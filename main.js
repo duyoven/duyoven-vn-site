@@ -18,6 +18,27 @@
     document.body.classList.toggle('nav-open');
   });
 
+  // ----- Mobile dropdown toggle (Sản phẩm / Tài liệu / Academy) -----
+  document.querySelectorAll('.main-nav .nav-item > a.has-caret').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (window.matchMedia('(max-width: 680px)').matches) {
+        e.preventDefault();
+        a.parentElement.classList.toggle('open');
+      }
+    });
+  });
+
+  // ----- Đánh dấu mục nav đang xem -----
+  (function () {
+    var page = (location.pathname.split('/').pop() || 'index.html');
+    var map = { 'index.html': 'index.html', '': 'index.html', 'gioi-thieu.html': 'gioi-thieu.html',
+      'san-pham.html': 'san-pham.html', 'san-pham-tach-khoi-65l.html': 'san-pham.html', 'lien-he.html': 'lien-he.html' };
+    var target = map[page] || 'index.html';
+    document.querySelectorAll('.main-nav .nav-item > a, .main-nav > a').forEach(function (a) {
+      if ((a.getAttribute('href') || '').split('#')[0] === target) a.classList.add('active');
+    });
+  })();
+
   // ----- Đa ngôn ngữ -----
   // Mỗi phần tử dịch có data-en/data-zh/data-ko; bản tiếng Việt gốc lưu vào data-vi.
   var current = localStorage.getItem('duyoven-lang') || 'vi';
