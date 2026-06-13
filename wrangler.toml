@@ -5,3 +5,4 @@ main = "worker.js"
 [assets]
 directory = "."
 binding = "ASSETS"
+run_worker_first = true
