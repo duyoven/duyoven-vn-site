@@ -32,7 +32,7 @@
   (function () {
     var page = (location.pathname.split('/').pop() || 'index.html');
     var map = { 'index.html': 'index.html', '': 'index.html', 'gioi-thieu.html': 'gioi-thieu.html',
-      'san-pham.html': 'san-pham.html', 'san-pham-tach-khoi-65l.html': 'san-pham.html', 'lien-he.html': 'lien-he.html' };
+      'san-pham.html': 'san-pham.html', 'san-pham-tach-khoi-65l.html': 'san-pham.html', 'tai-lieu.html': 'tai-lieu.html', 'academy.html': 'academy.html', 'lien-he.html': 'lien-he.html' };
     var target = map[page] || 'index.html';
     document.querySelectorAll('.main-nav .nav-item > a, .main-nav > a').forEach(function (a) {
       if ((a.getAttribute('href') || '').split('#')[0] === target) a.classList.add('active');
