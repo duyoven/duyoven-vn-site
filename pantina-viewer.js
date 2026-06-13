@@ -534,7 +534,7 @@
     });
 
     // ---------- camera control ----------
-    var az = 0.85, el = 0.32, dist = 1750, vAz = 0, vEl = 0;
+    var az = 0.85, el = 0.32, dist = 1550, vAz = 0, vEl = 0;
     function placeCam() {
       camera.position.set(
         target.x + dist * Math.cos(el) * Math.sin(az),
@@ -558,6 +558,7 @@
       lx = e.clientX; ly = e.clientY;
     });
     cv.addEventListener('wheel', function (e) {
+      if (!(e.ctrlKey || e.metaKey)) return; // let the page scroll normally; zoom only with Ctrl/Cmd
       e.preventDefault();
       dist *= (1 + Math.sign(e.deltaY) * 0.09);
       dist = Math.max(750, Math.min(4200, dist));
