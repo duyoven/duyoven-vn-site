@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liên hệ — Duy's Oven | duyoven.vn</title>
+  <meta name="description" content="Liên hệ Duy's Oven — hotline 090 169 1717, email info@duyoven.com. Tư vấn lò nướng than tách khói, lò BBQ, lò xông khói.">
+  <link rel="icon" href="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><img src="https://duyoven.com/wp-content/uploads/2022/11/duyoven_logo-01-1-tinified.png" alt="Duy's Oven"></a>
+    <nav class="main-nav">
+      <a href="index.html" data-en="Home" data-zh="首页" data-ko="홈" data-th="หน้าแรก" data-de="Startseite">Trang chủ</a>
+      <a href="gioi-thieu.html" data-en="About Us" data-zh="关于我们" data-ko="회사 소개" data-th="เกี่ยวกับเรา" data-de="Über uns">Về chúng tôi</a>
+      <a href="san-pham.html" data-en="Products" data-zh="产品" data-ko="제품" data-th="สินค้า" data-de="Produkte">Sản phẩm</a>
+      <a href="lien-he.html" class="active" data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</a>
+    </nav>
+    <select class="lang-select" aria-label="Language">
+      <option value="vi">VI · Tiếng Việt</option>
+      <option value="en">EN · English</option>
+      <option value="zh">中文</option>
+      <option value="ko">한국어</option>
+      <option value="th">ไทย</option>
+      <option value="de">DE · Deutsch</option>
+    </select>
+    <button class="nav-toggle" aria-label="Menu"><span></span></button>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="index.html" data-en="Home" data-zh="首页" data-ko="홈" data-th="หน้าแรก" data-de="Startseite">Trang chủ</a> / <span data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</span></p>
+    <h1 data-en="Contact Us" data-zh="联系我们" data-ko="문의하기" data-th="ติดต่อเรา" data-de="Kontakt">Liên hệ</h1>
+    <p data-en="Tell us your needs and we'll advise the right oven for you." data-zh="告诉我们需求，我们为你推荐合适的炉。" data-ko="필요를 알려주시면 알맞은 오븐을 추천해 드립니다." data-th="บอกความต้องการ แล้วเราจะแนะนำเตาที่เหมาะกับคุณ" data-de="Sagen Sie uns Ihre Bedürfnisse, wir beraten den passenden Ofen.">Cho chúng tôi biết nhu cầu của bạn, chúng tôi sẽ tư vấn chiếc lò phù hợp.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container contact-grid">
+    <div class="contact-info">
+      <h3 data-en="Company" data-zh="公司" data-ko="회사" data-th="บริษัท" data-de="Unternehmen">Công ty</h3>
+      <p>CÔNG TY CPCN CƠ KHÍ NN HARMONIA</p>
+      <h3 data-en="Address" data-zh="地址" data-ko="주소" data-th="ที่อยู่" data-de="Adresse">Địa chỉ</h3>
+      <p>1968/1 Lê Văn Lương, Hiệp Phước, Nhà Bè, TP.HCM</p>
+      <h3>Hotline</h3>
+      <p><a href="tel:0901691717">090 169 1717</a> · <a href="https://wa.me/84901691717" target="_blank" rel="noopener">WhatsApp</a></p>
+      <h3>Email</h3>
+      <p><a href="mailto:info@duyoven.com">info@duyoven.com</a></p>
+      <h3 data-en="Follow" data-zh="关注" data-ko="팔로우" data-th="ติดตาม" data-de="Folgen">Theo dõi</h3>
+      <p><a href="https://www.facebook.com/duyoven" target="_blank" rel="noopener">Facebook</a> · <a href="https://www.youtube.com/@duysoven3908" target="_blank" rel="noopener">YouTube</a></p>
+      <h3>MST</h3>
+      <p>0315700830</p>
+    </div>
+
+    <div>
+      <form onsubmit="handleContact(event)">
+        <div class="form-group">
+          <label data-en="Full name" data-zh="姓名" data-ko="이름" data-th="ชื่อ-นามสกุล" data-de="Name">Họ và tên</label>
+          <input type="text" name="name" required data-en-placeholder="Your name" data-zh-placeholder="您的姓名" data-ko-placeholder="성함" data-th-placeholder="ชื่อของคุณ" data-de-placeholder="Ihr Name" placeholder="Tên của bạn">
+        </div>
+        <div class="form-group">
+          <label data-en="Phone" data-zh="电话" data-ko="전화" data-th="โทรศัพท์" data-de="Telefon">Số điện thoại</label>
+          <input type="tel" name="phone" required placeholder="090...">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="email@...">
+        </div>
+        <div class="form-group">
+          <label data-en="Product of interest" data-zh="感兴趣的产品" data-ko="관심 제품" data-th="สินค้าที่สนใจ" data-de="Produktinteresse">Sản phẩm quan tâm</label>
+          <select name="product">
+            <option data-en="Smokeless oven" data-zh="无烟炭炉" data-ko="무연 오븐" data-th="เตาไร้ควัน" data-de="Rauchfreier Ofen">Lò tách khói</option>
+            <option data-en="Hybrid oven" data-zh="混合炉" data-ko="하이브리드 오븐" data-th="เตาไฮบริด" data-de="Hybrid-Ofen">Lò Hybrid</option>
+            <option data-en="Smoker" data-zh="熏炉" data-ko="훈연기" data-th="เตารมควัน" data-de="Smoker">Lò xông khói</option>
+            <option data-en="Custom grill" data-zh="定制烤炉" data-ko="맞춤 그릴" data-th="เตาสั่งทำ" data-de="Sondergrill">Nướng custom</option>
+            <option data-en="Pizza oven" data-zh="披萨炉" data-ko="피자 오븐" data-th="เตาพิซซ่า" data-de="Pizzaofen">Lò pizza</option>
+            <option data-en="Other" data-zh="其他" data-ko="기타" data-th="อื่น ๆ" data-de="Sonstiges">Khác</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-en="Message" data-zh="留言" data-ko="메시지" data-th="ข้อความ" data-de="Nachricht">Nội dung</label>
+          <textarea name="message" rows="4" data-en-placeholder="What are you looking for?" data-zh-placeholder="您在寻找什么？" data-ko-placeholder="무엇을 찾고 계신가요?" data-th-placeholder="คุณกำลังมองหาอะไร?" data-de-placeholder="Wonach suchen Sie?" placeholder="Bạn đang cần gì?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" data-en="Send" data-zh="发送" data-ko="보내기" data-th="ส่ง" data-de="Senden">Gửi liên hệ</button>
+        <p id="formNote" style="margin-top:14px;color:var(--muted);font-size:.85rem"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo"><img src="https://duyoven.com/wp-content/uploads/2022/11/duyoven_logo-01-1-tinified.png" alt="Duy's Oven"></a>
+        <p style="margin-top:18px"><strong style="color:var(--text-dim)">CÔNG TY CPCN CƠ KHÍ NN HARMONIA</strong></p>
+        <p>MST: 0315700830</p>
+      </div>
+      <div>
+        <h4 data-en="Products" data-zh="产品" data-ko="제품" data-th="สินค้า" data-de="Produkte">Sản phẩm</h4>
+        <ul>
+          <li><a href="san-pham.html#tach-khoi" data-en="Smokeless ovens" data-zh="无烟炭炉" data-ko="무연 오븐" data-th="เตาไร้ควัน" data-de="Rauchfreie Öfen">Lò tách khói</a></li>
+          <li><a href="san-pham.html#xong-khoi" data-en="Smokers" data-zh="熏炉" data-ko="훈연기" data-th="เตารมควัน" data-de="Smoker">Lò xông khói</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en="Company" data-zh="公司" data-ko="회사" data-th="บริษัท" data-de="Unternehmen">Công ty</h4>
+        <ul>
+          <li><a href="gioi-thieu.html" data-en="About us" data-zh="关于我们" data-ko="회사 소개" data-th="เกี่ยวกับเรา" data-de="Über uns">Về chúng tôi</a></li>
+          <li><a href="lien-he.html" data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</h4>
+        <ul>
+          <li><a href="tel:0901691717">Hotline: 090 169 1717</a></li>
+          <li><a href="mailto:info@duyoven.com">info@duyoven.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-en="© 2026 Duy's Oven — Passion for the ember." data-zh="© 2026 Duy's Oven — 炭火的热情。" data-ko="© 2026 Duy's Oven — 숯불을 향한 열정." data-th="© 2026 Duy's Oven — ความหลงใหลในถ่านไฟ" data-de="© 2026 Duy's Oven — Leidenschaft für die Glut.">© 2026 Duy's Oven — Đam mê than hồng. Chịu trách nhiệm: Ô. Nguyễn Vĩnh Duy.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+function handleContact(e){
+  e.preventDefault();
+  var f=e.target, note=document.getElementById('formNote');
+  var body=encodeURIComponent('Tên: '+f.name.value+'\nĐiện thoại: '+f.phone.value+'\nSản phẩm: '+f.product.value+'\nNội dung: '+f.message.value);
+  window.location.href='mailto:info@duyoven.com?subject='+encodeURIComponent('Lien he website - '+f.name.value)+'&body='+body;
+  var msgs={vi:'Đang mở ứng dụng email... Hoặc gọi 090 169 1717.',en:'Opening your email app... Or call 090 169 1717.',zh:'正在打开邮箱… 或致电 090 169 1717。',ko:'이메일 앱을 여는 중... 또는 090 169 1717로 전화주세요.',th:'กำลังเปิดอีเมล... หรือโทร 090 169 1717',de:'E-Mail-App wird geöffnet... Oder rufen Sie 090 169 1717 an.'};
+  note.textContent = msgs[document.documentElement.lang] || msgs.vi;
+}
+</script>
+</body>
+</html>
