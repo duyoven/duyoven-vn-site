@@ -401,3 +401,11 @@ a:hover { color: var(--ember-soft); }
   .mega-col a, .drop a { border-bottom: none; padding: 7px 0; }
   .nav-item::after { display: none; }
 }
+
+/* ---------- Academy ---------- */
+.tag { display:inline-block; font-size:.66rem; letter-spacing:.28em; text-transform:uppercase; color:var(--ember); margin-bottom:12px; font-weight:500; }
+.academy-card .card-body { padding:26px 24px; }
+.academy-card h3 { font-weight:300; letter-spacing:.06em; margin:4px 0 10px; font-size:1.05rem; }
+.academy-card p { color:var(--text-dim); font-weight:300; font-size:.9rem; line-height:1.7; margin-bottom:14px; }
+.split-media { padding:6% 7%; display:flex; align-items:center; }
+@media (max-width:680px){ .split-media{ padding:36px 22px; } }
