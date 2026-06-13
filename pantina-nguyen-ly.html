@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Marcellus&amp;display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; background: #fbf9f6; }
+  ::selection { background: rgba(244,102,31,0.35); }
+  @media (max-width: 820px) {
+    header { padding: 12px 16px !important; }
+    header nav a { display: none; }
+    header nav a:last-child { display: inline-block; }
+    section { padding-left: 18px !important; padding-right: 18px !important; }
+    h1 { font-size: 30px !important; }
+    div[style*="grid-template-columns: 1fr 1fr 1fr"] { grid-template-columns: 1fr !important; gap: 14px !important; }
+    div[style*="height: 480px"] { height: 250px !important; }
+    div[style*="gap: 28px"] { flex-wrap: wrap; gap: 14px !important; }
+    footer { flex-direction: column !important; align-items: flex-start !important; gap: 10px; padding: 20px !important; }
+  }
+  input.pp-range { -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: #ded7cc; outline: none; cursor: pointer; }
+  input.pp-range::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #f4661f; border: 2px solid #ffffff; cursor: grab; }
+  input.pp-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #f4661f; border: 2px solid #ffffff; }
+</style>
+</helmet>
+<div data-screen-label="Nguyên lý Pantina" style="min-height: 100vh; background: #fbf9f6; color: #221f1c; font-family: 'Be Vietnam Pro', sans-serif;">
+
+  <header style="position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 15px 40px; background: rgba(251,249,246,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(30,25,20,0.1);">
+    <div style="display: flex; align-items: baseline; gap: 14px;">
+      <div style="font-family: 'Marcellus', serif; font-size: 20px; letter-spacing: 0.22em; white-space: nowrap;">DUY'S OVEN</div>
+      <div style="font-size: 11px; letter-spacing: 0.18em; color: #f4661f; white-space: nowrap;">PANTINA · NGUYÊN LÝ HOẠT ĐỘNG</div>
+    </div>
+    <nav style="display: flex; align-items: center; gap: 22px;">
+      <a href="pantina-demo-3d.html" style="font-size: 12.5px; color: #756c62; text-decoration: none;" style-hover="color: #221f1c">Phòng demo 3D ↗</a>
+      <a href="sp-pantina.html" style="font-size: 12px; font-weight: 600; color: #ffffff; background: #f4661f; text-decoration: none; padding: 9px 20px; border-radius: 999px; letter-spacing: 0.05em; white-space: nowrap;" style-hover="background: #d9540f">TRANG BÁN HÀNG</a>
+    </nav>
+  </header>
+
+  <section style="padding: 64px 40px 28px 40px; background: radial-gradient(ellipse 80% 60% at 50% 0%, #f1ebe1 0%, #fbf9f6 70%);">
+    <div style="max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 28px; height: 1px; background: #f4661f;"></div>
+        <div style="font-size: 12px; letter-spacing: 0.24em; color: #f4661f;">VÌ SAO PANTINA TÁCH KHÓI?</div>
+      </div>
+      <h1 style="margin: 0; font-family: 'Marcellus', serif; font-size: 46px; font-weight: 400; line-height: 1.15; max-width: 720px; text-wrap: pretty;">Cùng một miếng thịt, hai số phận của giọt mỡ</h1>
+      <p style="margin: 0; font-size: 15.5px; line-height: 1.7; color: #6b635a; max-width: 640px; text-wrap: pretty;">Bên trái là lò than thường: mỡ rơi thẳng vào than, bốc khói đen ám vào thịt và người nướng. Bên phải là Pantina: than nằm trong máng chữ V — giọt mỡ trượt qua khe, rơi xuống khay hứng. Kéo quạt gió để xem than rực hơn.</p>
+    </div>
+  </section>
+
+  <section data-screen-label="Mô phỏng mặt cắt" style="padding: 12px 40px 40px 40px;">
+    <div style="max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 0;">
+      <div style="background: #ffffff; border: 1px solid rgba(30,25,20,0.14); border-radius: 18px 18px 0 0; overflow: hidden;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid rgba(30,25,20,0.12);">
+          <div style="padding: 18px 28px; display: flex; flex-direction: column; gap: 3px; border-right: 1px solid rgba(30,25,20,0.12);">
+            <div style="font-size: 11px; letter-spacing: 0.18em; color: #756c62; font-weight: 600;">LÒ THAN THƯỜNG</div>
+            <div style="font-size: 13.5px; color: #756c62;">Mỡ + than = khói đen ám mùi</div>
+          </div>
+          <div style="padding: 18px 28px; display: flex; flex-direction: column; gap: 3px; background: rgba(244,102,31,0.06);">
+            <div style="font-size: 11px; letter-spacing: 0.18em; color: #f4661f; font-weight: 600;">PANTINA — VỈ THAN CHỮ V</div>
+            <div style="font-size: 13.5px; color: #6b635a;">Mỡ xuống khay · khói than ra ống khói</div>
+          </div>
+        </div>
+        <div style="position: relative; height: 480px; background: radial-gradient(ellipse 90% 80% at 50% 30%, #26242a 0%, #131418 75%);">
+          <x-import component="PantinaPrinciple" from="./pantina-principle.js?v=3" fire="{{ fire }}" fan="{{ fan }}" hint-size="100%,480px" style="position: absolute; inset: 0;"></x-import>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 28px; background: #ffffff; border: 1px solid rgba(30,25,20,0.14); border-top: none; border-radius: 0 0 18px 18px; padding: 18px 28px;">
+        <div onClick="{{ toggleFire }}" style="display: flex; align-items: center; gap: 12px; cursor: pointer; flex: none;">
+          <div style="width: 42px; height: 24px; border-radius: 999px; background: {{ fireTrackBg }}; position: relative; transition: background 0.25s;">
+            <div style="position: absolute; top: 2px; left: {{ fireKnob }}; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; transition: left 0.25s;"></div>
+          </div>
+          <div style="font-size: 13px; font-weight: 500; color: #221f1c;">Nhóm lửa</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
+          <div style="font-size: 13px; font-weight: 500; color: #221f1c; white-space: nowrap;">Quạt gió điều tốc</div>
+          <input class="pp-range" type="range" min="0" max="100" step="1" value="{{ fan }}" onChange="{{ onFan }}" style="flex: 1;">
+          <div style="font-size: 13px; color: #d9540f; font-variant-numeric: tabular-nums; width: 44px; text-align: right;">{{ fanLabel }}</div>
+        </div>
+        <div style="font-size: 12px; color: #8a8178; flex: none;">Giọt vàng = mỡ · Xám đen = khói</div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="3 chi tiết nguyên lý" style="padding: 30px 40px 80px 40px;">
+    <div style="max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px;">
+      <div style="background: rgba(30,25,20,0.03); border: 1px solid rgba(30,25,20,0.12); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-family: 'Marcellus', serif; font-size: 28px; color: #f4661f;">V</div>
+        <div style="font-size: 16px; font-weight: 600;">Vỉ than chữ V</div>
+        <div style="font-size: 13.5px; line-height: 1.65; color: #756c62; text-wrap: pretty;">Than nằm gọn trong lòng máng V. Giọt mỡ rơi xuống sườn máng, trượt qua khe giữa hai máng — không bao giờ chạm mặt than đang cháy.</div>
+      </div>
+      <div style="background: rgba(30,25,20,0.03); border: 1px solid rgba(30,25,20,0.12); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-family: 'Marcellus', serif; font-size: 28px; color: #f4661f;">≈</div>
+        <div style="font-size: 16px; font-weight: 600;">Gió cưỡng bức từ quạt sò</div>
+        <div style="font-size: 13.5px; line-height: 1.65; color: #756c62; text-wrap: pretty;">Gió thổi ngang qua đáy máng than: than bén nhanh, cháy đều và đẩy khói về phía ống khói thay vì tạt lên mặt vỉ.</div>
+      </div>
+      <div style="background: rgba(30,25,20,0.03); border: 1px solid rgba(30,25,20,0.12); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-family: 'Marcellus', serif; font-size: 28px; color: #f4661f;">↑</div>
+        <div style="font-size: 16px; font-weight: 600;">Ống khói hút lên cao</div>
+        <div style="font-size: 13.5px; line-height: 1.65; color: #756c62; text-wrap: pretty;">Phần khói than ít ỏi còn lại được kéo qua họng ống khói và nhả lên cao — bàn ăn và người đứng nướng luôn sạch khói.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="display: flex; align-items: center; justify-content: space-between; padding: 24px 40px; border-top: 1px solid rgba(30,25,20,0.1);">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <div style="font-family: 'Marcellus', serif; font-size: 16px; letter-spacing: 0.22em;">DUY'S OVEN</div>
+      <div style="font-size: 10.5px; letter-spacing: 0.16em; color: #8a8178;">PANTINA — LÒ NƯỚNG THAN TÁCH KHÓI</div>
+    </div>
+    <div style="display: flex; gap: 20px;">
+      <a href="pantina-demo-3d.html" style="font-size: 12px; color: #756c62; text-decoration: none;" style-hover="color: #f4661f">Phòng demo 3D ↗</a>
+      <a href="sp-pantina.html" style="font-size: 12px; color: #756c62; text-decoration: none;" style-hover="color: #f4661f">Trang bán hàng ↗</a>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { fire: true, fan: 55 };
+  renderVals() {
+    const s = this.state;
+    return {
+      fire: s.fire,
+      fan: s.fan,
+      toggleFire: () => this.setState((p) => ({ fire: !p.fire })),
+      onFan: (e) => this.setState({ fan: +e.target.value }),
+      fanLabel: s.fan + '%',
+      fireTrackBg: s.fire ? '#f4661f' : '#ded7cc',
+      fireKnob: s.fire ? '20px' : '2px'
+    };
+  }
+}
+</script>
+</body>
+</html>

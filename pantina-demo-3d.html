@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Marcellus&amp;display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #fbf9f6; }
+  input.pv-range { -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: #ded7cc; outline: none; cursor: pointer; }
+  input.pv-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #f4661f; border: 2px solid #ffffff; cursor: grab; }
+  input.pv-range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #f4661f; border: 2px solid #ffffff; }
+  .pv-panel::-webkit-scrollbar { width: 8px; }
+  .pv-panel::-webkit-scrollbar-thumb { background: #d8d2c8; border-radius: 4px; }
+  @media (max-width: 820px) {
+    header { padding: 10px 14px !important; }
+    header > div:last-child { display: none; }
+    .pv-main { flex-direction: column !important; }
+    .pv-stage { flex: none !important; height: 45vh !important; min-height: 300px; }
+    .pv-panel { width: 100% !important; border-left: none !important; border-top: 1px solid rgba(30,25,20,0.12); padding: 18px 16px 60px 16px !important; }
+  }
+</style>
+</helmet>
+<div data-screen-label="Phòng demo lò Pantina" style="height: 100vh; display: flex; flex-direction: column; background: #fbf9f6; color: #221f1c; font-family: 'Be Vietnam Pro', sans-serif; overflow: hidden;">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; border-bottom: 1px solid rgba(30,25,20,0.1); flex: none;">
+    <div style="display: flex; align-items: baseline; gap: 16px; min-width: 0;">
+      <div style="font-family: 'Marcellus', serif; font-size: 22px; letter-spacing: 0.22em; color: #221f1c; white-space: nowrap; flex: none;">DUY'S OVEN</div>
+      <div style="font-size: 11px; letter-spacing: 0.18em; color: #f4661f; white-space: nowrap; flex: none;">PANTINA</div>
+      <div style="font-size: 11px; letter-spacing: 0.14em; color: #8a8178; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">LÒ NƯỚNG THAN TÁCH KHÓI</div>
+    </div>
+    <div style="font-size: 11px; letter-spacing: 0.14em; color: #f4661f; border: 1px solid rgba(244,102,31,0.35); border-radius: 999px; padding: 6px 14px; white-space: nowrap; flex: none; margin-left: 16px;">PHÒNG DEMO TRỰC TUYẾN</div>
+  </header>
+
+  <div class="pv-main" style="flex: 1; display: flex; min-height: 0;">
+
+    <div class="pv-stage" style="flex: 1; position: relative; min-width: 0; background: radial-gradient(ellipse 60% 38% at 58% 92%, rgba(244,102,31,0.22) 0%, rgba(160,60,12,0.08) 45%, rgba(0,0,0,0) 72%), radial-gradient(ellipse 90% 70% at 50% 30%, #131316 0%, #0a0a0c 55%, #040405 100%);">
+      <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; overflow: hidden;">
+        <div style="font-family: 'Marcellus', serif; font-size: 200px; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(244,102,31,0.11); letter-spacing: 0.06em; user-select: none; white-space: nowrap;">PANTINA</div>
+      </div>
+      <x-import component="PantinaViewer" from="./pantina-viewer.js?v=23" hint-size="100%,100%"
+        auto-rotate="{{ autoRotate }}" temp="{{ temp }}" fire="{{ fire }}" charcoal="{{ charcoal }}" meat="{{ meat }}"
+        fan-speed="{{ effFan }}" damper="{{ damper }}" lid-open="{{ lidOpen }}" sound="{{ sound }}"
+        glass-open="{{ glassOpen }}" vi-stage="{{ viStage }}" ash-out="{{ ashOut }}"
+        chimney-off="{{ chimneyOff }}" legs-folded="{{ legsFolded }}" power="{{ power }}"
+        show-dims="{{ showDims }}" active-hotspot="{{ active }}" on-select-hotspot="{{ selectHotspot }}"
+        style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></x-import>
+
+      <div style="position: absolute; left: 20px; top: 18px; display: flex; align-items: center; gap: 10px; pointer-events: none; z-index: 6;">
+        <div style="width: 15px; height: 15px; border-radius: 50%; border: 3px solid #f4661f; flex: none;"></div>
+        <div style="font-size: 13px; color: #d8d0c6; letter-spacing: 0.04em;">Bấm vào các điểm cam để xem chi tiết</div>
+      </div>
+      <div onClick="{{ toggleAutoPlay }}" style="position: absolute; right: 20px; top: 16px; z-index: 7; cursor: pointer; display: flex; align-items: center; gap: 8px; background: rgba(12,8,5,0.6); border: 1px solid rgba(244,102,31,0.5); border-radius: 999px; padding: 8px 14px; backdrop-filter: blur(6px);" style-hover="background: rgba(244,102,31,0.18)">
+        <div style="font-size: 10.5px; letter-spacing: 0.14em; font-weight: 600; color: #ff9554; white-space: nowrap;">{{ autoBadge }}</div>
+      </div>
+
+      <sc-if value="{{ hasCaption }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; left: 0; right: 0; top: 18px; display: flex; justify-content: center; pointer-events: none; z-index: 6;">
+          <div style="display: flex; align-items: center; gap: 14px; max-width: 640px; margin: 0 20px; background: rgba(11,12,15,0.85); border: 1px solid rgba(244,102,31,0.45); border-radius: 14px; padding: 12px 18px; backdrop-filter: blur(6px); pointer-events: auto;">
+            <div style="font-size: 13.5px; line-height: 1.55; color: #f2ede6; text-wrap: pretty;">{{ caption }}</div>
+            <div onClick="{{ stopDemo }}" style="flex: none; font-size: 10.5px; letter-spacing: 0.1em; color: #f4661f; border: 1px solid rgba(244,102,31,0.4); padding: 5px 11px; border-radius: 999px; cursor: pointer;" style-hover="background: rgba(244,102,31,0.12)">DỪNG</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="position: absolute; left: 0; right: 0; bottom: 18px; display: flex; justify-content: center; pointer-events: none;">
+        <div style="font-size: 12px; color: #cfc8bf; letter-spacing: 0.05em; background: rgba(15,14,12,0.6); padding: 6px 16px; border-radius: 999px; backdrop-filter: blur(4px);">Kéo để xoay · Lăn chuột để thu phóng</div>
+      </div>
+    </div>
+
+    <aside class="pv-panel" style="width: 344px; flex: none; border-left: 1px solid rgba(30,25,20,0.1); background: #ffffff; overflow-y: auto; padding: 22px 22px 40px 22px; display: flex; flex-direction: column; gap: 20px;">
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 18px; font-weight: 600; letter-spacing: 0.01em;">Lò nướng than tách khói Pantina</div>
+        <div style="font-size: 12.5px; color: #756c62; line-height: 1.55; text-wrap: pretty;">Xem từ xa mọi chi tiết &amp; tính năng — thân sắt đen huyền sơn chịu nhiệt Mỹ, 2 vỉ inox, dựng 1:1 từ file 3D gốc.</div>
+      </div>
+
+      <div style="display: flex; gap: 6px;">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+          <div onClick="{{ t.pick }}" style="flex: 1; text-align: center; padding: 9px 2px; border-radius: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; cursor: pointer; border: 1px solid {{ t.border }}; background: {{ t.bg }}; color: {{ t.color }};" style-hover="background: rgba(244,102,31,0.1)">{{ t.name }}</div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ tabVan }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+
+          <div onClick="{{ toggleSound }}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03); cursor: pointer;" style-hover="background: rgba(30,25,20,0.06)">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-size: 13.5px; font-weight: 500;">Âm thanh lò</div>
+              <div style="font-size: 11.5px; color: #8a8178;">Lửa tí tách · quạt vù vù · thịt xèo xèo</div>
+            </div>
+            <div style="width: 42px; height: 24px; border-radius: 999px; background: {{ soundTrackBg }}; position: relative; flex: none; transition: background 0.25s;">
+              <div style="position: absolute; top: 2px; left: {{ soundKnob }}; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; transition: left 0.25s;"></div>
+            </div>
+          </div>
+
+          <div onClick="{{ toggleFire }}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03); cursor: pointer;" style-hover="background: rgba(30,25,20,0.06)">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-size: 13.5px; font-weight: 500;">Nhóm lửa</div>
+              <div style="font-size: 11.5px; color: {{ fireStatusColor }};">{{ fireStatus }}</div>
+            </div>
+            <div style="width: 42px; height: 24px; border-radius: 999px; background: {{ fireTrackBg }}; position: relative; flex: none; transition: background 0.25s;">
+              <div style="position: absolute; top: 2px; left: {{ fireKnob }}; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; transition: left 0.25s;"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; border-radius: 12px; border: 1px solid rgba(244,102,31,0.22); background: rgba(244,102,31,0.05);">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-size: 13.5px; font-weight: 500;">Nhiệt độ trong lò</div>
+              <div style="font-size: 11.5px; color: {{ tempStatusColor }};">{{ tempStatus }}</div>
+            </div>
+            <div style="font-size: 26px; font-weight: 600; color: #ff8a4d; font-variant-numeric: tabular-nums;">{{ temp }}°C</div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03);">
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <div style="font-size: 13.5px; font-weight: 500;">Lượng than</div>
+              <div style="font-size: 12px; color: #f4661f; font-variant-numeric: tabular-nums;">{{ charcoalLabel }}</div>
+            </div>
+            <input class="pv-range" type="range" min="0" max="3" step="0.5" value="{{ charcoal }}" onChange="{{ onCharcoal }}" style="width: 100%;">
+            <div style="font-size: 11.5px; color: #8a8178; line-height: 1.5;">Mở cửa kính phía trước để gắp than vào vỉ than.</div>
+          </div>
+
+          <div onClick="{{ toggleGlass }}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03); cursor: pointer;" style-hover="background: rgba(30,25,20,0.06)">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-size: 13.5px; font-weight: 500;">Cửa kính cho than</div>
+              <div style="font-size: 11.5px; color: {{ glassStatusColor }};">{{ glassStatus }}</div>
+            </div>
+            <div style="width: 42px; height: 24px; border-radius: 999px; background: {{ glassTrackBg }}; position: relative; flex: none; transition: background 0.25s;">
+              <div style="position: absolute; top: 2px; left: {{ glassKnob }}; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; transition: left 0.25s;"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03);">
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <div style="font-size: 13.5px; font-weight: 500;">Lượng thịt trên vỉ</div>
+              <div style="font-size: 12px; color: #f4661f; font-variant-numeric: tabular-nums;">{{ meatLabel }}</div>
+            </div>
+            <input class="pv-range" type="range" min="0" max="4" step="0.5" value="{{ meat }}" onChange="{{ onMeat }}" style="width: 100%;">
+            <div style="font-size: 11.5px; color: #8a8178; line-height: 1.5;">Tối đa 4 kg trên 2 vỉ inox — thịt chín dần khi lò đủ nhiệt.</div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03);">
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <div style="font-size: 13.5px; font-weight: 500;">Quạt sò — gió cưỡng bức</div>
+              <div style="font-size: 12px; color: #f4661f; font-variant-numeric: tabular-nums;">{{ fanLabel }}</div>
+            </div>
+            <input class="pv-range" type="range" min="0" max="100" step="1" value="{{ fan }}" onChange="{{ onFan }}" style="width: 100%;">
+            <div style="font-size: 11.5px; color: {{ fanNoteColor }}; line-height: 1.5;">{{ fanNote }}</div>
+          </div>
+
+          <div onClick="{{ toggleDamper }}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03); cursor: pointer;" style-hover="background: rgba(30,25,20,0.06)">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-size: 13.5px; font-weight: 500;">Tay gạt ống khói</div>
+              <div style="font-size: 11.5px; color: {{ damperStatusColor }};">{{ damperStatus }}</div>
+            </div>
+            <div style="width: 42px; height: 24px; border-radius: 999px; background: {{ damperTrackBg }}; position: relative; flex: none; transition: background 0.25s;">
+              <div style="position: absolute; top: 2px; left: {{ damperKnob }}; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; transition: left 0.25s;"></div>
+            </div>
+          </div>
+
+          <div onClick="{{ toggleLid }}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03); cursor: pointer;" style-hover="background: rgba(30,25,20,0.06)">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-size: 13.5px; font-weight: 500;">Cửa trên lò (nắp)</div>
+              <div style="font-size: 11.5px; color: {{ lidStatusColor }};">{{ lidStatus }}</div>
+            </div>
+            <div style="width: 42px; height: 24px; border-radius: 999px; background: {{ lidTrackBg }}; position: relative; flex: none; transition: background 0.25s;">
+              <div style="position: absolute; top: 2px; left: {{ lidKnob }}; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; transition: left 0.25s;"></div>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tabThao }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 12px; color: #756c62; line-height: 1.55; text-wrap: pretty;">Mọi bộ phận tháo lắp không cần dụng cụ — bật từng mục để xem thao tác trên mô hình.</div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid {{ viStageBorder }}; background: rgba(30,25,20,0.03);">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <div style="font-size: 13.5px; font-weight: 500;">Tháo vỉ — theo thứ tự</div>
+              <div style="font-size: 11.5px; color: {{ viStageColor }}; line-height: 1.45;">{{ viStageStatus }}</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <sc-for list="{{ viSteps }}" as="vs" hint-placeholder-count="4">
+                <div onClick="{{ vs.pick }}" style="text-align: center; padding: 8px 4px; border-radius: 9px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid {{ vs.border }}; background: {{ vs.bg }}; color: {{ vs.color }};" style-hover="background: rgba(244,102,31,0.1)">{{ vs.name }}</div>
+              </sc-for>
+            </div>
+          </div>
+
+          <sc-for list="{{ parts }}" as="pt" hint-placeholder-count="5">
+            <div onClick="{{ pt.toggle }}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; border: 1px solid {{ pt.border }}; background: rgba(30,25,20,0.03); cursor: pointer;" style-hover="background: rgba(30,25,20,0.06)">
+              <div style="display: flex; flex-direction: column; gap: 3px; padding-right: 10px;">
+                <div style="font-size: 13.5px; font-weight: 500;">{{ pt.name }}</div>
+                <div style="font-size: 11.5px; color: {{ pt.statusColor }}; line-height: 1.45;">{{ pt.status }}</div>
+              </div>
+              <div style="width: 42px; height: 24px; border-radius: 999px; background: {{ pt.trackBg }}; position: relative; flex: none; transition: background 0.25s;">
+                <div style="position: absolute; top: 2px; left: {{ pt.knob }}; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; transition: left 0.25s;"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tabQuy }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+
+          <div style="border: 1px solid rgba(244,102,31,0.25); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: rgba(244,102,31,0.04);">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <div style="font-size: 13.5px; font-weight: 600;">Quy trình nướng — cơ chế tách khói</div>
+              <div onClick="{{ playGrill }}" style="flex: none; font-size: 10.5px; letter-spacing: 0.1em; font-weight: 600; color: #ffffff; background: #f4661f; padding: 7px 13px; border-radius: 999px; cursor: pointer;" style-hover="background: #ff8a4d">▶ CHẠY DEMO</div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 7px;">
+              <sc-for list="{{ grillSteps }}" as="st" hint-placeholder-count="6">
+                <div onClick="{{ st.go }}" style="display: flex; gap: 10px; align-items: flex-start; cursor: pointer; padding: 5px 6px; border-radius: 8px;" style-hover="background: rgba(30,25,20,0.06)">
+                  <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(244,102,31,0.15); color: #f4661f; display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 600; flex: none; margin-top: 1px;">{{ st.n }}</div>
+                  <div style="flex: 1; font-size: 12px; color: #aab2bd; line-height: 1.55; text-wrap: pretty;">{{ st.text }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="border: 1px solid rgba(30,25,20,0.12); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: rgba(30,25,20,0.03);">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <div style="font-size: 13.5px; font-weight: 600;">Quy trình vệ sinh lò</div>
+              <div onClick="{{ playClean }}" style="flex: none; font-size: 10.5px; letter-spacing: 0.1em; font-weight: 600; color: #221f1c; border: 1px solid rgba(30,25,20,0.25); padding: 7px 13px; border-radius: 999px; cursor: pointer;" style-hover="background: rgba(30,25,20,0.12)">▶ CHẠY DEMO</div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 7px;">
+              <sc-for list="{{ cleanSteps }}" as="st" hint-placeholder-count="7">
+                <div onClick="{{ st.go }}" style="display: flex; gap: 10px; align-items: flex-start; cursor: pointer; padding: 5px 6px; border-radius: 8px;" style-hover="background: rgba(30,25,20,0.06)">
+                  <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(30,25,20,0.12); color: #756c62; display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 600; flex: none; margin-top: 1px;">{{ st.n }}</div>
+                  <div style="flex: 1; font-size: 12px; color: #aab2bd; line-height: 1.55; text-wrap: pretty;">{{ st.text }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tabBo }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div onClick="{{ toggleDims }}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(30,25,20,0.12); background: rgba(30,25,20,0.03); cursor: pointer;" style-hover="background: rgba(30,25,20,0.06)">
+              <div style="font-size: 13.5px; font-weight: 500;">Hiện kích thước trên mô hình</div>
+              <div style="width: 42px; height: 24px; border-radius: 999px; background: {{ dimsTrackBg }}; position: relative; flex: none; transition: background 0.25s;">
+                <div style="position: absolute; top: 2px; left: {{ dimsKnob }}; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; transition: left 0.25s;"></div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column;">
+              <div style="display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px solid rgba(30,25,20,0.06); font-size: 12.5px;"><span style="color: #756c62;">Cao (cả ống khói)</span><span style="font-variant-numeric: tabular-nums;">770 mm</span></div>
+              <div style="display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px solid rgba(30,25,20,0.06); font-size: 12.5px;"><span style="color: #756c62;">Rộng</span><span style="font-variant-numeric: tabular-nums;">636 mm</span></div>
+              <div style="display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px solid rgba(30,25,20,0.06); font-size: 12.5px;"><span style="color: #756c62;">Sâu</span><span style="font-variant-numeric: tabular-nums;">392 mm</span></div>
+              <div style="display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px solid rgba(30,25,20,0.06); font-size: 12.5px;"><span style="color: #756c62;">Thịt tối đa</span><span style="font-variant-numeric: tabular-nums;">4 kg</span></div>
+              <div style="display: flex; justify-content: space-between; padding: 8px 2px; font-size: 12.5px;"><span style="color: #756c62;">Nguồn quạt sò</span><span style="font-variant-numeric: tabular-nums;">DC 12V / USB-C</span></div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 11px; letter-spacing: 0.16em; color: #756c62; font-weight: 600;">CHI TIẾT 13 BỘ PHẬN</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <sc-for list="{{ hotspots }}" as="h" hint-placeholder-count="13">
+                <div onClick="{{ h.pick }}" style="border: 1px solid {{ h.border }}; border-radius: 12px; background: rgba(30,25,20,0.03); cursor: pointer; padding: 11px 13px;" style-hover="background: rgba(30,25,20,0.06)">
+                  <div style="display: flex; align-items: center; gap: 11px;">
+                    <div style="width: 10px; height: 10px; border-radius: 50%; background: {{ h.numBg }}; border: 2px solid {{ h.numColor }}; flex: none;"></div>
+                    <div style="font-size: 13px; font-weight: 500;">{{ h.title }}</div>
+                  </div>
+                  <div style="display: {{ h.open }}; margin: 9px 0 2px 35px; font-size: 12px; color: #756c62; line-height: 1.6; text-wrap: pretty;">{{ h.desc }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    tab: 'van', material: 'black', fire: false, charcoal: 0, meat: 0, fan: 0,
+    damper: true, lidOpen: true, sound: false,
+    glassOpen: false, viStage: 0, ashOut: false,
+    chimneyOff: false, legsFolded: false, power: true,
+    showDims: false, active: null, temp: 32, hint: '', caption: '', autoPlay: true
+  };
+
+  componentDidMount() {
+    this._t = setInterval(() => {
+      const s = this.state;
+      const effFan = s.power ? s.fan : 0;
+      const target = s.fire && s.charcoal >= 0.5
+        ? 130 + effFan * 1.8 + s.charcoal * 35 + (s.damper ? 20 : -30) + (s.lidOpen ? 0 : 55)
+        : 32;
+      const temp = s.temp + (target - s.temp) * 0.06;
+      if (Math.abs(temp - s.temp) > 0.05) this.setState({ temp });
+    }, 400);
+    if (this.state.autoPlay) this.startAttract();
+  }
+  componentWillUnmount() { clearInterval(this._t); this.stopDemoTimer(); if (this._at) clearTimeout(this._at); }
+
+  stopDemoTimer() { if (this._dt) { clearTimeout(this._dt); this._dt = null; } }
+
+  startAttract() {
+    this.stopDemoTimer();
+    if (this._at) clearTimeout(this._at);
+    const steps = [
+      { p: { lidOpen: true, charcoal: 0, fire: false, fan: 0, meat: 0, legsFolded: false }, d: 3200 },
+      { p: { charcoal: 2 }, d: 3000 },
+      { p: { fire: true, fan: 65 }, d: 5200 },
+      { p: { meat: 2 }, d: 5200 },
+      { p: { lidOpen: false }, d: 4400 },
+      { p: { lidOpen: true }, d: 3600 },
+      { p: { meat: 0, fire: false, fan: 0, charcoal: 0 }, d: 3000 },
+      { p: { legsFolded: true }, d: 4200 },
+      { p: { legsFolded: false }, d: 3600 }
+    ];
+    let i = 0;
+    const next = () => {
+      const st = steps[i]; i = (i + 1) % steps.length;
+      this.setState(st.p);
+      this._at = setTimeout(next, st.d);
+    };
+    next();
+  }
+  stopAttract() {
+    if (this._at) { clearTimeout(this._at); this._at = null; }
+    if (this.state.autoPlay) this.setState({ autoPlay: false });
+  }
+
+  runDemo(steps) {
+    this.stopAttract();
+    this.stopDemoTimer();
+    let i = 0;
+    const next = () => {
+      if (i >= steps.length) { this.setState({ caption: '' }); this._dt = null; return; }
+      const st = steps[i++];
+      this.setState({ ...st.p, caption: st.c });
+      this._dt = setTimeout(next, st.d);
+    };
+    next();
+  }
+
+  grillDemo() {
+    return [
+      { p: { tab: 'quy', sound: true, lidOpen: true, glassOpen: true, charcoal: 2, fire: false, meat: 0 }, c: '1/6 · Mở cửa kính cường lực, gắp khoảng 2 kg than vào vỉ than.', d: 5500 },
+      { p: { glassOpen: false, fire: true, power: true, fan: 45 }, c: '2/6 · Đóng kính, nhóm lửa — quạt sò cấp gió cưỡng bức, than bén nhanh không cần quạt tay.', d: 6500 },
+      { p: { meat: 2 }, c: '3/6 · Xếp thịt lên 2 vỉ inox (tối đa 4 kg) — theo dõi than cháy qua cửa kính.', d: 6000 },
+      { p: {}, c: '4/6 · Mỡ chảy xuống VỈ TÁCH DẦU nằm giữa vỉ nướng và vỉ than — KHÔNG rơi vào than, chặn khói khét từ gốc. Đây chính là cơ chế tách khói.', d: 7500 },
+      { p: { lidOpen: false }, c: '5/6 · Đậy nắp giữ nhiệt — nhiệt độ hiển thị trên đồng hồ gắn ở nắp lò.', d: 6000 },
+      { p: { damper: true }, c: '6/6 · Khói than được hút qua ống khói thoát lên cao — người đứng nướng không bị ám khói.', d: 6500 },
+      { p: { lidOpen: true }, c: 'Hoàn tất — thịt chín vàng đều, không ám khói. Pantina by Duy\u2019s Oven.', d: 5000 }
+    ];
+  }
+  cleanDemo() {
+    return [
+      { p: { tab: 'quy', fire: false, meat: 0, fan: 0, lidOpen: true }, c: '1/6 · Tắt lửa, chờ lò nguội hẳn trước khi vệ sinh.', d: 4500 },
+      { p: { viStage: 3 }, c: '2/6 · Tháo vỉ theo thứ tự: vỉ nướng → vỉ tách dầu (đổ mỡ thừa) → vỉ than. Rửa trực tiếp với nước rửa chén.', d: 8000 },
+      { p: { ashOut: true }, c: '3/6 · Kéo khay tro bên trái lò (dưới ống khói) — đổ tro đã nguội.', d: 5500 },
+      { p: { glassOpen: true }, c: '4/6 · Mở cửa kính, lau kính cường lực bằng khăn ẩm.', d: 5000 },
+      { p: { glassOpen: false, viStage: 0, ashOut: false }, c: '5/6 · Lắp lại theo thứ tự ngược: vỉ than → vỉ tách dầu → vỉ nướng.', d: 6000 },
+      { p: { chimneyOff: true, legsFolded: true }, c: '6/6 · Tháo ống khói, gập 4 chân — gọn nhẹ, mang đi dã ngoại hoặc cất kho.', d: 7000 },
+      { p: { chimneyOff: false, legsFolded: false }, c: 'Hoàn tất — Pantina sẵn sàng cho mẻ nướng tiếp theo.', d: 4500 }
+    ];
+  }
+
+  renderVals() {
+    const s = this.state;
+    const HOT = [
+      { id: 'chimney', title: 'Ống khói', desc: 'Gom và dẫn khói lên cao, tách khói khỏi khu vực đứng nướng. Tháo rời được khi cất gọn.' },
+      { id: 'damper', title: 'Tay gạt điều tiết ống khói', desc: 'Gạt đóng / mở họng khói: mở cho khói thoát và lửa cháy mạnh, đóng bớt để giữ nhiệt.' },
+      { id: 'lid', title: 'Cửa trên lò (nắp)', desc: 'Nắp lật quanh bản lề sau; đậy xuống khi nướng kiểu hun khói — dùng nút "Cửa trên lò" để đóng / mở.' },
+      { id: 'gauge', title: 'Que đo & đồng hồ nhiệt độ', desc: 'Que đo cắm trong buồng nướng, hiển thị nhiệt độ thực tế trên mặt đồng hồ gắn ở nắp.' },
+      { id: 'vi', title: '2 vỉ nướng inox', desc: 'Hai vỉ inox chứa tối đa 4 kg thịt — tháo đầu tiên khi vệ sinh (xem mục Tháo lắp).' },
+      { id: 'coalbed', title: 'Vỉ than', desc: 'Than nằm trên vỉ thép dưới cùng; tro cháy hết rơi xuống khay tro. Tháo cuối cùng, sau vỉ nướng và vỉ tách dầu.' },
+      { id: 'glass', title: 'Cửa than lò — kính cường lực', desc: 'Nhìn xuyên kính thấy than hồng cháy trên vỉ than — như một lò sưởi mini: vừa nướng, vừa sưởi ấm bàn tiệc ngoài trời. Mở kính để gắp thêm than.' },
+      { id: 'oiltray', title: 'Vỉ tách dầu', desc: 'Tấm inox nằm giữa vỉ nướng và vỉ than — hứng toàn bộ mỡ chảy xuống, mỡ không rơi vào than nên không bốc khói khét. Đây là trái tim của cơ chế tách khói.' },
+      { id: 'ashtray', title: 'Khay tro', desc: 'Nằm bên trái lò, dưới ống khói — kéo ra về phía ống khói để đổ tro trong vài giây.' },
+      { id: 'fan', title: 'Quạt sò', desc: 'Cánh quạt quay ở mặt hút — cấp gió cưỡng bức vào buồng than, than bén nhanh, nhiệt đều, không cần quạt tay. Kéo thanh quạt để xem quay nhanh chậm.' },
+      { id: 'knob', title: 'Núm chỉnh tốc độ quạt', desc: 'Xoay để tăng giảm lượng gió, kiểm soát độ mạnh của than theo từng món.' },
+      { id: 'ports', title: 'Cổng DC 12V & USB-C', desc: 'Cấp nguồn bộ điều khiển quạt — dùng được sạc dự phòng qua cáp Type-C khi nướng ngoài trời.' },
+      { id: 'legs', title: 'Chân đế gập được', desc: 'Bốn chân thép đen huyền bóng nhẹ, gập sát đáy khi vận chuyển — xem mục Tháo lắp.' }
+    ];
+    const PARTS = [
+      { id: 'glassOpen', name: 'Mở cửa kính (thêm than)', on: 'Đang mở — gắp than vào', off: 'Đang đóng kín' },
+      { id: 'ashOut', name: 'Kéo khay tro (bên trái, dưới ống khói)', on: 'Đã kéo ra — đổ tro', off: 'Đang đẩy vào trong' },
+      { id: 'chimneyOff', name: 'Tháo ống khói', on: 'Đã tháo rời', off: 'Đang lắp trên thân lò' },
+      { id: 'legsFolded', name: 'Xếp chân lò', on: 'Đã gập gọn — sẵn sàng vận chuyển', off: 'Đang dựng đứng' },
+      { id: 'power', name: 'Sạc dự phòng + cáp Type-C', on: 'Đang cấp nguồn cho quạt sò', off: 'Chưa cắm — quạt không chạy' }
+    ];
+    const TABS = [
+      { id: 'van', name: 'Vận hành' },
+      { id: 'thao', name: 'Tháo lắp' },
+      { id: 'quy', name: 'Quy trình' },
+      { id: 'bo', name: 'Bộ phận' }
+    ];
+    const t = Math.round(s.temp);
+    let tempStatus, tempStatusColor;
+    if (t < 60) { tempStatus = 'Lò nguội'; tempStatusColor = '#8a8178'; }
+    else if (t < 150) { tempStatus = 'Đang nóng lên'; tempStatusColor = '#d08648'; }
+    else if (t < 300) { tempStatus = 'Nhiệt nướng lý tưởng'; tempStatusColor = '#f4661f'; }
+    else { tempStatus = 'Rất nóng — sưởi mạnh, hạ bớt quạt'; tempStatusColor = '#e06038'; }
+    const effFan = s.power ? s.fan : 0;
+    const grill = this.grillDemo(), clean = this.cleanDemo();
+    return {
+      fire: s.fire, charcoal: s.charcoal, meat: s.meat,
+      fan: s.fan, effFan, damper: s.damper, lidOpen: s.lidOpen, sound: s.sound,
+      glassOpen: s.glassOpen, viStage: s.viStage, ashOut: s.ashOut,
+      viStageBorder: s.viStage > 0 ? 'rgba(244,102,31,0.4)' : 'rgba(30,25,20,0.12)',
+      viStageColor: s.viStage > 0 ? '#f4661f' : '#8a8178',
+      viStageStatus: ['Đang lắp đủ 3 lớp vỉ', 'Đã tháo vỉ nướng (lớp 1)', 'Đã tháo vỉ nướng + vỉ tách dầu', 'Đã tháo cả 3 lớp — lòng lò trống'][s.viStage],
+      viSteps: [
+        { name: 'Lắp đủ', st: 0 },
+        { name: '1 · Vỉ nướng', st: 1 },
+        { name: '2 · + Vỉ tách dầu', st: 2 },
+        { name: '3 · + Vỉ than', st: 3 }
+      ].map((v) => ({
+        ...v,
+        pick: () => this.setState({ viStage: v.st }),
+        border: s.viStage === v.st ? 'rgba(244,102,31,0.6)' : 'rgba(30,25,20,0.12)',
+        bg: s.viStage === v.st ? 'rgba(244,102,31,0.14)' : 'transparent',
+        color: s.viStage === v.st ? '#d9540f' : '#756c62'
+      })),
+      chimneyOff: s.chimneyOff, legsFolded: s.legsFolded, power: s.power,
+      showDims: s.showDims, active: s.active,
+      temp: t, tempStatus, tempStatusColor,
+      caption: s.caption, hasCaption: !!s.caption,
+      stopDemo: () => { this.stopDemoTimer(); this.setState({ caption: '' }); },
+      autoRotate: s.autoPlay,
+      autoBadge: s.autoPlay ? '❚❚  TRÌNH DIỄN TỰ ĐỘNG' : '▶  TRÌNH DIỄN TỰ ĐỘNG',
+      toggleAutoPlay: () => { if (this.state.autoPlay) this.stopAttract(); else { this.setState({ autoPlay: true }); this.startAttract(); } },
+      playGrill: () => this.runDemo(grill),
+      playClean: () => this.runDemo(clean),
+      grillSteps: grill.slice(0, 6).map((st, i) => ({ n: i + 1, text: st.c.replace(/^\d\/\d · /, ''), go: () => { this.stopDemoTimer(); this.setState({ ...st.p, caption: st.c }); this._dt = setTimeout(() => this.setState({ caption: '' }), st.d); } })),
+      cleanSteps: clean.slice(0, 6).map((st, i) => ({ n: i + 1, text: st.c.replace(/^\d\/\d · /, ''), go: () => { this.stopDemoTimer(); this.setState({ ...st.p, caption: st.c }); this._dt = setTimeout(() => this.setState({ caption: '' }), st.d); } })),
+      tabs: TABS.map((tb) => ({
+        ...tb,
+        pick: () => this.setState({ tab: tb.id }),
+        border: s.tab === tb.id ? 'rgba(244,102,31,0.6)' : 'rgba(30,25,20,0.12)',
+        bg: s.tab === tb.id ? 'rgba(244,102,31,0.14)' : 'transparent',
+        color: s.tab === tb.id ? '#d9540f' : '#756c62'
+      })),
+      tabVan: s.tab === 'van', tabThao: s.tab === 'thao', tabQuy: s.tab === 'quy', tabBo: s.tab === 'bo',
+      selectHotspot: (id) => this.setState({ active: id, tab: id ? 'bo' : s.tab }),
+      toggleFire: () => { this.stopAttract(); this.setState((p) => {
+        if (!p.fire && p.charcoal < 0.5) {
+          clearTimeout(this._ht);
+          this._ht = setTimeout(() => this.setState({ hint: '' }), 3500);
+          return { hint: 'on' };
+        }
+        return { fire: !p.fire, hint: '' };
+      }); },
+      toggleSound: () => this.setState((p) => ({ sound: !p.sound })),
+      toggleDamper: () => this.setState((p) => ({ damper: !p.damper })),
+      toggleLid: () => { this.stopAttract(); this.setState((p) => ({ lidOpen: !p.lidOpen })); },
+      toggleGlass: () => { this.stopAttract(); this.setState((p) => ({ glassOpen: !p.glassOpen })); },
+      glassStatus: s.glassOpen ? 'Đang mở — gắp than vào vỉ' : 'Đang đóng kín',
+      glassStatusColor: s.glassOpen ? '#f4661f' : '#8a8178',
+      glassTrackBg: s.glassOpen ? '#f4661f' : '#ded7cc',
+      glassKnob: s.glassOpen ? '20px' : '2px',
+      toggleDims: () => this.setState((p) => ({ showDims: !p.showDims })),
+      onCharcoal: (e) => { this.stopAttract(); this.setState({ charcoal: +e.target.value }); },
+      onMeat: (e) => { this.stopAttract(); this.setState({ meat: +e.target.value }); },
+      onFan: (e) => { this.stopAttract(); this.setState({ fan: +e.target.value }); },
+      charcoalLabel: s.charcoal.toFixed(1) + ' kg',
+      meatLabel: s.meat.toFixed(1) + ' / 4 kg',
+      fanLabel: s.fan + '%',
+      fanNote: s.power ? 'Nguồn DC 12V hoặc sạc dự phòng qua cáp Type-C.' : 'Chưa cắm nguồn — bật "Sạc dự phòng" trong mục Tháo lắp.',
+      fanNoteColor: s.power ? '#8a8178' : '#e06038',
+      fireStatus: s.hint ? 'Chưa có than — kéo thanh "Lượng than" trước' : (s.fire ? (s.charcoal >= 0.5 ? 'Đang cháy' : 'Hết than — lửa tàn') : 'Đang tắt'),
+      fireStatusColor: s.hint ? '#e06038' : (s.fire ? '#e08a3c' : '#8a8178'),
+      fireTrackBg: s.fire ? '#f4661f' : '#ded7cc',
+      fireKnob: s.fire ? '20px' : '2px',
+      soundTrackBg: s.sound ? '#f4661f' : '#ded7cc',
+      soundKnob: s.sound ? '20px' : '2px',
+      damperStatus: s.damper ? 'Đang mở — khói thoát qua ống khói' : 'Đang đóng — giữ nhiệt trong lò',
+      damperStatusColor: s.damper ? '#f4661f' : '#756c62',
+      damperTrackBg: s.damper ? '#f4661f' : '#ded7cc',
+      damperKnob: s.damper ? '20px' : '2px',
+      lidStatus: s.lidOpen ? 'Đang mở — nướng trực tiếp' : 'Đang đậy — chế độ hun khói',
+      lidStatusColor: s.lidOpen ? '#f4661f' : '#756c62',
+      lidTrackBg: s.lidOpen ? '#f4661f' : '#ded7cc',
+      lidKnob: s.lidOpen ? '20px' : '2px',
+      dimsTrackBg: s.showDims ? '#f4661f' : '#ded7cc',
+      dimsKnob: s.showDims ? '20px' : '2px',
+
+      parts: PARTS.map((pt) => {
+        const on = !!s[pt.id];
+        return {
+          ...pt,
+          toggle: () => { this.stopAttract(); this.setState((p) => ({ [pt.id]: !p[pt.id] })); },
+          status: on ? pt.on : pt.off,
+          statusColor: on ? '#f4661f' : '#8a8178',
+          border: on ? 'rgba(244,102,31,0.4)' : 'rgba(30,25,20,0.12)',
+          trackBg: on ? '#f4661f' : '#ded7cc',
+          knob: on ? '20px' : '2px'
+        };
+      }),
+      hotspots: HOT.map((h, i) => ({
+        ...h,
+        num: i + 1,
+        pick: () => this.setState({ active: s.active === h.id ? null : h.id }),
+        open: s.active === h.id ? 'block' : 'none',
+        border: s.active === h.id ? 'rgba(244,102,31,0.5)' : 'rgba(30,25,20,0.12)',
+        numBg: s.active === h.id ? 'rgba(244,102,31,0.22)' : 'rgba(30,25,20,0.08)',
+        numColor: s.active === h.id ? '#d9540f' : '#756c62'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
