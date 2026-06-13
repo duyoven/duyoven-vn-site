@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo giá & Đặt hàng — Duy's Oven | duyoven.vn</title>
+  <meta name="description" content="Tạo báo giá và đặt hàng lò nướng than tách khói Duy's Oven — chọn sản phẩm, nhận báo giá PDF, gửi đơn qua WhatsApp hoặc email.">
+  <link rel="icon" href="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .bg-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:start}
+    @media(max-width:880px){.bg-wrap{grid-template-columns:1fr}}
+    .cat-h{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ember);margin:26px 0 12px;font-weight:500}
+    .prod-row{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line-soft)}
+    .prod-row .nm{flex:1;min-width:0}
+    .prod-row .nm b{font-weight:400;letter-spacing:.02em;display:block;font-size:.98rem}
+    .prod-row .nm small{color:var(--muted);font-size:.82rem}
+    .stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line-soft);border-radius:999px;overflow:hidden;flex:none}
+    .stepper button{background:transparent;border:0;color:var(--text);width:34px;height:34px;font-size:1.1rem;cursor:pointer;line-height:1}
+    .stepper button:hover{background:rgba(244,102,31,.15)}
+    .stepper input{width:38px;text-align:center;background:transparent;border:0;color:var(--text);font-size:.95rem;-moz-appearance:textfield}
+    .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    .cart{position:sticky;top:96px;border:1px solid var(--line-soft);border-radius:8px;padding:24px;background:rgba(255,255,255,.02)}
+    .cart h3{font-weight:300;letter-spacing:.1em;text-transform:uppercase;font-size:.9rem;margin:0 0 14px}
+    .cart-line{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;padding:7px 0;color:var(--text-dim)}
+    .cart-line .q{color:var(--muted)}
+    .cart-tot{display:flex;justify-content:space-between;padding:9px 0;font-size:.92rem}
+    .cart-tot.grand{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:14px;font-size:1.15rem;font-weight:500}
+    .cart-tot.grand .v{color:var(--ember)}
+    .cart input[type=text],.cart input[type=email],.cart textarea{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:5px;color:var(--text);padding:10px 12px;font:inherit;font-size:.9rem;margin-bottom:10px;box-sizing:border-box}
+    .cart textarea{min-height:60px;resize:vertical}
+    .empty{color:var(--muted);font-size:.88rem;padding:10px 0}
+    .btn-row{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    .btn-wa{background:#25D366;color:#062b15;border:0}
+    .note-pay{font-size:.8rem;color:var(--muted);margin-top:14px;line-height:1.6}
+    /* ---- Quote document ---- */
+    #quoteDoc{display:none}
+    .quote-actions{display:flex;gap:12px;margin:0 0 18px;flex-wrap:wrap}
+    .qdoc{background:#fff;color:#1a1a1a;max-width:820px;margin:0 auto;padding:48px 52px;border-radius:6px;font-family:'Be Vietnam Pro',sans-serif}
+    .qdoc h2{font-size:1.6rem;letter-spacing:.04em;margin:0 0 4px;color:#111;font-weight:600}
+    .qdoc .muted{color:#666}
+    .qdoc .top{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #f4661f;padding-bottom:18px;margin-bottom:18px;flex-wrap:wrap}
+    .qdoc .brand{font-size:1.2rem;font-weight:600;letter-spacing:.12em}
+    .qdoc table{width:100%;border-collapse:collapse;margin:18px 0}
+    .qdoc th,.qdoc td{padding:10px 8px;border-bottom:1px solid #e3e3e3;font-size:.86rem;text-align:left}
+    .qdoc th{background:#f6f3ee;font-weight:600}
+    .qdoc td.r,.qdoc th.r{text-align:right;font-variant-numeric:tabular-nums}
+    .qdoc tfoot td{border:0;font-weight:500}
+    .qdoc tfoot tr.grand td{font-size:1.05rem;color:#c0480c;border-top:2px solid #111;padding-top:12px}
+    .qdoc .terms{font-size:.8rem;color:#444;line-height:1.7;border-top:1px solid #e3e3e3;padding-top:16px;margin-top:18px}
+    @media print{
+      body *{visibility:hidden}
+      #quoteDoc,#quoteDoc *{visibility:visible}
+      #quoteDoc{display:block!important;position:absolute;left:0;top:0;width:100%}
+      .quote-actions{display:none!important}
+      .qdoc{box-shadow:none;border-radius:0;max-width:100%}
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><img src="https://duyoven.com/wp-content/uploads/2022/11/duyoven_logo-01-1-tinified.png" alt="Duy's Oven"></a>
+    <nav class="main-nav">
+      <a href="index.html" data-en="Home" data-zh="首页" data-ko="홈" data-th="หน้าแรก" data-de="Startseite">Trang chủ</a>
+      <a href="gioi-thieu.html" data-en="About Us" data-zh="关于我们" data-ko="회사 소개" data-th="เกี่ยวกับเรา" data-de="Über uns">Về chúng tôi</a>
+      <div class="nav-item">
+        <a href="san-pham.html" class="has-caret" data-en="Products" data-zh="产品" data-ko="제품" data-th="สินค้า" data-de="Produkte">Sản phẩm</a>
+        <div class="mega">
+          <div class="mega-col">
+            <h4 data-en="Smokeless Ovens" data-zh="无烟炭炉" data-ko="무연 오븐" data-th="เตาไร้ควัน" data-de="Rauchfreie Öfen">Lò tách khói</h4>
+            <a href="sp-pantina.html">Pantina</a>
+            <a href="san-pham-tach-khoi-65l.html">Tách khói 65L</a>
+            <a href="sp-tach-khoi-80l.html">Tách khói 80L</a>
+            <a href="sp-tach-khoi-85l.html">Tách khói 85L</a>
+            <a href="sp-tach-khoi-125l.html">Tách khói 125L</a>
+            <a href="sp-tach-khoi-250l.html">Tách khói 250L</a>
+          </div>
+          <div class="mega-col">
+            <h4 data-en="Hybrid Ovens" data-zh="混合炭炉" data-ko="하이브리드 오븐" data-th="เตาไฮบริด" data-de="Hybrid-Öfen">Hybrid</h4>
+            <a href="sp-hybrid-65l.html">Hybrid 65L</a>
+            <a href="sp-hybrid-80l.html">Hybrid 80L</a>
+            <a href="sp-hybrid-125l.html">Hybrid 125L</a>
+            <a href="san-pham.html#hybrid" class="all-link" data-en="View all →" data-zh="查看全部 →" data-ko="전체 보기 →" data-th="ดูทั้งหมด →" data-de="Alle ansehen →">Xem tất cả →</a>
+          </div>
+          <div class="mega-col">
+            <h4 data-en="Smokers" data-zh="熏炉" data-ko="훈연기" data-th="เตารมควัน" data-de="Smoker">Lò xông khói</h4>
+            <a href="sp-xong-khoi-hybrid-10050.html">Hybrid 10050</a>
+            <a href="sp-offset-10050.html">Offset 10050</a>
+            <a href="sp-offset-9045.html">Offset 9045</a>
+            <a href="sp-offset-15070.html">Offset 15070</a>
+            <a href="sp-submarine-mini.html">SubMarine Mini</a>
+          </div>
+          <div class="mega-col">
+            <h4 data-en="Custom Grills" data-zh="定制烤炉" data-ko="맞춤 그릴" data-th="เตาสั่งทำ" data-de="Sondergrills">Nướng custom</h4>
+            <a href="sp-argentina-grill.html">Argentina Grill</a>
+            <a href="sp-fastgrill.html">Fastgrill</a>
+            <a href="sp-lo-quay-hai-truc.html">Lò quay hai trục</a>
+            <a href="sp-lo-quay-xien.html">Lò quay xiên</a>
+          </div>
+          <div class="mega-col">
+            <h4 data-en="More" data-zh="更多" data-ko="더보기" data-th="อื่น ๆ" data-de="Mehr">Khác</h4>
+            <a href="sp-pizza-wood-gas.html">Lò Pizza</a>
+            <a href="sp-eco.html">Lò Eco</a>
+            <a href="san-pham.html#phu-kien" data-en="Accessories &amp; Charcoal" data-zh="配件与木炭" data-ko="액세서리 & 숯" data-th="อุปกรณ์ & ถ่าน" data-de="Zubehör & Kohle">Phụ kiện &amp; Than</a>
+            <a href="san-pham.html" class="all-link" data-en="All products →" data-zh="全部产品 →" data-ko="전체 제품 →" data-th="สินค้าทั้งหมด →" data-de="Alle Produkte →">Tất cả sản phẩm →</a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="tai-lieu.html" class="has-caret" data-en="Documentation" data-zh="技术资料" data-ko="기술 자료" data-th="เอกสาร" data-de="Dokumentation">Tài liệu</a>
+        <div class="drop">
+          <a href="/tai-lieu/catalog-2026-vi.pdf" target="_blank" rel="noopener">Catalog 2026 (Việt)</a>
+          <a href="/tai-lieu/catalog-2026-en.pdf" target="_blank" rel="noopener">Catalog 2026 (English)</a>
+          <a href="/tai-lieu/hdsd-tach-khoi.pdf" target="_blank" rel="noopener" data-en="Manual — Smokeless oven" data-zh="手册 — 无烟炭炉" data-ko="설명서 — 무연 오븐" data-th="คู่มือ — เตาไร้ควัน" data-de="Handbuch — Rauchfreier Ofen">HDSD Lò tách khói</a>
+          <a href="/tai-lieu/hdsd-pantina.pdf" target="_blank" rel="noopener" data-en="Manual — Pantina" data-zh="手册 — Pantina" data-ko="설명서 — Pantina" data-th="คู่มือ — Pantina" data-de="Handbuch — Pantina">HDSD Pantina</a>
+          <a href="/tai-lieu/hdsd-fastgrill.pdf" target="_blank" rel="noopener" data-en="Manual — FastGrill" data-zh="手册 — FastGrill" data-ko="설명서 — FastGrill" data-th="คู่มือ — FastGrill" data-de="Handbuch — FastGrill">HDSD FastGrill</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="academy.html" class="has-caret" data-en="Academy" data-zh="学院" data-ko="아카데미" data-th="อะคาเดมี" data-de="Academy">Academy</a>
+        <div class="drop">
+          <a href="academy-mo-phong-tach-khoi.html" data-en="Interactive demo" data-zh="互动演示" data-ko="인터랙티브 데모" data-th="เดโมโต้ตอบ" data-de="Interaktive Demo">Mô phỏng tương tác</a>
+          <a href="academy-mo-phong-xong-khoi.html" data-en="Smoking guide" data-zh="熏制指南" data-ko="훈연 가이드" data-th="คู่มือรมควัน" data-de="Räucher-Leitfaden">Hướng dẫn xông khói</a>
+          <a href="https://www.youtube.com/@duysoven3908" target="_blank" rel="noopener">Duy's Oven TV</a>
+          <a href="academy.html">Academy Lab</a>
+        </div>
+      </div>
+      <a href="bao-gia.html" data-en="Get a quote" data-zh="报价" data-ko="견적" data-th="ใบเสนอราคา" data-de="Angebot">Báo giá</a>
+      <a href="lien-he.html" data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</a>
+    </nav>
+    <select class="lang-select" aria-label="Language">
+      <option value="vi">VI · Tiếng Việt</option>
+      <option value="en">EN · English</option>
+      <option value="zh">中文</option>
+      <option value="ko">한국어</option>
+      <option value="th">ไทย</option>
+      <option value="de">DE · Deutsch</option>
+    </select>
+    <button class="nav-toggle" aria-label="Menu"><span></span></button>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="index.html" data-en="Home">Trang chủ</a> / <span data-en="Get a quote">Báo giá &amp; Đặt hàng</span></p>
+    <h1 data-en="Get a quote &amp; order">Báo giá &amp; Đặt hàng</h1>
+    <p data-en="Pick your products, get an instant quote (save as PDF), then send the order via WhatsApp or email.">Chọn sản phẩm → nhận báo giá tức thì (lưu PDF) → gửi đơn qua WhatsApp hoặc email. Giá đã gồm VAT 10%.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="bg-wrap">
+      <div id="prodList"></div>
+      <aside class="cart">
+        <h3>Giỏ hàng</h3>
+        <div id="cartLines"><div class="empty">Chưa chọn sản phẩm nào.</div></div>
+        <div id="cartTotals" style="display:none">
+          <div class="cart-tot"><span>Tạm tính (chưa VAT)</span><span class="v" id="tSub"></span></div>
+          <div class="cart-tot"><span>VAT 10%</span><span class="v" id="tVat"></span></div>
+          <div class="cart-tot grand"><span>Tổng cộng</span><span class="v" id="tGrand"></span></div>
+          <p class="note-pay" id="tNote"></p>
+        </div>
+        <div style="margin-top:18px">
+          <input type="text" id="cName" placeholder="Họ và tên *">
+          <input type="text" id="cPhone" placeholder="Số điện thoại *">
+          <input type="email" id="cEmail" placeholder="Email">
+          <input type="text" id="cCompany" placeholder="Công ty (nếu có)">
+          <input type="text" id="cAddr" placeholder="Địa chỉ giao hàng">
+          <textarea id="cNote" placeholder="Ghi chú thêm"></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="makeQuote()">Tạo báo giá (lưu PDF)</button>
+          <button class="btn btn-wa" onclick="sendOrder('wa')">Gửi đơn qua WhatsApp</button>
+          <button class="btn" onclick="sendOrder('mail')">Gửi đơn qua Email</button>
+        </div>
+        <p class="note-pay">Thanh toán: chuyển khoản / liên hệ xác nhận. Bảo hành chính hãng, giao hàng toàn quốc. Hotline 090 169 1717.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quoteDoc">
+  <div class="container">
+    <div class="quote-actions">
+      <button class="btn btn-primary" onclick="window.print()">In / Lưu PDF</button>
+      <button class="btn" onclick="document.getElementById('quoteDoc').style.display='none';window.scrollTo(0,0)">Đóng</button>
+    </div>
+    <div class="qdoc" id="qdocBody"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo"><img src="https://duyoven.com/wp-content/uploads/2022/11/duyoven_logo-01-1-tinified.png" alt="Duy's Oven"></a>
+        <p style="margin-top:18px"><strong style="color:var(--text-dim)">CÔNG TY CPCN CƠ KHÍ NN HARMONIA</strong></p>
+        <p>MST: 0315700830</p>
+      </div>
+      <div>
+        <h4 data-en="Products" data-zh="产品" data-ko="제품" data-th="สินค้า" data-de="Produkte">Sản phẩm</h4>
+        <ul>
+          <li><a href="san-pham.html#tach-khoi" data-en="Smokeless ovens" data-zh="无烟炭炉" data-ko="무연 오븐" data-th="เตาไร้ควัน" data-de="Rauchfreie Öfen">Lò tách khói</a></li>
+          <li><a href="san-pham.html#xong-khoi" data-en="Smokers" data-zh="熏炉" data-ko="훈연기" data-th="เตารมควัน" data-de="Smoker">Lò xông khói</a></li>
+          <li><a href="san-pham.html#custom" data-en="Custom grills" data-zh="定制烤炉" data-ko="맞춤 그릴" data-th="เตาสั่งทำ" data-de="Sondergrills">Nướng custom</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en="Company" data-zh="公司" data-ko="회사" data-th="บริษัท" data-de="Unternehmen">Công ty</h4>
+        <ul>
+          <li><a href="gioi-thieu.html" data-en="About us" data-zh="关于我们" data-ko="회사 소개" data-th="เกี่ยวกับเรา" data-de="Über uns">Về chúng tôi</a></li>
+          <li><a href="lien-he.html" data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</h4>
+        <ul>
+          <li><a href="tel:0901691717">Hotline: 090 169 1717</a></li>
+          <li><a href="mailto:info@duyoven.com">info@duyoven.com</a></li>
+          <li><a href="https://www.duyoven.com" target="_blank" rel="noopener">www.duyoven.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-en="© 2026 Duy's Oven — Passion for the ember." data-zh="© 2026 Duy's Oven — 炭火的热情。" data-ko="© 2026 Duy's Oven — 숯불을 향한 열정." data-th="© 2026 Duy's Oven — ความหลงใหลในถ่านไฟ" data-de="© 2026 Duy's Oven — Leidenschaft für die Glut.">© 2026 Duy's Oven — Đam mê than hồng. Chịu trách nhiệm: Ô. Nguyễn Vĩnh Duy.</p>
+    </div>
+  </div>
+</footer>
+<script src="main.js"></script>
+<script>
+var PRODUCTS = [
+ {c:'Lò nướng than tách khói', items:[
+   {n:'Lò Tách Khói Pantina', p:7700000},
+   {n:'Tách khói 65L', p:12100000},
+   {n:'Tách khói 80L', p:15400000},
+   {n:'Tách khói 85L', p:16500000},
+   {n:'Tách khói 125L', p:0},
+   {n:'Tách khói 125L Pro', p:0},
+   {n:'Tách khói 250L', p:0}]},
+ {c:'Hybrid (than + gas)', items:[
+   {n:'Hybrid 65L', p:15400000},
+   {n:'Hybrid 80L', p:18700000},
+   {n:'Hybrid 85L', p:0},
+   {n:'Hybrid 125L', p:27500000}]},
+ {c:'Lò xông khói', items:[
+   {n:'Xông khói Hybrid 10050', p:33000000},
+   {n:'Offset Smoker 10050', p:24200000},
+   {n:'Offset Smoker 9045', p:0},
+   {n:'Offset Smoker 15070', p:0},
+   {n:'SubMarine Mini', p:0}]},
+ {c:'Nướng custom & đặc biệt', items:[
+   {n:'Argentina Grill', p:0},
+   {n:'Lò Fastgrill', p:0},
+   {n:'Lò Pizza Wood & Gas', p:126500000},
+   {n:'Lò nướng Eco', p:0},
+   {n:'Lò Quay Hai Trục', p:0},
+   {n:'Lò Quay Xiên', p:0}]}
+];
+var WA='84901691717', MAIL='info@duyoven.com';
+var qty={};
+function fmt(n){return n.toLocaleString('vi-VN')+'₫';}
+function build(){
+  var h='';
+  PRODUCTS.forEach(function(g){
+    h+='<div class="cat-h">'+g.c+'</div>';
+    g.items.forEach(function(it){
+      var id=it.n;
+      var price= it.p? fmt(it.p)+' <small>đã gồm VAT</small>' : '<span style="color:var(--muted)">Liên hệ báo giá</span>';
+      h+='<div class="prod-row"><div class="nm"><b>'+it.n+'</b><small>'+price+'</small></div>'+
+         '<div class="stepper"><button onclick="chg(\''+id.replace(/'/g,"\\'")+'\',-1)">−</button>'+
+         '<input type="number" min="0" value="0" id="q_'+enc(id)+'" onchange="setq(\''+id.replace(/'/g,"\\'")+'\',this.value)">'+
+         '<button onclick="chg(\''+id.replace(/'/g,"\\'")+'\',1)">+</button></div></div>';
+    });
+  });
+  document.getElementById('prodList').innerHTML=h;
+}
+function enc(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
+function findP(n){var r=null;PRODUCTS.forEach(function(g){g.items.forEach(function(it){if(it.n===n)r=it;});});return r;}
+function chg(n,d){var v=(qty[n]||0)+d;if(v<0)v=0;qty[n]=v;var el=document.getElementById('q_'+enc(n));if(el)el.value=v;render();}
+function setq(n,v){v=parseInt(v)||0;if(v<0)v=0;qty[n]=v;render();}
+function render(){
+  var lines='',sub=0,hasContact=false,any=false;
+  PRODUCTS.forEach(function(g){g.items.forEach(function(it){
+    var q=qty[it.n]||0; if(!q)return; any=true;
+    if(it.p){var lt=it.p*q; sub+=lt/1.1; lines+='<div class="cart-line"><span>'+it.n+' <span class="q">×'+q+'</span></span><span>'+fmt(it.p*q)+'</span></div>';}
+    else{hasContact=true; lines+='<div class="cart-line"><span>'+it.n+' <span class="q">×'+q+'</span></span><span style="color:var(--muted)">Liên hệ</span></div>';}
+  });});
+  var cl=document.getElementById('cartLines'), ct=document.getElementById('cartTotals');
+  if(!any){cl.innerHTML='<div class="empty">Chưa chọn sản phẩm nào.</div>';ct.style.display='none';return;}
+  cl.innerHTML=lines; ct.style.display='block';
+  var vat=sub*0.1, grand=sub+vat;
+  document.getElementById('tSub').textContent=fmt(Math.round(sub));
+  document.getElementById('tVat').textContent=fmt(Math.round(vat));
+  document.getElementById('tGrand').textContent=fmt(Math.round(grand));
+  document.getElementById('tNote').textContent=hasContact?'* Một số món giá "Liên hệ" — sẽ báo giá riêng, chưa tính vào tổng.':'';
+}
+function cart(){var a=[];PRODUCTS.forEach(function(g){g.items.forEach(function(it){var q=qty[it.n]||0;if(q)a.push({n:it.n,p:it.p,q:q});});});return a;}
+function orderText(){
+  var c=cart(); if(!c.length)return null;
+  var nm=val('cName'),ph=val('cPhone');
+  var t='ĐƠN ĐẶT HÀNG — Duy\'s Oven\n----------------------\n';
+  var sub=0,contact=false;
+  c.forEach(function(x){ t+='• '+x.n+' ×'+x.q; if(x.p){t+=' = '+fmt(x.p*x.q); sub+=x.p*x.q/1.1;} else {t+=' (Liên hệ báo giá)';contact=true;} t+='\n';});
+  if(sub){var vat=sub*0.1; t+='----------------------\nTạm tính: '+fmt(Math.round(sub))+'\nVAT 10%: '+fmt(Math.round(vat))+'\nTỔNG: '+fmt(Math.round(sub+vat))+' (đã gồm VAT)\n';}
+  if(contact)t+='(* món Liên hệ sẽ báo giá riêng)\n';
+  t+='----------------------\nKhách: '+(nm||'(chưa điền)')+'\nĐT: '+(ph||'(chưa điền)');
+  if(val('cEmail'))t+='\nEmail: '+val('cEmail');
+  if(val('cCompany'))t+='\nCông ty: '+val('cCompany');
+  if(val('cAddr'))t+='\nĐịa chỉ: '+val('cAddr');
+  if(val('cNote'))t+='\nGhi chú: '+val('cNote');
+  return t;
+}
+function val(id){return (document.getElementById(id).value||'').trim();}
+function sendOrder(via){
+  var t=orderText();
+  if(!t){alert('Bạn chưa chọn sản phẩm nào.');return;}
+  if(!val('cName')||!val('cPhone')){alert('Vui lòng điền Họ tên và Số điện thoại.');return;}
+  if(via==='wa') window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(t),'_blank');
+  else window.location.href='mailto:'+MAIL+'?subject='+encodeURIComponent('Đơn đặt hàng - '+val('cName'))+'&body='+encodeURIComponent(t);
+}
+function makeQuote(){
+  var c=cart(); if(!c.length){alert('Bạn chưa chọn sản phẩm nào.');return;}
+  var d=new Date(), pad=function(x){return (x<10?'0':'')+x;};
+  var no='BG-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes());
+  var exp=new Date(d.getTime()+30*864e5);
+  var rows='',sub=0,contact=false,i=0;
+  c.forEach(function(x){ i++; var lt=x.p*x.q; if(x.p)sub+=lt/1.1; else contact=true;
+    rows+='<tr><td>'+i+'</td><td>'+x.n+'</td><td class="r">'+x.q+'</td><td class="r">'+(x.p?fmt(x.p):'Liên hệ')+'</td><td class="r">'+(x.p?fmt(lt):'Liên hệ')+'</td></tr>';});
+  var vat=sub*0.1, grand=sub+vat;
+  var html='<div class="top"><div><div class="brand">DUY\'S OVEN</div><div class="muted" style="font-size:.82rem;margin-top:4px">Lò nướng than tách khói · BBQ · Xông khói</div></div>'+
+    '<div style="text-align:right"><h2>BÁO GIÁ</h2><div class="muted" style="font-size:.84rem">Số: '+no+'<br>Ngày: '+pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+'<br>Hiệu lực đến: '+pad(exp.getDate())+'/'+pad(exp.getMonth()+1)+'/'+exp.getFullYear()+'</div></div></div>';
+  html+='<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:.86rem;margin-bottom:6px">'+
+    '<div><b>Bên bán:</b><br>CÔNG TY CPCN CƠ KHÍ NN HARMONIA<br>1968/1 Lê Văn Lương, Hiệp Phước, Nhà Bè, TP.HCM<br>MST: 0315700830 · Hotline: 090 169 1717<br>Email: info@duyoven.com</div>'+
+    '<div><b>Khách hàng:</b><br>'+(val('cName')||'—')+'<br>ĐT: '+(val('cPhone')||'—')+(val('cEmail')?'<br>Email: '+val('cEmail'):'')+(val('cCompany')?'<br>Công ty: '+val('cCompany'):'')+(val('cAddr')?'<br>Địa chỉ: '+val('cAddr'):'')+'</div></div>';
+  html+='<table><thead><tr><th>#</th><th>Sản phẩm</th><th class="r">SL</th><th class="r">Đơn giá (gồm VAT)</th><th class="r">Thành tiền</th></tr></thead><tbody>'+rows+'</tbody>'+
+    '<tfoot><tr><td colspan="4" class="r">Tạm tính (chưa VAT)</td><td class="r">'+fmt(Math.round(sub))+'</td></tr>'+
+    '<tr><td colspan="4" class="r">VAT 10%</td><td class="r">'+fmt(Math.round(vat))+'</td></tr>'+
+    '<tr class="grand"><td colspan="4" class="r">TỔNG CỘNG (đã gồm VAT)</td><td class="r">'+fmt(Math.round(grand))+'</td></tr></tfoot></table>';
+  if(contact)html+='<p style="font-size:.8rem;color:#666">(*) Sản phẩm ghi "Liên hệ" sẽ được báo giá riêng và chưa tính vào tổng.</p>';
+  if(val('cNote'))html+='<p style="font-size:.84rem"><b>Ghi chú:</b> '+val('cNote')+'</p>';
+  html+='<div class="terms"><b>Điều khoản:</b><br>• Báo giá có hiệu lực 30 ngày kể từ ngày lập.<br>• Giá đã bao gồm VAT 10%.<br>• Thanh toán: chuyển khoản hoặc tại công ty; liên hệ để xác nhận đơn và phí vận chuyển.<br>• Bảo hành chính hãng Duy Oven, giao hàng toàn quốc.<br><br>Cảm ơn Quý khách. Mọi thắc mắc xin liên hệ Hotline 090 169 1717 · info@duyoven.com</div>';
+  document.getElementById('qdocBody').innerHTML=html;
+  var qd=document.getElementById('quoteDoc'); qd.style.display='block'; qd.scrollIntoView({behavior:'smooth'});
+}
+build();
+</script>
+</body>
+</html>
