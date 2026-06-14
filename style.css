@@ -181,23 +181,24 @@ a:hover { color: var(--ember-soft); }
   align-items: center;
   position: relative;
   background:
-    radial-gradient(circle at 28% 65%, rgba(216,84,42,0.10), transparent 45%),
-    #060504;
+    radial-gradient(circle at 30% 52%, rgba(244,102,31,0.20), transparent 46%),
+    #0c0a08;
   overflow: hidden;
 }
 .hero::before {
   content: ''; position: absolute; inset: 0;
   background: url('https://duyoven.com/wp-content/uploads/2026/02/Background.jpg') center/cover no-repeat;
-  opacity: .14; z-index: 0;
+  opacity: .20; z-index: 0;
 }
 .hero-img {
   position: relative; z-index: 1;
   height: 100vh; display: flex; align-items: center; justify-content: center;
   padding: var(--header-h) 0 0;
+  background: radial-gradient(circle at 50% 54%, rgba(244,102,31,0.16), transparent 58%);
 }
 .hero-img img {
   max-height: 82vh; width: auto; object-fit: contain;
-  filter: drop-shadow(0 30px 60px rgba(0,0,0,.6));
+  filter: brightness(1.16) contrast(1.08) saturate(1.05) drop-shadow(0 26px 55px rgba(0,0,0,.55));
 }
 .hero-content { position: relative; z-index: 1; padding: var(--header-h) 6% 0 4%; max-width: 600px; }
 .hero h1 {
