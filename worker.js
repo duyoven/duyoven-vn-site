@@ -63,14 +63,23 @@ export default {
           },
         });
       }
-      // serve the page with the logged-in staff name injected
-      const assetReq = new Request(new URL("/bao-gia.html", url), request);
-      const res = await env.ASSETS.fetch(assetReq);
+      // serve the page with the logged-in staff name injected.
+      // Fetch the asset directly and follow any internal redirect (e.g. Cloudflare's
+      // .html -> clean-URL redirect) so we never bounce the browser into a loop.
+      let res = await env.ASSETS.fetch(new URL("/bao-gia.html", url).toString());
+      let guard = 0;
+      while (res.status >= 300 && res.status < 400 && res.headers.get("Location") && guard++ < 3) {
+        res = await env.ASSETS.fetch(new URL(res.headers.get("Location"), url).toString());
+      }
       let html = await res.text();
       html = html.split("__STAFF__").join(user);
-      const h = new Headers(res.headers);
-      h.set("Cache-Control", "no-store");
-      return new Response(html, { status: res.status, headers: h });
+      return new Response(html, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/html; charset=UTF-8",
+          "Cache-Control": "no-store",
+        },
+      });
     }
 
     return env.ASSETS.fetch(request);
