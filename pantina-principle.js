@@ -18,6 +18,7 @@
       var ctx = canvas.getContext('2d');
       var W = 1240, H = 560;
       var disposed = false;
+      var visible = true;
 
       function resize() {
         var w = host.clientWidth, h = host.clientHeight;
@@ -59,6 +60,7 @@
       var raf = 0;
       function loop(now) {
         if (disposed) return;
+        if (!visible) { raf = 0; return; }
         raf = requestAnimationFrame(loop);
         var dt = Math.min(0.05, (now - last) / 1000); last = now;
         var p = propsRef.current;
@@ -239,11 +241,19 @@
           ctx.beginPath(); ctx.arc(gs.x, gs.y, gs.r, 0, 6.3); ctx.fill();
         }
       }
+      var io = new IntersectionObserver(function (es) {
+        var vis = es[0].isIntersecting;
+        if (vis && !visible && !disposed) { visible = true; last = performance.now(); if (!raf) raf = requestAnimationFrame(loop); }
+        visible = vis;
+      }, { threshold: 0.01 });
+      io.observe(host);
+
       raf = requestAnimationFrame(loop);
 
       return function () {
         disposed = true;
         cancelAnimationFrame(raf);
+        io.disconnect();
         ro.disconnect();
         if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
       };
