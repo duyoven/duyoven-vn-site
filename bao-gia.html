@@ -50,9 +50,9 @@
     .saved-item button:hover{border-color:var(--ember);color:var(--ember)}
     #quoteDoc{display:none}
     .quote-actions{display:flex;gap:12px;margin:0 0 18px;flex-wrap:wrap}
-    .qdoc{background:#fff;color:#1a1714;max-width:860px;margin:0 auto;font-family:'Be Vietnam Pro',sans-serif;border:1px solid #ece7df;box-shadow:0 14px 50px rgba(20,15,10,.16);border-radius:6px;overflow:hidden}
+    .qdoc{background:#fff;color:#1a1714;max-width:860px;margin:0 auto;font-family:'Be Vietnam Pro',sans-serif;border:1px solid #ece7df;box-shadow:0 14px 50px rgba(20,15,10,.16);border-radius:6px;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .qdoc .accent{height:6px;background:linear-gradient(90deg,#f4661f 0%,#c0480c 60%,#7a2e08 100%)}
-    .qdoc .pad{padding:42px 48px}
+    .qdoc .pad{padding:30px 42px}
     @media(max-width:560px){.qdoc .pad{padding:28px 22px}}
     .qdoc .qhead{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;flex-wrap:wrap}
     .qdoc .logobox{display:flex;align-items:center;gap:14px}
@@ -63,11 +63,11 @@
     .qdoc .qtitle h2{font-family:'Marcellus',serif;font-size:2.1rem;letter-spacing:.16em;color:#15110e;margin:0;font-weight:400}
     .qdoc .qmeta{margin-top:10px;display:inline-block;text-align:left;background:#faf7f2;border:1px solid #ece7df;border-radius:8px;padding:10px 16px;font-size:.8rem;color:#5b524a;line-height:1.75}
     .qdoc .qmeta b{color:#15110e;font-weight:500}
-    .qdoc .parties{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:26px 0 4px}
+    .qdoc .parties{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0 4px;align-items:start}
     @media(max-width:560px){.qdoc .parties{grid-template-columns:1fr}}
-    .qdoc .party{background:#faf7f2;border:1px solid #ece7df;border-radius:10px;padding:16px 18px;font-size:.84rem;line-height:1.65;color:#4a423b}
-    .qdoc .party .plabel{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#f4661f;font-weight:600;margin-bottom:7px}
-    .qdoc .party .pname{font-size:.98rem;font-weight:600;color:#15110e;margin-bottom:3px}
+    .qdoc .party{background:#faf7f2;border:1px solid #ece7df;border-radius:9px;padding:13px 16px;font-size:.84rem;line-height:1.5;color:#3d342c}
+    .qdoc .party .plabel{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#15110e;font-weight:700;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid #e6ddd2}
+    .qdoc .party .pname{font-size:.98rem;font-weight:600;color:#15110e;margin-bottom:2px}
     .qdoc table{width:100%;border-collapse:collapse;margin:18px 0 0}
     .qdoc thead th{background:#15110e;color:#fff;font-weight:500;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;padding:12px 10px;text-align:left}
     .qdoc thead th.r{text-align:right}.qdoc thead th.c{text-align:center}
