@@ -10,8 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 <style>
-    .ai-wrap{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start}
-    @media(max-width:940px){.ai-wrap{grid-template-columns:1fr}}
+    .ai-wrap{max-width:780px;margin:0 auto}
     .panel{border:1px solid var(--line-soft);border-radius:10px;padding:22px;background:rgba(255,255,255,.02)}
     .panel h3{font-weight:300;letter-spacing:.06em;font-size:1.1rem;margin:0 0 4px}
     .panel .sub{color:var(--muted);font-size:.85rem;margin:0 0 16px}
@@ -45,8 +44,9 @@
     .reco-h{font-weight:300;letter-spacing:.06em;font-size:1.2rem;margin:0 0 4px}
     .reco-sub{color:var(--muted);font-size:.85rem;margin:0 0 18px}
     .mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
-    .mcard{border:1px solid var(--line-soft);border-radius:10px;background:rgba(255,255,255,.02);overflow:hidden;display:flex;flex-direction:column}
-    .mcard .schematic{border:0;border-radius:0;border-bottom:1px solid var(--line-soft)}
+    .mcard{border:1px solid var(--line-soft);border-radius:10px;background:rgba(255,255,255,.02);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s}
+    .mcard:hover{border-color:var(--ember);transform:translateY(-3px)}
+    .mthumb{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#0f0d0b;border-bottom:1px solid var(--line-soft)}
     .minfo{padding:16px 18px 4px;display:flex;flex-direction:column;gap:6px;flex:1}
     .mname{font-size:1.05rem;font-weight:400;color:var(--text)}
     .mprice{color:var(--ember);font-size:1.1rem}
@@ -137,7 +137,7 @@
 <section class="page-hero"><div class="container">
   <p class="breadcrumb"><a href="index.html">Trang chủ</a> / <span>Tư vấn &amp; Thiết kế lò AI</span></p>
   <h1>Tư vấn &amp; Thiết kế lò AI</h1>
-  <p>Chat với trợ lý AI để chọn lò phù hợp — mỗi model được gợi ý sẽ hiện kèm thông số, giá và bản vẽ mô phỏng. Hoặc nhập kích thước riêng để ước tính giá lò đặt làm.</p>
+  <p>Chat với trợ lý AI để chọn lò phù hợp — mỗi model được gợi ý sẽ hiện kèm ảnh thật, thông số và giá. Bấm vào thẻ để xem chi tiết sản phẩm.</p>
 </div></section>
 <section class="section"><div class="container">
   <div class="ai-wrap">
@@ -156,34 +156,6 @@
           <span class="chip" onclick="quick(this)">Khác gì lò than thường?</span>
           <span class="chip" onclick="quick(this)">Mang đi camping được không?</span>
         </div>
-      </div>
-    </div>
-
-    <div class="panel form-ai">
-      <h3>Thiết kế lò theo kích thước</h3>
-      <p class="sub">Nhập số đo (mm) → xem bản vẽ theo tỷ lệ, ước dung tích &amp; giá.</p>
-      <div class="frow">
-        <div><label>Dài (mm)</label><input type="number" id="dD" value="800" min="200"></div>
-        <div><label>Rộng (mm)</label><input type="number" id="dR" value="500" min="150"></div>
-        <div><label>Cao (mm)</label><input type="number" id="dC" value="600" min="200"></div>
-      </div>
-      <div class="frow">
-        <div><label>Nhiên liệu</label><select id="dFuel"><option value="than">Than tách khói</option><option value="hybrid">Hybrid (than + gas)</option></select></div>
-        <div><label>Vật liệu</label><select id="dMat"><option value="thep">Thép sơn chịu nhiệt</option><option value="inox">Inox toàn bộ</option></select></div>
-        <div><label>Số vỉ nướng</label><input type="number" id="dGr" value="2" min="1" max="6"></div>
-      </div>
-      <label>Mục đích sử dụng</label>
-      <select id="dUse"><option>Gia đình / sân vườn</option><option>Sân thượng / ban công</option><option>Nhà hàng / quán</option><option>Camping / di động</option></select>
-      <button class="btn btn-primary" style="margin-top:14px" onclick="simulate()">Mô phỏng &amp; ước giá</button>
-
-      <div class="simout" id="simOut">
-        <div class="schematic" id="schematic"></div>
-        <div class="specgrid">
-          <div class="specbox"><div class="k">Dung tích ngoài (ước)</div><div class="v" id="sVol"></div></div>
-          <div class="specbox"><div class="k">Khối lượng (ước)</div><div class="v" id="sWt"></div></div>
-          <div class="specbox" style="grid-column:1/3"><div class="k">Giá ước tính (tham khảo · gồm VAT)</div><div class="v price" id="sPrice"></div></div>
-        </div>
-        <p class="ai-note">Bản vẽ &amp; số đo theo đúng tỷ lệ bạn nhập. Giá là <b>ước tính tham khảo</b> — giá chính thức cần khảo sát thực tế (Hotline 090 169 1717).</p>
       </div>
     </div>
   </div>
@@ -243,76 +215,20 @@ function sendChat(){var inp=document.getElementById('chatInput');var t=(inp.valu
  fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHist})}).then(function(r){return r.json();}).then(function(j){typing.remove();var rep=(j&&j.reply)?j.reply.trim():'';if(!rep){addMsg('bot','Xin lỗi, trợ lý đang bận. Bạn gọi 090 169 1717 để được tư vấn nhanh nhé.');return;}addMsg('bot',rep);chatHist.push({role:'assistant',content:rep});if(chatHist.length>16)chatHist=chatHist.slice(-16);try{renderReco(detectModels(rep));}catch(e){}}).catch(function(){typing.remove();addMsg('bot','Kết nối trợ lý gặp trục trặc. Vui lòng thử lại hoặc gọi 090 169 1717.');});}
 window.addEventListener('load',function(){addMsg('bot','Chào bạn 👋 Mình là trợ lý của Duy\x27s Oven. Bạn cần lò để nấu cho mấy người, dùng trong nhà hay sân vườn, ngân sách khoảng bao nhiêu? Mình gợi ý model phù hợp nhé!');});
 
-function fmt(n){return Math.round(n).toLocaleString('vi-VN')+'₫';}
-function simulate(){
- var D=+document.getElementById('dD').value||0,R=+document.getElementById('dR').value||0,C=+document.getElementById('dC').value||0;
- if(D<200||R<150||C<200){alert('Nhập kích thước hợp lệ (Dài≥200, Rộng≥150, Cao≥200 mm).');return;}
- var fuel=document.getElementById('dFuel').value,mat=document.getElementById('dMat').value,gr=+document.getElementById('dGr').value||2;
- document.getElementById('schematic').innerHTML=drawSchematic(D,R,C);
- var volL=D*R*C/1e6; // mm3 -> liter
- var wt=Math.max(8,volL*0.25); // ~0.25 kg/L thép
- var price=volL*115000; if(fuel==='hybrid')price*=1.35; if(mat==='inox')price*=1.2; price+=Math.max(0,gr-2)*800000; price+=600000; if(price<5000000)price=5000000;
- var lo=Math.round(price*0.85/100000)*100000, hi=Math.round(price*1.15/100000)*100000;
- document.getElementById('sVol').textContent=Math.round(volL)+' lít';
- document.getElementById('sWt').textContent='~ '+Math.round(wt)+' kg';
- document.getElementById('sPrice').textContent=fmt(lo)+' – '+fmt(hi);
- document.getElementById('simOut').style.display='block';
- document.getElementById('aiImg').innerHTML='';
- document.getElementById('simOut').scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-function drawSchematic(D,R,C){
- var W=560,H=380,pad=64; var aw=W-2*pad-50,ah=H-2*pad-20;
- var sc=Math.min(aw/D,ah/C); var w=D*sc,h=C*sc,dep=Math.min(R*sc*0.45,72);
- var x=pad+10,y=H-pad-h; var dx=dep*0.82,dy=-dep*0.55;
- var em='#f4661f',li='#6b635a',tx='#cbb9a8';
- function ln(x1,y1,x2,y2,c,sw){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+c+'" stroke-width="'+(sw||1.4)+'"/>';}
- var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="Be Vietnam Pro,sans-serif">';
- // top face
- s+='<path d="M'+x+','+y+' L'+(x+w)+','+y+' L'+(x+w+dx)+','+(y+dy)+' L'+(x+dx)+','+(y+dy)+' Z" fill="#1c1814" stroke="'+li+'" stroke-width="1.4"/>';
- // side face
- s+='<path d="M'+(x+w)+','+y+' L'+(x+w)+','+(y+h)+' L'+(x+w+dx)+','+(y+h+dy)+' L'+(x+w+dx)+','+(y+dy)+' Z" fill="#15110e" stroke="'+li+'" stroke-width="1.4"/>';
- // front face
- s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#211b16" stroke="'+li+'" stroke-width="1.6"/>';
- // glass window
- var gw=w*0.42,gh=h*0.22,gx=x+w*0.29,gy=y+h*0.5;
- s+='<rect x="'+gx+'" y="'+gy+'" width="'+gw+'" height="'+gh+'" rx="3" fill="#3a2a18" stroke="'+em+'" stroke-width="1.2" opacity=".9"/>';
- // grate line
- s+=ln(x+6,y+h*0.4,x+w-6,y+h*0.4,li,1);
- // lid handle
- s+=ln(x+w*0.4,y-3,x+w*0.6,y-3,tx,2.2);
- // chimney
- var chW=Math.max(10,w*0.07);
- s+='<rect x="'+(x+dx*0.3)+'" y="'+(y+dy-46)+'" width="'+chW+'" height="50" fill="#15110e" stroke="'+li+'" stroke-width="1.3"/>';
- // legs
- [0.08,0.9].forEach(function(p){s+=ln(x+w*p,y+h,x+w*p-8,y+h+34,li,1.6);s+=ln(x+w*p+10,y+h,x+w*p+2,y+h+34,li,1.6);});
- // dimension: Dài (bottom)
- var by=y+h+52;
- s+=ln(x,by,x+w,by,em,1)+ln(x,by-5,x,by+5,em,1)+ln(x+w,by-5,x+w,by+5,em,1);
- s+='<text x="'+(x+w/2)+'" y="'+(by+16)+'" fill="'+tx+'" font-size="12.5" text-anchor="middle">Dài: '+D+' mm</text>';
- // Cao (left)
- var lx=x-22;
- s+=ln(lx,y,lx,y+h,em,1)+ln(lx-5,y,lx+5,y,em,1)+ln(lx-5,y+h,lx+5,y+h,em,1);
- s+='<text x="'+(lx-8)+'" y="'+(y+h/2)+'" fill="'+tx+'" font-size="12.5" text-anchor="middle" transform="rotate(-90 '+(lx-8)+' '+(y+h/2)+')">Cao: '+C+' mm</text>';
- // Rộng (top depth)
- var mx=x+w+dx*0.5, my=y+dy*0.5-10;
- s+='<text x="'+(x+w+dx+8)+'" y="'+(y+dy-2)+'" fill="'+tx+'" font-size="12.5">Rộng: '+R+' mm</text>';
- s+='</svg>';
- return s;
-}
-/* ===== Mô phỏng theo từng model AI tư vấn ===== */
+/* ===== Thông tin từng model AI tư vấn ===== */
 var MODELS={
- pantina:{n:'Lò tách khói Pantina',p:'7.700.000₫',c:'Nhỏ gọn · ~3 con gà · 2–4 người',d:[520,360,430],l:'sp-pantina.html',h:['Nhỏ gọn, dễ mang đi','Vỉ tách dầu chữ V chống khói','Quạt gió USB-C']},
- tk65:{n:'Lò tách khói 65L',p:'12.100.000₫',c:'65L · 6–8 người',d:[600,440,520],l:'san-pham-tach-khoi-65l.html',h:['Tách khói — nướng trong nhà OK','Thép sơn chịu nhiệt 600°C','Quạt gió chỉnh lửa']},
- tk80:{n:'Lò tách khói 80L',p:'15.400.000₫',c:'80L · 8–12 người',d:[660,480,560],l:'sp-tach-khoi-80l.html',h:['Mặt nướng rộng','Tách khói chữ V','Hợp gia đình đông']},
- tk85:{n:'Lò tách khói 85L',p:'16.500.000₫',c:'85L · 10–12 người',d:[680,490,570],l:'sp-tach-khoi-85l.html',h:['Dung tích lớn','Tách khói chữ V','Quạt gió DC']},
- tk125:{n:'Lò tách khói 125L',p:'Liên hệ',c:'125L · 15–20 người',d:[780,560,620],l:'sp-tach-khoi-125l.html',h:['Cho tiệc lớn / quán','Khung thép chắc','Tuỳ chọn bánh xe']},
- tk250:{n:'Lò tách khói 250L',p:'Liên hệ',c:'250L · tiệc rất lớn',d:[1000,620,680],l:'sp-tach-khoi-250l.html',h:['Công suất nhà hàng','Khung thép dày','Nhiều vỉ nướng']},
- hy65:{n:'Lò Hybrid than+gas 65L',p:'15.400.000₫',c:'65L · 6–8 người',d:[640,460,520],l:'sp-hybrid-65l.html',h:['Vừa than vừa gas','Linh hoạt mọi thời tiết','Tách khói chữ V']},
- hy80:{n:'Lò Hybrid than+gas 80L',p:'18.700.000₫',c:'80L · 8–12 người',d:[700,500,560],l:'sp-hybrid-80l.html',h:['Than + gas linh hoạt','Mặt nướng rộng','Quạt gió chỉnh lửa']},
- hy125:{n:'Lò Hybrid than+gas 125L',p:'27.500.000₫',c:'125L · tiệc lớn',d:[820,560,620],l:'sp-hybrid-125l.html',h:['Than + gas công suất lớn','Cho quán / nhà hàng','Khung thép chắc']},
- smoker:{n:'Lò xông khói Hybrid 10050',p:'33.000.000₫',c:'Smoker 100×50 · chuyên xông khói',d:[1000,500,900],l:'sp-xong-khoi-hybrid-10050.html',h:['Xông khói low & slow','Buồng đốt hybrid','Khung thép dày']},
- offset:{n:'Offset Smoker 10050',p:'24.200.000₫',c:'Offset 100×50',d:[1000,500,850],l:'sp-offset-10050.html',h:['Offset firebox cổ điển','Khói gỗ đậm vị','Cho BBQ pro']},
- pizza:{n:'Lò Pizza Wood & Gas',p:'126.500.000₫',c:'Pizza chuyên nghiệp',d:[1200,1000,1500],l:'sp-pizza-wood-gas.html',h:['Củi + gas','Nhiệt cao nướng pizza','Cho nhà hàng']}
+ pantina:{n:'Lò tách khói Pantina',p:'7.700.000₫',c:'Nhỏ gọn · ~3 con gà · 2–4 người',i:'https://duyoven.com/wp-content/uploads/2026/03/Pantina.jpg',l:'sp-pantina.html',h:['Nhỏ gọn, dễ mang đi','Vỉ tách dầu chữ V chống khói','Quạt gió USB-C']},
+ tk65:{n:'Lò tách khói 65L',p:'12.100.000₫',c:'65L · 6–8 người',i:'https://duyoven.com/wp-content/uploads/2021/04/65L-toan-canh-430x430.jpg',l:'san-pham-tach-khoi-65l.html',h:['Tách khói — nướng trong nhà OK','Thép sơn chịu nhiệt 600°C','Quạt gió chỉnh lửa']},
+ tk80:{n:'Lò tách khói 80L',p:'15.400.000₫',c:'80L · 8–12 người',i:'https://duyoven.com/wp-content/uploads/2023/03/80L-PHIATRUOC2-430x430.jpg',l:'sp-tach-khoi-80l.html',h:['Mặt nướng rộng','Tách khói chữ V','Hợp gia đình đông']},
+ tk85:{n:'Lò tách khói 85L',p:'16.500.000₫',c:'85L · 10–12 người',i:'https://duyoven.com/wp-content/uploads/2023/06/toan-canh-430x430.jpg',l:'sp-tach-khoi-85l.html',h:['Dung tích lớn','Tách khói chữ V','Quạt gió DC']},
+ tk125:{n:'Lò tách khói 125L',p:'Liên hệ',c:'125L · 15–20 người',i:'https://duyoven.com/wp-content/uploads/2021/04/TK-125L-800x800.webp',l:'sp-tach-khoi-125l.html',h:['Cho tiệc lớn / quán','Khung thép chắc','Tuỳ chọn bánh xe']},
+ tk250:{n:'Lò tách khói 250L',p:'Liên hệ',c:'250L · tiệc rất lớn',i:'https://duyoven.com/wp-content/uploads/2021/04/TK-125L-800x800.webp',l:'sp-tach-khoi-250l.html',h:['Công suất nhà hàng','Khung thép dày','Nhiều vỉ nướng']},
+ hy65:{n:'Lò Hybrid than+gas 65L',p:'15.400.000₫',c:'65L · 6–8 người',i:'https://duyoven.com/wp-content/uploads/2021/04/HB-65L-430x430.webp',l:'sp-hybrid-65l.html',h:['Vừa than vừa gas','Linh hoạt mọi thời tiết','Tách khói chữ V']},
+ hy80:{n:'Lò Hybrid than+gas 80L',p:'18.700.000₫',c:'80L · 8–12 người',i:'https://duyoven.com/wp-content/uploads/2023/06/HB-80L.c-430x430.png',l:'sp-hybrid-80l.html',h:['Than + gas linh hoạt','Mặt nướng rộng','Quạt gió chỉnh lửa']},
+ hy125:{n:'Lò Hybrid than+gas 125L',p:'27.500.000₫',c:'125L · tiệc lớn',i:'https://duyoven.com/wp-content/uploads/2023/03/duys-oven-lo-nuong-hybrid-125L-430x430.jpg',l:'sp-hybrid-125l.html',h:['Than + gas công suất lớn','Cho quán / nhà hàng','Khung thép chắc']},
+ smoker:{n:'Lò xông khói Hybrid 10050',p:'33.000.000₫',c:'Smoker 100×50 · chuyên xông khói',i:'https://duyoven.com/wp-content/uploads/2018/07/NGHIENG-MO-NAP2-430x430.jpg',l:'sp-xong-khoi-hybrid-10050.html',h:['Xông khói low & slow','Buồng đốt hybrid','Khung thép dày']},
+ offset:{n:'Offset Smoker 10050',p:'24.200.000₫',c:'Offset 100×50',i:'https://duyoven.com/wp-content/uploads/2019/11/hinh-web-big-size-copy-scaled-430x430.webp',l:'sp-offset-10050.html',h:['Offset firebox cổ điển','Khói gỗ đậm vị','Cho BBQ pro']},
+ pizza:{n:'Lò Pizza Wood & Gas',p:'126.500.000₫',c:'Pizza chuyên nghiệp',i:'https://duyoven.com/wp-content/uploads/2024/11/IMG_0848-430x430.jpeg',l:'sp-pizza-wood-gas.html',h:['Củi + gas','Nhiệt cao nướng pizza','Cho nhà hàng']}
 };
 function detectModels(t){
  var s=' '+String(t).toLowerCase()+' ',out=[];
@@ -330,10 +246,10 @@ function renderReco(keys){
  if(!keys||!keys.length)return;
  var box=document.getElementById('recoCards');
  box.innerHTML=keys.map(function(k){var x=MODELS[k];
-  return '<div class="mcard"><div class="schematic">'+drawSchematic(x.d[0],x.d[1],x.d[2])+'</div>'
+  return '<a class="mcard" href="'+x.l+'"><img class="mthumb" src="'+x.i+'" alt="'+x.n+'" loading="lazy">'
    +'<div class="minfo"><div class="mname">'+x.n+'</div><div class="mprice">'+x.p+'</div><div class="mcap">'+x.c+'</div>'
    +'<ul class="mhl">'+x.h.map(function(h){return '<li>'+h+'</li>';}).join('')+'</ul></div>'
-   +'<a class="btn btn-primary" href="'+x.l+'">Xem chi tiết →</a></div>';
+   +'<span class="btn btn-primary">Xem chi tiết →</span></a>';
  }).join('');
  var wrap=document.getElementById('recoWrap');wrap.style.display='block';
  wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
