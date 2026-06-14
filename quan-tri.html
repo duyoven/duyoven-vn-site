@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Trang điều khiển — Duy's Oven</title>
+<link rel="icon" href="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#14110e;--bg2:#1b1713;--line:#2c2620;--ember:#f4661f;--text:#f3ece4;--dim:#cbbfb2;--mut:#8c8175}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);font-weight:300;line-height:1.6}
+  a{color:var(--ember);text-decoration:none}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 22px}
+  header{border-bottom:1px solid var(--line);padding:18px 0;position:sticky;top:0;background:rgba(20,17,14,.92);backdrop-filter:blur(8px);z-index:5}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{height:34px}
+  .brand b{font-weight:500;letter-spacing:.04em}
+  .brand span{color:var(--mut);font-size:.85rem}
+  .who{color:var(--dim);font-size:.85rem}
+  .who b{color:var(--ember);font-weight:500}
+  h1{font-weight:200;letter-spacing:.04em;font-size:1.9rem;margin:38px 0 6px}
+  .lead{color:var(--dim);margin:0 0 8px}
+  section{margin:38px 0}
+  h2{font-weight:300;letter-spacing:.05em;font-size:1.25rem;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2:before{content:'';width:18px;height:2px;background:var(--ember)}
+  .sub{color:var(--mut);font-size:.86rem;margin:0 0 18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .card{display:block;border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:18px;transition:border-color .15s,transform .15s}
+  .card:hover{border-color:var(--ember);transform:translateY(-2px)}
+  .card .t{color:var(--text);font-weight:500;font-size:1rem}
+  .card .d{color:var(--mut);font-size:.82rem;margin-top:4px}
+  .card .u{color:var(--ember);font-size:.78rem;margin-top:8px;word-break:break-all}
+  .status-box{border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:20px}
+  .srow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .srow:last-child{border-bottom:0}
+  .srow .nm{color:var(--dim)}
+  .pill{font-size:.78rem;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+  .pill.ok{color:#7fd18a;border-color:rgba(127,209,138,.4)}
+  .pill.err{color:#e88;border-color:rgba(232,136,136,.4)}
+  .pill.run{color:var(--ember);border-color:rgba(244,102,31,.4)}
+  .btn{display:inline-block;border:1px solid var(--ember);background:var(--ember);color:#15110e;font-weight:500;font-family:inherit;font-size:.9rem;padding:11px 22px;border-radius:8px;cursor:pointer;letter-spacing:.02em}
+  .btn.ghost{background:transparent;color:var(--ember)}
+  .guide{border:1px solid var(--line);border-radius:12px;background:var(--bg2);overflow:hidden}
+  details{border-bottom:1px solid var(--line)}
+  details:last-child{border-bottom:0}
+  summary{cursor:pointer;padding:16px 20px;font-weight:500;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary:after{content:'+';color:var(--ember);font-size:1.3rem}
+  details[open] summary:after{content:'–'}
+  .gbody{padding:0 20px 20px;color:var(--dim);font-size:.92rem}
+  .gbody code{background:#0e0c0a;border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--ember);font-size:.85em}
+  .gbody ol,.gbody ul{padding-left:20px;margin:8px 0}
+  .gbody li{margin:6px 0}
+  table{width:100%;border-collapse:collapse;margin-top:6px}
+  td{padding:7px 8px;border-bottom:1px solid var(--line);font-size:.9rem}
+  td:first-child{color:var(--ember);white-space:nowrap;font-family:monospace;font-size:.85rem}
+  footer{border-top:1px solid var(--line);margin-top:50px;padding:22px 0;color:var(--mut);font-size:.82rem}
+  .note{background:rgba(244,102,31,.08);border:1px solid rgba(244,102,31,.3);border-radius:10px;padding:14px 16px;color:var(--dim);font-size:.88rem;margin-top:14px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="brand">
+    <img src="https://duyoven.com/wp-content/uploads/2022/11/duyoven_logo-01-1-tinified.png" alt="Duy's Oven">
+    <b>Trang điều khiển</b> <span>· duyoven.vn</span>
+  </div>
+  <div class="who">Xin chào, <b>__STAFF__</b></div>
+</div></header>
+
+<div class="wrap">
+  <h1>Bảng điều khiển website</h1>
+  <p class="lead">Khu vực nội bộ — quản lý nhanh duyoven.vn. Mọi thay đổi nội dung đều sửa trên GitHub rồi web tự cập nhật sau ~1 phút.</p>
+
+  <section>
+    <h2>Liên kết nhanh</h2>
+    <p class="sub">Bấm để mở đúng nơi cần làm việc.</p>
+    <div class="grid">
+      <a class="card" href="https://github.com/duyoven/duyoven-vn-site" target="_blank" rel="noopener"><div class="t">① GitHub — Sửa nội dung</div><div class="d">Mở file .html cần sửa → bút chì → sửa → Commit</div><div class="u">github.com/duyoven/duyoven-vn-site</div></a>
+      <a class="card" href="https://github.com/duyoven/duyoven-vn-site/upload/main" target="_blank" rel="noopener"><div class="t">⬆ Tải file lên GitHub</div><div class="d">Kéo-thả file mới để thay/ thêm trang</div><div class="u">.../upload/main</div></a>
+      <a class="card" href="https://dash.cloudflare.com" target="_blank" rel="noopener"><div class="t">☁ Cloudflare</div><div class="d">Hosting · Worker · Tên miền · Secret (key)</div><div class="u">dash.cloudflare.com</div></a>
+      <a class="card" href="https://console.anthropic.com" target="_blank" rel="noopener"><div class="t">🤖 Anthropic Console</div><div class="d">API key + nạp/ theo dõi credit cho AI</div><div class="u">console.anthropic.com</div></a>
+      <a class="card" href="https://duyoven.vn" target="_blank" rel="noopener"><div class="t">🌐 Xem website</div><div class="d">Trang chủ công khai</div><div class="u">duyoven.vn</div></a>
+      <a class="card" href="/bao-gia.html"><div class="t">🧾 Báo giá nội bộ</div><div class="d">Tạo &amp; in báo giá cho khách</div><div class="u">/bao-gia.html</div></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Trạng thái hệ thống</h2>
+    <p class="sub">Kiểm tra nhanh website &amp; các dịch vụ AI có đang chạy không.</p>
+    <div class="status-box">
+      <div class="srow"><span class="nm">Website (duyoven.vn)</span><span class="pill" id="st-site">—</span></div>
+      <div class="srow"><span class="nm">Chatbot AI (Claude)</span><span class="pill" id="st-chat">—</span></div>
+      <div class="srow"><span class="nm">Dịch đa ngôn ngữ</span><span class="pill" id="st-tr">—</span></div>
+      <div style="margin-top:16px"><button class="btn" onclick="runCheck()" id="checkBtn">Kiểm tra ngay</button></div>
+      <div class="note">💡 Nếu Chatbot/Dịch báo lỗi: thường do <b>hết credit Anthropic</b>. Vào Anthropic Console → Billing để nạp thêm. Website &amp; ảnh sản phẩm chạy miễn phí, không bị ảnh hưởng.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sổ tay quản trị</h2>
+    <p class="sub">Tự làm các việc thường gặp — không cần biết code.</p>
+    <div class="guide">
+
+      <details open><summary>Sửa giá / chữ trên trang</summary>
+        <div class="gbody">
+          <ol>
+            <li>Mở <a href="https://github.com/duyoven/duyoven-vn-site" target="_blank" rel="noopener">GitHub</a> → bấm vào file cần sửa (ví dụ giá lò 85L: <code>sp-tach-khoi-85l.html</code>).</li>
+            <li>Bấm <b>biểu tượng bút chì ✏️</b> (Edit) góc trên phải.</li>
+            <li>Dùng <b>Ctrl+F</b> tìm con số / câu chữ cần đổi (vd <code>16.500.000</code>), sửa lại.</li>
+            <li>Kéo xuống cuối → bấm <b>Commit changes</b>.</li>
+            <li>Đợi ~1 phút, web tự cập nhật. Tải lại trang bằng <b>Ctrl+Shift+R</b> để thấy ngay (tránh cache).</li>
+          </ol>
+          <div class="note">Lưu ý: giá hiển thị ở nhiều nơi (thẻ sản phẩm trong <code>san-pham.html</code> và trang chi tiết <code>sp-*.html</code>) — đổi giá nhớ sửa cả 2 chỗ.</div>
+        </div>
+      </details>
+
+      <details><summary>Bản đồ file — cái nào làm gì</summary>
+        <div class="gbody">
+          <table>
+            <tr><td>index.html</td><td>Trang chủ</td></tr>
+            <tr><td>san-pham.html</td><td>Danh sách tất cả sản phẩm (thẻ + giá)</td></tr>
+            <tr><td>sp-*.html</td><td>Trang chi tiết từng model (vd sp-tach-khoi-85l.html)</td></tr>
+            <tr><td>sp-pantina.html · san-pham-tach-khoi-65l.html</td><td>2 trang landing đặc biệt (tự thiết kế riêng)</td></tr>
+            <tr><td>tu-van-ai.html</td><td>Trang Tư vấn AI (chatbot + gợi ý model)</td></tr>
+            <tr><td>bao-gia.html</td><td>Công cụ báo giá nội bộ (cần đăng nhập)</td></tr>
+            <tr><td>gioi-thieu · lien-he · tai-lieu · academy*</td><td>Các trang nội dung</td></tr>
+            <tr><td>style.css</td><td>Toàn bộ giao diện (màu, font, bố cục)</td></tr>
+            <tr><td>main.js</td><td>Menu + chuyển ngôn ngữ tự dịch</td></tr>
+            <tr><td>worker.js</td><td>"Bộ não": AI chat, dịch, bảo mật nội bộ</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <details><summary>Web cập nhật / deploy như thế nào</summary>
+        <div class="gbody">
+          <p>Mỗi lần <b>Commit</b> trên GitHub → Cloudflare <b>tự build &amp; đăng</b> sau ~1 phút. Không cần thao tác gì thêm. Không có trang admin kiểu wp-admin — chỉnh sửa qua GitHub là cách chính thức.</p>
+        </div>
+      </details>
+
+      <details><summary>3 tài khoản / chìa khoá phải giữ</summary>
+        <div class="gbody">
+          <ul>
+            <li><b>GitHub</b> (github.com/duyoven) — chứa toàn bộ mã nguồn.</li>
+            <li><b>Cloudflare</b> — hosting + tên miền + Worker. Có 2 <b>Secret</b> (ở Worker → Settings → Variables): <code>ANTHROPIC_API_KEY</code> (key AI) và <code>STAFF_AUTH</code> (user/mật khẩu nội bộ, dạng <code>user:pass</code>). <b>Phải để kiểu Secret</b>, không để Text.</li>
+            <li><b>Anthropic Console</b> (console.anthropic.com) — tạo key + nạp credit cho AI chat &amp; dịch.</li>
+          </ul>
+          <div class="note">Mất 1 trong 3 cái này là mất quyền quản trị phần tương ứng — lưu kỹ.</div>
+        </div>
+      </details>
+
+      <details><summary>Đổi mật khẩu nội bộ / thêm nhân viên</summary>
+        <div class="gbody">
+          <p>Vào Cloudflare → Worker <code>duyoven-vn-site</code> → Settings → Variables → sửa Secret <code>STAFF_AUTH</code>. Định dạng: <code>user1:matkhau1,user2:matkhau2</code>. Lưu là áp dụng ngay cho cả Báo giá và Trang điều khiển này.</p>
+        </div>
+      </details>
+
+      <details><summary>Gặp sự cố — xử lý nhanh</summary>
+        <div class="gbody">
+          <ul>
+            <li><b>Sửa xong web chưa đổi:</b> đợi 1–2 phút (đang build) + tải lại bằng Ctrl+Shift+R.</li>
+            <li><b>Chatbot / dịch không chạy:</b> kiểm tra credit ở Anthropic Console (thường do hết tiền). Bấm "Kiểm tra ngay" ở trên để xác nhận.</li>
+            <li><b>Trang mất giao diện (trắng trơn):</b> kiểm tra file <code>style.css</code> còn trên GitHub không.</li>
+            <li><b>Không vào được Báo giá/Trang này:</b> kiểm tra Secret <code>STAFF_AUTH</code> trên Cloudflare còn không (mỗi lần build kiểu Text sẽ bị xoá — phải để Secret).</li>
+          </ul>
+        </div>
+      </details>
+
+    </div>
+  </section>
+</div>
+
+<footer><div class="wrap">© 2026 Duy's Oven · Khu vực nội bộ — đừng chia sẻ đường dẫn /quan-tri.html ra ngoài.</div></footer>
+
+<script>
+function setPill(id,state,txt){var e=document.getElementById(id);e.className='pill '+state;e.textContent=txt;}
+async function runCheck(){
+  var b=document.getElementById('checkBtn');b.disabled=true;b.textContent='Đang kiểm tra…';
+  setPill('st-site','run','…');setPill('st-chat','run','…');setPill('st-tr','run','…');
+  // site
+  try{var r=await fetch('/index.html?cb='+Date.now(),{cache:'no-store'});setPill('st-site',r.ok?'ok':'err',r.ok?'Đang chạy':'Lỗi '+r.status);}catch(e){setPill('st-site','err','Không kết nối');}
+  // chat
+  try{var r=await fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:'ping'}]})});var j=await r.json();if(r.ok&&j.reply)setPill('st-chat','ok','Hoạt động');else setPill('st-chat','err',(j.error||'Lỗi').slice(0,40));}catch(e){setPill('st-chat','err','Không kết nối');}
+  // translate
+  try{var r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({texts:['Xin chào'],lang:'en'})});var j=await r.json();var ok=j.translations&&j.translations[0]&&j.translations[0].toLowerCase()!=='xin chào';setPill('st-tr',ok?'ok':'err',ok?'Hoạt động':'Lỗi/chưa cấu hình');}catch(e){setPill('st-tr','err','Không kết nối');}
+  b.disabled=false;b.textContent='Kiểm tra lại';
+}
+window.addEventListener('load',runCheck);
+</script>
+</body>
+</html>

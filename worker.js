@@ -22,7 +22,7 @@ const PROXY = {
     "https://duyoven.com/wp-content/uploads/2026/03/HDSD_FastGrill.pdf",
 };
 
-const INTERNAL = new Set(["/bao-gia.html", "/bao-gia"]);
+const INTERNAL = new Set(["/bao-gia.html", "/bao-gia", "/quan-tri.html", "/quan-tri"]);
 
 const AI_SYS = [
   "Bạn là trợ lý tư vấn của Duy's Oven (duyoven.vn) — thương hiệu Việt Nam chuyên lò nướng than tách khói, lò BBQ, lò xông khói (smoker) và lò pizza, sản xuất từ thép, sơn chịu nhiệt chuẩn Mỹ 600°C, vỉ inox.",
@@ -245,10 +245,11 @@ export default {
           },
         });
       }
-      // serve the page with the logged-in staff name injected.
+      // serve the requested internal page with the logged-in staff name injected.
       // Fetch the asset directly and follow any internal redirect (e.g. Cloudflare's
       // .html -> clean-URL redirect) so we never bounce the browser into a loop.
-      let res = await env.ASSETS.fetch(new URL("/bao-gia.html", url).toString());
+      let pagePath = url.pathname.endsWith(".html") ? url.pathname : url.pathname + ".html";
+      let res = await env.ASSETS.fetch(new URL(pagePath, url).toString());
       let guard = 0;
       while (res.status >= 300 && res.status < 400 && res.headers.get("Location") && guard++ < 3) {
         res = await env.ASSETS.fetch(new URL(res.headers.get("Location"), url).toString());
