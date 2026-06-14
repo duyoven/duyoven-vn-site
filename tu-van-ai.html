@@ -219,7 +219,8 @@
 <script src="main.js"></script>
 <script>
 var chatHist=[];
-function addMsg(role,text,cls){var l=document.getElementById('chatLog');var d=document.createElement('div');d.className='msg '+(role==='user'?'user':'bot')+(cls?(' '+cls):'');d.textContent=text;l.appendChild(d);l.scrollTop=l.scrollHeight;return d;}
+function stripMd(s){return String(s).replace(/\*\*([^*]+)\*\*/g,'$1').replace(/__([^_]+)__/g,'$1').replace(/(^|\n)\s{0,3}#{1,6}\s*/g,'$1').replace(/(^|\n)\s*[\*\-]\s+/g,'$1– ').replace(/`{1,3}/g,'').replace(/\*/g,'').trim();}
+function addMsg(role,text,cls){var l=document.getElementById('chatLog');var d=document.createElement('div');d.className='msg '+(role==='user'?'user':'bot')+(cls?(' '+cls):'');d.textContent=(role==='bot'&&!cls)?stripMd(text):text;l.appendChild(d);l.scrollTop=l.scrollHeight;return d;}
 function quick(el){document.getElementById('chatInput').value=el.textContent;sendChat();}
 function sendChat(){var inp=document.getElementById('chatInput');var t=(inp.value||'').trim();if(!t)return;inp.value='';addMsg('user',t);chatHist.push({role:'user',content:t});var typing=addMsg('bot','Đang soạn trả lời…','typing');
  fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHist})}).then(function(r){return r.json();}).then(function(j){typing.remove();var rep=(j&&j.reply)?j.reply.trim():'';if(!rep){addMsg('bot','Xin lỗi, trợ lý đang bận. Bạn gọi 090 169 1717 để được tư vấn nhanh nhé.');return;}addMsg('bot',rep);chatHist.push({role:'assistant',content:rep});if(chatHist.length>16)chatHist=chatHist.slice(-16);}).catch(function(){typing.remove();addMsg('bot','Kết nối trợ lý gặp trục trặc. Vui lòng thử lại hoặc gọi 090 169 1717.');});}
