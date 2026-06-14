@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tư vấn & Thiết kế lò AI — Duy's Oven | duyoven.vn</title>
+<meta name="description" content="Trợ lý AI tư vấn chọn lò nướng than tách khói Duy's Oven, nhập kích thước để xem bản vẽ, ước tính giá và tạo ảnh mẫu bằng AI.">
+  <link rel="icon" href="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+<style>
+    .ai-wrap{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start}
+    @media(max-width:940px){.ai-wrap{grid-template-columns:1fr}}
+    .panel{border:1px solid var(--line-soft);border-radius:10px;padding:22px;background:rgba(255,255,255,.02)}
+    .panel h3{font-weight:300;letter-spacing:.06em;font-size:1.1rem;margin:0 0 4px}
+    .panel .sub{color:var(--muted);font-size:.85rem;margin:0 0 16px}
+    .chat{display:flex;flex-direction:column;height:440px}
+    .chat-log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:6px}
+    .msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:.9rem;line-height:1.55;white-space:pre-wrap}
+    .msg.user{align-self:flex-end;background:var(--ember);color:#15110e}
+    .msg.bot{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid var(--line-soft);color:var(--text-dim)}
+    .msg.bot.typing{color:var(--muted);font-style:italic}
+    .chat-in{display:flex;gap:8px;margin-top:12px}
+    .chat-in input{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:8px;color:var(--text);padding:11px 13px;font:inherit;font-size:.9rem}
+    .chat-in button{flex:none}
+    .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+    .chip{font-size:.78rem;border:1px solid var(--line-soft);border-radius:999px;padding:6px 13px;color:var(--text-dim);cursor:pointer;background:transparent}
+    .chip:hover{border-color:var(--ember);color:var(--ember)}
+    .frow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .form-ai label{display:block;font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:10px 0 4px}
+    .form-ai input,.form-ai select{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:6px;color:var(--text);padding:9px 11px;font:inherit;font-size:.9rem;box-sizing:border-box}
+    .simout{margin-top:18px;display:none}
+    .schematic{background:#0f0d0b;border:1px solid var(--line-soft);border-radius:10px;padding:8px}
+    .schematic svg{width:100%;height:auto;display:block}
+    .specgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .specbox{border:1px solid var(--line-soft);border-radius:8px;padding:12px 14px}
+    .specbox .k{font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+    .specbox .v{font-size:1.15rem;font-weight:400;margin-top:3px}
+    .specbox .v.price{color:var(--ember)}
+    .aiimg{margin-top:16px}
+    .aiimg img{width:100%;border-radius:10px;border:1px solid var(--line-soft);display:block}
+    .ai-note{font-size:.78rem;color:var(--muted);margin-top:10px;line-height:1.55}
+    .spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(244,102,31,.3);border-top-color:var(--ember);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><img src="https://duyoven.com/wp-content/uploads/2022/11/duyoven_logo-01-1-tinified.png" alt="Duy's Oven"></a>
+    <nav class="main-nav">
+      <a href="index.html" data-en="Home" data-zh="首页" data-ko="홈" data-th="หน้าแรก" data-de="Startseite">Trang chủ</a>
+      <a href="gioi-thieu.html" data-en="About Us" data-zh="关于我们" data-ko="회사 소개" data-th="เกี่ยวกับเรา" data-de="Über uns">Về chúng tôi</a>
+      <div class="nav-item">
+        <a href="san-pham.html" class="has-caret" data-en="Products" data-zh="产品" data-ko="제품" data-th="สินค้า" data-de="Produkte">Sản phẩm</a>
+        <div class="mega">
+          <div class="mega-col">
+            <h4 data-en="Smokeless Ovens" data-zh="无烟炭炉" data-ko="무연 오븐" data-th="เตาไร้ควัน" data-de="Rauchfreie Öfen">Lò tách khói</h4>
+            <a href="sp-pantina.html">Pantina</a>
+            <a href="san-pham-tach-khoi-65l.html">Tách khói 65L</a>
+            <a href="sp-tach-khoi-80l.html">Tách khói 80L</a>
+            <a href="sp-tach-khoi-85l.html">Tách khói 85L</a>
+            <a href="sp-tach-khoi-125l.html">Tách khói 125L</a>
+            <a href="sp-tach-khoi-250l.html">Tách khói 250L</a>
+          </div>
+          <div class="mega-col">
+            <h4 data-en="Hybrid Ovens" data-zh="混合炭炉" data-ko="하이브리드 오븐" data-th="เตาไฮบริด" data-de="Hybrid-Öfen">Hybrid</h4>
+            <a href="sp-hybrid-65l.html">Hybrid 65L</a>
+            <a href="sp-hybrid-80l.html">Hybrid 80L</a>
+            <a href="sp-hybrid-125l.html">Hybrid 125L</a>
+            <a href="san-pham.html#hybrid" class="all-link" data-en="View all →" data-zh="查看全部 →" data-ko="전체 보기 →" data-th="ดูทั้งหมด →" data-de="Alle ansehen →">Xem tất cả →</a>
+          </div>
+          <div class="mega-col">
+            <h4 data-en="Smokers" data-zh="熏炉" data-ko="훈연기" data-th="เตารมควัน" data-de="Smoker">Lò xông khói</h4>
+            <a href="sp-xong-khoi-hybrid-10050.html">Hybrid 10050</a>
+            <a href="sp-offset-10050.html">Offset 10050</a>
+            <a href="sp-offset-9045.html">Offset 9045</a>
+            <a href="sp-offset-15070.html">Offset 15070</a>
+            <a href="sp-submarine-mini.html">SubMarine Mini</a>
+          </div>
+          <div class="mega-col">
+            <h4 data-en="Custom Grills" data-zh="定制烤炉" data-ko="맞춤 그릴" data-th="เตาสั่งทำ" data-de="Sondergrills">Nướng custom</h4>
+            <a href="sp-argentina-grill.html">Argentina Grill</a>
+            <a href="sp-fastgrill.html">Fastgrill</a>
+            <a href="sp-lo-quay-hai-truc.html">Lò quay hai trục</a>
+            <a href="sp-lo-quay-xien.html">Lò quay xiên</a>
+          </div>
+          <div class="mega-col">
+            <h4 data-en="More" data-zh="更多" data-ko="더보기" data-th="อื่น ๆ" data-de="Mehr">Khác</h4>
+            <a href="sp-pizza-wood-gas.html">Lò Pizza</a>
+            <a href="sp-eco.html">Lò Eco</a>
+            <a href="san-pham.html#phu-kien" data-en="Accessories &amp; Charcoal" data-zh="配件与木炭" data-ko="액세서리 & 숯" data-th="อุปกรณ์ & ถ่าน" data-de="Zubehör & Kohle">Phụ kiện &amp; Than</a>
+            <a href="san-pham.html" class="all-link" data-en="All products →" data-zh="全部产品 →" data-ko="전체 제품 →" data-th="สินค้าทั้งหมด →" data-de="Alle Produkte →">Tất cả sản phẩm →</a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="tai-lieu.html" class="has-caret" data-en="Documentation" data-zh="技术资料" data-ko="기술 자료" data-th="เอกสาร" data-de="Dokumentation">Tài liệu</a>
+        <div class="drop">
+          <a href="/tai-lieu/catalog-2026-vi.pdf" target="_blank" rel="noopener">Catalog 2026 (Việt)</a>
+          <a href="/tai-lieu/catalog-2026-en.pdf" target="_blank" rel="noopener">Catalog 2026 (English)</a>
+          <a href="/tai-lieu/hdsd-tach-khoi.pdf" target="_blank" rel="noopener" data-en="Manual — Smokeless oven" data-zh="手册 — 无烟炭炉" data-ko="설명서 — 무연 오븐" data-th="คู่มือ — เตาไร้ควัน" data-de="Handbuch — Rauchfreier Ofen">HDSD Lò tách khói</a>
+          <a href="/tai-lieu/hdsd-pantina.pdf" target="_blank" rel="noopener" data-en="Manual — Pantina" data-zh="手册 — Pantina" data-ko="설명서 — Pantina" data-th="คู่มือ — Pantina" data-de="Handbuch — Pantina">HDSD Pantina</a>
+          <a href="/tai-lieu/hdsd-fastgrill.pdf" target="_blank" rel="noopener" data-en="Manual — FastGrill" data-zh="手册 — FastGrill" data-ko="설명서 — FastGrill" data-th="คู่มือ — FastGrill" data-de="Handbuch — FastGrill">HDSD FastGrill</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="academy.html" class="has-caret" data-en="Academy" data-zh="学院" data-ko="아카데미" data-th="อะคาเดมี" data-de="Academy">Academy</a>
+        <div class="drop">
+          <a href="academy-mo-phong-tach-khoi.html" data-en="Interactive demo" data-zh="互动演示" data-ko="인터랙티브 데모" data-th="เดโมโต้ตอบ" data-de="Interaktive Demo">Mô phỏng tương tác</a>
+          <a href="academy-mo-phong-xong-khoi.html" data-en="Smoking guide" data-zh="熏制指南" data-ko="훈연 가이드" data-th="คู่มือรมควัน" data-de="Räucher-Leitfaden">Hướng dẫn xông khói</a>
+          <a href="https://www.youtube.com/@duysoven3908" target="_blank" rel="noopener">Duy's Oven TV</a>
+          <a href="academy.html">Academy Lab</a>
+        </div>
+      </div>
+      <a href="tu-van-ai.html" data-en="AI Advisor" data-zh="AI顾问" data-ko="AI 상담" data-th="ที่ปรึกษา AI" data-de="KI-Berater">Tư vấn AI</a>
+      <a href="lien-he.html" data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</a>
+    </nav>
+    <select class="lang-select" aria-label="Language"><option value="vi">VI · Tiếng Việt</option><option value="en">EN</option><option value="zh">中文</option><option value="ko">한국어</option><option value="th">ไทย</option><option value="de">DE</option></select>
+    <button class="nav-toggle" aria-label="Menu"><span></span></button>
+  </div>
+</header>
+
+<section class="page-hero"><div class="container">
+  <p class="breadcrumb"><a href="index.html">Trang chủ</a> / <span>Tư vấn &amp; Thiết kế lò AI</span></p>
+  <h1>Tư vấn &amp; Thiết kế lò AI</h1>
+  <p>Chat với trợ lý AI để chọn lò phù hợp, hoặc nhập kích thước mong muốn để xem bản vẽ, ước tính giá và ảnh mẫu do AI tạo.</p>
+</div></section>
+<section class="section"><div class="container">
+  <div class="ai-wrap">
+    <div class="panel">
+      <h3>Trợ lý tư vấn lò</h3>
+      <p class="sub">Hỏi bất cứ điều gì về lò nướng than tách khói, BBQ, xông khói…</p>
+      <div class="chat">
+        <div class="chat-log" id="chatLog"></div>
+        <div class="chat-in">
+          <input type="text" id="chatInput" placeholder="VD: Nhà 6 người, sân thượng, nên mua lò nào?" onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="btn btn-primary" onclick="sendChat()">Gửi</button>
+        </div>
+        <div class="chips">
+          <span class="chip" onclick="quick(this)">Nướng trong nhà có khói không?</span>
+          <span class="chip" onclick="quick(this)">Lò nào cho 4–6 người?</span>
+          <span class="chip" onclick="quick(this)">Khác gì lò than thường?</span>
+          <span class="chip" onclick="quick(this)">Mang đi camping được không?</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel form-ai">
+      <h3>Thiết kế lò theo kích thước</h3>
+      <p class="sub">Nhập số đo (mm) → xem bản vẽ theo tỷ lệ, ước dung tích &amp; giá.</p>
+      <div class="frow">
+        <div><label>Dài (mm)</label><input type="number" id="dD" value="800" min="200"></div>
+        <div><label>Rộng (mm)</label><input type="number" id="dR" value="500" min="150"></div>
+        <div><label>Cao (mm)</label><input type="number" id="dC" value="600" min="200"></div>
+      </div>
+      <div class="frow">
+        <div><label>Nhiên liệu</label><select id="dFuel"><option value="than">Than tách khói</option><option value="hybrid">Hybrid (than + gas)</option></select></div>
+        <div><label>Vật liệu</label><select id="dMat"><option value="thep">Thép sơn chịu nhiệt</option><option value="inox">Inox toàn bộ</option></select></div>
+        <div><label>Số vỉ nướng</label><input type="number" id="dGr" value="2" min="1" max="6"></div>
+      </div>
+      <label>Mục đích sử dụng</label>
+      <select id="dUse"><option>Gia đình / sân vườn</option><option>Sân thượng / ban công</option><option>Nhà hàng / quán</option><option>Camping / di động</option></select>
+      <button class="btn btn-primary" style="margin-top:14px" onclick="simulate()">Mô phỏng &amp; ước giá</button>
+
+      <div class="simout" id="simOut">
+        <div class="schematic" id="schematic"></div>
+        <div class="specgrid">
+          <div class="specbox"><div class="k">Dung tích ngoài (ước)</div><div class="v" id="sVol"></div></div>
+          <div class="specbox"><div class="k">Khối lượng (ước)</div><div class="v" id="sWt"></div></div>
+          <div class="specbox" style="grid-column:1/3"><div class="k">Giá ước tính (tham khảo · gồm VAT)</div><div class="v price" id="sPrice"></div></div>
+        </div>
+        <button class="btn" style="margin-top:14px" id="imgBtn" onclick="genImage()">Tạo ảnh mẫu bằng AI</button>
+        <div class="aiimg" id="aiImg"></div>
+        <p class="ai-note">Bản vẽ &amp; số đo theo đúng tỷ lệ bạn nhập. Giá là <b>ước tính tham khảo</b> — giá chính thức cần khảo sát thực tế (Hotline 090 169 1717). Ảnh AI chỉ mang tính minh họa concept, không chính xác từng mm.</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo"><img src="https://duyoven.com/wp-content/uploads/2022/11/duyoven_logo-01-1-tinified.png" alt="Duy's Oven"></a>
+        <p style="margin-top:18px"><strong style="color:var(--text-dim)">CÔNG TY CPCN CƠ KHÍ NN HARMONIA</strong></p>
+        <p>MST: 0315700830</p>
+      </div>
+      <div>
+        <h4 data-en="Products" data-zh="产品" data-ko="제품" data-th="สินค้า" data-de="Produkte">Sản phẩm</h4>
+        <ul>
+          <li><a href="san-pham.html#tach-khoi" data-en="Smokeless ovens" data-zh="无烟炭炉" data-ko="무연 오븐" data-th="เตาไร้ควัน" data-de="Rauchfreie Öfen">Lò tách khói</a></li>
+          <li><a href="san-pham.html#xong-khoi" data-en="Smokers" data-zh="熏炉" data-ko="훈연기" data-th="เตารมควัน" data-de="Smoker">Lò xông khói</a></li>
+          <li><a href="san-pham.html#custom" data-en="Custom grills" data-zh="定制烤炉" data-ko="맞춤 그릴" data-th="เตาสั่งทำ" data-de="Sondergrills">Nướng custom</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en="Company" data-zh="公司" data-ko="회사" data-th="บริษัท" data-de="Unternehmen">Công ty</h4>
+        <ul>
+          <li><a href="gioi-thieu.html" data-en="About us" data-zh="关于我们" data-ko="회사 소개" data-th="เกี่ยวกับเรา" data-de="Über uns">Về chúng tôi</a></li>
+          <li><a href="lien-he.html" data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</h4>
+        <ul>
+          <li><a href="tel:0901691717">Hotline: 090 169 1717</a></li>
+          <li><a href="mailto:info@duyoven.com">info@duyoven.com</a></li>
+          <li><a href="https://www.duyoven.com" target="_blank" rel="noopener">www.duyoven.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-en="© 2026 Duy's Oven — Passion for the ember." data-zh="© 2026 Duy's Oven — 炭火的热情。" data-ko="© 2026 Duy's Oven — 숯불을 향한 열정." data-th="© 2026 Duy's Oven — ความหลงใหลในถ่านไฟ" data-de="© 2026 Duy's Oven — Leidenschaft für die Glut.">© 2026 Duy's Oven — Đam mê than hồng. Chịu trách nhiệm: Ô. Nguyễn Vĩnh Duy.</p>
+    </div>
+  </div>
+</footer>
+<script src="main.js"></script>
+<script>
+var history=[];
+function addMsg(role,text,cls){var l=document.getElementById('chatLog');var d=document.createElement('div');d.className='msg '+(role==='user'?'user':'bot')+(cls?(' '+cls):'');d.textContent=text;l.appendChild(d);l.scrollTop=l.scrollHeight;return d;}
+function quick(el){document.getElementById('chatInput').value=el.textContent;sendChat();}
+function sendChat(){var inp=document.getElementById('chatInput');var t=(inp.value||'').trim();if(!t)return;inp.value='';addMsg('user',t);history.push({role:'user',content:t});var typing=addMsg('bot','Đang soạn trả lời…','typing');
+ fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})}).then(function(r){return r.json();}).then(function(j){typing.remove();var rep=(j&&j.reply)?j.reply.trim():'';if(!rep){addMsg('bot','Xin lỗi, trợ lý đang bận. Bạn gọi 090 169 1717 để được tư vấn nhanh nhé.');return;}addMsg('bot',rep);history.push({role:'assistant',content:rep});if(history.length>16)history=history.slice(-16);}).catch(function(){typing.remove();addMsg('bot','Kết nối trợ lý gặp trục trặc. Vui lòng thử lại hoặc gọi 090 169 1717.');});}
+window.addEventListener('load',function(){addMsg('bot','Chào bạn 👋 Mình là trợ lý của Duy\x27s Oven. Bạn cần lò để nấu cho mấy người, dùng trong nhà hay sân vườn, ngân sách khoảng bao nhiêu? Mình gợi ý model phù hợp nhé!');});
+
+function fmt(n){return Math.round(n).toLocaleString('vi-VN')+'₫';}
+function simulate(){
+ var D=+document.getElementById('dD').value||0,R=+document.getElementById('dR').value||0,C=+document.getElementById('dC').value||0;
+ if(D<200||R<150||C<200){alert('Nhập kích thước hợp lệ (Dài≥200, Rộng≥150, Cao≥200 mm).');return;}
+ var fuel=document.getElementById('dFuel').value,mat=document.getElementById('dMat').value,gr=+document.getElementById('dGr').value||2;
+ document.getElementById('schematic').innerHTML=drawSchematic(D,R,C);
+ var volL=D*R*C/1e6; // mm3 -> liter
+ var wt=Math.max(8,volL*0.25); // ~0.25 kg/L thép
+ var price=volL*115000; if(fuel==='hybrid')price*=1.35; if(mat==='inox')price*=1.2; price+=Math.max(0,gr-2)*800000; price+=600000; if(price<5000000)price=5000000;
+ var lo=Math.round(price*0.85/100000)*100000, hi=Math.round(price*1.15/100000)*100000;
+ document.getElementById('sVol').textContent=Math.round(volL)+' lít';
+ document.getElementById('sWt').textContent='~ '+Math.round(wt)+' kg';
+ document.getElementById('sPrice').textContent=fmt(lo)+' – '+fmt(hi);
+ document.getElementById('simOut').style.display='block';
+ document.getElementById('aiImg').innerHTML='';
+ document.getElementById('simOut').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function drawSchematic(D,R,C){
+ var W=560,H=380,pad=64; var aw=W-2*pad-50,ah=H-2*pad-20;
+ var sc=Math.min(aw/D,ah/C); var w=D*sc,h=C*sc,dep=Math.min(R*sc*0.45,72);
+ var x=pad+10,y=H-pad-h; var dx=dep*0.82,dy=-dep*0.55;
+ var em='#f4661f',li='#6b635a',tx='#cbb9a8';
+ function ln(x1,y1,x2,y2,c,sw){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+c+'" stroke-width="'+(sw||1.4)+'"/>';}
+ var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="Be Vietnam Pro,sans-serif">';
+ // top face
+ s+='<path d="M'+x+','+y+' L'+(x+w)+','+y+' L'+(x+w+dx)+','+(y+dy)+' L'+(x+dx)+','+(y+dy)+' Z" fill="#1c1814" stroke="'+li+'" stroke-width="1.4"/>';
+ // side face
+ s+='<path d="M'+(x+w)+','+y+' L'+(x+w)+','+(y+h)+' L'+(x+w+dx)+','+(y+h+dy)+' L'+(x+w+dx)+','+(y+dy)+' Z" fill="#15110e" stroke="'+li+'" stroke-width="1.4"/>';
+ // front face
+ s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#211b16" stroke="'+li+'" stroke-width="1.6"/>';
+ // glass window
+ var gw=w*0.42,gh=h*0.22,gx=x+w*0.29,gy=y+h*0.5;
+ s+='<rect x="'+gx+'" y="'+gy+'" width="'+gw+'" height="'+gh+'" rx="3" fill="#3a2a18" stroke="'+em+'" stroke-width="1.2" opacity=".9"/>';
+ // grate line
+ s+=ln(x+6,y+h*0.4,x+w-6,y+h*0.4,li,1);
+ // lid handle
+ s+=ln(x+w*0.4,y-3,x+w*0.6,y-3,tx,2.2);
+ // chimney
+ var chW=Math.max(10,w*0.07);
+ s+='<rect x="'+(x+dx*0.3)+'" y="'+(y+dy-46)+'" width="'+chW+'" height="50" fill="#15110e" stroke="'+li+'" stroke-width="1.3"/>';
+ // legs
+ [0.08,0.9].forEach(function(p){s+=ln(x+w*p,y+h,x+w*p-8,y+h+34,li,1.6);s+=ln(x+w*p+10,y+h,x+w*p+2,y+h+34,li,1.6);});
+ // dimension: Dài (bottom)
+ var by=y+h+52;
+ s+=ln(x,by,x+w,by,em,1)+ln(x,by-5,x,by+5,em,1)+ln(x+w,by-5,x+w,by+5,em,1);
+ s+='<text x="'+(x+w/2)+'" y="'+(by+16)+'" fill="'+tx+'" font-size="12.5" text-anchor="middle">Dài: '+D+' mm</text>';
+ // Cao (left)
+ var lx=x-22;
+ s+=ln(lx,y,lx,y+h,em,1)+ln(lx-5,y,lx+5,y,em,1)+ln(lx-5,y+h,lx+5,y+h,em,1);
+ s+='<text x="'+(lx-8)+'" y="'+(y+h/2)+'" fill="'+tx+'" font-size="12.5" text-anchor="middle" transform="rotate(-90 '+(lx-8)+' '+(y+h/2)+')">Cao: '+C+' mm</text>';
+ // Rộng (top depth)
+ var mx=x+w+dx*0.5, my=y+dy*0.5-10;
+ s+='<text x="'+(x+w+dx+8)+'" y="'+(y+dy-2)+'" fill="'+tx+'" font-size="12.5">Rộng: '+R+' mm</text>';
+ s+='</svg>';
+ return s;
+}
+function genImage(){
+ var D=+document.getElementById('dD').value,R=+document.getElementById('dR').value,C=+document.getElementById('dC').value;
+ var fuel=document.getElementById('dFuel').value,mat=document.getElementById('dMat').value;
+ var prompt='Professional studio product photograph of a premium Vietnamese smokeless charcoal BBQ oven by Duy\x27s Oven. '+(mat==='inox'?'Brushed stainless steel body, ':'Matte black powder-coated steel body, ')+'stainless steel grates, '+(fuel==='hybrid'?'hybrid charcoal and gas, ':'charcoal smokeless design, ')+'approx '+D+'x'+R+'x'+C+' mm, glass charcoal window glowing with embers, chimney, folding legs, dramatic studio lighting, dark background, ultra detailed, photorealistic, 4k';
+ var btn=document.getElementById('imgBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Đang tạo ảnh… (10–20s)';
+ var box=document.getElementById('aiImg');box.innerHTML='';
+ fetch('/api/ai/image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})}).then(function(r){if(!r.ok)throw 0;return r.blob();}).then(function(b){var u=URL.createObjectURL(b);box.innerHTML='<img src="'+u+'" alt="Ảnh mẫu AI">';btn.disabled=false;btn.textContent='Tạo ảnh khác';}).catch(function(){box.innerHTML='<p class="ai-note">Chưa tạo được ảnh (AI đang bận hoặc quá tải). Thử lại sau ít phút nhé.</p>';btn.disabled=false;btn.textContent='Thử lại tạo ảnh';});
+}
+</script>
+</body>
+</html>

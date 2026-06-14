@@ -24,6 +24,21 @@ const PROXY = {
 
 const INTERNAL = new Set(["/bao-gia.html", "/bao-gia"]);
 
+const AI_SYS = [
+  "Bạn là trợ lý tư vấn của Duy's Oven (duyoven.vn) — thương hiệu Việt Nam chuyên lò nướng than tách khói, lò BBQ, lò xông khói (smoker) và lò pizza, sản xuất từ thép, sơn chịu nhiệt chuẩn Mỹ 600°C, vỉ inox.",
+  "Cơ chế tách khói: than cháy ở khu vực riêng, vỉ tách dầu hình chữ V hứng mỡ nên mỡ không rơi vào than → không sinh khói khét; có quạt gió (DC 12V/USB-C) giúp than cháy đều, nướng được trong nhà.",
+  "Bảng model & giá tham khảo (đã gồm VAT): Pantina 7.700.000đ (nhỏ gọn ~3 con gà); Tách khói 65L 12.100.000đ; 80L 15.400.000đ; 85L 16.500.000đ; 125L/125L Pro/250L (liên hệ); Hybrid than+gas 65L 15.400.000đ, 80L 18.700.000đ, 125L 27.500.000đ; Lò xông khói Hybrid 10050 33.000.000đ; Offset Smoker 10050 24.200.000đ; Lò Pizza Wood&Gas 126.500.000đ; Argentina Grill, Fastgrill, lò quay (liên hệ).",
+  "Nhiệm vụ: hỏi nhu cầu (số người ăn, trong nhà/sân vườn/camping, loại món, ngân sách) rồi gợi ý model phù hợp, giải thích ngắn gọn lý do, nêu giá. Có thể tư vấn đặt lò theo kích thước riêng.",
+  "Trả lời bằng TIẾNG VIỆT, thân thiện, ngắn gọn, thực tế. Không bịa thông số. Khi cần chốt đơn/giá chính xác, mời liên hệ Hotline 090 169 1717 hoặc trang Báo giá."
+].join(" ");
+
+function jsonResp(obj, status) {
+  return new Response(JSON.stringify(obj), {
+    status: status || 200,
+    headers: { "Content-Type": "application/json; charset=UTF-8", "Cache-Control": "no-store" },
+  });
+}
+
 function staffUser(request, env) {
   const hdr = request.headers.get("Authorization") || "";
   if (!hdr.startsWith("Basic ")) return null;
@@ -37,6 +52,38 @@ function staffUser(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    // --- AI: tư vấn (chat) ---
+    if (url.pathname === "/api/ai/chat" && request.method === "POST") {
+      try {
+        const body = await request.json();
+        const hist = Array.isArray(body.messages) ? body.messages : [];
+        const msgs = [{ role: "system", content: AI_SYS }];
+        hist.slice(-8).forEach((m) => {
+          if (m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string") {
+            msgs.push({ role: m.role, content: m.content.slice(0, 1500) });
+          }
+        });
+        const r = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", { messages: msgs, max_tokens: 512 });
+        return jsonResp({ reply: (r && r.response) ? r.response : "" });
+      } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
+
+    // --- AI: tạo ảnh mẫu ---
+    if (url.pathname === "/api/ai/image" && request.method === "POST") {
+      try {
+        const body = await request.json();
+        const prompt = String(body.prompt || "").slice(0, 800);
+        if (!prompt) return jsonResp({ error: "Thiếu mô tả" }, 400);
+        const r = await env.AI.run("@cf/black-forest-labs/flux-1-schnell", { prompt, steps: 6 });
+        const b64 = r && r.image ? r.image : "";
+        if (!b64) return jsonResp({ error: "Không tạo được ảnh" }, 500);
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new Response(bytes, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "no-store" } });
+      } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
 
     // --- reverse proxy ---
     const target = PROXY[url.pathname];
