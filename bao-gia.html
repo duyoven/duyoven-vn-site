@@ -1,65 +1,72 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex,nofollow">
-  <title>Báo giá nội bộ — Duy's Oven</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Báo giá nội bộ — Duy's Oven</title>
   <link rel="icon" href="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    .bg-wrap{display:grid;grid-template-columns:1.4fr 1fr;gap:36px;align-items:start}
+<style>
+    .bg-wrap{display:grid;grid-template-columns:1.4fr 1fr;gap:34px;align-items:start}
     @media(max-width:900px){.bg-wrap{grid-template-columns:1fr}}
-    .staffbar{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;background:rgba(244,102,31,.08);border:1px solid rgba(244,102,31,.3);border-radius:8px;padding:12px 18px;margin-bottom:8px;font-size:.86rem}
-    .staffbar b{color:var(--ember);font-weight:500}
-    .cat-h{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ember);margin:22px 0 10px;font-weight:500}
-    .prod-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-soft)}
-    .prod-row .nm{flex:1;min-width:0}
-    .prod-row .nm b{font-weight:400;display:block;font-size:.95rem}
-    .prod-row .nm small{color:var(--muted);font-size:.8rem}
+    .staffbar{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;background:rgba(244,102,31,.08);border:1px solid rgba(244,102,31,.3);border-radius:8px;padding:11px 16px;margin-bottom:16px;font-size:.85rem}
+    .staffbar b{color:var(--ember)}
+    .cat-h{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ember);margin:20px 0 8px;font-weight:500}
+    .prod-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+    .prod-row .nm{flex:1;min-width:0}.prod-row .nm b{font-weight:400;display:block;font-size:.94rem}.prod-row .nm small{color:var(--muted);font-size:.8rem}
     .stepper{display:flex;align-items:center;border:1px solid var(--line-soft);border-radius:999px;overflow:hidden;flex:none}
-    .stepper button{background:transparent;border:0;color:var(--text);width:32px;height:32px;font-size:1.05rem;cursor:pointer}
-    .stepper button:hover{background:rgba(244,102,31,.15)}
-    .stepper input{width:36px;text-align:center;background:transparent;border:0;color:var(--text);font-size:.92rem;-moz-appearance:textfield}
+    .stepper button{background:transparent;border:0;color:var(--text);width:32px;height:32px;font-size:1.05rem;cursor:pointer}.stepper button:hover{background:rgba(244,102,31,.15)}
+    .stepper input{width:34px;text-align:center;background:transparent;border:0;color:var(--text);font-size:.9rem;-moz-appearance:textfield}
     .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-    .cart{position:sticky;top:90px;border:1px solid var(--line-soft);border-radius:8px;padding:22px;background:rgba(255,255,255,.02)}
+    .custombox{border:1px dashed var(--line-soft);border-radius:8px;padding:14px;margin-top:18px}
+    .custombox .cg{display:grid;grid-template-columns:2fr 1fr 1.2fr .8fr;gap:8px}
+    @media(max-width:520px){.custombox .cg{grid-template-columns:1fr 1fr}}
+    .cart{position:sticky;top:90px;border:1px solid var(--line-soft);border-radius:8px;padding:20px;background:rgba(255,255,255,.02)}
     .cart h3{font-weight:300;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;margin:0 0 12px}
-    .cart-line{display:flex;justify-content:space-between;gap:10px;font-size:.86rem;padding:6px 0;color:var(--text-dim)}
-    .cart-line .q{color:var(--muted)}
-    .cart-tot{display:flex;justify-content:space-between;padding:7px 0;font-size:.88rem}
-    .cart-tot.grand{border-top:1px solid var(--line-soft);margin-top:6px;padding-top:12px;font-size:1.1rem;font-weight:500}
-    .cart-tot.grand .v{color:var(--ember)}
+    .cart-line{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;padding:6px 0;color:var(--text-dim)}.cart-line .q{color:var(--muted)}
+    .cart-line .x{cursor:pointer;color:var(--muted);margin-left:6px}.cart-line .x:hover{color:#e2574b}
+    .cart-tot{display:flex;justify-content:space-between;padding:6px 0;font-size:.88rem}
+    .cart-tot.grand{border-top:1px solid var(--line-soft);margin-top:6px;padding-top:11px;font-size:1.08rem;font-weight:500}.cart-tot.grand .v{color:var(--ember)}
     .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .lbl{font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:12px 0 4px;display:block}
-    .cart input,.cart select,.cart textarea{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:5px;color:var(--text);padding:9px 11px;font:inherit;font-size:.88rem;margin-bottom:8px;box-sizing:border-box}
-    .cart textarea{min-height:54px;resize:vertical}
-    .empty{color:var(--muted);font-size:.86rem;padding:8px 0}
-    .btn-row{display:flex;flex-direction:column;gap:9px;margin-top:10px}
-    .btn-wa{background:#25D366;color:#062b15;border:0}
-    .note-pay{font-size:.78rem;color:var(--muted);margin-top:12px;line-height:1.55}
+    .cart input,.cart select,.cart textarea,.custombox input{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:5px;color:var(--text);padding:9px 11px;font:inherit;font-size:.87rem;margin-bottom:8px;box-sizing:border-box}
+    .custombox input{margin-bottom:0}
+    .cart textarea{min-height:50px;resize:vertical}
+    .empty{color:var(--muted);font-size:.85rem;padding:8px 0}
+    .btn-row{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .btn-wa{background:#25D366;color:#062b15;border:0}.btn-sm{font-size:.82rem;padding:8px 14px}
+    .note-pay{font-size:.78rem;color:var(--muted);margin-top:10px;line-height:1.5}
+    .saved{margin-top:40px;border-top:1px solid var(--line-soft);padding-top:26px}
+    .saved h2{font-weight:200;letter-spacing:.1em;font-size:1.3rem;margin:0 0 14px}
+    .saved-search{max-width:420px;margin-bottom:14px}
+    .saved-item{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line-soft);border-radius:7px;padding:12px 16px;margin-bottom:8px;font-size:.88rem}
+    .saved-item .no{font-weight:500;color:var(--ember)}.saved-item .meta{color:var(--text-dim);flex:1;min-width:160px}
+    .saved-item .tot{font-variant-numeric:tabular-nums}
+    .saved-item button{background:transparent;border:1px solid var(--line-soft);color:var(--text);border-radius:5px;padding:5px 12px;font-size:.8rem;cursor:pointer}
+    .saved-item button:hover{border-color:var(--ember);color:var(--ember)}
     #quoteDoc{display:none}
     .quote-actions{display:flex;gap:12px;margin:0 0 18px;flex-wrap:wrap}
     .qdoc{background:#fff;color:#1a1a1a;max-width:840px;margin:0 auto;padding:46px 50px;border-radius:6px;font-family:'Be Vietnam Pro',sans-serif}
     .qdoc h2{font-size:1.5rem;letter-spacing:.04em;margin:0 0 4px;color:#111;font-weight:600}
     .qdoc .muted{color:#666}
-    .qdoc .top{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #f4661f;padding-bottom:16px;margin-bottom:16px;flex-wrap:wrap}
-    .qdoc .brand{font-size:1.15rem;font-weight:600;letter-spacing:.12em}
+    .qdoc .top{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #f4661f;padding-bottom:16px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-start}
+    .qdoc .logobox{display:flex;align-items:center;gap:12px}
+    .qdoc .logobox img{width:54px;height:54px;border-radius:8px;background:#0d0d0f;padding:5px;object-fit:contain}
+    .qdoc .brand{font-size:1.15rem;font-weight:600;letter-spacing:.1em;line-height:1.1}
     .qdoc table{width:100%;border-collapse:collapse;margin:16px 0}
     .qdoc th,.qdoc td{padding:9px 8px;border-bottom:1px solid #e3e3e3;font-size:.84rem;text-align:left;vertical-align:top}
     .qdoc th{background:#f6f3ee;font-weight:600}
-    .qdoc td.r,.qdoc th.r{text-align:right;font-variant-numeric:tabular-nums}
-    .qdoc td.c,.qdoc th.c{text-align:center}
-    .qdoc tfoot td{border:0;font-weight:500}
-    .qdoc tfoot tr.grand td{font-size:1.02rem;color:#c0480c;border-top:2px solid #111;padding-top:11px}
+    .qdoc td.r,.qdoc th.r{text-align:right;font-variant-numeric:tabular-nums}.qdoc td.c,.qdoc th.c{text-align:center}
+    .qdoc tfoot td{border:0;font-weight:500}.qdoc tfoot tr.grand td{font-size:1.02rem;color:#c0480c;border-top:2px solid #111;padding-top:11px}
     .qdoc .terms{font-size:.79rem;color:#444;line-height:1.7;border-top:1px solid #e3e3e3;padding-top:14px;margin-top:16px}
     .qdoc .sign{display:flex;justify-content:space-between;gap:40px;margin-top:34px;text-align:center;font-size:.82rem}
-    .qdoc .sign div{flex:1}
-    .qdoc .sign b{display:block;margin-bottom:54px}
+    .qdoc .sign div{flex:1}.qdoc .sign b{display:block;margin-bottom:54px}
     @media print{body *{visibility:hidden}#quoteDoc,#quoteDoc *{visibility:visible}#quoteDoc{display:block!important;position:absolute;left:0;top:0;width:100%}.quote-actions{display:none!important}.qdoc{box-shadow:none;border-radius:0;max-width:100%;padding:0}}
-  </style>
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -132,78 +139,78 @@
       </div>
       <a href="lien-he.html" data-en="Contact" data-zh="联系" data-ko="문의" data-th="ติดต่อ" data-de="Kontakt">Liên hệ</a>
     </nav>
-    <select class="lang-select" aria-label="Language">
-      <option value="vi">VI · Tiếng Việt</option>
-      <option value="en">EN · English</option><option value="zh">中文</option><option value="ko">한국어</option><option value="th">ไทย</option><option value="de">DE · Deutsch</option>
-    </select>
+    <select class="lang-select" aria-label="Language"><option value="vi">VI · Tiếng Việt</option><option value="en">EN</option><option value="zh">中文</option><option value="ko">한국어</option><option value="th">ไทย</option><option value="de">DE</option></select>
     <button class="nav-toggle" aria-label="Menu"><span></span></button>
   </div>
 </header>
-<section class="page-hero" style="padding-bottom:18px">
-  <div class="container">
-    <p class="breadcrumb"><a href="index.html">Trang chủ</a> / <span>Báo giá nội bộ</span></p>
-    <h1>Báo giá nội bộ</h1>
-    <p>Công cụ lập báo giá cho nhân viên Duy's Oven. Chọn sản phẩm → điền thông tin → tạo &amp; in báo giá → gửi đơn. Giá đã gồm VAT 10%.</p>
-  </div>
-</section>
-<section class="section" style="padding-top:10px">
-  <div class="container">
-    <div class="staffbar">
-      <span>Nhân viên lập báo giá: <b id="staffName">__STAFF__</b></span>
-      <span class="muted" style="color:var(--muted)">Phiên đăng nhập nội bộ · Duy's Oven</span>
-    </div>
-    <div class="bg-wrap">
+
+<section class="page-hero" style="padding-bottom:16px"><div class="container">
+  <p class="breadcrumb"><a href="index.html">Trang chủ</a> / <span>Báo giá nội bộ</span></p>
+  <h1>Báo giá nội bộ</h1>
+  <p>Lập, lưu và tra cứu báo giá cho nhân viên Duy's Oven. Giá đã gồm VAT 10%.</p>
+</div></section>
+<section class="section" style="padding-top:6px"><div class="container">
+  <div class="staffbar"><span>Nhân viên: <b id="staffName">__STAFF__</b></span><span class="muted" style="color:var(--muted)">Phiên nội bộ · Duy's Oven</span></div>
+  <div class="bg-wrap">
+    <div>
       <div id="prodList"></div>
-      <aside class="cart">
-        <h3>Đơn / Báo giá</h3>
-        <div id="cartLines"><div class="empty">Chưa chọn sản phẩm nào.</div></div>
-        <div id="cartTotals" style="display:none">
-          <div class="cart-tot"><span>Cộng tiền hàng (gồm VAT)</span><span class="v" id="tGoods"></span></div>
-          <div class="cart-tot"><span>Chiết khấu</span><span class="v" id="tDisc">0₫</span></div>
-          <div class="cart-tot"><span>Phí vận chuyển</span><span class="v" id="tShip">0₫</span></div>
-          <div class="cart-tot grand"><span>Tổng thanh toán</span><span class="v" id="tGrand"></span></div>
-          <div class="cart-tot" style="font-size:.78rem;color:var(--muted)"><span>Đã gồm thuế GTGT 10%</span><span id="tVat"></span></div>
-          <p class="note-pay" id="tNote"></p>
+      <div class="custombox">
+        <div class="cat-h" style="margin-top:0">Thêm sản phẩm khác (tự nhập)</div>
+        <div class="cg">
+          <input type="text" id="ciName" placeholder="Tên sản phẩm / dịch vụ">
+          <input type="text" id="ciUnit" placeholder="ĐVT" value="Cái">
+          <input type="number" id="ciPrice" placeholder="Đơn giá (₫)" min="0">
+          <input type="number" id="ciQty" placeholder="SL" min="1" value="1">
         </div>
-        <span class="lbl">Khách hàng</span>
-        <input type="text" id="cName" placeholder="Họ và tên người nhận báo giá *">
-        <div class="fgrid"><input type="text" id="cPhone" placeholder="Số điện thoại *"><input type="text" id="cContact" placeholder="Người liên hệ"></div>
-        <input type="email" id="cEmail" placeholder="Email">
-        <div class="fgrid"><input type="text" id="cCompany" placeholder="Công ty"><input type="text" id="cTax" placeholder="MST khách hàng"></div>
-        <input type="text" id="cAddr" placeholder="Địa chỉ giao hàng">
-        <span class="lbl">Điều kiện</span>
-        <div class="fgrid">
-          <input type="number" id="cShip" placeholder="Phí vận chuyển (₫)" min="0" oninput="render()">
-          <input type="number" id="cDisc" placeholder="Chiết khấu (₫)" min="0" oninput="render()">
-        </div>
-        <div class="fgrid">
-          <select id="cPay"><option value="Chuyển khoản">Chuyển khoản</option><option value="Tiền mặt">Tiền mặt</option><option value="COD (thu hộ)">COD (thu hộ)</option><option value="Khác">Khác</option></select>
-          <input type="text" id="cDeliv" placeholder="Thời gian giao (vd 3–5 ngày)">
-        </div>
-        <div class="fgrid">
-          <input type="number" id="cValid" placeholder="Hiệu lực (ngày)" value="30" min="1">
-          <input type="text" id="cWarr" placeholder="Bảo hành" value="12 tháng">
-        </div>
-        <textarea id="cNote" placeholder="Ghi chú thêm"></textarea>
-        <div class="btn-row">
-          <button class="btn btn-primary" onclick="makeQuote()">Tạo &amp; in báo giá (PDF)</button>
-          <button class="btn btn-wa" onclick="sendOrder('wa')">Gửi đơn qua WhatsApp</button>
-          <button class="btn" onclick="sendOrder('mail')">Gửi đơn qua Email</button>
-        </div>
-        <p class="note-pay">Báo giá có hiệu lực theo số ngày nhập. Bảo hành chính hãng, giao hàng toàn quốc. Hotline 090 169 1717.</p>
-      </aside>
+        <button class="btn btn-sm" style="margin-top:10px" onclick="addCustom()">+ Thêm vào đơn</button>
+      </div>
     </div>
+    <aside class="cart">
+      <h3>Đơn / Báo giá</h3>
+      <div id="cartLines"><div class="empty">Chưa chọn sản phẩm nào.</div></div>
+      <div id="cartTotals" style="display:none">
+        <div class="cart-tot"><span>Cộng tiền hàng (gồm VAT)</span><span class="v" id="tGoods"></span></div>
+        <div class="cart-tot"><span>Chiết khấu</span><span class="v" id="tDisc">0₫</span></div>
+        <div class="cart-tot"><span>Phí vận chuyển</span><span class="v" id="tShip">0₫</span></div>
+        <div class="cart-tot grand"><span>Tổng thanh toán</span><span class="v" id="tGrand"></span></div>
+        <div class="cart-tot" style="font-size:.78rem;color:var(--muted)"><span>Đã gồm thuế GTGT 10%</span><span id="tVat"></span></div>
+        <p class="note-pay" id="tNote"></p>
+      </div>
+      <span class="lbl">Khách hàng</span>
+      <input type="text" id="cName" placeholder="Họ và tên *">
+      <div class="fgrid"><input type="text" id="cPhone" placeholder="Số điện thoại *"><input type="text" id="cContact" placeholder="Người liên hệ"></div>
+      <input type="email" id="cEmail" placeholder="Email">
+      <div class="fgrid"><input type="text" id="cCompany" placeholder="Công ty"><input type="text" id="cTax" placeholder="MST khách"></div>
+      <input type="text" id="cAddr" placeholder="Địa chỉ giao hàng">
+      <span class="lbl">Điều kiện</span>
+      <div class="fgrid"><input type="number" id="cShip" placeholder="Phí vận chuyển (₫)" min="0" oninput="render()"><input type="number" id="cDisc" placeholder="Chiết khấu (₫)" min="0" oninput="render()"></div>
+      <div class="fgrid"><select id="cPay"><option>Chuyển khoản</option><option>Tiền mặt</option><option>COD (thu hộ)</option><option>Khác</option></select><input type="text" id="cDeliv" placeholder="Thời gian giao"></div>
+      <div class="fgrid"><input type="number" id="cValid" placeholder="Hiệu lực (ngày)" value="30" min="1"><input type="text" id="cWarr" placeholder="Bảo hành" value="12 tháng"></div>
+      <textarea id="cNote" placeholder="Ghi chú thêm"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="makeQuote(true)">Lưu &amp; tạo báo giá</button>
+        <button class="btn" onclick="makeQuote(false)">Xem trước (không lưu)</button>
+        <button class="btn btn-wa" onclick="sendOrder('wa')">Gửi đơn qua WhatsApp</button>
+        <button class="btn" onclick="sendOrder('mail')">Gửi đơn qua Email</button>
+      </div>
+    </aside>
   </div>
-</section>
-<section class="section" id="quoteDoc">
-  <div class="container">
-    <div class="quote-actions">
-      <button class="btn btn-primary" onclick="window.print()">In / Lưu PDF</button>
-      <button class="btn" onclick="document.getElementById('quoteDoc').style.display='none';window.scrollTo(0,0)">Đóng</button>
-    </div>
-    <div class="qdoc" id="qdocBody"></div>
+
+  <div class="saved">
+    <h2>Báo giá đã lưu</h2>
+    <input type="text" class="saved-search" id="savedSearch" placeholder="Tìm theo số BG / tên khách / SĐT…" oninput="renderSaved()">
+    <div id="savedList"></div>
+    <p class="note-pay">Báo giá lưu trong trình duyệt máy này. Muốn lưu chung mọi máy → gắn thêm kho Cloudflare KV (liên hệ admin).</p>
   </div>
-</section>
+</div></section>
+<section class="section" id="quoteDoc"><div class="container">
+  <div class="quote-actions">
+    <button class="btn btn-primary" onclick="window.print()">In / Lưu PDF</button>
+    <button class="btn" onclick="document.getElementById('quoteDoc').style.display='none';window.scrollTo(0,0)">Đóng</button>
+  </div>
+  <div class="qdoc" id="qdocBody"></div>
+</div></section>
+
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
@@ -243,41 +250,62 @@
 </footer>
 <script src="main.js"></script>
 <script>
+var LOGO="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png";
 var PRODUCTS=[
  {c:'Lò nướng than tách khói',items:[{n:'Lò Tách Khói Pantina',p:7700000},{n:'Tách khói 65L',p:12100000},{n:'Tách khói 80L',p:15400000},{n:'Tách khói 85L',p:16500000},{n:'Tách khói 125L',p:0},{n:'Tách khói 125L Pro',p:0},{n:'Tách khói 250L',p:0}]},
  {c:'Hybrid (than + gas)',items:[{n:'Hybrid 65L',p:15400000},{n:'Hybrid 80L',p:18700000},{n:'Hybrid 85L',p:0},{n:'Hybrid 125L',p:27500000}]},
  {c:'Lò xông khói',items:[{n:'Xông khói Hybrid 10050',p:33000000},{n:'Offset Smoker 10050',p:24200000},{n:'Offset Smoker 9045',p:0},{n:'Offset Smoker 15070',p:0},{n:'SubMarine Mini',p:0}]},
  {c:'Nướng custom & đặc biệt',items:[{n:'Argentina Grill',p:0},{n:'Lò Fastgrill',p:0},{n:'Lò Pizza Wood & Gas',p:126500000},{n:'Lò nướng Eco',p:0},{n:'Lò Quay Hai Trục',p:0},{n:'Lò Quay Xiên',p:0}]}
 ];
-var WA='84901691717',MAIL='info@duyoven.com',qty={};
+var WA='84901691717',MAIL='info@duyoven.com',qty={},customItems=[],KEY='dq_quotes';
 function fmt(n){return Math.round(n).toLocaleString('vi-VN')+'₫';}
+function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function enc(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
 function build(){var h='';PRODUCTS.forEach(function(g){h+='<div class="cat-h">'+g.c+'</div>';g.items.forEach(function(it){var price=it.p?fmt(it.p)+' <small>đã gồm VAT</small>':'<span style="color:var(--muted)">Liên hệ báo giá</span>';h+='<div class="prod-row"><div class="nm"><b>'+it.n+'</b><small>'+price+'</small></div><div class="stepper"><button onclick="chg(\''+it.n.replace(/\x27/g,"\\\x27")+'\',-1)">−</button><input type="number" min="0" value="0" id="q_'+enc(it.n)+'" onchange="setq(\''+it.n.replace(/\x27/g,"\\\x27")+'\',this.value)"><button onclick="chg(\''+it.n.replace(/\x27/g,"\\\x27")+'\',1)">+</button></div></div>';});});document.getElementById('prodList').innerHTML=h;}
 function chg(n,d){var v=(qty[n]||0)+d;if(v<0)v=0;qty[n]=v;var el=document.getElementById('q_'+enc(n));if(el)el.value=v;render();}
 function setq(n,v){v=parseInt(v)||0;if(v<0)v=0;qty[n]=v;render();}
+function addCustom(){var n=val('ciName');if(!n){alert('Nhập tên sản phẩm.');return;}var p=parseFloat(val('ciPrice'))||0,q=parseInt(val('ciQty'))||1,u=val('ciUnit')||'Cái';customItems.push({n:n,p:p,q:q,unit:u});document.getElementById('ciName').value='';document.getElementById('ciPrice').value='';document.getElementById('ciQty').value='1';render();}
+function delCustom(i){customItems.splice(i,1);render();}
 function val(id){var e=document.getElementById(id);return e?(e.value||'').trim():'';}
 function num(id){return parseFloat(val(id))||0;}
-function calc(){var goods=0,contact=false;PRODUCTS.forEach(function(g){g.items.forEach(function(it){var q=qty[it.n]||0;if(!q)return;if(it.p)goods+=it.p*q;else contact=true;});});var disc=num('cDisc'),ship=num('cShip');var total=goods-disc+ship;if(total<0)total=0;var vat=(goods-disc)/11;return{goods:goods,disc:disc,ship:ship,total:total,vat:vat,contact:contact};}
-function render(){var lines='',any=false;PRODUCTS.forEach(function(g){g.items.forEach(function(it){var q=qty[it.n]||0;if(!q)return;any=true;if(it.p)lines+='<div class="cart-line"><span>'+it.n+' <span class="q">×'+q+'</span></span><span>'+fmt(it.p*q)+'</span></div>';else lines+='<div class="cart-line"><span>'+it.n+' <span class="q">×'+q+'</span></span><span style="color:var(--muted)">Liên hệ</span></div>';});});var cl=document.getElementById('cartLines'),ct=document.getElementById('cartTotals');if(!any){cl.innerHTML='<div class="empty">Chưa chọn sản phẩm nào.</div>';ct.style.display='none';return;}cl.innerHTML=lines;ct.style.display='block';var c=calc();document.getElementById('tGoods').textContent=fmt(c.goods);document.getElementById('tDisc').textContent='−'+fmt(c.disc);document.getElementById('tShip').textContent='+'+fmt(c.ship);document.getElementById('tGrand').textContent=fmt(c.total);document.getElementById('tVat').textContent=fmt(c.vat);document.getElementById('tNote').textContent=c.contact?'* Món "Liên hệ" báo giá riêng, chưa tính vào tổng.':'';}
-function cart(){var a=[];PRODUCTS.forEach(function(g){g.items.forEach(function(it){var q=qty[it.n]||0;if(q)a.push({n:it.n,p:it.p,q:q});});});return a;}
-function orderText(){var ci=cart();if(!ci.length)return null;var c=calc();var t='ĐƠN ĐẶT HÀNG — Duy\'s Oven\nNV lập: '+(val('staffName')||document.getElementById('staffName').textContent)+'\n----------------------\n';ci.forEach(function(x){t+='• '+x.n+' ×'+x.q;if(x.p)t+=' = '+fmt(x.p*x.q);else t+=' (Liên hệ)';t+='\n';});t+='----------------------\nTiền hàng: '+fmt(c.goods)+'\n';if(c.disc)t+='Chiết khấu: -'+fmt(c.disc)+'\n';if(c.ship)t+='Vận chuyển: +'+fmt(c.ship)+'\n';t+='TỔNG: '+fmt(c.total)+' (đã gồm VAT)\n----------------------\nKhách: '+(val('cName')||'(chưa điền)')+'\nĐT: '+(val('cPhone')||'(chưa điền)');if(val('cContact'))t+='\nNgười liên hệ: '+val('cContact');if(val('cEmail'))t+='\nEmail: '+val('cEmail');if(val('cCompany'))t+='\nCông ty: '+val('cCompany');if(val('cTax'))t+='\nMST: '+val('cTax');if(val('cAddr'))t+='\nĐịa chỉ: '+val('cAddr');t+='\nThanh toán: '+val('cPay');if(val('cDeliv'))t+='\nGiao hàng: '+val('cDeliv');if(val('cNote'))t+='\nGhi chú: '+val('cNote');return t;}
-function sendOrder(via){var t=orderText();if(!t){alert('Chưa chọn sản phẩm.');return;}if(!val('cName')||!val('cPhone')){alert('Vui lòng điền Họ tên và SĐT khách.');return;}if(via==='wa')window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(t),'_blank');else window.location.href='mailto:'+MAIL+'?subject='+encodeURIComponent('Đơn đặt hàng - '+val('cName'))+'&body='+encodeURIComponent(t);}
-function makeQuote(){var ci=cart();if(!ci.length){alert('Chưa chọn sản phẩm.');return;}var c=calc();var d=new Date(),pad=function(x){return(x<10?'0':'')+x;};var no='BG-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes());var vd=parseInt(val('cValid'))||30;var exp=new Date(d.getTime()+vd*864e5);var dstr=function(x){return pad(x.getDate())+'/'+pad(x.getMonth()+1)+'/'+x.getFullYear();};var rows='',i=0,contact=false;ci.forEach(function(x){i++;if(!x.p)contact=true;rows+='<tr><td class="c">'+i+'</td><td>'+x.n+'</td><td class="c">Cái</td><td class="r">'+x.q+'</td><td class="r">'+(x.p?fmt(x.p):'Liên hệ')+'</td><td class="r">'+(x.p?fmt(x.p*x.q):'Liên hệ')+'</td></tr>';});
-var staff=document.getElementById('staffName').textContent;
-var h='<div class="top"><div><div class="brand">DUY\'S OVEN</div><div class="muted" style="font-size:.8rem;margin-top:4px">Lò nướng than tách khói · BBQ · Xông khói</div></div><div style="text-align:right"><h2>BÁO GIÁ</h2><div class="muted" style="font-size:.82rem">Số: '+no+'<br>Ngày: '+dstr(d)+'<br>Hiệu lực đến: '+dstr(exp)+' ('+vd+' ngày)</div></div></div>';
-h+='<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:.84rem;margin-bottom:4px"><div style="max-width:48%"><b>BÊN BÁN:</b><br>CÔNG TY CPCN CƠ KHÍ NN HARMONIA<br>1968/1 Lê Văn Lương, Hiệp Phước, Nhà Bè, TP.HCM<br>MST: 0315700830 · Hotline: 090 169 1717<br>Email: info@duyoven.com</div><div style="max-width:48%"><b>KÍNH GỬI:</b><br>'+(val('cName')||'—')+(val('cCompany')?'<br>'+val('cCompany'):'')+(val('cTax')?'<br>MST: '+val('cTax'):'')+'<br>ĐT: '+(val('cPhone')||'—')+(val('cContact')?'<br>Người liên hệ: '+val('cContact'):'')+(val('cEmail')?'<br>Email: '+val('cEmail'):'')+(val('cAddr')?'<br>Địa chỉ: '+val('cAddr'):'')+'</div></div>';
-h+='<table><thead><tr><th class="c">STT</th><th>Tên sản phẩm</th><th class="c">ĐVT</th><th class="r">SL</th><th class="r">Đơn giá (gồm VAT)</th><th class="r">Thành tiền</th></tr></thead><tbody>'+rows+'</tbody><tfoot>';
-h+='<tr><td colspan="5" class="r">Cộng tiền hàng (đã gồm VAT)</td><td class="r">'+fmt(c.goods)+'</td></tr>';
-if(c.disc)h+='<tr><td colspan="5" class="r">Chiết khấu</td><td class="r">−'+fmt(c.disc)+'</td></tr>';
-if(c.ship)h+='<tr><td colspan="5" class="r">Phí vận chuyển</td><td class="r">+'+fmt(c.ship)+'</td></tr>';
-h+='<tr class="grand"><td colspan="5" class="r">TỔNG THANH TOÁN</td><td class="r">'+fmt(c.total)+'</td></tr>';
-h+='<tr><td colspan="5" class="r" style="font-size:.78rem;color:#666">Trong đó thuế GTGT 10%</td><td class="r" style="font-size:.78rem;color:#666">'+fmt(c.vat)+'</td></tr></tfoot></table>';
-if(contact)h+='<p style="font-size:.78rem;color:#666">(*) Sản phẩm ghi "Liên hệ" sẽ báo giá riêng, chưa tính vào tổng.</p>';
-if(val('cNote'))h+='<p style="font-size:.83rem"><b>Ghi chú:</b> '+val('cNote')+'</p>';
-h+='<div class="terms"><b>Điều khoản:</b><br>• Hình thức thanh toán: '+val('cPay')+'.<br>• Thời gian giao hàng: '+(val('cDeliv')||'theo thỏa thuận')+'.<br>• Bảo hành: '+(val('cWarr')||'12 tháng')+' chính hãng Duy Oven, giao hàng toàn quốc.<br>• Báo giá có hiệu lực '+vd+' ngày kể từ ngày lập. Giá đã bao gồm VAT 10%.</div>';
-h+='<div class="sign"><div><b>BÊN MUA</b>(Ký, ghi rõ họ tên)</div><div><b>NV LẬP BÁO GIÁ</b>'+staff+'</div><div><b>DUY\'S OVEN</b>(Ký, đóng dấu)</div></div>';
-document.getElementById('qdocBody').innerHTML=h;var qd=document.getElementById('quoteDoc');qd.style.display='block';qd.scrollIntoView({behavior:'smooth'});}
-build();
+function cart(){var a=[];PRODUCTS.forEach(function(g){g.items.forEach(function(it){var q=qty[it.n]||0;if(q)a.push({n:it.n,p:it.p,q:q,unit:'Cái'});});});customItems.forEach(function(it){a.push({n:it.n,p:it.p,q:it.q,unit:it.unit,custom:true});});return a;}
+function calc(){var goods=0,contact=false;cart().forEach(function(x){if(x.p)goods+=x.p*x.q;else contact=true;});var disc=num('cDisc'),ship=num('cShip');var total=goods-disc+ship;if(total<0)total=0;var vat=(goods-disc)/11;return{goods:goods,disc:disc,ship:ship,total:total,vat:vat,contact:contact};}
+function render(){var c=cart(),lines='';if(!c.length){document.getElementById('cartLines').innerHTML='<div class="empty">Chưa chọn sản phẩm nào.</div>';document.getElementById('cartTotals').style.display='none';return;}
+ c.forEach(function(x,i){var price=x.p?fmt(x.p*x.q):'<span style="color:var(--muted)">Liên hệ</span>';var rm=x.custom?'<span class="x" title="Xóa" onclick="delCustom('+customItems.indexOf(customItems.filter(function(z){return z.n===x.n;})[0])+')">✕</span>':'';lines+='<div class="cart-line"><span>'+esc(x.n)+' <span class="q">×'+x.q+'</span></span><span>'+price+rm+'</span></div>';});
+ document.getElementById('cartLines').innerHTML=lines;document.getElementById('cartTotals').style.display='block';
+ var k=calc();document.getElementById('tGoods').textContent=fmt(k.goods);document.getElementById('tDisc').textContent='−'+fmt(k.disc);document.getElementById('tShip').textContent='+'+fmt(k.ship);document.getElementById('tGrand').textContent=fmt(k.total);document.getElementById('tVat').textContent=fmt(k.vat);document.getElementById('tNote').textContent=k.contact?'* Món "Liên hệ" báo giá riêng, chưa tính vào tổng.':'';}
+function quoteObj(no,date){var c=calc();return{no:no,date:date,staff:document.getElementById('staffName').textContent,cust:{name:val('cName'),phone:val('cPhone'),contact:val('cContact'),email:val('cEmail'),company:val('cCompany'),tax:val('cTax'),addr:val('cAddr')},items:cart(),pay:val('cPay'),deliv:val('cDeliv'),valid:parseInt(val('cValid'))||30,warr:val('cWarr')||'12 tháng',note:val('cNote'),calc:c};}
+function renderQuoteDoc(q){
+ var d=new Date(q.date),pad=function(x){return(x<10?'0':'')+x;},dstr=function(x){return pad(x.getDate())+'/'+pad(x.getMonth()+1)+'/'+x.getFullYear();};
+ var exp=new Date(d.getTime()+q.valid*864e5);var c=q.calc,rows='',i=0,contact=false;
+ q.items.forEach(function(x){i++;if(!x.p)contact=true;rows+='<tr><td class="c">'+i+'</td><td>'+esc(x.n)+'</td><td class="c">'+esc(x.unit||'Cái')+'</td><td class="r">'+x.q+'</td><td class="r">'+(x.p?fmt(x.p):'Liên hệ')+'</td><td class="r">'+(x.p?fmt(x.p*x.q):'Liên hệ')+'</td></tr>';});
+ var u=q.cust;
+ var h='<div class="top"><div class="logobox"><img src="'+LOGO+'" alt="Duy\x27s Oven"><div><div class="brand">DUY\x27S OVEN</div><div class="muted" style="font-size:.78rem;margin-top:3px">Lò nướng than tách khói · BBQ · Xông khói</div></div></div><div style="text-align:right"><h2>BÁO GIÁ</h2><div class="muted" style="font-size:.82rem">Số: '+q.no+'<br>Ngày: '+dstr(d)+'<br>Hiệu lực đến: '+dstr(exp)+' ('+q.valid+' ngày)</div></div></div>';
+ h+='<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:.85rem"><div style="max-width:48%"><b>BÊN BÁN:</b><br>CÔNG TY CPCN CƠ KHÍ NN HARMONIA<br>1968/1 Lê Văn Lương, Hiệp Phước, Nhà Bè, TP.HCM<br>MST: 0315700830 · Hotline: 090 169 1717<br>Email: info@duyoven.com</div><div style="max-width:48%"><b>KÍNH GỬI:</b><br>'+esc(u.name||'—')+(u.company?'<br>'+esc(u.company):'')+(u.tax?'<br>MST: '+esc(u.tax):'')+'<br>ĐT: '+esc(u.phone||'—')+(u.contact?'<br>Người liên hệ: '+esc(u.contact):'')+(u.email?'<br>Email: '+esc(u.email):'')+(u.addr?'<br>Địa chỉ: '+esc(u.addr):'')+'</div></div>';
+ h+='<table><thead><tr><th class="c">STT</th><th>Tên sản phẩm</th><th class="c">ĐVT</th><th class="r">SL</th><th class="r">Đơn giá (gồm VAT)</th><th class="r">Thành tiền</th></tr></thead><tbody>'+rows+'</tbody><tfoot>';
+ h+='<tr><td colspan="5" class="r">Cộng tiền hàng (đã gồm VAT)</td><td class="r">'+fmt(c.goods)+'</td></tr>';
+ if(c.disc)h+='<tr><td colspan="5" class="r">Chiết khấu</td><td class="r">−'+fmt(c.disc)+'</td></tr>';
+ if(c.ship)h+='<tr><td colspan="5" class="r">Phí vận chuyển</td><td class="r">+'+fmt(c.ship)+'</td></tr>';
+ h+='<tr class="grand"><td colspan="5" class="r">TỔNG THANH TOÁN</td><td class="r">'+fmt(c.total)+'</td></tr>';
+ h+='<tr><td colspan="5" class="r" style="font-size:.78rem;color:#666">Trong đó thuế GTGT 10%</td><td class="r" style="font-size:.78rem;color:#666">'+fmt(c.vat)+'</td></tr></tfoot></table>';
+ if(contact)h+='<p style="font-size:.78rem;color:#666">(*) Sản phẩm ghi "Liên hệ" sẽ báo giá riêng, chưa tính vào tổng.</p>';
+ if(q.note)h+='<p style="font-size:.84rem"><b>Ghi chú:</b> '+esc(q.note)+'</p>';
+ h+='<div class="terms"><b>Điều khoản:</b><br>• Hình thức thanh toán: '+esc(q.pay)+'.<br>• Thời gian giao hàng: '+esc(q.deliv||'theo thỏa thuận')+'.<br>• Bảo hành: '+esc(q.warr)+' chính hãng Duy Oven, giao hàng toàn quốc.<br>• Báo giá có hiệu lực '+q.valid+' ngày kể từ ngày lập. Giá đã bao gồm VAT 10%.</div>';
+ h+='<div class="sign"><div><b>BÊN MUA</b>(Ký, ghi rõ họ tên)</div><div><b>NV LẬP BÁO GIÁ</b>'+esc(q.staff)+'</div><div><b>DUY\x27S OVEN</b>(Ký, đóng dấu)</div></div>';
+ document.getElementById('qdocBody').innerHTML=h;var qd=document.getElementById('quoteDoc');qd.style.display='block';qd.scrollIntoView({behavior:'smooth'});}
+function genNo(d){var pad=function(x){return(x<10?'0':'')+x;};return 'BG-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds());}
+function makeQuote(save){if(!cart().length){alert('Chưa chọn sản phẩm.');return;}var d=new Date();var q=quoteObj(genNo(d),d.toISOString());if(save){if(!q.cust.name||!q.cust.phone){alert('Vui lòng điền Họ tên và SĐT khách trước khi lưu.');return;}var arr=load();arr.unshift(q);localStorage.setItem(KEY,JSON.stringify(arr));renderSaved();alert('Đã lưu báo giá '+q.no);}renderQuoteDoc(q);}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return [];}}
+function renderSaved(){var arr=load(),term=(val('savedSearch')||'').toLowerCase();var box=document.getElementById('savedList');
+ var f=arr.filter(function(q){if(!term)return true;return (q.no+' '+(q.cust.name||'')+' '+(q.cust.phone||'')+' '+(q.cust.company||'')).toLowerCase().indexOf(term)>=0;});
+ if(!f.length){box.innerHTML='<div class="empty">'+(arr.length?'Không tìm thấy báo giá khớp.':'Chưa có báo giá nào được lưu.')+'</div>';return;}
+ var pad=function(x){return(x<10?'0':'')+x;};
+ box.innerHTML=f.map(function(q){var d=new Date(q.date);var i=arr.indexOf(q);return '<div class="saved-item"><span class="no">'+q.no+'</span><span class="meta">'+esc(q.cust.name||'(KH)')+(q.cust.phone?' · '+esc(q.cust.phone):'')+' · '+pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+'</span><span class="tot">'+fmt(q.calc.total)+'</span><button onclick="viewSaved('+i+')">Xem lại</button><button onclick="delSaved('+i+')">Xóa</button></div>';}).join('');}
+function viewSaved(i){var arr=load();if(arr[i])renderQuoteDoc(arr[i]);}
+function delSaved(i){if(!confirm('Xóa báo giá này?'))return;var arr=load();arr.splice(i,1);localStorage.setItem(KEY,JSON.stringify(arr));renderSaved();}
+function orderText(){var ci=cart();if(!ci.length)return null;var c=calc();var t='ĐƠN ĐẶT HÀNG — Duy\x27s Oven\nNV: '+document.getElementById('staffName').textContent+'\n----------\n';ci.forEach(function(x){t+='• '+x.n+' ×'+x.q;if(x.p)t+=' = '+fmt(x.p*x.q);else t+=' (Liên hệ)';t+='\n';});t+='----------\nTiền hàng: '+fmt(c.goods)+'\n';if(c.disc)t+='Chiết khấu: -'+fmt(c.disc)+'\n';if(c.ship)t+='Vận chuyển: +'+fmt(c.ship)+'\n';t+='TỔNG: '+fmt(c.total)+' (gồm VAT)\n----------\nKhách: '+(val('cName')||'(chưa điền)')+'\nĐT: '+(val('cPhone')||'(chưa điền)');if(val('cAddr'))t+='\nĐịa chỉ: '+val('cAddr');if(val('cNote'))t+='\nGhi chú: '+val('cNote');return t;}
+function sendOrder(via){var t=orderText();if(!t){alert('Chưa chọn sản phẩm.');return;}if(!val('cName')||!val('cPhone')){alert('Điền Họ tên và SĐT khách.');return;}if(via==='wa')window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(t),'_blank');else window.location.href='mailto:'+MAIL+'?subject='+encodeURIComponent('Đơn - '+val('cName'))+'&body='+encodeURIComponent(t);}
+build();renderSaved();
 </script>
 </body>
 </html>
