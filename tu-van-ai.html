@@ -8,7 +8,7 @@
   <link rel="icon" href="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
 <style>
     .ai-wrap{max-width:780px;margin:0 auto}
     .panel{border:1px solid var(--line-soft);border-radius:10px;padding:22px;background:rgba(255,255,255,.02)}
@@ -56,6 +56,19 @@
     .mhl li:before{content:'–';position:absolute;left:0;color:var(--ember)}
     .mcard .btn{margin:14px 18px 18px;align-self:flex-start}
 </style>
+  <link rel="canonical" href="https://duyoven.vn/tu-van-ai">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Duy's Oven">
+  <meta property="og:title" content="Tư vấn &amp; Thiết kế lò AI — Duy&#x27;s Oven | duyoven.vn">
+  <meta property="og:description" content="Trợ lý AI tư vấn chọn lò nướng than tách khói Duy&#x27;s Oven: gợi ý model phù hợp kèm thông số, giá và bản vẽ mô phỏng từng loại lò; nhập kích thước riêng để ước tính giá.">
+  <meta property="og:url" content="https://duyoven.vn/tu-van-ai">
+  <meta property="og:image" content="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
+  <meta property="og:locale" content="vi_VN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tư vấn &amp; Thiết kế lò AI — Duy&#x27;s Oven | duyoven.vn">
+  <meta name="twitter:description" content="Trợ lý AI tư vấn chọn lò nướng than tách khói Duy&#x27;s Oven: gợi ý model phù hợp kèm thông số, giá và bản vẽ mô phỏng từng loại lò; nhập kích thước riêng để ước tính giá.">
+  <meta name="twitter:image" content="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
 </head>
 <body>
 <header class="site-header">
@@ -162,9 +175,9 @@
 
   <div class="reco" id="recoWrap">
     <h3 class="reco-h">Lò AI đang gợi ý</h3>
-    <p class="reco-sub">Thông số &amp; bản vẽ mô phỏng theo từng model trợ lý vừa nhắc tới.</p>
+    <p class="reco-sub">Ảnh thật, thông số &amp; giá theo từng model trợ lý vừa nhắc tới.</p>
     <div class="mcards" id="recoCards"></div>
-    <p class="ai-note" style="margin-top:14px">Giá đã gồm VAT, có thể thay đổi theo tuỳ chọn vỉ/phụ kiện. Bản vẽ minh hoạ tỉ lệ tương đối. Cần báo giá chính xác: Hotline 090 169 1717.</p>
+    <p class="ai-note" style="margin-top:14px">Giá đã gồm VAT, có thể thay đổi theo tuỳ chọn vỉ/phụ kiện. Bấm vào thẻ để xem chi tiết sản phẩm. Cần báo giá chính xác: Hotline 090 169 1717.</p>
   </div>
 </div></section>
 
@@ -205,7 +218,7 @@
     </div>
   </div>
 </footer>
-<script src="main.js"></script>
+<script src="js/main.js"></script>
 <script>
 var chatHist=[];
 function stripMd(s){return String(s).replace(/\*\*([^*]+)\*\*/g,'$1').replace(/__([^_]+)__/g,'$1').replace(/(^|\n)\s{0,3}#{1,6}\s*/g,'$1').replace(/(^|\n)\s*[\*\-]\s+/g,'$1– ').replace(/`{1,3}/g,'').replace(/\*/g,'').trim();}

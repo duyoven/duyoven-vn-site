@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /bao-gia
+Disallow: /quan-tri
+Disallow: /api/
+
+Sitemap: https://duyoven.vn/sitemap.xml
