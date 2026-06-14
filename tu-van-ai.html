@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tư vấn & Thiết kế lò AI — Duy's Oven | duyoven.vn</title>
-<meta name="description" content="Trợ lý AI tư vấn chọn lò nướng than tách khói Duy's Oven, nhập kích thước để xem bản vẽ, ước tính giá và tạo ảnh mẫu bằng AI.">
+<meta name="description" content="Trợ lý AI tư vấn chọn lò nướng than tách khói Duy's Oven: gợi ý model phù hợp kèm thông số, giá và bản vẽ mô phỏng từng loại lò; nhập kích thước riêng để ước tính giá.">
   <link rel="icon" href="https://duyoven.com/wp-content/uploads/2020/12/duyoven_logo-01-1-300x300.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
@@ -41,8 +41,20 @@
     .aiimg{margin-top:16px}
     .aiimg img{width:100%;border-radius:10px;border:1px solid var(--line-soft);display:block}
     .ai-note{font-size:.78rem;color:var(--muted);margin-top:10px;line-height:1.55}
-    .spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(244,102,31,.3);border-top-color:var(--ember);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .reco{margin-top:42px;display:none}
+    .reco-h{font-weight:300;letter-spacing:.06em;font-size:1.2rem;margin:0 0 4px}
+    .reco-sub{color:var(--muted);font-size:.85rem;margin:0 0 18px}
+    .mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
+    .mcard{border:1px solid var(--line-soft);border-radius:10px;background:rgba(255,255,255,.02);overflow:hidden;display:flex;flex-direction:column}
+    .mcard .schematic{border:0;border-radius:0;border-bottom:1px solid var(--line-soft)}
+    .minfo{padding:16px 18px 4px;display:flex;flex-direction:column;gap:6px;flex:1}
+    .mname{font-size:1.05rem;font-weight:400;color:var(--text)}
+    .mprice{color:var(--ember);font-size:1.1rem}
+    .mcap{color:var(--muted);font-size:.84rem}
+    .mhl{list-style:none;padding:0;margin:6px 0 0;display:flex;flex-direction:column;gap:5px}
+    .mhl li{font-size:.84rem;color:var(--text-dim);padding-left:15px;position:relative;line-height:1.45}
+    .mhl li:before{content:'–';position:absolute;left:0;color:var(--ember)}
+    .mcard .btn{margin:14px 18px 18px;align-self:flex-start}
 </style>
 </head>
 <body>
@@ -125,7 +137,7 @@
 <section class="page-hero"><div class="container">
   <p class="breadcrumb"><a href="index.html">Trang chủ</a> / <span>Tư vấn &amp; Thiết kế lò AI</span></p>
   <h1>Tư vấn &amp; Thiết kế lò AI</h1>
-  <p>Chat với trợ lý AI để chọn lò phù hợp, hoặc nhập kích thước mong muốn để xem bản vẽ, ước tính giá và ảnh mẫu do AI tạo.</p>
+  <p>Chat với trợ lý AI để chọn lò phù hợp — mỗi model được gợi ý sẽ hiện kèm thông số, giá và bản vẽ mô phỏng. Hoặc nhập kích thước riêng để ước tính giá lò đặt làm.</p>
 </div></section>
 <section class="section"><div class="container">
   <div class="ai-wrap">
@@ -171,11 +183,16 @@
           <div class="specbox"><div class="k">Khối lượng (ước)</div><div class="v" id="sWt"></div></div>
           <div class="specbox" style="grid-column:1/3"><div class="k">Giá ước tính (tham khảo · gồm VAT)</div><div class="v price" id="sPrice"></div></div>
         </div>
-        <button class="btn" style="margin-top:14px" id="imgBtn" onclick="genImage()">Tạo ảnh mẫu bằng AI</button>
-        <div class="aiimg" id="aiImg"></div>
-        <p class="ai-note">Bản vẽ &amp; số đo theo đúng tỷ lệ bạn nhập. Giá là <b>ước tính tham khảo</b> — giá chính thức cần khảo sát thực tế (Hotline 090 169 1717). Ảnh AI chỉ mang tính minh họa concept, không chính xác từng mm.</p>
+        <p class="ai-note">Bản vẽ &amp; số đo theo đúng tỷ lệ bạn nhập. Giá là <b>ước tính tham khảo</b> — giá chính thức cần khảo sát thực tế (Hotline 090 169 1717).</p>
       </div>
     </div>
+  </div>
+
+  <div class="reco" id="recoWrap">
+    <h3 class="reco-h">Lò AI đang gợi ý</h3>
+    <p class="reco-sub">Thông số &amp; bản vẽ mô phỏng theo từng model trợ lý vừa nhắc tới.</p>
+    <div class="mcards" id="recoCards"></div>
+    <p class="ai-note" style="margin-top:14px">Giá đã gồm VAT, có thể thay đổi theo tuỳ chọn vỉ/phụ kiện. Bản vẽ minh hoạ tỉ lệ tương đối. Cần báo giá chính xác: Hotline 090 169 1717.</p>
   </div>
 </div></section>
 
@@ -223,7 +240,7 @@ function stripMd(s){return String(s).replace(/\*\*([^*]+)\*\*/g,'$1').replace(/_
 function addMsg(role,text,cls){var l=document.getElementById('chatLog');var d=document.createElement('div');d.className='msg '+(role==='user'?'user':'bot')+(cls?(' '+cls):'');d.textContent=(role==='bot'&&!cls)?stripMd(text):text;l.appendChild(d);l.scrollTop=l.scrollHeight;return d;}
 function quick(el){document.getElementById('chatInput').value=el.textContent;sendChat();}
 function sendChat(){var inp=document.getElementById('chatInput');var t=(inp.value||'').trim();if(!t)return;inp.value='';addMsg('user',t);chatHist.push({role:'user',content:t});var typing=addMsg('bot','Đang soạn trả lời…','typing');
- fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHist})}).then(function(r){return r.json();}).then(function(j){typing.remove();var rep=(j&&j.reply)?j.reply.trim():'';if(!rep){addMsg('bot','Xin lỗi, trợ lý đang bận. Bạn gọi 090 169 1717 để được tư vấn nhanh nhé.');return;}addMsg('bot',rep);chatHist.push({role:'assistant',content:rep});if(chatHist.length>16)chatHist=chatHist.slice(-16);}).catch(function(){typing.remove();addMsg('bot','Kết nối trợ lý gặp trục trặc. Vui lòng thử lại hoặc gọi 090 169 1717.');});}
+ fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHist})}).then(function(r){return r.json();}).then(function(j){typing.remove();var rep=(j&&j.reply)?j.reply.trim():'';if(!rep){addMsg('bot','Xin lỗi, trợ lý đang bận. Bạn gọi 090 169 1717 để được tư vấn nhanh nhé.');return;}addMsg('bot',rep);chatHist.push({role:'assistant',content:rep});if(chatHist.length>16)chatHist=chatHist.slice(-16);try{renderReco(detectModels(rep));}catch(e){}}).catch(function(){typing.remove();addMsg('bot','Kết nối trợ lý gặp trục trặc. Vui lòng thử lại hoặc gọi 090 169 1717.');});}
 window.addEventListener('load',function(){addMsg('bot','Chào bạn 👋 Mình là trợ lý của Duy\x27s Oven. Bạn cần lò để nấu cho mấy người, dùng trong nhà hay sân vườn, ngân sách khoảng bao nhiêu? Mình gợi ý model phù hợp nhé!');});
 
 function fmt(n){return Math.round(n).toLocaleString('vi-VN')+'₫';}
@@ -282,13 +299,44 @@ function drawSchematic(D,R,C){
  s+='</svg>';
  return s;
 }
-function genImage(){
- var D=+document.getElementById('dD').value,R=+document.getElementById('dR').value,C=+document.getElementById('dC').value;
- var fuel=document.getElementById('dFuel').value,mat=document.getElementById('dMat').value;
- var prompt='Professional studio product photograph of a premium Vietnamese smokeless charcoal BBQ oven by Duy\x27s Oven. '+(mat==='inox'?'Brushed stainless steel body, ':'Matte black powder-coated steel body, ')+'stainless steel grates, '+(fuel==='hybrid'?'hybrid charcoal and gas, ':'charcoal smokeless design, ')+'approx '+D+'x'+R+'x'+C+' mm, glass charcoal window glowing with embers, chimney, folding legs, dramatic studio lighting, dark background, ultra detailed, photorealistic, 4k';
- var btn=document.getElementById('imgBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Đang tạo ảnh… (10–20s)';
- var box=document.getElementById('aiImg');box.innerHTML='';
- fetch('/api/ai/image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})}).then(function(r){if(!r.ok)throw 0;return r.blob();}).then(function(b){var u=URL.createObjectURL(b);box.innerHTML='<img src="'+u+'" alt="Ảnh mẫu AI">';btn.disabled=false;btn.textContent='Tạo ảnh khác';}).catch(function(){box.innerHTML='<p class="ai-note">Chưa tạo được ảnh (AI đang bận hoặc quá tải). Thử lại sau ít phút nhé.</p>';btn.disabled=false;btn.textContent='Thử lại tạo ảnh';});
+/* ===== Mô phỏng theo từng model AI tư vấn ===== */
+var MODELS={
+ pantina:{n:'Lò tách khói Pantina',p:'7.700.000₫',c:'Nhỏ gọn · ~3 con gà · 2–4 người',d:[520,360,430],l:'sp-pantina.html',h:['Nhỏ gọn, dễ mang đi','Vỉ tách dầu chữ V chống khói','Quạt gió USB-C']},
+ tk65:{n:'Lò tách khói 65L',p:'12.100.000₫',c:'65L · 6–8 người',d:[600,440,520],l:'san-pham-tach-khoi-65l.html',h:['Tách khói — nướng trong nhà OK','Thép sơn chịu nhiệt 600°C','Quạt gió chỉnh lửa']},
+ tk80:{n:'Lò tách khói 80L',p:'15.400.000₫',c:'80L · 8–12 người',d:[660,480,560],l:'sp-tach-khoi-80l.html',h:['Mặt nướng rộng','Tách khói chữ V','Hợp gia đình đông']},
+ tk85:{n:'Lò tách khói 85L',p:'16.500.000₫',c:'85L · 10–12 người',d:[680,490,570],l:'sp-tach-khoi-85l.html',h:['Dung tích lớn','Tách khói chữ V','Quạt gió DC']},
+ tk125:{n:'Lò tách khói 125L',p:'Liên hệ',c:'125L · 15–20 người',d:[780,560,620],l:'sp-tach-khoi-125l.html',h:['Cho tiệc lớn / quán','Khung thép chắc','Tuỳ chọn bánh xe']},
+ tk250:{n:'Lò tách khói 250L',p:'Liên hệ',c:'250L · tiệc rất lớn',d:[1000,620,680],l:'sp-tach-khoi-250l.html',h:['Công suất nhà hàng','Khung thép dày','Nhiều vỉ nướng']},
+ hy65:{n:'Lò Hybrid than+gas 65L',p:'15.400.000₫',c:'65L · 6–8 người',d:[640,460,520],l:'sp-hybrid-65l.html',h:['Vừa than vừa gas','Linh hoạt mọi thời tiết','Tách khói chữ V']},
+ hy80:{n:'Lò Hybrid than+gas 80L',p:'18.700.000₫',c:'80L · 8–12 người',d:[700,500,560],l:'sp-hybrid-80l.html',h:['Than + gas linh hoạt','Mặt nướng rộng','Quạt gió chỉnh lửa']},
+ hy125:{n:'Lò Hybrid than+gas 125L',p:'27.500.000₫',c:'125L · tiệc lớn',d:[820,560,620],l:'sp-hybrid-125l.html',h:['Than + gas công suất lớn','Cho quán / nhà hàng','Khung thép chắc']},
+ smoker:{n:'Lò xông khói Hybrid 10050',p:'33.000.000₫',c:'Smoker 100×50 · chuyên xông khói',d:[1000,500,900],l:'sp-xong-khoi-hybrid-10050.html',h:['Xông khói low & slow','Buồng đốt hybrid','Khung thép dày']},
+ offset:{n:'Offset Smoker 10050',p:'24.200.000₫',c:'Offset 100×50',d:[1000,500,850],l:'sp-offset-10050.html',h:['Offset firebox cổ điển','Khói gỗ đậm vị','Cho BBQ pro']},
+ pizza:{n:'Lò Pizza Wood & Gas',p:'126.500.000₫',c:'Pizza chuyên nghiệp',d:[1200,1000,1500],l:'sp-pizza-wood-gas.html',h:['Củi + gas','Nhiệt cao nướng pizza','Cho nhà hàng']}
+};
+function detectModels(t){
+ var s=' '+String(t).toLowerCase()+' ',out=[];
+ function add(k){if(MODELS[k]&&out.indexOf(k)<0)out.push(k);}
+ if(/pantina/.test(s))add('pantina');
+ var re=/(65|80|85|125|250)\s?l/g,m;
+ while((m=re.exec(s))){var n=m[1],pre=s.slice(Math.max(0,m.index-30),m.index);
+  if(/hybrid|than\s*\+\s*gas|than và gas/.test(pre))add('hy'+n);else add('tk'+n);}
+ if(/offset/.test(s))add('offset');
+ if(/xông khói|xong khoi|smoker/.test(s))add('smoker');
+ if(/pizza/.test(s))add('pizza');
+ return out.filter(function(k){return MODELS[k];}).slice(0,3);
+}
+function renderReco(keys){
+ if(!keys||!keys.length)return;
+ var box=document.getElementById('recoCards');
+ box.innerHTML=keys.map(function(k){var x=MODELS[k];
+  return '<div class="mcard"><div class="schematic">'+drawSchematic(x.d[0],x.d[1],x.d[2])+'</div>'
+   +'<div class="minfo"><div class="mname">'+x.n+'</div><div class="mprice">'+x.p+'</div><div class="mcap">'+x.c+'</div>'
+   +'<ul class="mhl">'+x.h.map(function(h){return '<li>'+h+'</li>';}).join('')+'</ul></div>'
+   +'<a class="btn btn-primary" href="'+x.l+'">Xem chi tiết →</a></div>';
+ }).join('');
+ var wrap=document.getElementById('recoWrap');wrap.style.display='block';
+ wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 </script>
 </body>

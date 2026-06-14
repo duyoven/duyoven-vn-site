@@ -40,12 +40,6 @@ const CHAT_MODELS = [
   "@cf/meta/llama-3.2-3b-instruct",
   "@cf/meta/llama-3.1-8b-instruct-fast",
 ];
-const IMAGE_MODELS = [
-  "@cf/black-forest-labs/flux-1-schnell",
-  "@cf/stabilityai/stable-diffusion-xl-base-1.0",
-  "@cf/bytedance/stable-diffusion-xl-lightning",
-];
-
 function jsonResp(obj, status) {
   return new Response(JSON.stringify(obj), {
     status: status || 200,
@@ -126,32 +120,6 @@ export default {
         }
         if (!reply) return jsonResp({ error: "Không có model khả dụng. " + lastErr }, 502);
         return jsonResp({ reply, model: used });
-      } catch (e) { return jsonResp({ error: String(e) }, 500); }
-    }
-
-    // --- AI: tạo ảnh mẫu ---
-    if (url.pathname === "/api/ai/image" && request.method === "POST") {
-      try {
-        const body = await request.json();
-        const prompt = String(body.prompt || "").slice(0, 800);
-        if (!prompt) return jsonResp({ error: "Thiếu mô tả" }, 400);
-        let bytes = null, ct = "image/jpeg", lastErr = "";
-        for (const model of IMAGE_MODELS) {
-          try {
-            const r = await env.AI.run(model, { prompt, steps: 6 });
-            if (r && r.image) {
-              const bin = atob(r.image);
-              bytes = new Uint8Array(bin.length);
-              for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-              ct = "image/jpeg"; break;
-            } else if (r && (r instanceof ReadableStream || r.body)) {
-              bytes = new Uint8Array(await new Response(r.body || r).arrayBuffer());
-              ct = "image/png"; break;
-            }
-          } catch (err) { lastErr = String(err); }
-        }
-        if (!bytes) return jsonResp({ error: "Không tạo được ảnh. " + lastErr }, 502);
-        return new Response(bytes, { headers: { "Content-Type": ct, "Cache-Control": "no-store" } });
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
 
