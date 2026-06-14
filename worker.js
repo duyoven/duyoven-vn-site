@@ -52,6 +52,35 @@ function jsonResp(obj, status) {
   });
 }
 
+async function callClaude(env, msgs) {
+  const sys = (msgs.find((m) => m.role === "system") || {}).content || AI_SYS;
+  const conv = msgs
+    .filter((m) => m.role === "user" || m.role === "assistant")
+    .map((m) => ({ role: m.role, content: m.content }));
+  if (!conv.length) return "";
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": env.ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model: env.CLAUDE_MODEL || "claude-haiku-4-5",
+      max_tokens: 700,
+      system: sys,
+      messages: conv,
+    }),
+  });
+  if (!r.ok) throw new Error("anthropic " + r.status + " " + (await r.text()).slice(0, 200));
+  const j = await r.json();
+  return (j.content || [])
+    .filter((c) => c.type === "text")
+    .map((c) => c.text)
+    .join("")
+    .trim();
+}
+
 function staffUser(request, env) {
   const hdr = request.headers.get("Authorization") || "";
   if (!hdr.startsWith("Basic ")) return null;
@@ -78,11 +107,21 @@ export default {
           }
         });
         let reply = "", used = "", lastErr = "";
-        for (const model of CHAT_MODELS) {
+        // 1) Ưu tiên Claude (thông minh hơn hẳn) nếu đã cấu hình API key.
+        if (env.ANTHROPIC_API_KEY) {
           try {
-            const r = await env.AI.run(model, { messages: msgs, max_tokens: 512 });
-            if (r && r.response) { reply = r.response; used = model; break; }
-          } catch (err) { lastErr = String(err); }
+            reply = await callClaude(env, msgs);
+            if (reply) used = env.CLAUDE_MODEL || "claude-haiku-4-5";
+          } catch (err) { lastErr = "Claude: " + String(err); }
+        }
+        // 2) Dự phòng: Workers AI (llama) nếu chưa có key hoặc Claude lỗi.
+        if (!reply) {
+          for (const model of CHAT_MODELS) {
+            try {
+              const r = await env.AI.run(model, { messages: msgs, max_tokens: 512 });
+              if (r && r.response) { reply = r.response; used = model; break; }
+            } catch (err) { lastErr = (lastErr ? lastErr + " | " : "") + String(err); }
+          }
         }
         if (!reply) return jsonResp({ error: "Không có model khả dụng. " + lastErr }, 502);
         return jsonResp({ reply, model: used });
