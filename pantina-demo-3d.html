@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<script src="i18n-viewer.js"></script>
+<script src="i18n.js"></script>
 </head>
 <body>
 <x-dc>
@@ -35,7 +37,17 @@
       <div style="font-size: 11px; letter-spacing: 0.18em; color: #f4661f; white-space: nowrap; flex: none;">PANTINA</div>
       <div style="font-size: 11px; letter-spacing: 0.14em; color: #8a8178; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">LÒ NƯỚNG THAN TÁCH KHÓI</div>
     </div>
-    <div style="font-size: 11px; letter-spacing: 0.14em; color: #f4661f; border: 1px solid rgba(244,102,31,0.35); border-radius: 999px; padding: 6px 14px; white-space: nowrap; flex: none; margin-left: 16px;">PHÒNG DEMO TRỰC TUYẾN</div>
+    <div style="display: flex; align-items: center; gap: 14px; flex: none; margin-left: 16px;">
+      <select id="pa-lang" aria-label="Language" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 12.5px; color: #221f1c; background: #fbf9f6; border: 1px solid rgba(30,25,20,0.25); border-radius: 999px; padding: 7px 12px; cursor: pointer; outline: none;">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+        <option value="ko">한국어</option>
+        <option value="de">Deutsch</option>
+        <option value="th">ไทย</option>
+      </select>
+      <div style="font-size: 11px; letter-spacing: 0.14em; color: #f4661f; border: 1px solid rgba(244,102,31,0.35); border-radius: 999px; padding: 6px 14px; white-space: nowrap; flex: none;">PHÒNG DEMO TRỰC TUYẾN</div>
+    </div>
   </header>
 
   <div class="pv-main" style="flex: 1; display: flex; min-height: 0;">
@@ -44,7 +56,7 @@
       <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; overflow: hidden;">
         <div style="font-family: 'Marcellus', serif; font-size: 200px; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(244,102,31,0.11); letter-spacing: 0.06em; user-select: none; white-space: nowrap;">PANTINA</div>
       </div>
-      <x-import component="PantinaViewer" from="./pantina-viewer.js?v=24" hint-size="100%,100%"
+      <x-import component="PantinaViewer" from="./pantina-viewer.js?v=23" hint-size="100%,100%"
         auto-rotate="{{ autoRotate }}" temp="{{ temp }}" fire="{{ fire }}" charcoal="{{ charcoal }}" meat="{{ meat }}"
         fan-speed="{{ effFan }}" damper="{{ damper }}" lid-open="{{ lidOpen }}" sound="{{ sound }}"
         glass-open="{{ glassOpen }}" vi-stage="{{ viStage }}" ash-out="{{ ashOut }}"

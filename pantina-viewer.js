@@ -534,7 +534,7 @@
     });
 
     // ---------- camera control ----------
-    var az = 0.85, el = 0.32, dist = 1550, vAz = 0, vEl = 0;
+    var az = 0.85, el = 0.32, dist = 1750, vAz = 0, vEl = 0;
     function placeCam() {
       camera.position.set(
         target.x + dist * Math.cos(el) * Math.sin(az),
@@ -558,7 +558,6 @@
       lx = e.clientX; ly = e.clientY;
     });
     cv.addEventListener('wheel', function (e) {
-      if (!(e.ctrlKey || e.metaKey)) return; // let the page scroll normally; zoom only with Ctrl/Cmd
       e.preventDefault();
       dist *= (1 + Math.sign(e.deltaY) * 0.09);
       dist = Math.max(750, Math.min(4200, dist));
@@ -882,15 +881,15 @@
     // ---------- load geometry ----------
     function safe(u) { return fetchF32(u).catch(function () { return null; }); }
     var ready = Promise.all([
-      fetchF32('pa-body.bin'),     // 0
-      fetchF32('pa-grate.bin'),    // 1 charcoal grate
-      safe('pa-wheel.bin'),        // 2 gauge
-      safe('pa-glass.bin'),        // 3
-      safe('pa-lever.bin'),        // 4
-      safe('pa-lid.bin'),          // 5
-      safe('pa-chimney.bin'),      // 6
-      safe('pa-leg0.bin'), safe('pa-leg1.bin'), safe('pa-leg2.bin'), safe('pa-leg3.bin'), // 7-10
-      safe('pa-vi.bin')            // 11
+      fetchF32('body.bin'),     // 0
+      fetchF32('grate.bin'),    // 1 charcoal grate
+      safe('wheel.bin'),        // 2 gauge
+      safe('glass.bin'),        // 3
+      safe('lever.bin'),        // 4
+      safe('lid.bin'),          // 5
+      safe('chimney.bin'),      // 6
+      safe('leg0.bin'), safe('leg1.bin'), safe('leg2.bin'), safe('leg3.bin'), // 7-10
+      safe('vi.bin')            // 11
     ]).then(function (r) {
       group.add(new THREE.Mesh(geomFrom(r[0]), bodyMat));
       thanGroup.add(new THREE.Mesh(geomFrom(r[1]), charGrateMat));
