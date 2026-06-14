@@ -46,6 +46,8 @@ export default {
         accounts: list.length,
         usernames: list.map(x => x.split(":")[0]),
         eachHasColon: list.map(x => x.indexOf(":") > 0),
+        accept_duy_123456: list.indexOf("duy:123456") !== -1,
+        duy_entry_len: (list.find(x => x.split(":")[0] === "duy") || "").length,
       }), { headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
     }
 
