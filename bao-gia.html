@@ -324,7 +324,7 @@ function renderQuoteDoc(q){
  if(contact)h+='<p style="font-size:.78rem;color:#9a9089;margin-top:8px">(*) Sản phẩm ghi "Liên hệ" sẽ được báo giá riêng và chưa tính vào tổng.</p>';
  if(q.note)h+='<p style="font-size:.84rem;margin-top:8px"><b>Ghi chú:</b> '+esc(q.note)+'</p>';
  h+='<div class="terms"><div class="tlabel">Điều khoản &amp; cam kết</div>• Hình thức thanh toán: '+esc(q.pay)+'.<br>• Thời gian giao hàng: '+esc(q.deliv||'theo thỏa thuận')+'.<br>• Bảo hành: '+esc(q.warr)+' chính hãng Duy Oven · giao hàng &amp; lắp đặt toàn quốc.<br>• Báo giá có hiệu lực '+q.valid+' ngày kể từ ngày lập. Giá đã bao gồm thuế GTGT 10%.</div>';
- h+='<div class="sign"><div><div class="role">Bên mua</div><div class="hint">(Ký, ghi rõ họ tên)</div><div class="gap"></div></div><div><div class="role">Nhân viên lập</div><div class="hint">&nbsp;</div><div class="gap"></div>'+esc(q.staff)+'</div><div><div class="role">Duy\x27s Oven</div><div class="hint">(Ký, đóng dấu)</div><div class="gap"></div></div></div>';
+ h+='<div class="sign"><div><div class="role">Bên mua</div><div class="hint">(Ký, ghi rõ họ tên)</div><div class="gap"></div></div><div><div class="role">Duy\x27s Oven</div><div class="hint">(Ký, đóng dấu)</div><div class="gap"></div></div></div>';
  h+='</div><div class="qfoot">Cảm ơn Quý khách đã tin tưởng <b>Duy\x27s Oven</b> · duyoven.vn · Hotline 090 169 1717 · info@duyoven.com</div>';
  document.getElementById('qdocBody').innerHTML=h;var qd=document.getElementById('quoteDoc');qd.style.display='block';qd.scrollIntoView({behavior:'smooth'});}
 function genNo(d){var pad=function(x){return(x<10?'0':'')+x;};return 'BG-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds());}
