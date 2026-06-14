@@ -33,6 +33,13 @@ const AI_SYS = [
   "QUAN TRỌNG về định dạng: khung chat chỉ hiển thị VĂN BẢN THUẦN, KHÔNG render Markdown. Vì vậy TUYỆT ĐỐI không dùng dấu Markdown: không dùng # hay ## (tiêu đề), không dùng ** hay __ (in đậm), không bảng. Trả lời như tin nhắn tự nhiên, 2–5 câu. Nếu cần liệt kê thì xuống dòng và bắt đầu bằng dấu gạch '– '. Tên model và giá viết thẳng trong câu, ví dụ: Lò Tách khói 65L giá 12.100.000đ."
 ].join(" ");
 
+const LANG_NAMES = { en: "English", zh: "Simplified Chinese", ko: "Korean", th: "Thai", de: "German" };
+
+async function sha1hex(s) {
+  const b = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+
 const CHAT_MODELS = [
   "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   "@cf/meta/llama-4-scout-17b-16e-instruct",
@@ -120,6 +127,52 @@ export default {
         }
         if (!reply) return jsonResp({ error: "Không có model khả dụng. " + lastErr }, 502);
         return jsonResp({ reply, model: used });
+      } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
+
+    // --- AI: dịch nội dung trang (batch) ---
+    if (url.pathname === "/api/translate" && request.method === "POST") {
+      try {
+        const body = await request.json();
+        const texts = Array.isArray(body.texts) ? body.texts.slice(0, 60).map((t) => String(t)) : [];
+        const lang = String(body.lang || "en");
+        if (!texts.length) return jsonResp({ translations: [] });
+        if (!LANG_NAMES[lang]) return jsonResp({ translations: texts });
+        // Cache edge (miễn phí, chia sẻ giữa các khách) theo hash của nội dung + ngôn ngữ.
+        const cache = caches.default;
+        const ckey = new Request("https://tr.duyoven.vn/t?l=" + lang + "&h=" + (await sha1hex(JSON.stringify(texts))));
+        const hit = await cache.match(ckey);
+        if (hit) return hit;
+        if (!env.ANTHROPIC_API_KEY) return jsonResp({ translations: texts });
+        const sys =
+          "You are a professional UI/website translator for Duy's Oven, a premium Vietnamese charcoal BBQ oven brand. " +
+          "Translate each Vietnamese string in the input JSON array into " + LANG_NAMES[lang] + ". " +
+          "Rules: keep it natural, concise and on-brand for a product website; preserve numbers, prices, units, emojis exactly; " +
+          "keep brand/product names unchanged (Duy's Oven, Pantina, Hybrid, Offset, Fastgrill, Argentina Grill, Eco); " +
+          "do not translate phone numbers or email addresses; do not add quotes, notes or extra text. " +
+          "Return ONLY a JSON array of translated strings with the SAME length and order as the input.";
+        let arr = null, lastErr = "";
+        for (const model of [env.CLAUDE_MODEL || "claude-haiku-4-5", "claude-haiku-4-5"]) {
+          try {
+            const r = await fetch("https://api.anthropic.com/v1/messages", {
+              method: "POST",
+              headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
+              body: JSON.stringify({ model, max_tokens: 4096, system: sys, messages: [{ role: "user", content: JSON.stringify(texts) }] }),
+            });
+            if (!r.ok) { lastErr = "anthropic " + r.status; continue; }
+            const j = await r.json();
+            let txt = (j.content || []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
+            try { arr = JSON.parse(txt); } catch (e) { const m = txt.match(/\[[\s\S]*\]/); arr = m ? JSON.parse(m[0]) : null; }
+            if (Array.isArray(arr) && arr.length === texts.length) break;
+            arr = null;
+          } catch (e) { lastErr = String(e); }
+        }
+        if (!Array.isArray(arr) || arr.length !== texts.length) arr = texts;
+        const resp = new Response(JSON.stringify({ translations: arr }), {
+          headers: { "Content-Type": "application/json; charset=UTF-8", "Cache-Control": "public, max-age=2592000" },
+        });
+        if (arr !== texts) { try { await cache.put(ckey, resp.clone()); } catch (e) {} }
+        return resp;
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
 

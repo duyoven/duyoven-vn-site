@@ -44,6 +44,83 @@
   var current = localStorage.getItem('duyoven-lang') || 'vi';
   if (LANGS.indexOf(current) === -1) current = 'vi';
 
+  // ===== Engine tự dịch toàn trang (runtime, cache) =====
+  var I18N = { collected: false, nodes: [], attrs: [], busy: false };
+  function cyrb53(str) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < str.length; i++) { var ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+  }
+  function collectNodes() {
+    if (I18N.collected) return;
+    I18N.collected = true;
+    var skip = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, CODE: 1, PRE: 1, TEXTAREA: 1, SELECT: 1, OPTION: 1 };
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        var t = n.nodeValue;
+        if (!t || !t.trim()) return NodeFilter.FILTER_REJECT;
+        if (!/[A-Za-zÀ-ỹ]/.test(t)) return NodeFilter.FILTER_REJECT;
+        var p = n.parentNode;
+        while (p && p !== document.body) {
+          if (p.nodeType === 1) {
+            if (skip[p.tagName]) return NodeFilter.FILTER_REJECT;
+            if (p.hasAttribute && p.hasAttribute('data-en')) return NodeFilter.FILTER_REJECT;
+            if (p.id === 'chatLog' || p.id === 'recoCards') return NodeFilter.FILTER_REJECT;
+            if (p.classList && p.classList.contains('lang-select')) return NodeFilter.FILTER_REJECT;
+          }
+          p = p.parentNode;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var n; while ((n = walker.nextNode())) I18N.nodes.push({ node: n, vi: n.nodeValue });
+    document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(function (el) {
+      if (el.hasAttribute('data-en-placeholder')) return;
+      I18N.attrs.push({ el: el, attr: 'placeholder', vi: el.getAttribute('placeholder') || '' });
+    });
+  }
+  function cacheGet(lang, s) { try { return localStorage.getItem('tr:' + lang + ':' + cyrb53(s)); } catch (e) { return null; } }
+  function cacheSet(lang, s, v) { try { localStorage.setItem('tr:' + lang + ':' + cyrb53(s), v); } catch (e) {} }
+  function applyMap(lang, map) {
+    I18N.nodes.forEach(function (o) {
+      if (lang === 'vi') { o.node.nodeValue = o.vi; return; }
+      var key = o.vi.trim(); var tr = map[key];
+      if (tr != null) o.node.nodeValue = o.vi.replace(key, tr);
+    });
+    I18N.attrs.forEach(function (o) {
+      if (lang === 'vi') { o.el.setAttribute(o.attr, o.vi); return; }
+      var key = o.vi.trim(); var tr = map[key];
+      if (tr != null) o.el.setAttribute(o.attr, tr);
+    });
+  }
+  function translateTo(lang) {
+    collectNodes();
+    if (lang === 'vi') { applyMap('vi', {}); return; }
+    var set = {};
+    I18N.nodes.forEach(function (o) { var s = o.vi.trim(); if (s) set[s] = 1; });
+    I18N.attrs.forEach(function (o) { var s = o.vi.trim(); if (s) set[s] = 1; });
+    var uniq = Object.keys(set), map = {}, misses = [];
+    uniq.forEach(function (s) { var c = cacheGet(lang, s); if (c != null) map[s] = c; else misses.push(s); });
+    applyMap(lang, map);
+    if (!misses.length) return;
+    var chunks = []; for (var i = 0; i < misses.length; i += 40) chunks.push(misses.slice(i, i + 40));
+    if (header) header.classList.add('translating');
+    (function next(ci) {
+      if (ci >= chunks.length) { if (header) header.classList.remove('translating'); return; }
+      fetch('/api/translate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ texts: chunks[ci], lang: lang }) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          var arr = (j && j.translations) || [];
+          chunks[ci].forEach(function (s, idx) { var t = arr[idx]; if (typeof t === 'string' && t) { map[s] = t; cacheSet(lang, s, t); } });
+          if (current === lang) applyMap(lang, map);
+        })
+        .catch(function () {})
+        .then(function () { next(ci + 1); });
+    })(0);
+  }
+
   function applyLang(lang) {
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-en]').forEach(function (el) {
@@ -63,6 +140,7 @@
     document.querySelectorAll('.lang-select').forEach(function (s) { s.value = lang; });
     try { localStorage.setItem('duyoven-lang', lang); } catch (e) {}
     current = lang;
+    if (lang !== 'vi' || I18N.collected) translateTo(lang);
   }
 
   document.querySelectorAll('.lang-switch button').forEach(function (btn) {
