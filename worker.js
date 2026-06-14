@@ -32,6 +32,19 @@ const AI_SYS = [
   "Trả lời bằng TIẾNG VIỆT, thân thiện, ngắn gọn, thực tế. Không bịa thông số. Khi cần chốt đơn/giá chính xác, mời liên hệ Hotline 090 169 1717 hoặc trang Báo giá."
 ].join(" ");
 
+const CHAT_MODELS = [
+  "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+  "@cf/meta/llama-4-scout-17b-16e-instruct",
+  "@cf/mistralai/mistral-small-3.1-24b-instruct",
+  "@cf/meta/llama-3.2-3b-instruct",
+  "@cf/meta/llama-3.1-8b-instruct-fast",
+];
+const IMAGE_MODELS = [
+  "@cf/black-forest-labs/flux-1-schnell",
+  "@cf/stabilityai/stable-diffusion-xl-base-1.0",
+  "@cf/bytedance/stable-diffusion-xl-lightning",
+];
+
 function jsonResp(obj, status) {
   return new Response(JSON.stringify(obj), {
     status: status || 200,
@@ -64,8 +77,15 @@ export default {
             msgs.push({ role: m.role, content: m.content.slice(0, 1500) });
           }
         });
-        const r = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", { messages: msgs, max_tokens: 512 });
-        return jsonResp({ reply: (r && r.response) ? r.response : "" });
+        let reply = "", used = "", lastErr = "";
+        for (const model of CHAT_MODELS) {
+          try {
+            const r = await env.AI.run(model, { messages: msgs, max_tokens: 512 });
+            if (r && r.response) { reply = r.response; used = model; break; }
+          } catch (err) { lastErr = String(err); }
+        }
+        if (!reply) return jsonResp({ error: "Không có model khả dụng. " + lastErr }, 502);
+        return jsonResp({ reply, model: used });
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
 
@@ -75,13 +95,23 @@ export default {
         const body = await request.json();
         const prompt = String(body.prompt || "").slice(0, 800);
         if (!prompt) return jsonResp({ error: "Thiếu mô tả" }, 400);
-        const r = await env.AI.run("@cf/black-forest-labs/flux-1-schnell", { prompt, steps: 6 });
-        const b64 = r && r.image ? r.image : "";
-        if (!b64) return jsonResp({ error: "Không tạo được ảnh" }, 500);
-        const bin = atob(b64);
-        const bytes = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        return new Response(bytes, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "no-store" } });
+        let bytes = null, ct = "image/jpeg", lastErr = "";
+        for (const model of IMAGE_MODELS) {
+          try {
+            const r = await env.AI.run(model, { prompt, steps: 6 });
+            if (r && r.image) {
+              const bin = atob(r.image);
+              bytes = new Uint8Array(bin.length);
+              for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+              ct = "image/jpeg"; break;
+            } else if (r && (r instanceof ReadableStream || r.body)) {
+              bytes = new Uint8Array(await new Response(r.body || r).arrayBuffer());
+              ct = "image/png"; break;
+            }
+          } catch (err) { lastErr = String(err); }
+        }
+        if (!bytes) return jsonResp({ error: "Không tạo được ảnh. " + lastErr }, 502);
+        return new Response(bytes, { headers: { "Content-Type": ct, "Cache-Control": "no-store" } });
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
 
