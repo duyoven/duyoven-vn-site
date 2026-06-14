@@ -1,0 +1,460 @@
+/* ============================================
+   DUY'S OVEN — duyoven.vn
+   Phong cách Josper: tối giản, font mảnh, nền đen điện ảnh
+   ============================================ */
+
+:root {
+  --bg: #0b0a09;          /* đen than sâu */
+  --bg-alt: #121110;      /* nền xen kẽ */
+  --bg-soft: #1a1817;
+  --ember: #d8542a;       /* đỏ-cam lửa, dùng tiết chế */
+  --ember-soft: #e8662a;
+  --text: #ece7df;
+  --text-dim: #b8b2a8;
+  --muted: #847d73;
+  --line: rgba(255,255,255,0.12);
+  --line-soft: rgba(255,255,255,0.07);
+  --header-h: 76px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 300;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tiêu đề: mảnh, chữ hoa, giãn rộng — giống Josper */
+h1, h2, h3, h4 {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  line-height: 1.25;
+}
+
+img { max-width: 100%; display: block; }
+a { color: var(--ember); text-decoration: none; transition: color .25s; }
+a:hover { color: var(--ember-soft); }
+
+.container { width: min(1280px, 90%); margin: 0 auto; }
+
+/* ---------- Header ---------- */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  background: transparent;
+  z-index: 100;
+  transition: background .3s, border-color .3s;
+  border-bottom: 1px solid transparent;
+}
+.site-header.solid {
+  background: rgba(11,10,9,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.header-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.logo {
+  font-weight: 300;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text);
+  white-space: nowrap;
+}
+.logo b { font-weight: 600; color: var(--ember); }
+.logo img { height: 42px; width: auto; }
+
+.main-nav { display: flex; align-items: center; gap: 34px; }
+.main-nav a {
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 4px 0;
+  position: relative;
+  opacity: .9;
+}
+.main-nav a::after {
+  content: ''; position: absolute; left: 0; right: 100%; bottom: -3px;
+  height: 1px; background: var(--ember); transition: right .3s;
+}
+.main-nav a:hover, .main-nav a.active { color: #fff; opacity: 1; }
+.main-nav a:hover::after, .main-nav a.active::after { right: 0; }
+
+/* ---------- Dropdown / Mega menu ---------- */
+.main-nav .nav-item { position: relative; display: flex; align-items: center; }
+.main-nav .nav-item > a.has-caret::after {
+  content: ''; display: inline-block; width: 5px; height: 5px; margin-left: 7px;
+  border-right: 1px solid currentColor; border-bottom: 1px solid currentColor;
+  transform: rotate(45deg) translateY(-1px); opacity: .65; transition: transform .25s;
+}
+.main-nav .nav-item:hover > a.has-caret::after { transform: rotate(225deg) translateY(-1px); }
+
+.mega, .drop {
+  position: absolute; top: 100%; margin-top: 14px;
+  background: rgba(11,10,9,0.98); backdrop-filter: blur(12px);
+  border: 1px solid var(--line-soft);
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity .25s, transform .25s, visibility .25s; z-index: 120;
+}
+.drop { left: 0; min-width: 240px; padding: 12px 0; }
+.mega { left: 50%; width: min(1080px, 90vw); transform: translateX(-50%) translateY(10px);
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 26px; padding: 30px 34px; }
+.nav-item:hover .drop { opacity: 1; visibility: visible; transform: translateY(0); }
+.nav-item:hover .mega { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+/* hover bridge */
+.nav-item::after { content: ''; position: absolute; top: 100%; left: 0; right: 0; height: 16px; }
+
+.mega-col h4 { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); margin-bottom: 12px; font-weight: 500; }
+.mega-col a, .drop a {
+  display: block; color: var(--text-dim); font-size: .82rem; font-weight: 300;
+  letter-spacing: 0; text-transform: none; padding: 6px 0; border: none; opacity: 1;
+}
+.drop a { padding: 9px 22px; }
+.mega-col a::after, .drop a::after { display: none; }
+.mega-col a:hover, .drop a:hover { color: #fff; }
+.mega-col .all-link { color: var(--ember); font-size: .76rem; margin-top: 8px; }
+
+.lang-switch { display: flex; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; }
+.lang-switch button {
+  background: none; border: none; color: var(--muted);
+  font: inherit; font-size: 0.72rem; font-weight: 500; letter-spacing: .1em;
+  padding: 5px 11px; cursor: pointer; transition: background .2s,color .2s;
+}
+.lang-switch button.active { background: var(--ember); color: #fff; }
+
+/* Dropdown ngôn ngữ (kiểu Josper EN▾) */
+.lang-select {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 400;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 7px 30px 7px 12px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+  background-position: calc(100% - 16px) calc(50% - 2px), calc(100% - 11px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  transition: border-color .25s;
+}
+.lang-select:hover, .lang-select:focus { border-color: var(--ember); outline: none; }
+.lang-select option { background: var(--bg); color: var(--text); }
+
+.nav-toggle { display: none; background: none; border: none; cursor: pointer; width: 40px; height: 40px; position: relative; }
+.nav-toggle span, .nav-toggle span::before, .nav-toggle span::after {
+  content: ''; position: absolute; left: 8px; width: 24px; height: 1.5px; background: var(--text); transition: transform .25s, opacity .25s;
+}
+.nav-toggle span { top: 19px; }
+.nav-toggle span::before { left: 0; top: -7px; }
+.nav-toggle span::after { left: 0; top: 7px; }
+.nav-open .nav-toggle span { background: transparent; }
+.nav-open .nav-toggle span::before { transform: translateY(7px) rotate(45deg); }
+.nav-open .nav-toggle span::after { transform: translateY(-7px) rotate(-45deg); }
+
+/* ---------- Hero chia đôi (kiểu Josper) ---------- */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  position: relative;
+  background:
+    radial-gradient(circle at 30% 52%, rgba(244,102,31,0.20), transparent 46%),
+    #0c0a08;
+  overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: url('https://duyoven.com/wp-content/uploads/2026/02/Background.jpg') center/cover no-repeat;
+  opacity: .20; z-index: 0;
+}
+.hero-img {
+  position: relative; z-index: 1;
+  height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: var(--header-h) 0 0;
+  background: radial-gradient(circle at 50% 54%, rgba(244,102,31,0.16), transparent 58%);
+}
+.hero-img img {
+  max-height: 82vh; width: auto; object-fit: contain;
+  filter: brightness(1.16) contrast(1.08) saturate(1.05) drop-shadow(0 26px 55px rgba(0,0,0,.55));
+}
+.hero-content { position: relative; z-index: 1; padding: var(--header-h) 6% 0 4%; max-width: 600px; }
+.hero h1 {
+  font-size: clamp(2.2rem, 4.2vw, 3.6rem);
+  font-weight: 200; letter-spacing: 0.2em; margin-bottom: 28px; color: #fff;
+}
+.hero .kicker {
+  font-size: 0.8rem; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--ember); margin-bottom: 22px; font-weight: 500;
+}
+.hero p { color: var(--text-dim); font-weight: 300; font-size: 1.02rem; margin-bottom: 36px; line-height: 1.9; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block; padding: 14px 38px;
+  font-size: 0.78rem; font-weight: 400; text-transform: uppercase; letter-spacing: 0.2em;
+  border: 1px solid var(--text-dim); color: var(--text); background: transparent;
+  cursor: pointer; transition: all .3s;
+}
+.btn:hover { border-color: var(--ember); color: var(--ember); letter-spacing: 0.24em; }
+.btn-primary { border-color: var(--ember); background: var(--ember); color: #fff; }
+.btn-primary:hover { background: transparent; color: var(--ember); }
+
+/* ---------- Sections ---------- */
+.section { padding: 92px 0; }
+.section.alt { background: var(--bg-alt); }
+.section-head { text-align: center; max-width: 760px; margin: 0 auto 50px; }
+.section-head .kicker { font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; color:var(--ember); display:block; margin-bottom:14px; font-weight:600; }
+.section-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); font-weight: 300; letter-spacing: 0.1em; margin-bottom: 18px; }
+.section-head h2::after { content:''; display:block; width:54px; height:2px; margin:20px auto 0; background:linear-gradient(90deg,var(--ember),var(--ember-soft)); border-radius:2px; }
+.section-head p { color: var(--text-dim); font-weight: 300; font-size: 1.02rem; }
+
+/* ---------- Danh mục: ảnh + nhãn dưới (kiểu Josper) ---------- */
+.cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cat {
+  position: relative; display: block; overflow: hidden;
+  aspect-ratio: 3/4; background: var(--bg-soft);
+}
+.cat img { width: 100%; height: 100%; object-fit: cover; opacity: .82; transition: transform .9s ease, opacity .4s; }
+.cat:hover img { transform: scale(1.06); opacity: 1; }
+.cat::after { content:''; position:absolute; inset:0; background: linear-gradient(to top, rgba(6,5,4,.85) 0%, rgba(6,5,4,.1) 55%); }
+.cat-label {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 26px 22px; text-align: center;
+}
+.cat-label h3 { font-size: 1rem; font-weight: 300; letter-spacing: 0.14em; color: #fff; margin-bottom: 6px; }
+.cat-label span { font-size: 0.74rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ember); opacity: 0; transform: translateY(6px); transition: all .35s; display:inline-block; }
+.cat:hover .cat-label span { opacity: 1; transform: translateY(0); }
+
+/* ---------- Split (câu chuyện) ---------- */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-items: stretch; }
+.split.alt-dir .split-text { order: 2; }
+.split-img { min-height: 520px; background-size: cover; background-position: center; }
+.split-text { padding: 9% 8%; display: flex; flex-direction: column; justify-content: center; }
+.split-text .kicker { font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; color:var(--ember); margin-bottom:18px; font-weight:500; }
+.split-text h2 { font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 200; letter-spacing: 0.14em; margin-bottom: 24px; }
+.split-text p { color: var(--text-dim); font-weight: 300; margin-bottom: 18px; line-height: 1.9; }
+.split-text .btn { margin-top: 14px; align-self: flex-start; }
+
+/* ---------- Feature (thẻ đậm, ánh lửa) ---------- */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: transparent; }
+.feature {
+  position: relative; padding: 44px 34px 40px; text-align: center;
+  background: linear-gradient(180deg, #19120e 0%, #120f0d 100%);
+  border: 1px solid rgba(216,84,42,0.16); border-radius: 16px; overflow: hidden;
+  transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+.feature::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--ember),var(--ember-soft)); opacity:.85; }
+.feature::after { content:''; position:absolute; top:-60px; left:50%; transform:translateX(-50%); width:200px; height:160px; background:radial-gradient(circle, rgba(216,84,42,0.22) 0%, transparent 70%); opacity:0; transition:opacity .4s; pointer-events:none; }
+.feature:hover { transform: translateY(-6px); border-color: rgba(216,84,42,0.45); box-shadow: 0 18px 50px rgba(0,0,0,0.5); }
+.feature:hover::after { opacity:1; }
+.feature .num { font-size: 2.6rem; font-weight: 300; color: var(--ember); display: block; margin-bottom: 14px; letter-spacing: .04em; line-height:1; text-shadow:0 0 24px rgba(216,84,42,0.45); }
+.feature h3 { font-size: 1.12rem; font-weight: 500; letter-spacing: .12em; margin-bottom: 14px; color:#fff; }
+.feature p { color: var(--text-dim); font-weight: 300; font-size: 0.95rem; line-height:1.75; }
+/* stats: số to, phát sáng */
+.section.alt .feature { background: linear-gradient(180deg,#161311 0%,#100e0c 100%); border-color: rgba(216,84,42,0.12); }
+.section.alt .feature .num { font-size: 3.2rem; font-weight: 200; }
+.section.alt .feature h3 { font-weight: 400; letter-spacing:.14em; font-size:.92rem; color:var(--text-dim); }
+.section.alt .feature:hover { transform: translateY(-4px); }
+
+/* ---------- Sản phẩm nổi bật (thẻ đồng bộ, viền ánh lửa) ---------- */
+.prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.prod {
+  position: relative; display: block; overflow: hidden;
+  background: var(--bg-soft); border: 1px solid var(--line-soft); border-radius: 14px;
+  transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+.prod:hover { transform: translateY(-6px); border-color: rgba(216,84,42,0.4); box-shadow: 0 18px 46px rgba(0,0,0,0.5); }
+.prod-thumb { position: relative; overflow: hidden; }
+/* khung ảnh đồng bộ: nền tối nhất quán + chuẩn hoá tông ảnh dù nền gốc khác nhau */
+.prod-thumb { background: radial-gradient(circle at 50% 38%, #23201d 0%, #141210 78%); }
+.prod img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display:block;
+  filter: brightness(.93) contrast(1.05) saturate(.88); mix-blend-mode: luminosity;
+  transition: transform .8s, filter .4s; }
+.prod-thumb::after { content:''; position:absolute; inset:0; pointer-events:none;
+  background: linear-gradient(180deg, rgba(216,84,42,0.05) 0%, transparent 30%, rgba(20,18,16,0.55) 100%); }
+.prod:hover img { transform: scale(1.06); filter: brightness(1) contrast(1.05) saturate(1); mix-blend-mode: normal; }
+.prod-body { padding: 20px 20px 24px; }
+.prod-body h3 { font-size: 0.98rem; font-weight: 400; letter-spacing: .04em; color: #fff; margin-bottom: 12px; text-transform: none; }
+.prod-price { color: var(--ember); font-size: 1.12rem; font-weight: 500; }
+.prod-price small { display:block; color: var(--muted); font-size: .72rem; font-weight: 300; margin-top: 4px; letter-spacing:.02em; }
+
+/* ---------- Atmosphere band (dải hình lớn, ánh than) ---------- */
+.atmo-band {
+  position: relative; padding: 130px 0; text-align: center; overflow: hidden;
+  background: linear-gradient(rgba(8,6,5,.62), rgba(8,6,5,.78)),
+    url('https://duyoven.com/wp-content/uploads/2018/07/NGHIENG-MO-NAP2.jpg') center 40%/cover no-repeat;
+}
+.atmo-band::after { content:''; position:absolute; left:0; right:0; bottom:0; height:40%;
+  background: linear-gradient(to top, var(--bg) 0%, transparent 100%); pointer-events:none; }
+.atmo-band .container { position: relative; z-index: 2; }
+.atmo-band .kicker { font-size:.72rem; letter-spacing:.34em; text-transform:uppercase; color:var(--ember); display:block; margin-bottom:22px; font-weight:600; }
+.atmo-band h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 300; letter-spacing: .04em; line-height:1.25; max-width: 880px; margin: 0 auto 14px; color:#fff; text-shadow:0 2px 30px rgba(0,0,0,.6); }
+.atmo-band h2 b { color: var(--ember-soft); font-weight: 400; }
+.atmo-band p { color: var(--text-dim); font-weight: 300; max-width: 560px; margin: 0 auto; font-size:1.02rem; }
+
+/* ---------- CTA band ---------- */
+.cta-band {
+  background: linear-gradient(rgba(6,5,4,.78), rgba(6,5,4,.84)),
+    url('https://duyoven.com/wp-content/uploads/2023/05/argentina-steak-copy-800x800.webp') center/cover fixed no-repeat;
+  text-align: center; padding: 130px 0;
+}
+.cta-band .kicker { font-size:.74rem; letter-spacing:.34em; text-transform:uppercase; color:var(--ember); display:block; margin-bottom:20px; }
+.cta-band h2 { font-size: clamp(1.6rem, 3.4vw, 2.6rem); font-weight: 200; letter-spacing: 0.14em; margin-bottom: 18px; }
+.cta-band p { max-width: 640px; margin: 0 auto 34px; color: var(--text-dim); font-weight: 300; }
+
+/* ---------- Page hero (trang con) ---------- */
+.page-hero { padding: calc(var(--header-h) + 90px) 0 70px; background: var(--bg-alt); border-bottom: 1px solid var(--line-soft); }
+.page-hero h1 { font-size: clamp(2rem, 4.6vw, 3.2rem); font-weight: 200; letter-spacing: .18em; }
+.page-hero p { color: var(--text-dim); font-weight: 300; margin-top: 14px; max-width: 640px; }
+.breadcrumb { font-size: 0.74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+.breadcrumb a { color: var(--muted); }
+.breadcrumb a:hover { color: var(--ember); }
+
+/* ---------- Product detail ---------- */
+.product-detail { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: start; }
+.product-gallery img { border: 1px solid var(--line-soft); margin-bottom: 14px; }
+.thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.thumbs img { margin: 0; cursor: pointer; opacity: .55; transition: opacity .25s; border:1px solid var(--line-soft); }
+.thumbs img:hover, .thumbs img.active { opacity: 1; border-color: var(--ember); }
+.product-info h1 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 200; letter-spacing: .12em; margin-bottom: 8px; }
+.product-info .model { color: var(--ember); letter-spacing: .2em; text-transform: uppercase; font-size: .78rem; margin-bottom: 24px; }
+.product-info > p { color: var(--text-dim); font-weight: 300; margin-bottom: 26px; }
+.spec-table { width: 100%; border-collapse: collapse; margin: 30px 0; }
+.spec-table th, .spec-table td { text-align: left; padding: 13px 16px; border: 1px solid var(--line-soft); font-size: 0.9rem; font-weight: 300; }
+.spec-table th { font-weight: 400; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); width: 44%; background: var(--bg-alt); font-size: .8rem; }
+.bullets { list-style: none; margin: 0 0 28px; }
+.bullets li { padding-left: 26px; position: relative; margin-bottom: 12px; color: var(--text-dim); font-weight: 300; }
+.bullets li::before { content: ''; position: absolute; left: 0; top: 11px; width: 10px; height: 10px; background: var(--ember); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.product-info .btn { margin-right: 12px; margin-top: 8px; }
+
+/* ---------- Contact ---------- */
+.contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; }
+.contact-info h3 { font-size: 0.82rem; letter-spacing:.16em; margin: 26px 0 6px; color: var(--ember); font-weight: 400; }
+.contact-info p { color: var(--text-dim); font-weight: 300; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 0.74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; background: var(--bg-soft); border: 1px solid var(--line-soft); color: var(--text);
+  font: inherit; font-weight: 300; font-size: 0.95rem; padding: 13px 16px;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--ember); }
+
+/* ---------- About timeline ---------- */
+.timeline { border-left: 1px solid var(--line); padding-left: 34px; margin-top: 44px; }
+.timeline-item { position: relative; margin-bottom: 40px; }
+.timeline-item::before { content: ''; position: absolute; left: -40px; top: 7px; width: 9px; height: 9px; border-radius: 50%; background: var(--ember); }
+.timeline-item h3 { font-size: 0.95rem; letter-spacing:.14em; color: var(--ember); margin-bottom: 8px; font-weight: 400; }
+.timeline-item p { color: var(--text-dim); font-weight: 300; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: #060504; border-top: 1px solid var(--line-soft); padding: 80px 0 32px; font-size: 0.9rem; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 56px; }
+.site-footer h4 { font-size: 0.74rem; letter-spacing: .18em; margin-bottom: 20px; color: var(--text); font-weight: 400; }
+.site-footer ul { list-style: none; }
+.site-footer li { margin-bottom: 11px; }
+.site-footer a, .site-footer p { color: var(--muted); font-weight: 300; }
+.site-footer a:hover { color: var(--ember); }
+.footer-bottom { border-top: 1px solid var(--line-soft); padding-top: 28px; text-align: center; color: var(--muted); font-size: 0.78rem; letter-spacing: .04em; }
+
+/* ---------- Tương thích trang con (.grid/.card/.split cũ) ---------- */
+.grid { display: grid; gap: 8px; }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.card { position: relative; display: block; overflow: hidden; background: var(--bg-soft); border: 1px solid var(--line-soft); transition: border-color .3s; }
+.card:hover { border-color: var(--ember); }
+.card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; opacity: .9; transition: transform .8s, opacity .3s; }
+.card:hover img { transform: scale(1.05); opacity: 1; }
+.card-body { padding: 24px 22px 28px; }
+.card-body h3 { font-size: 0.95rem; font-weight: 300; letter-spacing: .1em; color: #fff; margin-bottom: 10px; text-transform: none; }
+.card-body p { color: var(--text-dim); font-weight: 300; font-size: 0.88rem; margin-bottom: 16px; }
+.card-link { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ember); }
+.price { color: var(--ember); font-size: 1rem; font-weight: 400; margin-bottom: 14px; }
+.price small { display:block; color: var(--muted); font-size: .72rem; font-weight: 300; margin-top: 3px; }
+
+/* split kiểu cũ (trang giới thiệu): text + img cạnh nhau */
+.split.legacy { grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.split.legacy > div { padding: 0; }
+.split.legacy h2 { font-size: clamp(1.6rem,3vw,2.3rem); font-weight: 200; letter-spacing:.14em; margin-bottom: 22px; }
+.split.legacy h2 em { color: var(--ember); font-style: normal; }
+.split.legacy p { color: var(--text-dim); font-weight: 300; margin-bottom: 18px; }
+.split.legacy img { border: 1px solid var(--line-soft); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+  .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .split.legacy { grid-template-columns: 1fr; gap: 36px; }
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .prod-grid { grid-template-columns: repeat(2, 1fr); }
+  .features { grid-template-columns: 1fr; }
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-img { height: auto; padding-top: calc(var(--header-h) + 30px); }
+  .hero-img img { max-height: 52vh; }
+  .hero-content { padding: 40px 6% 80px; text-align: center; margin: 0 auto; }
+  .split, .split.alt-dir .split-text { grid-template-columns: 1fr; order: 0; }
+  .split-img { min-height: 320px; }
+  .product-detail, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 680px) {
+  .section { padding: 80px 0; }
+  .cat-grid, .prod-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .nav-toggle { display: block; }
+  .main-nav {
+    position: fixed; top: var(--header-h); left: 0; right: 0;
+    background: rgba(11,10,9,0.97); border-bottom: 1px solid var(--line-soft);
+    flex-direction: column; align-items: flex-start; gap: 0; padding: 10px 7%; display: none;
+  }
+  .nav-open .main-nav { display: flex; }
+  .main-nav > a, .main-nav .nav-item > a { width: 100%; padding: 15px 0; border-bottom: 1px solid var(--line-soft); }
+  .main-nav .nav-item { display: block; width: 100%; }
+  .mega, .drop {
+    position: static; opacity: 1; visibility: visible; transform: none !important;
+    width: auto; background: transparent; border: none; backdrop-filter: none;
+    margin: 0; padding: 4px 0 10px 14px; grid-template-columns: 1fr; gap: 8px; display: none;
+  }
+  .nav-item.open .mega, .nav-item.open .drop { display: grid; }
+  .drop.open, .nav-item.open .drop { display: block; }
+  .mega-col h4 { margin-top: 8px; }
+  .mega-col a, .drop a { border-bottom: none; padding: 7px 0; }
+  .nav-item::after { display: none; }
+}
+
+/* ---------- Academy ---------- */
+.tag { display:inline-block; font-size:.66rem; letter-spacing:.28em; text-transform:uppercase; color:var(--ember); margin-bottom:12px; font-weight:500; }
+.academy-card .card-body { padding:26px 24px; }
+.academy-card h3 { font-weight:300; letter-spacing:.06em; margin:4px 0 10px; font-size:1.05rem; }
+.academy-card p { color:var(--text-dim); font-weight:300; font-size:.9rem; line-height:1.7; margin-bottom:14px; }
+.split-media { padding:6% 7%; display:flex; align-items:center; }
+@media (max-width:680px){ .split-media{ padding:36px 22px; } }
+
+/* ---------- Legal pages ---------- */
+.legal-content h2,.legal-content h3{ font-weight:300; letter-spacing:.04em; color:var(--text); margin:30px 0 12px; font-size:1.12rem; }
+.legal-content p{ color:var(--text-dim); font-weight:300; line-height:1.95; margin-bottom:14px; }
+.legal-content ul{ margin:0 0 16px 1.1rem; }
+.legal-content li{ color:var(--text-dim); font-weight:300; line-height:1.85; margin-bottom:7px; }
+.legal-content strong{ color:var(--text); font-weight:500; }
