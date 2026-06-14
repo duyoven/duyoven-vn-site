@@ -218,11 +218,11 @@
 </footer>
 <script src="main.js"></script>
 <script>
-var history=[];
+var chatHist=[];
 function addMsg(role,text,cls){var l=document.getElementById('chatLog');var d=document.createElement('div');d.className='msg '+(role==='user'?'user':'bot')+(cls?(' '+cls):'');d.textContent=text;l.appendChild(d);l.scrollTop=l.scrollHeight;return d;}
 function quick(el){document.getElementById('chatInput').value=el.textContent;sendChat();}
-function sendChat(){var inp=document.getElementById('chatInput');var t=(inp.value||'').trim();if(!t)return;inp.value='';addMsg('user',t);history.push({role:'user',content:t});var typing=addMsg('bot','Đang soạn trả lời…','typing');
- fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})}).then(function(r){return r.json();}).then(function(j){typing.remove();var rep=(j&&j.reply)?j.reply.trim():'';if(!rep){addMsg('bot','Xin lỗi, trợ lý đang bận. Bạn gọi 090 169 1717 để được tư vấn nhanh nhé.');return;}addMsg('bot',rep);history.push({role:'assistant',content:rep});if(history.length>16)history=history.slice(-16);}).catch(function(){typing.remove();addMsg('bot','Kết nối trợ lý gặp trục trặc. Vui lòng thử lại hoặc gọi 090 169 1717.');});}
+function sendChat(){var inp=document.getElementById('chatInput');var t=(inp.value||'').trim();if(!t)return;inp.value='';addMsg('user',t);chatHist.push({role:'user',content:t});var typing=addMsg('bot','Đang soạn trả lời…','typing');
+ fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHist})}).then(function(r){return r.json();}).then(function(j){typing.remove();var rep=(j&&j.reply)?j.reply.trim():'';if(!rep){addMsg('bot','Xin lỗi, trợ lý đang bận. Bạn gọi 090 169 1717 để được tư vấn nhanh nhé.');return;}addMsg('bot',rep);chatHist.push({role:'assistant',content:rep});if(chatHist.length>16)chatHist=chatHist.slice(-16);}).catch(function(){typing.remove();addMsg('bot','Kết nối trợ lý gặp trục trặc. Vui lòng thử lại hoặc gọi 090 169 1717.');});}
 window.addEventListener('load',function(){addMsg('bot','Chào bạn 👋 Mình là trợ lý của Duy\x27s Oven. Bạn cần lò để nấu cho mấy người, dùng trong nhà hay sân vườn, ngân sách khoảng bao nhiêu? Mình gợi ý model phù hợp nhé!');});
 
 function fmt(n){return Math.round(n).toLocaleString('vi-VN')+'₫';}
