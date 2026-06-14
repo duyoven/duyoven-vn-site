@@ -265,6 +265,14 @@ export default {
       });
     }
 
+    // Serve .txt (robots.txt, llms.txt) as UTF-8 so Vietnamese reads correctly for AI crawlers.
+    if (url.pathname.endsWith(".txt")) {
+      const res = await env.ASSETS.fetch(request);
+      const h = new Headers(res.headers);
+      h.set("Content-Type", "text/plain; charset=utf-8");
+      return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h });
+    }
+
     return env.ASSETS.fetch(request);
   },
 };
