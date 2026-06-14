@@ -38,19 +38,6 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // --- temporary diagnostic: confirms STAFF_AUTH reached the Worker (no password leaked) ---
-    if (url.pathname === "/__cfg") {
-      const list = (env.STAFF_AUTH || "").split(",").map(s => s.trim()).filter(Boolean);
-      return new Response(JSON.stringify({
-        staffAuthSet: !!env.STAFF_AUTH,
-        accounts: list.length,
-        usernames: list.map(x => x.split(":")[0]),
-        eachHasColon: list.map(x => x.indexOf(":") > 0),
-        accept_duy_123456: list.indexOf("duy:123456") !== -1,
-        duy_entry_len: (list.find(x => x.split(":")[0] === "duy") || "").length,
-      }), { headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
-    }
-
     // --- reverse proxy ---
     const target = PROXY[url.pathname];
     if (target) {
