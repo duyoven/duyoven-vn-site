@@ -35,6 +35,26 @@ const AI_SYS = [
 
 const LANG_NAMES = { en: "English", zh: "Simplified Chinese", ko: "Korean", th: "Thai", de: "German" };
 
+const IMG_STYLE =
+  ", professional studio product photography, matte black powder-coated steel, stainless steel grates, " +
+  "dramatic warm rim lighting, glowing orange charcoal embers, dark charcoal-grey seamless backdrop, " +
+  "premium, photorealistic, ultra detailed, sharp focus, centered, no text, no watermark";
+function imgPrompt(m) {
+  m = (m || "").toLowerCase();
+  if (m.indexOf("pantina") === 0) return "A compact small smokeless charcoal BBQ oven, single chamber, short sturdy legs, small glass ember window on the front";
+  if (m.indexOf("hybrid") === 0 || m.indexOf("hy") === 0) return "A smokeless charcoal-and-gas hybrid BBQ oven cabinet with two control knobs, a chimney and a glass ember window, on caster wheels";
+  if (m.indexOf("offset") !== -1) return "A classic offset barrel smoker with a side firebox and a tall chimney, on two wheels";
+  if (m.indexOf("xong") !== -1 || m.indexOf("smoker") !== -1) return "A large vertical hybrid smoker oven with a chimney, heavy steel body, double doors";
+  if (m.indexOf("pizza") !== -1) return "A premium wood-fired pizza oven with an arched dome chamber and flames glowing inside";
+  if (m.indexOf("argentina") !== -1) return "An Argentine-style grill with an adjustable height grate and a side brasero, flames and embers";
+  if (m.indexOf("fastgrill") !== -1) return "A sleek portable charcoal grill with glowing embers";
+  if (m.indexOf("eco") !== -1) return "A compact minimalist eco charcoal grill";
+  if (m.indexOf("quay") !== -1) return "A charcoal rotisserie oven with a rotating spit and glowing embers";
+  if (m === "hero") return "A flagship premium smokeless charcoal BBQ oven, hero shot, cinematic, glowing embers, dramatic atmosphere";
+  return "A smokeless charcoal BBQ box oven cabinet with a chimney and a glass ember window, standing on slim legs";
+}
+function seedFrom(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h % 100000; }
+
 async function sha1hex(s) {
   const b = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(s));
   return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
@@ -149,6 +169,7 @@ export default {
           "Translate each Vietnamese string in the input JSON array into " + LANG_NAMES[lang] + ". " +
           "Rules: keep it natural, concise and on-brand for a product website; preserve numbers, prices, units, emojis exactly; " +
           "keep brand/product names unchanged (Duy's Oven, Pantina, Hybrid, Offset, Fastgrill, Argentina Grill, Eco); " +
+          "KEY TERM: 'tách khói' is the brand's flagship concept meaning SMOKELESS (the smoke is separated away) — translate it with the natural word for 'smokeless' in the target language, NEVER as 'offset'; 'lò xông khói' = smoker; 'lò nướng' = grill/oven; " +
           "do not translate phone numbers or email addresses; do not add quotes, notes or extra text. " +
           "Return ONLY a JSON array of translated strings with the SAME length and order as the input.";
         let arr = null, lastErr = "";
@@ -174,6 +195,29 @@ export default {
         if (arr !== texts) { try { await cache.put(ckey, resp.clone()); } catch (e) {} }
         return resp;
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
+
+    // --- AI: ảnh sản phẩm studio (tạo 1 lần, cache vĩnh viễn ở edge) ---
+    if (url.pathname === "/img/p") {
+      const m = (url.searchParams.get("m") || "hero").slice(0, 40);
+      const cache = caches.default;
+      const ckey = new Request("https://img.duyoven.vn/p?m=" + m);
+      const hit = await cache.match(ckey);
+      if (hit) return hit;
+      try {
+        const r = await env.AI.run("@cf/black-forest-labs/flux-1-schnell", {
+          prompt: imgPrompt(m) + IMG_STYLE, steps: 8, seed: seedFrom(m),
+        });
+        if (r && r.image) {
+          const bin = atob(r.image);
+          const bytes = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          const resp = new Response(bytes, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=31536000" } });
+          await cache.put(ckey, resp.clone());
+          return resp;
+        }
+      } catch (e) { return jsonResp({ error: String(e) }, 502); }
+      return jsonResp({ error: "no image" }, 502);
     }
 
     // --- reverse proxy ---
