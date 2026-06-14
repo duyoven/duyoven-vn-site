@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Lò nướng than tách khói Pantina — Duy's Oven | duyoven.vn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
 </head>
@@ -37,15 +36,25 @@
     footer { flex-direction: column !important; align-items: flex-start !important; gap: 10px; padding: 20px !important; }
   }
 </style>
+<script src="i18n-viewer.js"></script>
+<script src="i18n.js"></script>
 </helmet>
 <div style="background: #fbf9f6; color: #221f1c; font-family: 'Be Vietnam Pro', sans-serif; overflow-x: hidden;">
 
   <header data-screen-label="Thanh điều hướng" style="position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; background: rgba(251,249,246,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(30,25,20,0.1);">
     <div style="display: flex; align-items: baseline; gap: 14px; min-width: 0;">
-      <a href="index.html" style="font-family: 'Marcellus', serif; font-size: 20px; letter-spacing: 0.22em; white-space: nowrap; flex: none; text-decoration:none; color:inherit;">DUY'S OVEN</a>
+      <div style="font-family: 'Marcellus', serif; font-size: 20px; letter-spacing: 0.22em; white-space: nowrap; flex: none;">DUY'S OVEN</div>
       <div style="font-size: 11px; letter-spacing: 0.18em; color: #f4661f; white-space: nowrap; flex: none;">PANTINA</div>
     </div>
     <nav style="display: flex; align-items: center; gap: 26px;">
+      <select id="pa-lang" aria-label="Language / Ngôn ngữ" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 12.5px; color: #221f1c; background: #fbf9f6; border: 1px solid rgba(30,25,20,0.25); border-radius: 999px; padding: 8px 12px; cursor: pointer; outline: none; flex: none;">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+        <option value="ko">한국어</option>
+        <option value="de">Deutsch</option>
+        <option value="th">ไทย</option>
+      </select>
       <a href="#cochế" style="font-size: 12.5px; color: #756c62; text-decoration: none; letter-spacing: 0.04em;" style-hover="color: #221f1c">Cơ chế tách khói</a>
       <a href="pantina-nguyen-ly.html" style="font-size: 12.5px; color: #756c62; text-decoration: none; letter-spacing: 0.04em;" style-hover="color: #221f1c">Nguyên lý ↗</a>
       <a href="#demo3d" style="font-size: 12.5px; color: #756c62; text-decoration: none; letter-spacing: 0.04em;" style-hover="color: #221f1c">Demo 3D</a>
@@ -201,7 +210,7 @@
         <a href="pantina-demo-3d.html" style="font-size: 13px; font-weight: 500; color: #221f1c; text-decoration: none; padding: 12px 24px; border-radius: 999px; border: 1px solid rgba(30,25,20,0.3); white-space: nowrap; flex: none;" style-hover="background: rgba(30,25,20,0.1)">Mở toàn màn hình ↗</a>
       </div>
       <div style="height: 760px; border: 1px solid rgba(30,25,20,0.14); border-radius: 18px; overflow: hidden; background: #ffffff;">
-        <iframe src="pantina-demo-3d.html" title="Phòng demo 3D Pantina" style="width:100%;height:100%;border:0;display:block" loading="lazy" allow="fullscreen"></iframe>
+        <dc-import name="Pantina 3D Viewer" hint-size="100%,760px" style="width: 100%; height: 100%; display: block;"></dc-import>
       </div>
     </div>
   </section>
@@ -274,20 +283,14 @@
         </div>
       </div>
       <div style="display: flex; flex-direction: column; border: 1px solid rgba(30,25,20,0.12); border-radius: 16px; overflow: hidden;">
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Công nghệ nướng</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">Than tách khói · 3 lớp vỉ</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Kích thước thân lò (D×R×C)</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">600 × 300 × 380 mm</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Kích thước cả ống khói</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">770 × 636 × 392 mm</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Khối lượng</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">17 kg</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Mặt vỉ nướng (2 vỉ inox)</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">255 × 435 mm</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Sức chứa</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">~3 con gà · 4 kg thịt / mẻ</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Lượng than khuyên dùng</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">2 – 3 kg</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Vật liệu thân lò</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">Thép · sơn chịu nhiệt Mỹ 600°C</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Vỉ &amp; chi tiết tiếp xúc thực phẩm</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">Inox</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Quạt gió · nguồn điện</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">12VDC/2A hoặc Power Bank Type-C</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Kiểm soát nhiệt</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">Kim báo nhiệt °C/°F · nắp kính xem than</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Tiện vận chuyển</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">Ống khói tháo rời · 4 chân gập · 3 quai cầm</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Bảo hành</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">Chính hãng Duy Oven · toàn quốc</span></div>
-        <div style="display: flex; justify-content: space-between; gap: 24px; padding: 15px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Giá (đã gồm VAT 10%)</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; font-weight: 500;">7.700.000₫</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Kích thước (cả ống khói)</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums;">770 × 636 × 392 mm</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Mặt vỉ nướng (2 vỉ inox)</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums;">255 × 435 mm</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Sức chứa thịt tối đa</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums;">4 kg / mẻ</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Lượng than khuyên dùng</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums;">2 – 3 kg</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Nguồn quạt gió</span><span style="font-size: 13.5px; font-variant-numeric: tabular-nums;">DC 12V / USB Type-C</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(30,25,20,0.1);"><span style="font-size: 13.5px; color: #756c62;">Vật liệu thân lò</span><span style="font-size: 13.5px;">Sắt, sơn chịu nhiệt Mỹ</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(30,25,20,0.1); background: rgba(30,25,20,0.03);"><span style="font-size: 13.5px; color: #756c62;">Vỉ &amp; chi tiết tiếp xúc thực phẩm</span><span style="font-size: 13.5px;">Inox</span></div>
+        <div style="display: flex; justify-content: space-between; padding: 16px 24px;"><span style="font-size: 13.5px; color: #756c62;">Vận chuyển</span><span style="font-size: 13.5px;">Ống khói tháo rời · chân gập</span></div>
       </div>
     </div>
   </section>

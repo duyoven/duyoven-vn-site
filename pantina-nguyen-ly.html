@@ -29,6 +29,8 @@
   input.pp-range::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #f4661f; border: 2px solid #ffffff; cursor: grab; }
   input.pp-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #f4661f; border: 2px solid #ffffff; }
 </style>
+<script src="i18n-pages.js"></script>
+<script src="i18n.js"></script>
 </helmet>
 <div data-screen-label="Nguyên lý Pantina" style="min-height: 100vh; background: #fbf9f6; color: #221f1c; font-family: 'Be Vietnam Pro', sans-serif;">
 
@@ -38,6 +40,14 @@
       <div style="font-size: 11px; letter-spacing: 0.18em; color: #f4661f; white-space: nowrap;">PANTINA · NGUYÊN LÝ HOẠT ĐỘNG</div>
     </div>
     <nav style="display: flex; align-items: center; gap: 22px;">
+      <select id="pa-lang" aria-label="Language" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 12.5px; color: #221f1c; background: #fbf9f6; border: 1px solid rgba(30,25,20,0.25); border-radius: 999px; padding: 7px 12px; cursor: pointer; outline: none; flex: none;">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+        <option value="ko">한국어</option>
+        <option value="de">Deutsch</option>
+        <option value="th">ไทย</option>
+      </select>
       <a href="pantina-demo-3d.html" style="font-size: 12.5px; color: #756c62; text-decoration: none;" style-hover="color: #221f1c">Phòng demo 3D ↗</a>
       <a href="sp-pantina.html" style="font-size: 12px; font-weight: 600; color: #ffffff; background: #f4661f; text-decoration: none; padding: 9px 20px; border-radius: 999px; letter-spacing: 0.05em; white-space: nowrap;" style-hover="background: #d9540f">TRANG BÁN HÀNG</a>
     </nav>

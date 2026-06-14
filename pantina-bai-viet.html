@@ -6,6 +6,7 @@
 <script src="./support.js"></script>
 </head>
 <body>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#fbf9f6"/><rect x="30" y="30" width="40" height="40" rx="8" fill="#f4661f"/><text x="50" y="62" font-size="30" text-anchor="middle" fill="#fff" font-family="Georgia,serif">P</text></svg></template>
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +18,7 @@
   ::selection { background: rgba(244,102,31,0.35); }
   .pa-body p { margin: 0 0 22px 0; }
   .pa-body p:last-child { margin-bottom: 0; }
+  .pa-drop::first-letter { font-family: 'Marcellus', serif; font-size: 52px; float: left; line-height: 0.82; margin: 6px 12px 0 0; color: #f4661f; }
   @media (max-width: 820px) {
     header { padding: 12px 16px !important; }
     header nav a { display: none !important; }
@@ -32,15 +34,25 @@
     footer { flex-direction: column !important; align-items: flex-start !important; gap: 10px; }
   }
 </style>
+<script src="i18n-pages.js"></script>
+<script src="i18n.js"></script>
 </helmet>
 <div data-screen-label="Bài viết bán hàng Pantina" style="background: #fbf9f6; color: #221f1c; font-family: 'Be Vietnam Pro', sans-serif; overflow-x: hidden;">
 
   <header style="position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; background: rgba(251,249,246,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(30,25,20,0.1);">
     <a href="sp-pantina.html" style="display: flex; align-items: baseline; gap: 14px; min-width: 0; text-decoration: none; color: inherit;">
-      <a href="index.html" style="font-family: 'Marcellus', serif; font-size: 20px; letter-spacing: 0.22em; white-space: nowrap; flex: none; text-decoration:none; color:inherit;">DUY'S OVEN</a>
+      <div style="font-family: 'Marcellus', serif; font-size: 20px; letter-spacing: 0.22em; white-space: nowrap; flex: none;">DUY'S OVEN</div>
       <div style="font-size: 11px; letter-spacing: 0.18em; color: #f4661f; white-space: nowrap; flex: none;">PANTINA</div>
     </a>
     <nav style="display: flex; align-items: center; gap: 26px;">
+      <select id="pa-lang" aria-label="Language" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 12.5px; color: #221f1c; background: #fbf9f6; border: 1px solid rgba(30,25,20,0.25); border-radius: 999px; padding: 7px 12px; cursor: pointer; outline: none; flex: none;">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+        <option value="ko">한국어</option>
+        <option value="de">Deutsch</option>
+        <option value="th">ไทย</option>
+      </select>
       <a href="sp-pantina.html" style="font-size: 12.5px; color: #756c62; text-decoration: none; letter-spacing: 0.04em;" style-hover="color: #221f1c">Trang chủ</a>
       <a href="pantina-demo-3d.html" style="font-size: 12.5px; color: #756c62; text-decoration: none; letter-spacing: 0.04em;" style-hover="color: #221f1c">Demo 3D ↗</a>
       <a href="#dathang" style="font-size: 12px; font-weight: 600; color: #ffffff; background: #f4661f; text-decoration: none; padding: 10px 22px; border-radius: 999px; letter-spacing: 0.06em; white-space: nowrap;" style-hover="background: #d9540f">ĐẶT HÀNG</a>
@@ -74,7 +86,7 @@
     </div>
 
     <div class="pa-wrap pa-body" style="max-width: 720px; margin: 0 auto; padding: 50px 40px 0 40px; font-size: 17.5px; line-height: 1.85; color: #2c2823;">
-      <p style="font-size: 19px; color: #221f1c;"><span style="font-family: 'Marcellus', serif; font-size: 40px; float: left; line-height: 0.9; margin: 6px 12px 0 0; color: #f4661f;">C</span>uối tuần, bạn bè kéo tới, thịt ướp sẵn, bia để lạnh. Bạn nhóm than, đặt vỉ lên, gắp miếng ba chỉ đầu tiên… và ngay khi mỡ bắt đầu nhỏ giọt, khói đen bốc lên mù mịt. Mắt cay, áo khét, tóc ám mùi, hàng xóm đóng cửa sổ. Vui thì vẫn vui, nhưng hôm sau cả nhà vẫn còn thoảng mùi than.</p>
+      <p class="pa-drop" style="font-size: 19px; color: #221f1c;">Cuối tuần, bạn bè kéo tới, thịt ướp sẵn, bia để lạnh. Bạn nhóm than, đặt vỉ lên, gắp miếng ba chỉ đầu tiên… và ngay khi mỡ bắt đầu nhỏ giọt, khói đen bốc lên mù mịt. Mắt cay, áo khét, tóc ám mùi, hàng xóm đóng cửa sổ. Vui thì vẫn vui, nhưng hôm sau cả nhà vẫn còn thoảng mùi than.</p>
 
       <p>Vấn đề không nằm ở than, cũng không nằm ở tay nghề của bạn. Nó nằm ở một điều mà gần như mọi chiếc lò than đều mắc phải.</p>
 
