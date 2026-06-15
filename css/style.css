@@ -76,7 +76,8 @@ a:hover { color: var(--ember-soft); }
   white-space: nowrap;
 }
 .logo b { font-weight: 600; color: var(--ember); }
-.logo img { height: 48px; width: auto; }
+.logo { flex: 0 0 auto; }
+.logo img { height: 48px; width: auto; max-width: none; flex: none; object-fit: contain; }
 
 .main-nav { display: flex; align-items: center; gap: 34px; }
 .main-nav a {
