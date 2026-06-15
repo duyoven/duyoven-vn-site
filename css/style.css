@@ -491,7 +491,7 @@ a:hover { color: var(--ember-soft); }
   color: #fff; background: rgba(216,84,42,0.92); padding: 6px 13px; border-radius: 999px;
 }
 .show-body { padding: 26px 28px 30px; display: flex; flex-direction: column; gap: 13px; }
-.show-body .cat { font-size: .68rem; letter-spacing: .24em; text-transform: uppercase; color: var(--ember); font-weight: 600; }
+.show-body .cat { font-size: .68rem; letter-spacing: .24em; text-transform: uppercase; color: var(--ember); font-weight: 600; aspect-ratio: auto; background: none; overflow: visible; display: block; }
 .show-body h3 { font-size: 1.7rem; letter-spacing: .02em; color: #fff; line-height: 1.12; margin: 0; }
 .show-body p { color: var(--text-dim); font-weight: 300; font-size: .95rem; line-height: 1.72; margin: 0; }
 .show-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 6px; }
