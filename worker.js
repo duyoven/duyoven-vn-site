@@ -45,7 +45,8 @@ const QUOTE_SYS = [
   "- Lò Pizza Wood&Gas: 126500000",
   "- Argentina Grill / Fastgrill / Lò quay / Eco: cần báo giá riêng (đặt p=0)",
   "QUY TẮC: chọn 1–3 sản phẩm hợp nhu cầu (số người ăn, trong nhà/sân vườn/camping, ngân sách). Số lượng mặc định 1 trừ khi khách cần nhiều suất/nhiều chi nhánh. Với mặt hàng 'cần báo giá riêng' đặt p=0 và nhắc nhân viên tự điền giá trong 'reply'. Tôn trọng ngân sách khách nếu nêu.",
-  "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown, KHÔNG ```. Cấu trúc đúng: {\"items\":[{\"n\":\"Lò Tách khói 65L\",\"unit\":\"Cái\",\"p\":12100000,\"q\":1}],\"note\":\"ghi chú/điều khoản gợi ý ngắn\",\"deliv\":\"7-10 ngày\",\"warr\":\"12 tháng\",\"valid\":30,\"reply\":\"giải thích ngắn 2-3 câu bằng tiếng Việt cho nhân viên: vì sao chọn các model này\"}. Giá 'p' là số nguyên VND, không dấu phân cách, không chữ. Nếu thiếu thông tin cứ đề xuất phương án hợp lý nhất và nêu giả định trong 'reply'."
+  "THÔNG TIN KHÁCH: nếu nhân viên có mô tả tên khách, số điện thoại, công ty, mã số thuế, email, người liên hệ, hay địa chỉ giao hàng thì BÓC ra và điền vào object 'cust'. Trường nào không có thì để chuỗi rỗng \"\". TUYỆT ĐỐI không bịa thông tin khách (không tự tạo SĐT/email/tên giả).",
+  "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown, KHÔNG ```. Cấu trúc đúng: {\"items\":[{\"n\":\"Lò Tách khói 65L\",\"unit\":\"Cái\",\"p\":12100000,\"q\":1}],\"cust\":{\"name\":\"\",\"phone\":\"\",\"contact\":\"\",\"email\":\"\",\"company\":\"\",\"tax\":\"\",\"addr\":\"\"},\"note\":\"ghi chú/điều khoản gợi ý ngắn\",\"deliv\":\"7-10 ngày\",\"warr\":\"12 tháng\",\"valid\":30,\"reply\":\"giải thích ngắn 2-3 câu bằng tiếng Việt cho nhân viên: vì sao chọn các model này\"}. Giá 'p' là số nguyên VND, không dấu phân cách, không chữ. Nếu thiếu thông tin cứ đề xuất phương án hợp lý nhất và nêu giả định trong 'reply'."
 ].join("\n");
 
 const LANG_NAMES = { en: "English", zh: "Simplified Chinese", ko: "Korean", th: "Thai", de: "German" };
@@ -198,9 +199,20 @@ export default {
           p: Math.max(0, Math.round(Number(it.p || it.price || 0)) || 0),
           q: Math.max(1, Math.round(Number(it.q || it.qty || 1)) || 1),
         })).filter((it) => it.n) : [];
+        const c = (data.cust && typeof data.cust === "object") ? data.cust : {};
+        const cust = {
+          name: String(c.name || "").slice(0, 120),
+          phone: String(c.phone || "").slice(0, 40),
+          contact: String(c.contact || "").slice(0, 120),
+          email: String(c.email || "").slice(0, 120),
+          company: String(c.company || "").slice(0, 160),
+          tax: String(c.tax || "").slice(0, 40),
+          addr: String(c.addr || "").slice(0, 300),
+        };
         return jsonResp({
           reply: String(data.reply || "").slice(0, 2000),
           items,
+          cust,
           note: String(data.note || "").slice(0, 600),
           deliv: String(data.deliv || "").slice(0, 120),
           warr: String(data.warr || "").slice(0, 80),
