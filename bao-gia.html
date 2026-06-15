@@ -178,6 +178,22 @@
 </div></section>
 <section class="section" style="padding-top:6px"><div class="container">
   <div class="staffbar"><span>Nhân viên: <b id="staffName">__STAFF__</b></span><span class="muted" style="color:var(--muted)">Phiên nội bộ · Duy's Oven</span></div>
+  <!-- ===== Trợ lý AI báo giá ===== -->
+  <div id="aiPanel" style="border:1px solid rgba(244,123,32,.35);border-radius:14px;padding:16px 18px;margin-bottom:18px;background:linear-gradient(160deg,rgba(244,123,32,.10),transparent)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <b style="font-size:15px">🤖 Trợ lý AI báo giá</b>
+      <span style="font-size:12.5px;color:var(--muted)">Gõ nhu cầu của khách → AI gợi ý sản phẩm &amp; giá rồi tự điền vào đơn bên dưới.</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start">
+      <textarea id="aiBrief" rows="2" placeholder="VD: Quán nướng 60 khách ở Đà Nẵng, sân vườn, ngân sách ~25 triệu, cần giao trong tháng" style="flex:1;min-width:240px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.15);color:inherit;font:inherit;resize:vertical"></textarea>
+      <button class="btn btn-primary" id="aiGoBtn" onclick="aiSuggest()">Gợi ý &amp; điền đơn</button>
+    </div>
+    <div id="aiLog" style="margin-top:12px;display:none;font-size:13.5px;line-height:1.6;max-height:300px;overflow:auto"></div>
+    <div id="aiChatRow" style="display:none;gap:8px;margin-top:10px">
+      <input type="text" id="aiChatInput" placeholder="Hỏi thêm / điều chỉnh (vd: thêm 1 Pantina, đổi sang gói rẻ hơn)" onkeydown="if(event.key==='Enter')aiChat()" style="flex:1;padding:9px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.15);color:inherit;font:inherit">
+      <button class="btn" onclick="aiChat()">Gửi</button>
+    </div>
+  </div>
   <div class="bg-wrap">
     <div>
       <div id="prodList"></div>
@@ -292,6 +308,16 @@ function build(){var h='';PRODUCTS.forEach(function(g){h+='<div class="cat-h">'+
 function chg(n,d){var v=(qty[n]||0)+d;if(v<0)v=0;qty[n]=v;var el=document.getElementById('q_'+enc(n));if(el)el.value=v;render();}
 function setq(n,v){v=parseInt(v)||0;if(v<0)v=0;qty[n]=v;render();}
 function addCustom(){var n=val('ciName');if(!n){alert('Nhập tên sản phẩm.');return;}var p=parseFloat(val('ciPrice'))||0,q=parseInt(val('ciQty'))||1,u=val('ciUnit')||'Cái';customItems.push({n:n,p:p,q:q,unit:u});document.getElementById('ciName').value='';document.getElementById('ciPrice').value='';document.getElementById('ciQty').value='1';render();}
+/* ===== Trợ lý AI báo giá ===== */
+var aiHistory=[];
+function aiEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function aiBusy(b){var btn=document.getElementById('aiGoBtn');if(btn){btn.disabled=b;btn.textContent=b?'Đang nghĩ…':'Gợi ý & điền đơn';}}
+function aiAppendLog(role,text){var log=document.getElementById('aiLog');log.style.display='block';var who=role==='user'?'Bạn':'🤖 AI';var col=role==='user'?'var(--muted)':'var(--ember,#F47B20)';log.innerHTML+='<div style="margin:6px 0"><b style="color:'+col+'">'+who+':</b> '+aiEsc(text).replace(/\n/g,'<br>')+'</div>';log.scrollTop=log.scrollHeight;}
+async function aiPost(text){var r=await fetch('/api/bao-gia',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({brief:text,messages:aiHistory})});var j=await r.json();if(j.error)throw new Error(j.error);return j;}
+function aiSetIfEmpty(id,v){if(!v)return;var el=document.getElementById(id);if(el&&!el.value)el.value=v;}
+function aiApply(j){var added=0;(j.items||[]).forEach(function(it){if(it.n){customItems.push({n:it.n,p:it.p||0,q:it.q||1,unit:it.unit||'Cái'});added++;}});aiSetIfEmpty('cNote',j.note);aiSetIfEmpty('cDeliv',j.deliv);aiSetIfEmpty('cWarr',j.warr);if(j.valid)aiSetIfEmpty('cValid',j.valid);if(added)render();return added;}
+async function aiSuggest(){var t=val('aiBrief');if(!t){alert('Nhập nhu cầu của khách trước.');return;}aiBusy(true);aiAppendLog('user',t);aiHistory.push({role:'user',content:t});try{var j=await aiPost(t);aiHistory.push({role:'assistant',content:j.reply||''});var n=aiApply(j);aiAppendLog('assistant',(j.reply||'(không có giải thích)')+(n?('\n→ Đã thêm '+n+' mục vào đơn.'):'\n(không có mục nào để thêm — kiểm tra lại nhu cầu)'));document.getElementById('aiBrief').value='';document.getElementById('aiChatRow').style.display='flex';}catch(e){aiAppendLog('assistant','⚠ Lỗi: '+e.message);}aiBusy(false);}
+async function aiChat(){var inp=document.getElementById('aiChatInput');var t=(inp.value||'').trim();if(!t)return;inp.value='';aiAppendLog('user',t);aiHistory.push({role:'user',content:t});try{var j=await aiPost(t);aiHistory.push({role:'assistant',content:j.reply||''});var n=(j.items&&j.items.length)?aiApply(j):0;aiAppendLog('assistant',(j.reply||'')+(n?('\n→ Đã thêm '+n+' mục vào đơn.'):''));}catch(e){aiAppendLog('assistant','⚠ Lỗi: '+e.message);}}
 function delCustom(i){customItems.splice(i,1);render();}
 function val(id){var e=document.getElementById(id);return e?(e.value||'').trim():'';}
 function num(id){return parseFloat(val(id))||0;}
