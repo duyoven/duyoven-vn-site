@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lò Nướng Than Tách Khói Hybrid 65L — Mô phỏng 3D & Khoa học | Duy's Oven</title>
+<meta name="description" content="Lò Hybrid 65L: nướng than tách khói + xông khói low & slow. Mô phỏng 3D xoay được, mô phỏng nướng theo nhiệt độ an toàn USDA, cơ chế khoa học và ứng dụng thực tế.">
+<meta property="og:title" content="Lò Nướng Than Tách Khói Hybrid 65L — Duy's Oven">
+<meta property="og:description" content="Một cỗ lò, hai chức năng: tách khói & xông khói. Mô phỏng 3D, khoa học và nhiệt độ an toàn USDA.">
+<meta property="og:type" content="product">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0B; --bg2:#0E0E10; --card:#141417; --line:rgba(255,255,255,.09);
+    --ember:#F47B20; --ember2:#FF8F3D; --text:#F5F3EF; --muted:rgba(245,243,239,.6);
+    --green:#22c08a; --header-h:64px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Be Vietnam Pro',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3,.osw{font-family:'Oswald',sans-serif;letter-spacing:.01em}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+  .ember{color:var(--ember)}
+  .eyebrow{font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ember);font-weight:700}
+  .sec{padding:clamp(56px,8vw,100px) 0;border-top:1px solid var(--line)}
+  .sec h2{font-size:clamp(28px,4.4vw,44px);font-weight:600;text-transform:uppercase;line-height:1.08;margin:12px 0 16px}
+  .sec p.lead{color:var(--muted);font-size:16.5px;max-width:760px}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:50;height:var(--header-h);background:rgba(10,10,11,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav{height:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Oswald';font-weight:700;font-size:19px;text-transform:uppercase;letter-spacing:.04em}
+  .brand .mk{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--ember),var(--ember2));display:grid;place-items:center;color:#0A0A0B;font-weight:700;box-shadow:0 6px 16px rgba(244,123,32,.35)}
+  .nav-links{display:flex;gap:6px;align-items:center}
+  .nav-links a{padding:7px 12px;border-radius:8px;color:var(--muted);font-size:13.5px;font-weight:500;transition:.15s}
+  .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+  .lang{background:#141417;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-family:inherit;font-size:13px;cursor:pointer}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
+  .burger span{width:22px;height:2px;background:var(--text);border-radius:2px}
+
+  /* Hero */
+  .hero{position:relative;padding:clamp(40px,6vw,72px) 0 clamp(30px,4vw,48px);overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-40% 0 auto 0;height:560px;background:radial-gradient(60% 60% at 30% 0,rgba(244,123,32,.16),transparent 70%);z-index:-1}
+  .hero h1{font-size:clamp(38px,6vw,72px);font-weight:700;line-height:1.02;text-transform:uppercase}
+  .hero .sub{color:var(--muted);font-size:clamp(16px,2vw,19px);margin-top:18px;max-width:620px}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .chip{font-size:12.5px;font-weight:600;color:var(--ember);background:rgba(244,123,32,.1);border:1px solid rgba(244,123,32,.32);border-radius:99px;padding:7px 14px}
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;padding:14px 28px;border-radius:12px;cursor:pointer;border:1px solid transparent;transition:.15s}
+  .btn-p{background:var(--ember);color:#0A0A0B}
+  .btn-p:hover{background:var(--ember2);transform:translateY(-1px)}
+  .btn-o{border-color:var(--line);color:var(--text)}
+  .btn-o:hover{border-color:var(--ember);color:var(--ember)}
+
+  /* 3D viewer */
+  #viewer-sec .stage{position:relative;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:radial-gradient(ellipse 70% 60% at 50% 80%,rgba(244,123,32,.1),#080809);aspect-ratio:16/10;min-height:420px}
+  #c3d{width:100%;height:100%;display:block;cursor:grab}
+  #c3d:active{cursor:grabbing}
+  .v-controls{position:absolute;left:14px;bottom:14px;display:flex;flex-wrap:wrap;gap:8px;z-index:4}
+  .v-controls button{background:rgba(11,12,15,.84);border:1px solid var(--line);color:var(--text);font-family:inherit;font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:10px;cursor:pointer;backdrop-filter:blur(6px);transition:.15s}
+  .v-controls button:hover{border-color:var(--ember)}
+  .v-controls button.on{background:var(--ember);color:#0A0A0B;border-color:var(--ember)}
+  .v-hint{position:absolute;right:14px;top:14px;z-index:4;font-size:11.5px;color:var(--muted);background:rgba(11,12,15,.7);border:1px solid var(--line);padding:6px 11px;border-radius:8px;backdrop-filter:blur(6px)}
+  .v-load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:14px;z-index:3}
+  .parts-legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:18px}
+  .parts-legend span{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+  .parts-legend i{width:13px;height:13px;border-radius:3px;display:inline-block}
+
+  /* Generic cards grid */
+  .grid{display:grid;gap:18px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:12px}
+  .card .ico{width:50px;height:50px;border-radius:13px;background:rgba(244,123,32,.12);display:grid;place-items:center;font-size:24px}
+  .card h3{font-size:19px;font-weight:600}
+  .card p{color:var(--muted);font-size:14.5px}
+  .num{font-family:'Oswald';font-size:26px;font-weight:600;color:var(--ember)}
+
+  /* Function toggle (dual) */
+  .func-tabs{display:flex;gap:8px;margin:8px 0 24px;flex-wrap:wrap}
+  .func-tabs button{flex:1;min-width:200px;background:var(--card);border:1px solid var(--line);color:var(--muted);font-family:'Oswald';font-weight:600;font-size:18px;text-transform:uppercase;padding:16px;border-radius:14px;cursor:pointer;transition:.18s}
+  .func-tabs button.on{border-color:var(--ember);color:var(--text);background:linear-gradient(160deg,rgba(244,123,32,.14),var(--card))}
+  .func-panel{display:none}
+  .func-panel.on{display:block;animation:fade .4s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* Mechanism diagram */
+  .mech{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center}
+  .mech-fig{position:relative;background:radial-gradient(ellipse 80% 70% at 50% 60%,rgba(244,123,32,.12),#0c0c0e);border:1px solid var(--line);border-radius:18px;aspect-ratio:4/3;overflow:hidden}
+  .mech-fig svg{width:100%;height:100%}
+
+  /* Cooking simulator */
+  .sim{display:grid;grid-template-columns:300px 1fr;gap:22px}
+  .sim-foods{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow:auto;padding-right:4px}
+  .food-btn{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;color:var(--text);font-family:inherit;transition:.15s}
+  .food-btn:hover{border-color:rgba(244,123,32,.5)}
+  .food-btn.on{border-color:var(--ember);background:linear-gradient(160deg,rgba(244,123,32,.12),var(--card))}
+  .food-btn .emo{font-size:26px}
+  .food-btn b{font-size:14.5px;display:block}
+  .food-btn small{color:var(--muted);font-size:11.5px}
+  .sim-panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:18px}
+  .sim-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .sim-head h3{font-size:24px;font-weight:600}
+  .method-tag{font-size:12px;font-weight:700;padding:6px 13px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em}
+  .m-grill{background:rgba(244,123,32,.15);color:var(--ember);border:1px solid rgba(244,123,32,.4)}
+  .m-smoke{background:rgba(120,160,255,.13);color:#8fb0ff;border:1px solid rgba(120,160,255,.4)}
+  .thermo{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .thermo-bar{flex:1;min-width:200px;height:26px;border-radius:99px;background:#0c0c0e;border:1px solid var(--line);position:relative;overflow:hidden}
+  .thermo-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:99px;background:linear-gradient(90deg,#3a7bff,#f4b020,#F47B20,#e23b2e);transition:width 1s linear}
+  .thermo-read{font-family:'Oswald';font-size:40px;font-weight:700;min-width:130px}
+  .targets{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+  .target{background:#0c0c0e;border:1px solid var(--line);border-radius:12px;padding:14px}
+  .target .k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .target .v{font-family:'Oswald';font-size:22px;font-weight:600;margin-top:3px}
+  .target .v.safe{color:var(--green)}
+  .target .v.tex{color:var(--ember)}
+  .sim-tip{font-size:13.5px;color:var(--muted);border-left:2px solid var(--ember);padding-left:14px}
+  .sim-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .sim-status{font-size:13px;font-weight:600;padding:8px 0}
+
+  /* USDA table */
+  .usda{width:100%;border-collapse:collapse;margin-top:22px;font-size:14px}
+  .usda th,.usda td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .usda th{font-family:'Oswald';font-weight:600;text-transform:uppercase;font-size:12.5px;letter-spacing:.06em;color:var(--muted)}
+  .usda td b{color:var(--green)}
+  .usda tr:hover td{background:rgba(255,255,255,.02)}
+
+  /* Story / article */
+  .prose{max-width:760px}
+  .prose p{margin:0 0 18px;color:rgba(245,243,239,.78)}
+  .prose h3{font-size:22px;margin:30px 0 12px;font-weight:600}
+  .pull{font-family:'Oswald';font-size:clamp(22px,3vw,30px);font-weight:500;line-height:1.3;color:var(--text);border-left:3px solid var(--ember);padding:6px 0 6px 22px;margin:26px 0}
+
+  /* CTA */
+  .cta{background:linear-gradient(150deg,var(--ember),#c2540f);border-radius:26px;padding:clamp(36px,5vw,56px);text-align:center;color:#160a02;position:relative;overflow:hidden}
+  .cta h2{color:#160a02}
+  .cta .btn-dark{background:#0A0A0B;color:var(--text)}
+  .cta .btn-dark:hover{background:#000}
+
+  /* Footer */
+  footer.site{background:var(--bg2);border-top:1px solid var(--line);padding:54px 0 30px;margin-top:0}
+  .f-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:30px}
+  .f-grid h4{font-family:'Oswald';font-size:14px;text-transform:uppercase;margin-bottom:12px}
+  .f-grid a,.f-grid li{color:var(--muted);font-size:13.5px;padding:3px 0;display:block;list-style:none}
+  .f-grid a:hover{color:var(--ember)}
+  .f-bottom{border-top:1px solid var(--line);margin-top:30px;padding-top:20px;font-size:12.5px;color:var(--muted)}
+
+  /* Back home floating */
+  .home-fab{position:fixed;left:18px;bottom:18px;z-index:60;background:rgba(11,12,15,.9);border:1px solid var(--line);color:var(--text);font-size:13px;font-weight:600;padding:11px 16px;border-radius:99px;backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.4);transition:.15s}
+  .home-fab:hover{border-color:var(--ember);color:var(--ember)}
+
+  @media(max-width:860px){
+    .mech{grid-template-columns:1fr}
+    .sim{grid-template-columns:1fr}
+    .sim-foods{flex-direction:row;overflow-x:auto;max-height:none}
+    .food-btn{min-width:170px}
+    .f-grid{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:640px){
+    .nav-links{display:none}
+    .burger{display:flex}
+    .nav-links.open{display:flex;position:fixed;top:var(--header-h);left:0;right:0;flex-direction:column;background:var(--bg);padding:14px 24px;border-bottom:1px solid var(--line)}
+    .f-grid{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="brand"><span class="mk">D</span><span>Duy's Oven</span></a>
+    <nav class="nav-links" id="navlinks">
+      <a href="#viewer-sec">Mô phỏng 3D</a>
+      <a href="#chuc-nang">2 chức năng</a>
+      <a href="#co-che">Cơ chế</a>
+      <a href="#mo-phong-nuong">Nướng & USDA</a>
+      <a href="#ung-dung">Ứng dụng</a>
+      <a href="#cau-chuyen">Câu chuyện</a>
+      <a href="#dat-hang" class="btn btn-p" style="padding:8px 16px;font-size:13px;margin-left:6px">Đặt hàng</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:8px">
+      <select class="lang" id="lang" aria-label="Ngôn ngữ">
+        <option value="vi">VI</option><option value="en">EN</option><option value="ko">KO</option>
+        <option value="th">TH</option><option value="de">DE</option><option value="ja">JA</option>
+      </select>
+      <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Duy's Oven · Hybrid Series</span>
+    <h1>Lò Nướng Than<br><span class="ember">Tách Khói</span> Hybrid 65L</h1>
+    <p class="sub">Một cỗ lò, hai chất chơi: <b>nướng than tách khói</b> sạch vị mỗi ngày, và <b>xông khói low&nbsp;&amp;&nbsp;slow</b> chuẩn Texas khi muốn. Thép thật, lửa thật, khói được kiểm soát từ gốc.</p>
+    <div class="chips">
+      <span class="chip">Vỉ 55×37 cm</span>
+      <span class="chip">Quạt gió 7W · 12V/USB-C</span>
+      <span class="chip">Buồng xông khói rời</span>
+      <span class="chip">Thép 60 kg · có bánh xe</span>
+    </div>
+    <div class="btnrow">
+      <a href="#viewer-sec" class="btn btn-p">Xem mô phỏng 3D ↗</a>
+      <a href="#mo-phong-nuong" class="btn btn-o">Mô phỏng nướng theo USDA →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3D VIEWER ===== -->
+<section class="sec" id="viewer-sec">
+  <div class="wrap">
+    <span class="eyebrow">Mô phỏng 3D</span>
+    <h2>Xoay, mở nắp, xem cơ chế bên trong</h2>
+    <p class="lead">Kéo để xoay lò. Bật chế độ để thấy đường đi của nhiệt, khói và dầu mỡ — dựng theo đúng tỉ lệ bản vẽ kỹ thuật.</p>
+    <div class="stage" style="margin-top:24px">
+      <canvas id="c3d"></canvas>
+      <div class="v-load" id="vload">Đang dựng mô hình 3D…</div>
+      <div class="v-hint">🖱️ Kéo để xoay · cuộn để phóng to</div>
+      <div class="v-controls">
+        <button data-act="lid" id="btnLid">Mở nắp</button>
+        <button data-act="mode" data-mode="grill" class="on" id="btnGrill">🔥 Tách khói</button>
+        <button data-act="mode" data-mode="smoke" id="btnSmoke">💨 Xông khói</button>
+        <button data-act="reset">↺ Đặt lại góc</button>
+      </div>
+    </div>
+    <div class="parts-legend">
+      <span><i style="background:#3a3a40"></i>Thân lò &amp; nắp</span>
+      <span><i style="background:#F47B20"></i>Hộc than / buồng đốt</span>
+      <span><i style="background:#9aa0aa"></i>Vỉ nướng &amp; mâm hứng mỡ</span>
+      <span><i style="background:#6b7280"></i>Ống khói</span>
+      <span><i style="background:#cfd3da"></i>Buồng xông khói</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HAI CHUC NANG ===== -->
+<section class="sec" id="chuc-nang" style="background:var(--bg2)">
+  <div class="wrap">
+    <span class="eyebrow">Thiết kế Hybrid</span>
+    <h2>Hai chức năng trong một cỗ lò</h2>
+    <div class="func-tabs">
+      <button class="on" data-fn="grill">🔥 Nướng than tách khói</button>
+      <button data-fn="smoke">💨 Xông khói low &amp; slow</button>
+    </div>
+    <div class="func-panel on" data-fp="grill">
+      <div class="grid g2">
+        <div class="card">
+          <div class="ico">🔥</div>
+          <h3>Than hai bên, thức ăn ở giữa</h3>
+          <p>Hai hộc than đặt hai bên hông, miếng thịt nằm chính giữa. Mỡ rơi thẳng xuống <b>mâm hứng ở giữa</b> — không chạm than, nên <b>không bùng lửa, không khói khét, không khói độc</b>. Đó là nguyên lý "tách khói".</p>
+        </div>
+        <div class="card">
+          <div class="ico">🌀</div>
+          <h3>Quạt gió cưỡng bức 7W</h3>
+          <p>Quạt sò cấp oxy và đẩy luồng khí nóng đối lưu đều khắp khoang 65L — chín đều, ít phải trở vỉ. Cấp nguồn <b>12V DC hoặc USB-C</b>, chạy được cả bằng sạc dự phòng khi đi dã ngoại.</p>
+        </div>
+      </div>
+    </div>
+    <div class="func-panel" data-fp="smoke">
+      <div class="grid g2">
+        <div class="card">
+          <div class="ico">💨</div>
+          <h3>Buồng xông khói riêng (offset)</h3>
+          <p>Buồng đốt bên hông đốt than củi tạo khói thơm. Khói đi xuyên thân lò, bao trọn miếng thịt rồi thoát ở ống khói — kiểu offset smoker Texas để nấu <b>low &amp; slow</b> nhiều giờ.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🎚️</div>
+          <h3>Cánh gió điều nhiệt</h3>
+          <p>Cánh gió điều tiết lượng oxy vào buồng xông khói, giữ nhiệt ổn định ở dải 95–135°C suốt buổi nấu. Đồng hồ trên nắp theo dõi nhiệt thực tế trong khoang.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CO CHE / KHOA HOC ===== -->
+<section class="sec" id="co-che">
+  <div class="wrap">
+    <span class="eyebrow">Cơ chế &amp; khoa học</span>
+    <h2>Vì sao "tách khói" lại sạch vị</h2>
+    <div class="mech" style="margin-top:24px">
+      <div class="mech-fig">
+        <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="meat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b5651d"/><stop offset="1" stop-color="#7a3e12"/></linearGradient>
+          </defs>
+          <!-- side coals -->
+          <rect x="34" y="150" width="70" height="40" rx="6" fill="#F47B20"/>
+          <rect x="296" y="150" width="70" height="40" rx="6" fill="#F47B20"/>
+          <text x="69" y="210" fill="#F47B20" font-size="12" text-anchor="middle" font-family="Oswald">Hộc than 1</text>
+          <text x="331" y="210" fill="#F47B20" font-size="12" text-anchor="middle" font-family="Oswald">Hộc than 2</text>
+          <!-- glow -->
+          <ellipse cx="69" cy="150" rx="55" ry="20" fill="#F47B20" opacity=".25"/>
+          <ellipse cx="331" cy="150" rx="55" ry="20" fill="#F47B20" opacity=".25"/>
+          <!-- grate -->
+          <line x1="120" y1="120" x2="280" y2="120" stroke="#9aa0aa" stroke-width="3"/>
+          <g stroke="#9aa0aa" stroke-width="2">
+            <line x1="140" y1="114" x2="140" y2="126"/><line x1="170" y1="114" x2="170" y2="126"/>
+            <line x1="200" y1="114" x2="200" y2="126"/><line x1="230" y1="114" x2="230" y2="126"/><line x1="260" y1="114" x2="260" y2="126"/>
+          </g>
+          <!-- meat -->
+          <rect x="172" y="98" width="56" height="20" rx="7" fill="url(#meat)"/>
+          <!-- convection arrows -->
+          <path d="M104 150 q40 -50 96 -52" fill="none" stroke="#F47B20" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M296 150 q-40 -50 -96 -52" fill="none" stroke="#F47B20" stroke-width="2" stroke-dasharray="4 4"/>
+          <!-- fat drops -->
+          <circle cx="200" cy="135" r="3.5" fill="#ffd27a"/>
+          <circle cx="196" cy="158" r="3.5" fill="#ffd27a"/>
+          <circle cx="204" cy="178" r="3.5" fill="#ffd27a"/>
+          <!-- center tray -->
+          <rect x="150" y="196" width="100" height="14" rx="5" fill="#9aa0aa"/>
+          <text x="200" y="234" fill="#9aa0aa" font-size="12" text-anchor="middle" font-family="Oswald">Mâm hứng mỡ (giữa)</text>
+          <text x="200" y="70" fill="#F5F3EF" font-size="13" text-anchor="middle" font-family="Oswald">Nhiệt đối lưu bao quanh thịt</text>
+        </svg>
+      </div>
+      <div>
+        <div class="card" style="background:transparent;border:none;padding:0;gap:18px">
+          <div>
+            <h3 style="font-family:'Oswald';font-size:20px;margin-bottom:6px">1 · Khói khét sinh ra từ đâu?</h3>
+            <p style="color:var(--muted);font-size:14.5px">Khi mỡ nóng chảy rơi vào than đỏ, nó cháy không hoàn toàn và sinh ra <b>PAHs</b> và khói khét — chính thứ làm cay mắt, ám mùi và bám vị đắng lên thịt.</p>
+          </div>
+          <div>
+            <h3 style="font-family:'Oswald';font-size:20px;margin-bottom:6px">2 · Tách khói = đặt than lệch</h3>
+            <p style="color:var(--muted);font-size:14.5px">Đưa than ra <b>hai bên</b>, thức ăn nằm giữa. Mỡ rơi thẳng xuống mâm hứng, <b>không bao giờ chạm than</b>. Không có phản ứng mỡ–than thì không có khói khét.</p>
+          </div>
+          <div>
+            <h3 style="font-family:'Oswald';font-size:20px;margin-bottom:6px">3 · Đối lưu cưỡng bức</h3>
+            <p style="color:var(--muted);font-size:14.5px">Quạt 7W tạo dòng khí nóng vòng quanh miếng thịt (như lò convection). Nhiệt truyền bằng <b>đối lưu</b> thay vì bức xạ trực tiếp — chín đều từ ngoài vào, giữ ẩm tốt hơn.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MO PHONG NUONG + USDA ===== -->
+<section class="sec" id="mo-phong-nuong" style="background:var(--bg2)">
+  <div class="wrap">
+    <span class="eyebrow">Mô phỏng nướng · Nhiệt độ an toàn USDA</span>
+    <h2>Chọn món — xem nướng tới đúng nhiệt</h2>
+    <p class="lead">Mỗi món có nhiệt độ lõi an toàn theo USDA và nhiệt "ngon" theo kết cấu. Bấm một món rồi "Bắt đầu nướng" để xem nhiệt lõi tăng dần.</p>
+    <div class="sim" style="margin-top:24px">
+      <div class="sim-foods" id="foods"></div>
+      <div class="sim-panel">
+        <div class="sim-head">
+          <h3 id="f-name">—</h3>
+          <span class="method-tag m-grill" id="f-method">—</span>
+        </div>
+        <div class="thermo">
+          <div class="thermo-read" id="f-temp">25°C</div>
+          <div class="thermo-bar"><div class="thermo-fill" id="f-fill"></div></div>
+        </div>
+        <div class="targets">
+          <div class="target"><div class="k">An toàn USDA (lõi)</div><div class="v safe" id="f-safe">—</div></div>
+          <div class="target"><div class="k">Nhiệt "ngon" (kết cấu)</div><div class="v tex" id="f-tex">—</div></div>
+          <div class="target"><div class="k">Thời gian ước tính</div><div class="v" id="f-time">—</div></div>
+        </div>
+        <div class="sim-tip" id="f-tip">Chọn một món bên trái để bắt đầu.</div>
+        <div class="sim-actions">
+          <button class="btn btn-p" id="f-start">Bắt đầu nướng ▶</button>
+          <button class="btn btn-o" id="f-reset">Đặt lại</button>
+        </div>
+        <div class="sim-status" id="f-status"></div>
+      </div>
+    </div>
+
+    <h3 class="osw" style="font-size:22px;margin-top:46px">Bảng nhiệt độ an toàn USDA</h3>
+    <table class="usda">
+      <thead><tr><th>Thực phẩm</th><th>Nhiệt độ lõi an toàn</th><th>Ghi chú</th></tr></thead>
+      <tbody>
+        <tr><td>Gia cầm (gà, vịt — nguyên con &amp; miếng)</td><td><b>74°C / 165°F</b></td><td>Đo phần dày nhất, không chạm xương</td></tr>
+        <tr><td>Thịt xay (bò, heo, cừu)</td><td><b>71°C / 160°F</b></td><td>Xúc xích tươi, burger</td></tr>
+        <tr><td>Bò, bê, cừu (steak, miếng nguyên)</td><td><b>63°C / 145°F</b></td><td>Nghỉ thịt 3 phút sau khi nướng</td></tr>
+        <tr><td>Heo (miếng nguyên, sườn)</td><td><b>63°C / 145°F</b></td><td>Nghỉ 3 phút; BBQ ribs ngon ở 90–96°C</td></tr>
+        <tr><td>Cá &amp; hải sản</td><td><b>63°C / 145°F</b></td><td>Thịt đục, tách lớp dễ dàng</td></tr>
+        <tr><td>Hâm lại thức ăn chín</td><td><b>74°C / 165°F</b></td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12.5px;color:var(--muted);margin-top:12px">Nguồn: USDA Food Safety and Inspection Service. Với món BBQ low &amp; slow (brisket, ribs, pulled pork), thịt an toàn từ 63–71°C nhưng chỉ <b>mềm rục</b> khi collagen tan ở 88–96°C — nên nhiệt "ngon" cao hơn nhiệt an toàn.</p>
+  </div>
+</section>
+
+<!-- ===== UNG DUNG ===== -->
+<section class="sec" id="ung-dung">
+  <div class="wrap">
+    <span class="eyebrow">Ứng dụng</span>
+    <h2>Một cỗ lò, nhiều cách chơi</h2>
+    <div class="grid g3" style="margin-top:24px">
+      <div class="card"><div class="ico">🏡</div><h3>Tiệc sân vườn gia đình</h3><p>Nướng ba chỉ, gà, hải sản cho cả nhà mà bếp không ám khói, hàng xóm không phàn nàn. Bánh xe đẩy ra vào dễ dàng.</p></div>
+      <div class="card"><div class="ico">🥩</div><h3>BBQ low &amp; slow cuối tuần</h3><p>Brisket, sườn heo, pulled pork xông khói 6–12 giờ chuẩn Texas. Buồng khói rời giữ nhiệt ổn định cả buổi.</p></div>
+      <div class="card"><div class="ico">🏪</div><h3>Quán nướng &amp; food stall</h3><p>Công suất vỉ 55×37 cm, nhiệt đối lưu đều — ra món nhanh, đồng đều, sạch khói trong không gian kín.</p></div>
+      <div class="card"><div class="ico">🏕️</div><h3>Dã ngoại &amp; camping</h3><p>Quạt chạy bằng sạc dự phòng USB-C. Mang đi cắm trại, bãi biển, vẫn nướng tách khói đúng vị.</p></div>
+      <div class="card"><div class="ico">🐟</div><h3>Cá hồi &amp; đồ xông khói nguội</h3><p>Xông khói nhiệt thấp cho cá hồi, phô mai, ức gà — hương khói gỗ sồi thấm sâu, an toàn theo nhiệt USDA.</p></div>
+      <div class="card"><div class="ico">🎓</div><h3>Học &amp; trải nghiệm BBQ</h3><p>Hai chế độ trong một lò là giáo cụ tuyệt vời để hiểu sự khác nhau giữa grilling và smoking.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CAU CHUYEN ===== -->
+<section class="sec" id="cau-chuyen" style="background:var(--bg2)">
+  <div class="wrap">
+    <span class="eyebrow">Câu chuyện</span>
+    <h2>Từ một bữa nướng cay mắt</h2>
+    <div class="prose" style="margin-top:20px">
+      <p>Duy's Oven bắt đầu từ 2018, từ một điều rất đời: nướng than ngon thật, nhưng cả nhà ai cũng cay mắt, áo ám mùi, hàng xóm đóng cửa sổ. Khói khét không phải là "đặc sản" của than — nó là <b>lỗi thiết kế</b>: mỡ rơi vào than.</p>
+      <p class="pull">"Giữ được lửa than thật, mà bỏ được khói khét — đó là bài toán chúng tôi theo đuổi suốt nhiều năm."</p>
+      <p>Lò Hybrid 65L là câu trả lời mới nhất. Nó không bắt bạn chọn giữa <b>tiện mỗi ngày</b> và <b>chất chơi cuối tuần</b>. Ngày thường, bật chế độ tách khói, quạt gió lên, 15 phút sau đã có mẻ thịt sạch vị. Cuối tuần rảnh, đốt buồng xông khói, hạ nhiệt xuống low &amp; slow, ủ một tảng brisket suốt buổi chiều.</p>
+      <p>Mỗi cỗ lò vẫn được chế tác thủ công tại Việt Nam: thân sắt sơn chịu nhiệt, vỉ inox tiếp xúc thực phẩm, cân chỉnh từng cánh gió. Thép thật, lửa thật — chỉ khói là được kiểm soát.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BAI VIET MARKETING ===== -->
+<section class="sec" id="bai-viet">
+  <div class="wrap">
+    <span class="eyebrow">Góc kiến thức</span>
+    <h2>Hybrid 65L: nướng sạch mỗi ngày, xông khói khi muốn</h2>
+    <div class="prose" style="margin-top:20px">
+      <p>Người mê BBQ thường phải sắm hai thiết bị: một lò nướng than cho bữa nhanh, và một offset smoker cồng kềnh cho những buổi low &amp; slow. Lò Hybrid 65L của Duy's Oven gộp cả hai vào một thân lò 60 kg có bánh xe — tiết kiệm tiền, tiết kiệm chỗ, và quan trọng nhất: <b>tiết kiệm khói cho lá phổi của bạn</b>.</p>
+      <h3>Tách khói không phải chiêu marketing</h3>
+      <p>Nguyên lý rất vật lý: khói khét và các hợp chất PAH sinh ra khi mỡ gặp than đỏ. Đặt than sang hai bên, để mỡ rơi vào mâm hứng ở giữa, và phản ứng đó đơn giản là <b>không xảy ra</b>. Kết hợp quạt đối lưu 7W, miếng thịt chín đều bằng dòng khí nóng thay vì bị "nướng cháy" bởi bức xạ trực tiếp.</p>
+      <h3>Khi nào dùng chế độ xông khói?</h3>
+      <p>Khi bạn muốn hương gỗ sồi thấm sâu và kết cấu mềm rục: brisket, sườn heo, pulled pork, cá hồi. Buồng xông khói rời cho phép giữ nhiệt thấp ổn định 95–135°C nhiều giờ — điều mà một lò nướng than thường không làm được.</p>
+      <h3>An toàn là phần không thỏa hiệp</h3>
+      <p>Mọi món đều nên đạt nhiệt độ lõi an toàn theo USDA: gà 74°C, thịt xay 71°C, steak/heo/cá 63°C. Một chiếc nhiệt kế lõi rẻ tiền là người bạn tốt nhất — ngon hay không tính sau, an toàn tính trước.</p>
+      <p style="color:var(--muted);font-size:13px">* Nội dung mang tính tham khảo. Luôn dùng nhiệt kế thực phẩm để kiểm tra nhiệt độ lõi.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== THONG SO + CTA ===== -->
+<section class="sec" id="thong-so" style="background:var(--bg2)">
+  <div class="wrap">
+    <span class="eyebrow">Thông số kỹ thuật</span>
+    <h2>Lò Hybrid 65L</h2>
+    <div class="grid g4" style="margin-top:24px">
+      <div class="card"><div class="num">60×40×155</div><p>Kích thước R×S×C (cm) · ngang cả buồng khói 85 cm</p></div>
+      <div class="card"><div class="num">55×37</div><p>Vỉ nướng (cm) · 1 tầng · cao 19 cm</p></div>
+      <div class="card"><div class="num">7W</div><p>Quạt gió · 12V / 0.59A · DC hoặc USB-C</p></div>
+      <div class="card"><div class="num">60 kg</div><p>Khối lượng · thép sơn chịu nhiệt · có bánh xe</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="dat-hang">
+  <div class="wrap">
+    <div class="cta">
+      <span class="eyebrow" style="color:#160a02">Đặt hàng</span>
+      <h2 style="margin:12px 0 10px">Rước Hybrid 65L về sân nhà</h2>
+      <p style="max-width:560px;margin:0 auto 22px;color:#160a02;font-weight:500">Giao toàn quốc · tư vấn chọn lò theo cách bạn nướng.</p>
+      <div class="btnrow" style="justify-content:center">
+        <a href="tel:0901691717" class="btn btn-dark">📞 090 169 1717</a>
+        <a href="lien-he.html" class="btn btn-dark">Liên hệ tư vấn →</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site">
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <a href="index.html" class="brand" style="font-size:18px"><span class="mk">D</span><span>Duy's Oven</span></a>
+        <p style="margin-top:14px;color:var(--muted);font-size:13.5px"><b style="color:var(--text)">CÔNG TY CPCN CƠ KHÍ NN HARMONIA</b><br>MST: 0315700830</p>
+      </div>
+      <div>
+        <h4>Sản phẩm</h4>
+        <a href="san-pham.html#tach-khoi">Lò tách khói</a>
+        <a href="san-pham.html#xong-khoi">Lò xông khói</a>
+        <a href="san-pham.html">Tất cả sản phẩm</a>
+      </div>
+      <div>
+        <h4>Liên hệ</h4>
+        <a href="tel:0901691717">Hotline: 090 169 1717</a>
+        <a href="mailto:info@duyoven.com">info@duyoven.com</a>
+        <a href="https://www.duyoven.com" target="_blank" rel="noopener">www.duyoven.com</a>
+      </div>
+    </div>
+    <div class="f-bottom">© 2026 Duy's Oven — Đam mê than hồng. Chịu trách nhiệm: Ô. Nguyễn Vĩnh Duy.</div>
+  </div>
+</footer>
+
+<a href="index.html" class="home-fab">← Trang chủ</a>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/* ============ NAV / LANG / TABS ============ */
+const burger=document.getElementById('burger'),navlinks=document.getElementById('navlinks');
+burger.addEventListener('click',()=>navlinks.classList.toggle('open'));
+navlinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navlinks.classList.remove('open')));
+
+const I18N={
+  vi:{n3d:'Mô phỏng 3D',nfn:'2 chức năng',nco:'Cơ chế',nnuong:'Nướng & USDA',nud:'Ứng dụng',ncau:'Câu chuyện',order:'Đặt hàng'},
+  en:{n3d:'3D Model',nfn:'2 Functions',nco:'Mechanism',nnuong:'Cooking & USDA',nud:'Uses',ncau:'Story',order:'Order'},
+  ko:{n3d:'3D 모델',nfn:'2가지 기능',nco:'원리',nnuong:'조리 & USDA',nud:'활용',ncau:'이야기',order:'주문'},
+  th:{n3d:'โมเดล 3D',nfn:'2 ฟังก์ชัน',nco:'กลไก',nnuong:'ปรุง & USDA',nud:'การใช้งาน',ncau:'เรื่องราว',order:'สั่งซื้อ'},
+  de:{n3d:'3D-Modell',nfn:'2 Funktionen',nco:'Mechanik',nnuong:'Garen & USDA',nud:'Anwendung',ncau:'Geschichte',order:'Bestellen'},
+  ja:{n3d:'3Dモデル',nfn:'2機能',nco:'仕組み',nnuong:'調理 & USDA',nud:'用途',ncau:'ストーリー',order:'注文'}
+};
+document.getElementById('lang').addEventListener('change',e=>{
+  const t=I18N[e.target.value]||I18N.vi,L=navlinks.querySelectorAll('a');
+  L[0].textContent=t.n3d;L[1].textContent=t.nfn;L[2].textContent=t.nco;L[3].textContent=t.nnuong;L[4].textContent=t.nud;L[5].textContent=t.ncau;L[6].textContent=t.order;
+});
+
+document.querySelectorAll('.func-tabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.func-tabs button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.querySelectorAll('.func-panel').forEach(p=>p.classList.toggle('on',p.dataset.fp===b.dataset.fn));
+}));
+
+/* ============ COOKING SIMULATOR ============ */
+const FOODS=[
+  {emo:'🍗',name:'Đùi gà',method:'grill',safe:74,tex:78,time:'18–22 phút',tip:'Da hướng xuống than trước cho giòn, đo phần dày nhất không chạm xương.'},
+  {emo:'🥓',name:'Ba chỉ heo',method:'grill',safe:63,tex:71,time:'12–16 phút',tip:'Mỡ rơi vào mâm hứng — không bùng lửa nên không cháy đen.'},
+  {emo:'🥩',name:'Steak bò (medium)',method:'grill',safe:63,tex:57,time:'8–12 phút',tip:'Medium ~57°C; nghỉ thịt 3 phút trước khi cắt. USDA an toàn tối thiểu 63°C.'},
+  {emo:'🍤',name:'Tôm / hải sản',method:'grill',safe:63,tex:63,time:'4–6 phút',tip:'Chín rất nhanh, thịt chuyển đục là được — đừng nướng quá.'},
+  {emo:'🌽',name:'Bắp & rau củ',method:'grill',safe:0,tex:0,time:'10–14 phút',tip:'Không cần nhiệt lõi an toàn; nướng tới khi xém cạnh, ngọt nước.'},
+  {emo:'🌭',name:'Xúc xích tươi',method:'grill',safe:71,tex:71,time:'12–15 phút',tip:'Thịt xay nên cần 71°C; lăn đều cho vàng các mặt.'},
+  {emo:'🥩',name:'Brisket bò (xông khói)',method:'smoke',safe:71,tex:94,time:'8–12 giờ',tip:'An toàn từ 71°C nhưng chỉ mềm rục khi collagen tan ~94°C. Giữ buồng khói 110–120°C.'},
+  {emo:'🍖',name:'Sườn heo (ribs)',method:'smoke',safe:63,tex:92,time:'5–6 giờ',tip:'Phương pháp 3-2-1; ngon nhất ~92°C khi thịt tách xương.'},
+  {emo:'🐷',name:'Pulled pork (vai heo)',method:'smoke',safe:63,tex:95,time:'8–10 giờ',tip:'Xé tơi ở ~95°C; ủ giấy bạc giai đoạn cuối để giữ ẩm.'},
+  {emo:'🐟',name:'Cá hồi xông khói',method:'smoke',safe:63,tex:63,time:'1.5–3 giờ',tip:'Xông khói nhiệt thấp ~80°C buồng; lõi đạt 63°C là an toàn.'},
+];
+const foodsEl=document.getElementById('foods');
+let cur=null,timer=null,curTemp=25;
+FOODS.forEach((f,i)=>{
+  const b=document.createElement('button');b.className='food-btn';b.innerHTML=`<span class="emo">${f.emo}</span><span><b>${f.name}</b><small>${f.method==='grill'?'Tách khói':'Xông khói'} · ${f.time}</small></span>`;
+  b.addEventListener('click',()=>selectFood(i,b));foodsEl.appendChild(b);
+});
+function selectFood(i,b){
+  document.querySelectorAll('.food-btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  cur=FOODS[i];stopCook();curTemp=25;
+  document.getElementById('f-name').textContent=cur.name;
+  const m=document.getElementById('f-method');
+  m.textContent=cur.method==='grill'?'🔥 Tách khói':'💨 Xông khói';m.className='method-tag '+(cur.method==='grill'?'m-grill':'m-smoke');
+  document.getElementById('f-safe').textContent=cur.safe?cur.safe+'°C':'—';
+  document.getElementById('f-tex').textContent=cur.tex?cur.tex+'°C':'tùy thích';
+  document.getElementById('f-time').textContent=cur.time;
+  document.getElementById('f-tip').textContent=cur.tip;
+  updateThermo();document.getElementById('f-status').textContent='';
+}
+function updateThermo(){
+  document.getElementById('f-temp').textContent=Math.round(curTemp)+'°C';
+  const pct=Math.min(100,(curTemp-20)/(100-20)*100);
+  document.getElementById('f-fill').style.width=pct+'%';
+}
+function stopCook(){if(timer){clearInterval(timer);timer=null;}}
+document.getElementById('f-start').addEventListener('click',()=>{
+  if(!cur){document.getElementById('f-status').textContent='⬅ Hãy chọn một món trước.';return;}
+  stopCook();const goal=cur.tex||90;
+  document.getElementById('f-status').textContent='Đang nướng…';
+  timer=setInterval(()=>{
+    const step=(goal-curTemp)*0.06+0.4;curTemp=Math.min(goal,curTemp+step);updateThermo();
+    const st=document.getElementById('f-status');
+    if(cur.safe&&curTemp>=cur.safe&&curTemp<goal-0.5){st.innerHTML='<span style="color:var(--green)">✓ Đã đạt nhiệt an toàn USDA</span>';}
+    if(curTemp>=goal-0.4){curTemp=goal;updateThermo();stopCook();
+      st.innerHTML=cur.safe?'<span style="color:var(--ember)">🍽️ Hoàn tất — đạt nhiệt ngon nhất!</span>':'<span style="color:var(--ember)">🍽️ Chín tới, xém cạnh!</span>';}
+  },140);
+});
+document.getElementById('f-reset').addEventListener('click',()=>{if(cur){curTemp=25;stopCook();updateThermo();document.getElementById('f-status').textContent='';}});
+selectFood(0,foodsEl.children[0]);
+
+/* ============ THREE.JS 3D MODEL ============ */
+(function(){
+  const canvas=document.getElementById('c3d'),stage=canvas.parentElement;
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x09090a);
+  const cam=new THREE.PerspectiveCamera(42,stage.clientWidth/stage.clientHeight,0.1,100);
+  cam.position.set(3.4,2.2,4.4);
+  const r=new THREE.WebGLRenderer({canvas,antialias:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
+  function size(){r.setSize(stage.clientWidth,stage.clientHeight,false);cam.aspect=stage.clientWidth/stage.clientHeight;cam.updateProjectionMatrix();}
+  size();
+  const ctrl=new THREE.OrbitControls(cam,canvas);ctrl.enableDamping=true;ctrl.dampingFactor=.08;ctrl.minDistance=3;ctrl.maxDistance=9;ctrl.target.set(0,1,0);ctrl.maxPolarAngle=Math.PI/1.95;
+  scene.add(new THREE.HemisphereLight(0xbcd2ff,0x1a1208,.55));
+  const key=new THREE.DirectionalLight(0xfff2e0,1.1);key.position.set(4,6,4);scene.add(key);
+  const rim=new THREE.DirectionalLight(0xF47B20,.6);rim.position.set(-4,2,-3);scene.add(rim);
+
+  const steel=new THREE.MeshStandardMaterial({color:0x2e2e34,roughness:.55,metalness:.65});
+  const steelDark=new THREE.MeshStandardMaterial({color:0x202024,roughness:.6,metalness:.6});
+  const grateMat=new THREE.MeshStandardMaterial({color:0x9aa0aa,roughness:.4,metalness:.8});
+  const chimMat=new THREE.MeshStandardMaterial({color:0x4a4e56,roughness:.5,metalness:.7});
+  const fireMat=new THREE.MeshStandardMaterial({color:0xF47B20,emissive:0x000000,roughness:.5,metalness:.2});
+  const trayMat=new THREE.MeshStandardMaterial({color:0x82868f,roughness:.5,metalness:.6});
+
+  const oven=new THREE.Group();scene.add(oven);
+
+  // Main barrel (horizontal cylinder along X)
+  const barrelR=0.95,barrelL=1.7;
+  const barrelBottom=new THREE.Mesh(new THREE.CylinderGeometry(barrelR,barrelR,barrelL,40,1,false,0,Math.PI),steel);
+  barrelBottom.rotation.z=Math.PI/2;barrelBottom.position.y=1.25;oven.add(barrelBottom);
+  // Lid group (upper half) rotating around hinge at back
+  const lid=new THREE.Group();lid.position.set(0,1.25,0);
+  const lidMesh=new THREE.Mesh(new THREE.CylinderGeometry(barrelR,barrelR,barrelL,40,1,false,Math.PI,Math.PI),steel);
+  lidMesh.rotation.z=Math.PI/2;lid.add(lidMesh);
+  // temp gauge on lid front
+  const gauge=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.11,0.05,20),new THREE.MeshStandardMaterial({color:0xdadde2,roughness:.3,metalness:.5}));
+  gauge.rotation.x=Math.PI/2;gauge.position.set(0,barrelR*0.62,barrelR*0.78);lid.add(gauge);
+  oven.add(lid);
+  // end caps
+  [-barrelL/2,barrelL/2].forEach(x=>{const cap=new THREE.Mesh(new THREE.CircleGeometry(barrelR,40),steelDark);cap.rotation.y=Math.PI/2;cap.position.set(x,1.25,0);cap.scale.x=Math.sign(x);oven.add(cap);});
+
+  // Chimney (top, near left end)
+  const chim=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,1.05,20),chimMat);
+  chim.position.set(-barrelL/2+0.35,1.25+barrelR+0.45,0);oven.add(chim);
+
+  // Firebox (smoke chamber) on right side
+  const fireBox=new THREE.Group();fireBox.position.set(barrelL/2+0.5,1.05,0);
+  const fbBody=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,0.7,28),new THREE.MeshStandardMaterial({color:0x33343a,roughness:.55,metalness:.65}));
+  fbBody.rotation.z=Math.PI/2;fireBox.add(fbBody);
+  const fbCapMat=new THREE.MeshStandardMaterial({color:0xcfd3da,roughness:.4,metalness:.5});
+  const fbDoor=new THREE.Mesh(new THREE.CircleGeometry(0.5,28),fbCapMat);fbDoor.rotation.y=Math.PI/2;fbDoor.position.x=0.36;fireBox.add(fbDoor);
+  oven.add(fireBox);
+
+  // Grate inside (visible when lid open)
+  const grate=new THREE.Group();grate.position.y=1.32;
+  const gFrame=new THREE.Mesh(new THREE.BoxGeometry(barrelL*0.82,0.04,barrelR*1.15),grateMat);grate.add(gFrame);
+  for(let i=-6;i<=6;i++){const bar=new THREE.Mesh(new THREE.BoxGeometry(barrelL*0.82,0.05,0.025),grateMat);bar.position.z=i*0.07;grate.add(bar);}
+  oven.add(grate);
+
+  // Two side charcoal boxes (grill mode)
+  function coalBox(zside){const g=new THREE.Group();g.position.set(0,1.0,zside*(barrelR*0.55));
+    const box=new THREE.Mesh(new THREE.BoxGeometry(barrelL*0.8,0.18,0.32),steelDark);g.add(box);
+    const coals=new THREE.Mesh(new THREE.BoxGeometry(barrelL*0.74,0.1,0.26),fireMat.clone());coals.position.y=0.11;g.add(coals);g.userData.coals=coals.material;return g;}
+  const coalL=coalBox(-1),coalR=coalBox(1);oven.add(coalL);oven.add(coalR);
+  // center grease tray
+  const tray=new THREE.Mesh(new THREE.BoxGeometry(barrelL*0.7,0.05,0.4),trayMat);tray.position.set(0,0.92,0);oven.add(tray);
+  // fat drops
+  const drops=new THREE.Group();for(let i=0;i<5;i++){const d=new THREE.Mesh(new THREE.SphereGeometry(0.035,8,8),new THREE.MeshStandardMaterial({color:0xffd27a,emissive:0x553300}));d.position.set((i-2)*0.28,1.2,0);d.userData.base=Math.random();drops.add(d);}oven.add(drops);
+
+  // Smoke particles (smoke mode)
+  const smokeGeo=new THREE.BufferGeometry();const SN=120,sp=new Float32Array(SN*3);
+  for(let i=0;i<SN;i++){sp[i*3]=barrelL/2+0.5+(Math.random()-.5)*0.4;sp[i*3+1]=1.0+Math.random()*1.5;sp[i*3+2]=(Math.random()-.5)*0.4;}
+  smokeGeo.setAttribute('position',new THREE.BufferAttribute(sp,3));
+  const smoke=new THREE.Points(smokeGeo,new THREE.PointsMaterial({color:0xbfc4cc,size:0.09,transparent:true,opacity:0.5}));scene.add(smoke);
+
+  // Legs + shelf + wheels
+  const legMat=steelDark;
+  [[-1,1],[1,1],[-1,-1],[1,-1]].forEach(([sx,sz])=>{const leg=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,1.0,10),legMat);leg.position.set(sx*barrelL*0.32,0.45,sz*0.42);oven.add(leg);});
+  const shelf=new THREE.Mesh(new THREE.BoxGeometry(barrelL*0.74,0.05,0.85),legMat);shelf.position.y=0.18;oven.add(shelf);
+  [[-1],[1]].forEach(([sx])=>{const w=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.17,0.08,16),new THREE.MeshStandardMaterial({color:0x111114,roughness:.8}));w.rotation.x=Math.PI/2;w.position.set(sx*barrelL*0.34,0.17,0.55);oven.add(w);});
+  // side prep table
+  const ptable=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.04,0.7),legMat);ptable.position.set(-barrelL/2-0.32,1.0,0);oven.add(ptable);
+
+  oven.position.y=-0.2;
+
+  // ===== State & controls =====
+  let lidOpen=false,mode='grill',lidAng=0;
+  function setMode(m){mode=m;
+    const grill=m==='grill';
+    coalL.visible=coalR.visible=tray.visible=drops.visible=grill;
+    smoke.visible=!grill;
+    // firebox glow in smoke mode
+    fbBody.material.emissive=new THREE.Color(!grill?0x401500:0x000000);
+    document.getElementById('btnGrill').classList.toggle('on',grill);
+    document.getElementById('btnSmoke').classList.toggle('on',!grill);
+  }
+  setMode('grill');
+  document.querySelectorAll('.v-controls button').forEach(b=>b.addEventListener('click',()=>{
+    const a=b.dataset.act;
+    if(a==='lid'){lidOpen=!lidOpen;b.textContent=lidOpen?'Đóng nắp':'Mở nắp';}
+    if(a==='mode'){setMode(b.dataset.mode);if(!lidOpen){/*auto open to reveal*/}}
+    if(a==='reset'){cam.position.set(3.4,2.2,4.4);ctrl.target.set(0,1,0);}
+  }));
+
+  document.getElementById('vload').style.display='none';
+  const clock=new THREE.Clock();
+  function loop(){requestAnimationFrame(loop);const t=clock.getElapsedTime();
+    lidAng+=((lidOpen?-1.15:0)-lidAng)*0.12;lid.rotation.z=lidAng;
+    // ember pulse
+    const pulse=0.5+Math.sin(t*3)*0.25;
+    [coalL,coalR].forEach(c=>{if(c.visible)c.userData.coals.emissive=new THREE.Color(0x000000).lerp(new THREE.Color(0xF43b00),pulse);});
+    // fat drops fall
+    if(drops.visible)drops.children.forEach(d=>{d.position.y-=0.012;if(d.position.y<0.95)d.position.y=1.32;});
+    // smoke rise
+    if(smoke.visible){const pos=smokeGeo.attributes.position.array;for(let i=0;i<SN;i++){pos[i*3+1]+=0.012;if(pos[i*3+1]>3.2){pos[i*3]=barrelL/2+0.5+(Math.random()-.5)*0.4;pos[i*3+1]=1.0;}
+      // drift toward chimney
+      pos[i*3]+=(-barrelL/2+0.35-pos[i*3])*0.004;}smokeGeo.attributes.position.needsUpdate=true;}
+    ctrl.update();r.render(scene,cam);
+  }
+  loop();
+  addEventListener('resize',size);
+})();
+</script>
+</body>
+</html>
