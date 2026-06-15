@@ -20,6 +20,9 @@
   <style>
     ::selection { background: rgba(244,123,32,.35); }
     #top h1, #top span, .dz-home h2, .dz-home h3 { font-family: 'Oswald', sans-serif; }
+    .dz-home h1, .dz-home h2, .dz-home h3 { letter-spacing: .01em; }
+    .site-header .logo { flex: 0 0 auto; }
+    .site-header .logo img { height: 48px; width: auto; flex: none; object-fit: contain; }
     @keyframes tkSmoke { 0% { transform: translateY(0) scale(.7); opacity: 0; } 18% { opacity: .5; } 100% { transform: translateY(-46px) scale(1.7); opacity: 0; } }
     @keyframes dripFallTK { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: 1; } 96% { opacity: 1; } 100% { transform: translateY(176px); opacity: 0; } }
     @keyframes dripFallConv { 0% { transform: translateY(0); opacity: 0; } 18% { opacity: 1; } 92% { opacity: 1; } 100% { transform: translateY(54px); opacity: 0; } }
@@ -138,8 +141,8 @@
           <span style="font-size: 11px; letter-spacing: .08em; color: rgba(245,243,239,.5); text-transform: uppercase;">Năm thành lập</span>
         </div>
         <div style="flex: 1; min-width: 110px; display: flex; flex-direction: column; gap: 2px; border-left: 1px solid rgba(255,255,255,.1); padding-left: 20px;">
-          <span style="font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 600;">4 lò</span>
-          <span style="font-size: 11px; letter-spacing: .08em; color: rgba(245,243,239,.5); text-transform: uppercase;">Dòng sản phẩm</span>
+          <span style="font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 600;">50+</span>
+          <span style="font-size: 11px; letter-spacing: .08em; color: rgba(245,243,239,.5); text-transform: uppercase;">Sản phẩm</span>
         </div>
         <div style="flex: 1; min-width: 110px; display: flex; flex-direction: column; gap: 2px; border-left: 1px solid rgba(255,255,255,.1); padding-left: 20px;">
           <span style="font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 600;">100%</span>
@@ -200,7 +203,7 @@
       <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
         <div style="display: flex; flex-direction: column; gap: 14px; max-width: 720px;">
           <span style="font-size: 11.5px; letter-spacing: .24em; text-transform: uppercase; color: #F47B20; font-weight: 700;">Bộ sưu tập</span>
-          <h2 style="margin: 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: clamp(29px, 4.4vw, 44px); line-height: 1.1; text-transform: uppercase;">Bốn cỗ lò, một chuẩn khói sạch</h2>
+          <h2 style="margin: 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: clamp(29px, 4.4vw, 44px); line-height: 1.1; text-transform: uppercase;">Những cỗ lò, một chuẩn khói sạch</h2>
           <p style="margin: 0; font-size: 16px; line-height: 1.65; color: rgba(245,243,239,.62); text-wrap: pretty;">Từ lò tách khói gập gọn cho ban công, tới lò xông khói offset cho cả bàn tiệc — chọn cỗ lò hợp với cách bạn nướng.</p>
         </div>
       </div>
@@ -211,7 +214,7 @@
         <a href="san-pham-tach-khoi-65l.html" style="text-decoration: none; color: inherit; background: #141417; border: 1px solid rgba(255,255,255,.1); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .18s, transform .18s;" style-hover="border-color: rgba(244,123,32,.55); transform: translateY(-3px);">
           <div style="position: relative; height: 200px; background: radial-gradient(ellipse 80% 80% at 50% 90%, rgba(244,123,32,.16), #1a1714); display: flex; align-items: center; justify-content: center; overflow: hidden;">
             <span style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 92px; color: transparent; -webkit-text-stroke: 1px rgba(244,123,32,.35); line-height: 1;">65L</span>
-            <span style="position: absolute; top: 14px; left: 16px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,243,239,.5); border: 1px solid rgba(255,255,255,.14); border-radius: 99px; padding: 5px 11px;">Lò để bàn</span>
+            <span style="position: absolute; top: 14px; left: 16px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,243,239,.5); border: 1px solid rgba(255,255,255,.14); border-radius: 99px; padding: 5px 11px;">Lò sân vườn</span>
           </div>
           <div style="padding: 24px; display: flex; flex-direction: column; gap: 12px; flex: 1;">
             <h3 style="margin: 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: .04em;">TK65L · LÒ THAN TÁCH KHÓI</h3>
@@ -229,7 +232,7 @@
         <a href="sp-pantina.html" style="text-decoration: none; color: inherit; background: #141417; border: 1px solid rgba(255,255,255,.1); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .18s, transform .18s;" style-hover="border-color: rgba(244,123,32,.55); transform: translateY(-3px);">
           <div style="position: relative; height: 200px; background: radial-gradient(ellipse 80% 80% at 50% 90%, rgba(244,123,32,.16), #1a1714); display: flex; align-items: center; justify-content: center; overflow: hidden;">
             <span style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 50px; letter-spacing: .12em; color: transparent; -webkit-text-stroke: 1px rgba(244,123,32,.35); line-height: 1;">PANTINA</span>
-            <span style="position: absolute; top: 14px; left: 16px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,243,239,.5); border: 1px solid rgba(255,255,255,.14); border-radius: 99px; padding: 5px 11px;">Gập gọn mang đi</span>
+            <span style="position: absolute; top: 14px; left: 16px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,243,239,.5); border: 1px solid rgba(255,255,255,.14); border-radius: 99px; padding: 5px 11px;">Để bàn · mang đi</span>
           </div>
           <div style="padding: 24px; display: flex; flex-direction: column; gap: 12px; flex: 1;">
             <h3 style="margin: 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 22px; letter-spacing: .04em;">PANTINA · LÒ TÁCH KHÓI GẬP GỌN</h3>
