@@ -33,6 +33,21 @@ const AI_SYS = [
   "QUAN TRỌNG về định dạng: khung chat chỉ hiển thị VĂN BẢN THUẦN, KHÔNG render Markdown. Vì vậy TUYỆT ĐỐI không dùng dấu Markdown: không dùng # hay ## (tiêu đề), không dùng ** hay __ (in đậm), không bảng. Trả lời như tin nhắn tự nhiên, 2–5 câu. Nếu cần liệt kê thì xuống dòng và bắt đầu bằng dấu gạch '– '. Tên model và giá viết thẳng trong câu, ví dụ: Lò Tách khói 65L giá 12.100.000đ."
 ].join(" ");
 
+const QUOTE_SYS = [
+  "Bạn là TRỢ LÝ BÁO GIÁ NỘI BỘ cho nhân viên sale của Duy's Oven (lò nướng than tách khói, lò BBQ, lò xông khói, lò pizza). Nhân viên mô tả nhu cầu khách bằng ngôn ngữ tự nhiên; bạn đề xuất sản phẩm phù hợp và soạn nháp đơn báo giá để điền vào hệ thống.",
+  "BẢNG GIÁ (VND, đã gồm VAT). Chỉ dùng đúng các mức giá này, TUYỆT ĐỐI không bịa giá khác:",
+  "- Pantina (nhỏ gọn, ~3 con gà): 7700000",
+  "- Lò Tách khói 65L: 12100000 | 80L: 15400000 | 85L: 16500000",
+  "- Lò Tách khói 125L / 125L Pro / 250L: cần báo giá riêng (đặt p=0)",
+  "- Hybrid than+gas 65L: 15400000 | 80L: 18700000 | 125L: 27500000",
+  "- Lò xông khói Hybrid 10050: 33000000",
+  "- Offset Smoker 10050: 24200000",
+  "- Lò Pizza Wood&Gas: 126500000",
+  "- Argentina Grill / Fastgrill / Lò quay / Eco: cần báo giá riêng (đặt p=0)",
+  "QUY TẮC: chọn 1–3 sản phẩm hợp nhu cầu (số người ăn, trong nhà/sân vườn/camping, ngân sách). Số lượng mặc định 1 trừ khi khách cần nhiều suất/nhiều chi nhánh. Với mặt hàng 'cần báo giá riêng' đặt p=0 và nhắc nhân viên tự điền giá trong 'reply'. Tôn trọng ngân sách khách nếu nêu.",
+  "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown, KHÔNG ```. Cấu trúc đúng: {\"items\":[{\"n\":\"Lò Tách khói 65L\",\"unit\":\"Cái\",\"p\":12100000,\"q\":1}],\"note\":\"ghi chú/điều khoản gợi ý ngắn\",\"deliv\":\"7-10 ngày\",\"warr\":\"12 tháng\",\"valid\":30,\"reply\":\"giải thích ngắn 2-3 câu bằng tiếng Việt cho nhân viên: vì sao chọn các model này\"}. Giá 'p' là số nguyên VND, không dấu phân cách, không chữ. Nếu thiếu thông tin cứ đề xuất phương án hợp lý nhất và nêu giả định trong 'reply'."
+].join("\n");
+
 const LANG_NAMES = { en: "English", zh: "Simplified Chinese", ko: "Korean", th: "Thai", de: "German" };
 
 const IMG_STYLE =
@@ -147,6 +162,51 @@ export default {
         }
         if (!reply) return jsonResp({ error: "Không có model khả dụng. " + lastErr }, 502);
         return jsonResp({ reply, model: used });
+      } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
+
+    // --- AI: trợ lý báo giá nội bộ (chỉ nhân viên) ---
+    if (url.pathname === "/api/bao-gia" && request.method === "POST") {
+      try {
+        if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+        if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
+        const body = await request.json();
+        const brief = String(body.brief || "").slice(0, 2000);
+        const hist = Array.isArray(body.messages) ? body.messages : [];
+        const conv = [];
+        hist.slice(-8).forEach((m) => {
+          if (m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+            conv.push({ role: m.role, content: m.content.slice(0, 2000) });
+        });
+        if (brief) conv.push({ role: "user", content: brief });
+        if (!conv.length) return jsonResp({ error: "Thiếu nội dung." }, 400);
+        const model = env.CLAUDE_MODEL_QUOTE || "claude-haiku-4-5";
+        const r = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
+          body: JSON.stringify({ model, max_tokens: 1200, system: QUOTE_SYS, messages: conv }),
+        });
+        if (!r.ok) return jsonResp({ error: "anthropic " + r.status + " " + (await r.text()).slice(0, 200) }, 502);
+        const j = await r.json();
+        const txt = (j.content || []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
+        let data = null;
+        try { data = JSON.parse(txt); } catch (e) { const mm = txt.match(/\{[\s\S]*\}/); if (mm) { try { data = JSON.parse(mm[0]); } catch (e2) {} } }
+        if (!data || typeof data !== "object") return jsonResp({ reply: txt || "Xin lỗi, chưa tạo được gợi ý.", items: [] });
+        const items = Array.isArray(data.items) ? data.items.slice(0, 20).map((it) => ({
+          n: String(it.n || it.name || "").slice(0, 120),
+          unit: String(it.unit || "Cái").slice(0, 20),
+          p: Math.max(0, Math.round(Number(it.p || it.price || 0)) || 0),
+          q: Math.max(1, Math.round(Number(it.q || it.qty || 1)) || 1),
+        })).filter((it) => it.n) : [];
+        return jsonResp({
+          reply: String(data.reply || "").slice(0, 2000),
+          items,
+          note: String(data.note || "").slice(0, 600),
+          deliv: String(data.deliv || "").slice(0, 120),
+          warr: String(data.warr || "").slice(0, 80),
+          valid: parseInt(data.valid) || 0,
+          model,
+        });
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
 
