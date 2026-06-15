@@ -53,7 +53,7 @@ const CONTRACT_SYS = [
   "Bạn là TRỢ LÝ LẬP HỢP ĐỒNG MUA BÁN nội bộ cho Duy's Oven. Nhân viên mô tả yêu cầu bằng ngôn ngữ tự nhiên (khách hàng, đơn hàng, điều kiện giao/thanh toán). Bạn ĐỌC kỹ và tự bóc tách rồi điền vào đúng các trường của hợp đồng.",
   "QUY ƯỚC: Bên A = BÊN MUA = khách hàng. Bên B = BÊN BÁN = Duy's Oven. Nếu nhân viên KHÔNG nêu Bên B khác thì để toàn bộ object B rỗng (hệ thống tự dùng HARMONIA mặc định).",
   "BẢNG GIÁ tham khảo (VND): Pantina 7700000; Lò Tách khói 65L 12100000, 80L 15400000, 85L 16500000; Hybrid 65L 15400000, 80L 18700000, 125L 27500000; Xông khói Hybrid 10050 33000000; Offset 10050 24200000; Lò Pizza Wood&Gas 126500000; hàng đặt riêng/khác đặt p=0. Nếu nhân viên nêu đơn giá cụ thể (giá dự án) thì DÙNG ĐÚNG số đó. Không bịa giá.",
-  "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown. Cấu trúc: {\"A\":{\"name\":\"\",\"addr\":\"\",\"phone\":\"\",\"email\":\"\",\"tax\":\"\",\"rep\":\"\",\"title\":\"\",\"bank\":\"\"},\"B\":{\"name\":\"\",\"addr\":\"\",\"phone\":\"\",\"email\":\"\",\"tax\":\"\",\"rep\":\"\",\"title\":\"\",\"bank\":\"\"},\"items\":[{\"n\":\"\",\"unit\":\"bộ\",\"p\":0,\"q\":1}],\"project\":\"\",\"delivery\":\"Đợt 1: ...\\nĐợt 2: ...\",\"payment\":\"Đợt 1: 30% ...\\nĐợt 2: ...\",\"warr\":24,\"reply\":\"giải thích ngắn 2-3 câu tiếng Việt cho nhân viên\"}. 'rep' ghi kèm kính ngữ ví dụ 'ông Nguyễn Văn A'. 'delivery' và 'payment' mỗi đợt một dòng. KHÔNG bịa thông tin khách (tên/SĐT/MST/email) — thiếu thì để chuỗi rỗng. 'warr' là số tháng (mặc định 24)."
+  "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown. Cấu trúc: {\"A\":{\"name\":\"\",\"addr\":\"\",\"phone\":\"\",\"email\":\"\",\"tax\":\"\",\"rep\":\"\",\"title\":\"\",\"bank\":\"\"},\"B\":{\"name\":\"\",\"addr\":\"\",\"phone\":\"\",\"email\":\"\",\"tax\":\"\",\"rep\":\"\",\"title\":\"\",\"bank\":\"\"},\"items\":[{\"n\":\"tên ngắn\",\"desc\":\"mô tả/quy cách: model, kích thước, chất liệu, đặc tính\",\"unit\":\"bộ\",\"p\":0,\"q\":1}],\"project\":\"\",\"delivery\":\"Đợt 1: ...\\nĐợt 2: ...\",\"payment\":\"Đợt 1: 30% ...\\nĐợt 2: ...\",\"warr\":24,\"reply\":\"giải thích ngắn 2-3 câu tiếng Việt cho nhân viên\"}. 'rep' ghi kèm kính ngữ ví dụ 'ông Nguyễn Văn A'. 'desc' là mô tả chi tiết hàng hóa (nếu nhân viên có nêu, không thì để rỗng). 'delivery' và 'payment' mỗi đợt một dòng. KHÔNG bịa thông tin khách (tên/SĐT/MST/email) — thiếu thì để chuỗi rỗng. 'warr' là số tháng (mặc định 24)."
 ].join("\n");
 
 const LANG_NAMES = { en: "English", zh: "Simplified Chinese", ko: "Korean", th: "Thai", de: "German" };
@@ -266,7 +266,7 @@ export default {
           };
         };
         const items = Array.isArray(data.items) ? data.items.slice(0, 30).map((it) => ({
-          n: String(it.n || it.name || "").slice(0, 200), unit: String(it.unit || "bộ").slice(0, 20),
+          n: String(it.n || it.name || "").slice(0, 200), desc: String(it.desc || "").slice(0, 800), unit: String(it.unit || "bộ").slice(0, 20),
           p: Math.max(0, Math.round(Number(it.p || it.price || 0)) || 0), q: Math.max(1, Math.round(Number(it.q || it.qty || 1)) || 1),
         })).filter((it) => it.n) : [];
         return jsonResp({
