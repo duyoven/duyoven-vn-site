@@ -157,7 +157,11 @@
 
     <div style="position: relative; min-height: 540px; display: flex; align-items: center; justify-content: center; padding: clamp(20px, 3vw, 40px);">
       <div style="position: absolute; inset: 0; background: radial-gradient(ellipse 62% 46% at 50% 72%, rgba(244,123,32,.18), transparent 70%);"></div>
-      <div style="position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%); font-family: 'Oswald', sans-serif; font-weight: 700; font-size: clamp(170px, 22vw, 320px); line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.07); user-select: none; pointer-events: none; white-space: nowrap;">BBQ</div>
+      <!-- Mô phỏng lò xông khói (nhúng từ /academy-sim/xong-khoi) -->
+      <div style="position: relative; z-index: 5; width: 100%; max-width: 560px; height: clamp(420px, 56vh, 520px); border: 1px solid rgba(244,123,32,.4); border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 26px 64px rgba(0,0,0,.55);">
+        <iframe src="/academy-sim/xong-khoi" title="Mô phỏng lò xông khói" loading="lazy" style="width: 100%; height: 100%; border: 0; display: block;" allowfullscreen></iframe>
+        <a href="academy-mo-phong-xong-khoi.html" title="Mở toàn màn hình" style="position: absolute; top: 11px; right: 11px; z-index: 7; background: rgba(11,12,15,.82); border: 1px solid rgba(244,123,32,.5); color: #F47B20; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; padding: 6px 12px; border-radius: 8px; backdrop-filter: blur(6px);" data-en="Smoker simulation ↗">Mô phỏng xông khói ↗</a>
+      </div>
       <!-- embers -->
       <span style="position: absolute; left: 30%; bottom: 16%; width: 5px; height: 5px; border-radius: 50%; background: #F47B20; box-shadow: 0 0 8px 2px rgba(244,123,32,.8); animation: emberFloat 4.5s linear infinite;"></span>
       <span style="position: absolute; left: 64%; bottom: 12%; width: 4px; height: 4px; border-radius: 50%; background: #FF8F3D; box-shadow: 0 0 8px 2px rgba(244,123,32,.8); animation: emberFloat 5.5s linear infinite; animation-delay: 1.6s;"></span>
