@@ -468,7 +468,7 @@ a:hover { color: var(--ember-soft); }
 .show-body h3 { font-family: 'Marcellus', serif; font-weight: 400; }
 
 /* Showcase 4 sản phẩm tiêu biểu */
-.show-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+.show-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; align-items: start; }
 .show {
   display: flex; flex-direction: column;
   background: var(--bg-soft);
@@ -490,10 +490,10 @@ a:hover { color: var(--ember-soft); }
   font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; font-weight: 600;
   color: #fff; background: rgba(216,84,42,0.92); padding: 6px 13px; border-radius: 999px;
 }
-.show-body { padding: 26px 28px 30px; display: flex; flex-direction: column; gap: 13px; flex: 1; }
+.show-body { padding: 26px 28px 30px; display: flex; flex-direction: column; gap: 13px; }
 .show-body .cat { font-size: .68rem; letter-spacing: .24em; text-transform: uppercase; color: var(--ember); font-weight: 600; }
 .show-body h3 { font-size: 1.7rem; letter-spacing: .02em; color: #fff; line-height: 1.12; margin: 0; }
-.show-body p { color: var(--text-dim); font-weight: 300; font-size: .95rem; line-height: 1.72; flex: 1; margin: 0; }
+.show-body p { color: var(--text-dim); font-weight: 300; font-size: .95rem; line-height: 1.72; margin: 0; }
 .show-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 6px; }
 .show-price { color: var(--ember); font-size: 1.06rem; font-weight: 500; }
 .show-link { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: #fff; border-bottom: 1px solid var(--ember); padding-bottom: 3px; transition: color .3s; white-space: nowrap; }
