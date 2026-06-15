@@ -49,6 +49,13 @@ const QUOTE_SYS = [
   "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown, KHÔNG ```. Cấu trúc đúng: {\"items\":[{\"n\":\"Lò Tách khói 65L\",\"unit\":\"Cái\",\"p\":12100000,\"q\":1}],\"cust\":{\"name\":\"\",\"phone\":\"\",\"contact\":\"\",\"email\":\"\",\"company\":\"\",\"tax\":\"\",\"addr\":\"\"},\"note\":\"ghi chú/điều khoản gợi ý ngắn\",\"deliv\":\"7-10 ngày\",\"warr\":\"12 tháng\",\"valid\":30,\"reply\":\"giải thích ngắn 2-3 câu bằng tiếng Việt cho nhân viên: vì sao chọn các model này\"}. Giá 'p' là số nguyên VND, không dấu phân cách, không chữ. Nếu thiếu thông tin cứ đề xuất phương án hợp lý nhất và nêu giả định trong 'reply'."
 ].join("\n");
 
+const CONTRACT_SYS = [
+  "Bạn là TRỢ LÝ LẬP HỢP ĐỒNG MUA BÁN nội bộ cho Duy's Oven. Nhân viên mô tả yêu cầu bằng ngôn ngữ tự nhiên (khách hàng, đơn hàng, điều kiện giao/thanh toán). Bạn ĐỌC kỹ và tự bóc tách rồi điền vào đúng các trường của hợp đồng.",
+  "QUY ƯỚC: Bên A = BÊN MUA = khách hàng. Bên B = BÊN BÁN = Duy's Oven. Nếu nhân viên KHÔNG nêu Bên B khác thì để toàn bộ object B rỗng (hệ thống tự dùng HARMONIA mặc định).",
+  "BẢNG GIÁ tham khảo (VND): Pantina 7700000; Lò Tách khói 65L 12100000, 80L 15400000, 85L 16500000; Hybrid 65L 15400000, 80L 18700000, 125L 27500000; Xông khói Hybrid 10050 33000000; Offset 10050 24200000; Lò Pizza Wood&Gas 126500000; hàng đặt riêng/khác đặt p=0. Nếu nhân viên nêu đơn giá cụ thể (giá dự án) thì DÙNG ĐÚNG số đó. Không bịa giá.",
+  "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown. Cấu trúc: {\"A\":{\"name\":\"\",\"addr\":\"\",\"phone\":\"\",\"email\":\"\",\"tax\":\"\",\"rep\":\"\",\"title\":\"\",\"bank\":\"\"},\"B\":{\"name\":\"\",\"addr\":\"\",\"phone\":\"\",\"email\":\"\",\"tax\":\"\",\"rep\":\"\",\"title\":\"\",\"bank\":\"\"},\"items\":[{\"n\":\"\",\"unit\":\"bộ\",\"p\":0,\"q\":1}],\"project\":\"\",\"delivery\":\"Đợt 1: ...\\nĐợt 2: ...\",\"payment\":\"Đợt 1: 30% ...\\nĐợt 2: ...\",\"warr\":24,\"reply\":\"giải thích ngắn 2-3 câu tiếng Việt cho nhân viên\"}. 'rep' ghi kèm kính ngữ ví dụ 'ông Nguyễn Văn A'. 'delivery' và 'payment' mỗi đợt một dòng. KHÔNG bịa thông tin khách (tên/SĐT/MST/email) — thiếu thì để chuỗi rỗng. 'warr' là số tháng (mặc định 24)."
+].join("\n");
+
 const LANG_NAMES = { en: "English", zh: "Simplified Chinese", ko: "Korean", th: "Thai", de: "German" };
 
 const IMG_STYLE =
@@ -218,6 +225,57 @@ export default {
           warr: String(data.warr || "").slice(0, 80),
           valid: parseInt(data.valid) || 0,
           model,
+        });
+      } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
+
+    // --- AI: trợ lý lập hợp đồng (chỉ nhân viên) ---
+    if (url.pathname === "/api/hop-dong" && request.method === "POST") {
+      try {
+        if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+        if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
+        const body = await request.json();
+        const brief = String(body.brief || "").slice(0, 3000);
+        const hist = Array.isArray(body.messages) ? body.messages : [];
+        const conv = [];
+        hist.slice(-8).forEach((m) => {
+          if (m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+            conv.push({ role: m.role, content: m.content.slice(0, 3000) });
+        });
+        if (brief) conv.push({ role: "user", content: brief });
+        if (!conv.length) return jsonResp({ error: "Thiếu nội dung." }, 400);
+        const model = env.CLAUDE_MODEL_QUOTE || "claude-haiku-4-5";
+        const r = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
+          body: JSON.stringify({ model, max_tokens: 1600, system: CONTRACT_SYS, messages: conv }),
+        });
+        if (!r.ok) return jsonResp({ error: "anthropic " + r.status + " " + (await r.text()).slice(0, 200) }, 502);
+        const j = await r.json();
+        const txt = (j.content || []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
+        let data = null;
+        try { data = JSON.parse(txt); } catch (e) { const mm = txt.match(/\{[\s\S]*\}/); if (mm) { try { data = JSON.parse(mm[0]); } catch (e2) {} } }
+        if (!data || typeof data !== "object") return jsonResp({ reply: txt || "Chưa tạo được gợi ý.", items: [] });
+        const party = (p) => {
+          p = (p && typeof p === "object") ? p : {};
+          return {
+            name: String(p.name || "").slice(0, 200), addr: String(p.addr || "").slice(0, 300),
+            phone: String(p.phone || "").slice(0, 40), email: String(p.email || "").slice(0, 120),
+            tax: String(p.tax || "").slice(0, 40), rep: String(p.rep || "").slice(0, 120),
+            title: String(p.title || "").slice(0, 60), bank: String(p.bank || "").slice(0, 200),
+          };
+        };
+        const items = Array.isArray(data.items) ? data.items.slice(0, 30).map((it) => ({
+          n: String(it.n || it.name || "").slice(0, 200), unit: String(it.unit || "bộ").slice(0, 20),
+          p: Math.max(0, Math.round(Number(it.p || it.price || 0)) || 0), q: Math.max(1, Math.round(Number(it.q || it.qty || 1)) || 1),
+        })).filter((it) => it.n) : [];
+        return jsonResp({
+          reply: String(data.reply || "").slice(0, 2000), items,
+          A: party(data.A), B: party(data.B),
+          project: String(data.project || "").slice(0, 300),
+          delivery: String(data.delivery || "").slice(0, 1000),
+          payment: String(data.payment || "").slice(0, 1500),
+          warr: parseInt(data.warr) || 0, model,
         });
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
