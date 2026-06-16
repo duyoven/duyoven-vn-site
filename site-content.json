@@ -1,6 +1,6 @@
 {
   "_note": "Nội dung động của duyoven.vn — chỉnh trong Admin › Website. Đừng sửa tay nếu không rành.",
-  "updatedAt": "",
+  "updatedAt": "2026-06-16T17:25:16.078Z",
   "company": {
     "name": "CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA",
     "brand": "Duy's Oven",
@@ -17,18 +17,116 @@
     "promo": ""
   },
   "products": [
-    { "id": "pantina", "name": "Pantina (lò mini gập gọn)", "price": 7700000, "unit": "bộ", "short": "Lò mini gập gọn, tiện mang đi.", "img": "", "link": "sp-pantina.html", "active": true },
-    { "id": "tk80", "name": "Lò Tách khói 80L", "price": 15400000, "unit": "bộ", "short": "Lò than tách khói 80L cho nhà hàng vừa.", "img": "", "link": "sp-tach-khoi-80l.html", "active": true },
-    { "id": "tk85", "name": "Lò Tách khói 85L", "price": 16500000, "unit": "bộ", "short": "Lò than tách khói 85L.", "img": "", "link": "sp-tach-khoi-85l.html", "active": true },
-    { "id": "tk125", "name": "Lò Tách khói 125L", "price": 0, "unit": "bộ", "short": "Lò than tách khói 125L công suất lớn.", "img": "", "link": "sp-tach-khoi-125l.html", "active": true },
-    { "id": "hy65", "name": "Hybrid 65L (than + gas)", "price": 15400000, "unit": "bộ", "short": "Lò Hybrid 65L kết hợp than và gas.", "img": "", "link": "sp-hybrid-65l.html", "active": true },
-    { "id": "hy80", "name": "Hybrid 80L (than + gas)", "price": 18700000, "unit": "bộ", "short": "Lò Hybrid 80L kết hợp than và gas.", "img": "", "link": "sp-hybrid-80l.html", "active": true },
-    { "id": "hy125", "name": "Hybrid 125L (than + gas)", "price": 27500000, "unit": "bộ", "short": "Lò Hybrid 125L công suất lớn.", "img": "", "link": "sp-hybrid-125l.html", "active": true },
-    { "id": "smk10050", "name": "Lò xông khói Hybrid 10050", "price": 33000000, "unit": "bộ", "short": "Lò xông khói (smoker) Hybrid 10050.", "img": "", "link": "sp-xong-khoi-hybrid-10050.html", "active": true },
-    { "id": "offset10050", "name": "Offset Smoker 10050", "price": 24200000, "unit": "bộ", "short": "Lò xông khói offset 10050 kiểu Mỹ.", "img": "", "link": "sp-offset-10050.html", "active": true },
-    { "id": "pizza", "name": "Lò Pizza Wood & Gas", "price": 126500000, "unit": "bộ", "short": "Lò pizza dùng củi và gas.", "img": "", "link": "sp-pizza-wood-gas.html", "active": true }
+    {
+      "id": "pantina",
+      "name": "Pantina (lò mini gập gọn)",
+      "price": 7700000,
+      "unit": "bộ",
+      "short": "Lò mini gập gọn, tiện mang đi.",
+      "img": "",
+      "link": "sp-pantina.html",
+      "active": true
+    },
+    {
+      "id": "tk80",
+      "name": "Lò Tách khói 80L",
+      "price": 15400000,
+      "unit": "bộ",
+      "short": "Lò than tách khói 80L cho nhà hàng vừa.",
+      "img": "",
+      "link": "sp-tach-khoi-80l.html",
+      "active": true
+    },
+    {
+      "id": "tk85",
+      "name": "Lò Tách khói 85L",
+      "price": 16500000,
+      "unit": "bộ",
+      "short": "Lò than tách khói 85L.",
+      "img": "",
+      "link": "sp-tach-khoi-85l.html",
+      "active": true
+    },
+    {
+      "id": "tk125",
+      "name": "Lò Tách khói 125L",
+      "price": 0,
+      "unit": "bộ",
+      "short": "Lò than tách khói 125L công suất lớn.",
+      "img": "",
+      "link": "sp-tach-khoi-125l.html",
+      "active": true
+    },
+    {
+      "id": "hy65",
+      "name": "Hybrid 65L (than + gas)",
+      "price": 15400000,
+      "unit": "bộ",
+      "short": "Lò Hybrid 65L kết hợp than và gas.",
+      "img": "",
+      "link": "sp-hybrid-65l.html",
+      "active": true
+    },
+    {
+      "id": "hy80",
+      "name": "Hybrid 80L (than + gas)",
+      "price": 18700000,
+      "unit": "bộ",
+      "short": "Lò Hybrid 80L kết hợp than và gas.",
+      "img": "",
+      "link": "sp-hybrid-80l.html",
+      "active": true
+    },
+    {
+      "id": "hy125",
+      "name": "Hybrid 125L (than + gas)",
+      "price": 27500000,
+      "unit": "bộ",
+      "short": "Lò Hybrid 125L công suất lớn.",
+      "img": "",
+      "link": "sp-hybrid-125l.html",
+      "active": true
+    },
+    {
+      "id": "smk10050",
+      "name": "Lò xông khói Hybrid 10050",
+      "price": 33000000,
+      "unit": "bộ",
+      "short": "Lò xông khói (smoker) Hybrid 10050.",
+      "img": "",
+      "link": "sp-xong-khoi-hybrid-10050.html",
+      "active": true
+    },
+    {
+      "id": "offset10050",
+      "name": "Offset Smoker 10050",
+      "price": 24200000,
+      "unit": "bộ",
+      "short": "Lò xông khói offset 10050 kiểu Mỹ.",
+      "img": "",
+      "link": "sp-offset-10050.html",
+      "active": true
+    },
+    {
+      "id": "pizza",
+      "name": "Lò Pizza Wood & Gas",
+      "price": 126500000,
+      "unit": "bộ",
+      "short": "Lò pizza dùng củi và gas.",
+      "img": "",
+      "link": "sp-pizza-wood-gas.html",
+      "active": true
+    }
   ],
   "news": [
-    { "id": "welcome", "date": "2026-06-16", "title": "Duy's Oven ra mắt trang Tin tức", "summary": "Cập nhật sản phẩm mới, khuyến mãi và kiến thức nướng than tách khói.", "body": "Chào mừng Quý khách đến với trang Tin tức của Duy's Oven. Tại đây chúng tôi sẽ cập nhật sản phẩm mới, chương trình khuyến mãi và các bài chia sẻ về nướng than không khói, lò xông khói kiểu Mỹ.", "img": "", "active": true }
+    {
+      "id": "welcome",
+      "date": "2026-06-16",
+      "title": "Duy's Oven ra mắt trang Tin tức",
+      "summary": "Cập nhật sản phẩm mới, khuyến mãi và kiến thức nướng than tách khói.",
+      "body": "Chào mừng Quý khách đến với trang Tin tức của Duy's Oven. Tại đây chúng tôi sẽ cập nhật sản phẩm mới, chương trình khuyến mãi và các bài chia sẻ về nướng than không khói, lò xông khói kiểu Mỹ.",
+      "img": "",
+      "active": true
+    }
   ]
 }
