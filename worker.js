@@ -49,6 +49,12 @@ const QUOTE_SYS = [
   "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown, KHÔNG ```. Cấu trúc đúng: {\"items\":[{\"n\":\"Lò Tách khói 65L\",\"unit\":\"Cái\",\"p\":12100000,\"q\":1}],\"cust\":{\"name\":\"\",\"phone\":\"\",\"contact\":\"\",\"email\":\"\",\"company\":\"\",\"tax\":\"\",\"addr\":\"\"},\"note\":\"ghi chú/điều khoản gợi ý ngắn\",\"deliv\":\"7-10 ngày\",\"warr\":\"12 tháng\",\"valid\":30,\"reply\":\"giải thích ngắn 2-3 câu bằng tiếng Việt cho nhân viên: vì sao chọn các model này\"}. Giá 'p' là số nguyên VND, không dấu phân cách, không chữ. Nếu thiếu thông tin cứ đề xuất phương án hợp lý nhất và nêu giả định trong 'reply'."
 ].join("\n");
 
+const IMPORT_SYS = [
+  "Bạn là trợ lý ĐỌC & SỐ HÓA BÁO GIÁ CŨ cho Duy's Oven. Người dùng gửi ẢNH hoặc PDF một bản báo giá/đơn hàng đã có. Hãy ĐỌC thật kỹ và trích xuất ĐÚNG nội dung trong tài liệu — KHÔNG bịa, KHÔNG thêm thông tin ngoài tài liệu.",
+  "DÙNG ĐÚNG dữ liệu trong tài liệu: từng dòng sản phẩm (tên/quy cách, ĐVT, số lượng, đơn giá), thông tin khách hàng (tên, công ty, MST, SĐT, email, người liên hệ, địa chỉ), và điều khoản nếu có (thanh toán, thời gian giao, bảo hành, hiệu lực). Đơn giá lấy ĐÚNG số trong báo giá, bỏ dấu phân cách, ra số nguyên VND. Ô nào không đọc được thì để rỗng hoặc 0.",
+  "CHỈ trả về MỘT JSON hợp lệ, KHÔNG markdown. Cấu trúc: {\"items\":[{\"n\":\"\",\"unit\":\"Cái\",\"p\":0,\"q\":1}],\"cust\":{\"name\":\"\",\"phone\":\"\",\"contact\":\"\",\"email\":\"\",\"company\":\"\",\"tax\":\"\",\"addr\":\"\"},\"note\":\"\",\"deliv\":\"\",\"warr\":\"\",\"valid\":30,\"reply\":\"tóm tắt ngắn tiếng Việt: đã đọc được mấy mục hàng, tên khách\"}."
+].join("\n");
+
 const CONTRACT_SYS = [
   "Bạn là TRỢ LÝ LẬP HỢP ĐỒNG MUA BÁN nội bộ cho Duy's Oven. Nhân viên mô tả yêu cầu bằng ngôn ngữ tự nhiên (khách hàng, đơn hàng, điều kiện giao/thanh toán). Bạn ĐỌC kỹ và tự bóc tách rồi điền vào đúng các trường của hợp đồng.",
   "QUY ƯỚC: Bên A = BÊN MUA = khách hàng. Bên B = BÊN BÁN = Duy's Oven. Nếu nhân viên KHÔNG nêu Bên B khác thì để toàn bộ object B rỗng (hệ thống tự dùng HARMONIA mặc định).",
@@ -276,6 +282,50 @@ export default {
           delivery: String(data.delivery || "").slice(0, 1000),
           payment: String(data.payment || "").slice(0, 1500),
           warr: parseInt(data.warr) || 0, model,
+        });
+      } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
+
+    // --- AI: import báo giá cũ từ ảnh/PDF (chỉ nhân viên) ---
+    if (url.pathname === "/api/bao-gia-import" && request.method === "POST") {
+      try {
+        if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+        if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
+        const body = await request.json();
+        const file = String(body.file || "");
+        const note = String(body.text || "").slice(0, 500);
+        const mm = file.match(/^data:([^;]+);base64,(.+)$/);
+        if (!mm) return jsonResp({ error: "File không hợp lệ." }, 400);
+        const mime = mm[1], data = mm[2];
+        let block;
+        if (mime === "application/pdf") block = { type: "document", source: { type: "base64", media_type: "application/pdf", data } };
+        else if (mime.indexOf("image/") === 0) block = { type: "image", source: { type: "base64", media_type: mime, data } };
+        else return jsonResp({ error: "Chỉ nhận ảnh hoặc PDF." }, 400);
+        const content = [block, { type: "text", text: "Đây là một BÁO GIÁ CŨ. Hãy đọc và trích xuất chính xác thành JSON theo đúng cấu trúc đã hướng dẫn." + (note ? (" Lưu ý thêm từ nhân viên: " + note) : "") }];
+        const model = env.CLAUDE_MODEL_IMPORT || env.CLAUDE_MODEL_QUOTE || "claude-haiku-4-5";
+        const r = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
+          body: JSON.stringify({ model, max_tokens: 1600, system: IMPORT_SYS, messages: [{ role: "user", content }] }),
+        });
+        if (!r.ok) return jsonResp({ error: "anthropic " + r.status + " " + (await r.text()).slice(0, 200) }, 502);
+        const j = await r.json();
+        const txt = (j.content || []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
+        let d = null;
+        try { d = JSON.parse(txt); } catch (e) { const x = txt.match(/\{[\s\S]*\}/); if (x) { try { d = JSON.parse(x[0]); } catch (e2) {} } }
+        if (!d || typeof d !== "object") return jsonResp({ reply: txt || "Chưa đọc được báo giá.", items: [] });
+        const items = Array.isArray(d.items) ? d.items.slice(0, 30).map((it) => ({
+          n: String(it.n || it.name || "").slice(0, 200), unit: String(it.unit || "Cái").slice(0, 20),
+          p: Math.max(0, Math.round(Number(it.p || it.price || 0)) || 0), q: Math.max(1, Math.round(Number(it.q || it.qty || 1)) || 1),
+        })).filter((it) => it.n) : [];
+        const c = (d.cust && typeof d.cust === "object") ? d.cust : {};
+        return jsonResp({
+          reply: String(d.reply || "").slice(0, 2000), items,
+          cust: {
+            name: String(c.name || "").slice(0, 120), phone: String(c.phone || "").slice(0, 40), contact: String(c.contact || "").slice(0, 120),
+            email: String(c.email || "").slice(0, 120), company: String(c.company || "").slice(0, 160), tax: String(c.tax || "").slice(0, 40), addr: String(c.addr || "").slice(0, 300),
+          },
+          note: String(d.note || "").slice(0, 600), deliv: String(d.deliv || "").slice(0, 120), warr: String(d.warr || "").slice(0, 80), valid: parseInt(d.valid) || 0, model,
         });
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
