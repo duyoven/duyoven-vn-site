@@ -4,88 +4,162 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Quản Lý — nội bộ Duy's Oven</title>
+<title>Quản Lý — Duy's Oven</title>
 <style>
-  :root{--bg:#0d0e10;--card:#16181c;--line:rgba(255,255,255,.12);--ember:#F47B20;--text:#eceae6;--muted:#9aa0aa}
+  :root{--ember:#F47B20;--ink:#15110e;--side:#1c1f24;--side2:#262b32;--line:#e3ddd2;--bg:#f4f2ec;--card:#fff;--text:#23201c;--muted:#8a8378}
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(1200px 600px at 50% -10%,rgba(244,123,32,.10),transparent),var(--bg);color:var(--text);min-height:100vh}
-  .wrap{max-width:980px;margin:0 auto;padding:32px 18px 60px}
-  .brand{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-  .brand h1{font-size:24px;margin:0}
-  .brand small{color:var(--muted)}
-  .staff{color:var(--muted);font-size:13px;margin:2px 0 26px}
-  .staff b{color:var(--text)}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-  .tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;cursor:pointer;transition:.15s;display:flex;gap:16px;align-items:flex-start;text-align:left}
-  .tile:hover{border-color:var(--ember);transform:translateY(-2px)}
-  .tile .ic{font-size:30px;line-height:1}
-  .tile h3{margin:0 0 4px;font-size:17px}
-  .tile p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
-  .tile .lock{margin-left:auto;color:var(--muted);font-size:13px}
-  .foot{margin-top:26px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:10px}
-  .foot a,.foot button{color:var(--muted);background:none;border:none;font:inherit;cursor:pointer;text-decoration:none}
-  .foot a:hover,.foot button:hover{color:var(--ember)}
-  /* overlay */
-  .ov{position:fixed;inset:0;background:rgba(8,9,11,.92);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:50;padding:18px}
+  html,body{margin:0;height:100%}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+  a{color:inherit}
+  /* ===== Admin shell ===== */
+  .topbar{position:fixed;top:0;left:0;right:0;height:50px;background:var(--ink);color:#f3ede4;display:flex;align-items:center;gap:12px;padding:0 16px;z-index:40}
+  .topbar .brand{font-weight:700;display:flex;align-items:center;gap:8px;font-size:15px}
+  .topbar .brand small{color:#b9b1a4;font-weight:400}
+  .topbar .sp{flex:1}
+  .topbar .who{color:#cfc7ba;font-size:13px}
+  .topbar .who b{color:#fff}
+  .topbar button{background:transparent;border:1px solid rgba(255,255,255,.2);color:#f3ede4;border-radius:8px;padding:6px 11px;font:inherit;font-size:13px;cursor:pointer}
+  .topbar button:hover{border-color:var(--ember);color:var(--ember)}
+  .hamb{display:none}
+  .side{position:fixed;top:50px;bottom:0;left:0;width:222px;background:var(--side);overflow-y:auto;z-index:30;padding:10px 0}
+  .navi{display:flex;align-items:center;gap:11px;padding:11px 18px;color:#c8c2b8;cursor:pointer;font-size:14px;border-left:3px solid transparent}
+  .navi .ic{font-size:17px;width:20px;text-align:center}
+  .navi:hover{background:var(--side2);color:#fff}
+  .navi.active{background:var(--side2);color:#fff;border-left-color:var(--ember);font-weight:600}
+  .navsec{color:#6f6a61;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:14px 18px 6px}
+  .main{margin-left:222px;margin-top:50px;min-height:calc(100vh - 50px)}
+  /* dashboard */
+  .dash{padding:26px 28px}
+  .dash h1{font-size:23px;margin:0 0 2px}
+  .dash .sub{color:var(--muted);margin:0 0 22px;font-size:14px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:26px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:center}
+  .stat .ic{font-size:26px}
+  .stat .n{font-size:26px;font-weight:700;line-height:1}
+  .stat .l{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:18px}
+  .panel h2{font-size:15px;margin:0 0 12px}
+  .quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+  .qbtn{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;background:#fbfaf7;transition:.13s}
+  .qbtn:hover{border-color:var(--ember);transform:translateY(-1px)}
+  .qbtn .ic{font-size:24px}
+  .qbtn .t{font-weight:600;font-size:14px}
+  .qbtn .d{color:var(--muted);font-size:12px}
+  .acts{font-size:13.5px}
+  .acts .row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .acts .in{color:#2e9e57;font-weight:600} .acts .out{color:#d9772a;font-weight:600}
+  .empty{color:var(--muted);font-size:13px}
+  /* tool frame */
+  .framewrap{position:fixed;top:50px;left:222px;right:0;bottom:0;display:none;background:var(--bg)}
+  .framebar{height:38px;background:#efe9df;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 14px;font-size:13px;color:var(--muted)}
+  .framebar b{color:var(--text)}
+  .framebar .sp{flex:1}
+  .framebar button{background:transparent;border:1px solid var(--line);border-radius:7px;padding:4px 9px;font:inherit;font-size:12.5px;cursor:pointer;color:var(--text)}
+  .framebar button:hover{border-color:var(--ember);color:var(--ember)}
+  #toolFrame{width:100%;height:calc(100% - 38px);border:0;background:#fff}
+  /* overlays */
+  .ov{position:fixed;inset:0;background:rgba(20,17,14,.62);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:60;padding:18px}
   .ov.hide{display:none}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 24px;width:100%;max-width:360px;text-align:center}
-  .panel .ic{font-size:34px}
-  .panel h2{margin:8px 0 2px;font-size:19px}
-  .panel p{margin:0 0 16px;color:var(--muted);font-size:13px}
-  .panel input{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:16px;text-align:center;letter-spacing:2px}
-  .panel input:focus{outline:none;border-color:var(--ember)}
-  .panel .btn{margin-top:12px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--ember);color:#160a02;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
-  .panel .err{color:#ff7a6b;font-size:13px;min-height:18px;margin-top:8px}
-  .panel .cancel{margin-top:10px;color:var(--muted);background:none;border:none;font:inherit;cursor:pointer;font-size:13px}
-  .panel .cancel:hover{color:var(--text)}
+  .pnl{background:#fff;border-radius:16px;padding:26px 24px;width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .pnl .ic{font-size:34px}
+  .pnl h2{margin:8px 0 2px;font-size:19px}
+  .pnl p{margin:0 0 16px;color:var(--muted);font-size:13px}
+  .pnl input{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:#faf8f4;color:var(--text);font:inherit;font-size:16px;text-align:center;letter-spacing:2px}
+  .pnl input:focus{outline:none;border-color:var(--ember)}
+  .pnl .go{margin-top:12px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--ember);color:#160a02;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+  .pnl .err{color:#d4452f;font-size:13px;min-height:18px;margin-top:8px}
+  .pnl .cancel{margin-top:8px;color:var(--muted);background:none;border:none;font:inherit;cursor:pointer;font-size:13px}
+  .pnl .cancel:hover{color:var(--text)}
+  @media(max-width:820px){
+    .side{transform:translateX(-100%);transition:.2s;width:240px}
+    body.snav .side{transform:none}
+    .main{margin-left:0} .framewrap{left:0}
+    .hamb{display:inline-flex}
+  }
 </style>
 </head>
 <body>
 
 <!-- LEVEL 1 GATE -->
 <div class="ov" id="gate1">
-  <div class="panel">
+  <div class="pnl">
     <div class="ic">🔒</div>
     <h2>Quản Lý — Duy's Oven</h2>
     <p>Nhập mật khẩu để vào khu vực quản lý</p>
     <input type="password" id="pw1" autocomplete="off" placeholder="••••••" onkeydown="if(event.key==='Enter')tryL1()">
-    <button class="btn" onclick="tryL1()">Vào</button>
+    <button class="go" onclick="tryL1()">Vào</button>
     <div class="err" id="err1"></div>
   </div>
 </div>
 
 <!-- PER-TOOL GATE -->
 <div class="ov hide" id="gate2">
-  <div class="panel">
+  <div class="pnl">
     <div class="ic" id="g2ic">🔑</div>
     <h2 id="g2name">Mục</h2>
     <p>Nhập mật khẩu riêng của mục này</p>
     <input type="password" id="pw2" autocomplete="off" placeholder="••••••" onkeydown="if(event.key==='Enter')tryTool()">
-    <button class="btn" onclick="tryTool()">Mở</button>
+    <button class="go" onclick="tryTool()">Mở</button>
     <div class="err" id="err2"></div>
-    <button class="cancel" onclick="closeG2()">← Quay lại menu</button>
+    <button class="cancel" onclick="closeG2()">← Quay lại</button>
   </div>
 </div>
 
-<!-- HUB -->
-<div class="wrap" id="hub" style="visibility:hidden">
-  <div class="brand"><span style="font-size:30px">🛠️</span><div><h1>Bảng Quản Lý</h1><small>Nội bộ · Duy's Oven</small></div></div>
-  <div class="staff">Nhân viên: <b id="staffName">__STAFF__</b></div>
-  <div class="grid" id="grid"></div>
-  <div class="foot">
-    <a href="index.html">← Về trang chủ</a>
-    <button onclick="lockAll()">🔒 Khóa & đăng xuất khu quản lý</button>
+<!-- SHELL -->
+<div id="shell" style="visibility:hidden">
+  <div class="topbar">
+    <button class="hamb" onclick="document.body.classList.toggle('snav')">☰</button>
+    <span class="brand">🛠️ Duy's Oven <small>· Quản Lý</small></span>
+    <span class="sp"></span>
+    <span class="who">Nhân viên: <b id="staffName">__STAFF__</b></span>
+    <button onclick="lockAll()">🔒 Đăng xuất</button>
+  </div>
+  <nav class="side" id="side">
+    <div class="navsec">Tổng quan</div>
+    <div class="navi active" data-key="dash" onclick="openNav('dash')"><span class="ic">📊</span> Bảng tin</div>
+    <div class="navsec">Công cụ</div>
+    <div class="navi" data-key="baogia" onclick="openNav('baogia')"><span class="ic">📄</span> Báo Giá</div>
+    <div class="navi" data-key="hopdong" onclick="openNav('hopdong')"><span class="ic">📑</span> Hợp Đồng</div>
+    <div class="navi" data-key="kho" onclick="openNav('kho')"><span class="ic">📦</span> Quản Lý Kho</div>
+    <div class="navi" data-key="nghiemthu" onclick="openNav('nghiemthu')"><span class="ic">✅</span> Bàn Giao Nghiệm Thu</div>
+    <div class="navsec">Khác</div>
+    <div class="navi" onclick="location.href='index.html'"><span class="ic">🏠</span> Về trang chủ</div>
+  </nav>
+
+  <div class="main" id="dashboard">
+    <div class="dash">
+      <h1>Bảng tin</h1>
+      <p class="sub">Tổng quan dữ liệu trên máy này · <span id="todayStr"></span></p>
+      <div class="stats" id="stats"></div>
+      <div class="panel">
+        <h2>⚡ Truy cập nhanh</h2>
+        <div class="quick">
+          <div class="qbtn" onclick="openNav('baogia')"><span class="ic">📄</span><div><div class="t">Lập báo giá</div><div class="d">Song ngữ · Word · Drive</div></div></div>
+          <div class="qbtn" onclick="openNav('hopdong')"><span class="ic">📑</span><div><div class="t">Soạn hợp đồng</div><div class="d">Chia đợt thanh toán</div></div></div>
+          <div class="qbtn" onclick="openNav('kho')"><span class="ic">📦</span><div><div class="t">Nhập / Xuất kho</div><div class="d">Tồn kho · phiếu kho</div></div></div>
+          <div class="qbtn" onclick="openNav('nghiemthu')"><span class="ic">✅</span><div><div class="t">Bàn giao nghiệm thu</div><div class="d">Biên bản cho khách</div></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>🕘 Hoạt động kho gần đây</h2>
+        <div class="acts" id="recentActs"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="framewrap" id="framewrap">
+    <div class="framebar"><span id="frameTitle"><b>Công cụ</b></span><span class="sp"></span><button onclick="openInTab()">↗ Mở tab riêng</button><button onclick="reloadFrame()">↻ Tải lại</button><button onclick="openNav('dash')">✕ Đóng</button></div>
+    <iframe id="toolFrame" src="about:blank"></iframe>
   </div>
 </div>
 
 <script>
-var TOOLS=[
- {key:'baogia',  url:'bao-gia.html',            ic:'📄', name:'Báo Giá',             desc:'Lập & lưu báo giá, song ngữ, xuất Word, lưu Google Drive.'},
- {key:'hopdong', url:'hop-dong.html',           ic:'📑', name:'Hợp Đồng',            desc:'Soạn hợp đồng mua bán, chia đợt thanh toán, lưu Drive.'},
- {key:'kho',     url:'quan-ly-kho.html',        ic:'📦', name:'Quản Lý Kho',         desc:'Tồn kho, nhập – xuất, lập Phiếu xuất kho.'},
- {key:'nghiemthu',url:'ban-giao-nghiem-thu.html',ic:'✅', name:'Bàn Giao Nghiệm Thu', desc:'Biên bản bàn giao & nghiệm thu cho khách.'}
-];
-/* SHA-256 hashes của mật khẩu (mật khẩu KHÔNG nằm trong mã nguồn) */
+var TOOLS={
+ baogia:{url:'bao-gia.html',ic:'📄',name:'Báo Giá'},
+ hopdong:{url:'hop-dong.html',ic:'📑',name:'Hợp Đồng'},
+ kho:{url:'quan-ly-kho.html',ic:'📦',name:'Quản Lý Kho'},
+ nghiemthu:{url:'ban-giao-nghiem-thu.html',ic:'✅',name:'Bàn Giao Nghiệm Thu'}
+};
 var HASH={
  l1:'af73d138ab9df9df801490bd5beef3426d98616e21a79207a8fc18d9f7f1bf63',
  baogia:'1e4e8b049223c94c574465b3d3755ad6fbabb1d8a2898480ff90b44d07c34369',
@@ -95,21 +169,50 @@ var HASH={
 };
 async function sha(s){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');}
 function qs(k){return new URLSearchParams(location.search).get(k);}
+function lj(k){try{return JSON.parse(localStorage.getItem(k)||'[]');}catch(e){return [];}}
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function pad(x){return(x<10?'0':'')+x;}
 
-function renderGrid(){document.getElementById('grid').innerHTML=TOOLS.map(function(t){return '<div class="tile" onclick="openTool(\''+t.key+'\')"><div class="ic">'+t.ic+'</div><div><h3>'+t.name+'</h3><p>'+t.desc+'</p></div><div class="lock">🔑</div></div>';}).join('');}
+/* ===== dashboard ===== */
+function renderDash(){
+ var q=lj('dq_quotes'),c=lj('dq_contracts'),kho=lj('dq_kho'),px=lj('dq_phieuxuat'),pn=lj('dq_phieunhap'),bb=lj('dq_bbnt');
+ var ton=0;kho.forEach(function(x){ton+=(x.qty||0);});
+ var cards=[
+  {ic:'📄',n:q.length,l:'Báo giá đã lưu'},
+  {ic:'📑',n:c.length,l:'Hợp đồng đã lưu'},
+  {ic:'📦',n:kho.length,l:'Mặt hàng trong kho'},
+  {ic:'🔢',n:ton,l:'Tổng số lượng tồn'},
+  {ic:'🟢',n:pn.length,l:'Phiếu nhập kho'},
+  {ic:'🧾',n:px.length,l:'Phiếu xuất kho'},
+  {ic:'✅',n:bb.length,l:'Biên bản nghiệm thu'}
+ ];
+ document.getElementById('stats').innerHTML=cards.map(function(x){return '<div class="stat"><span class="ic">'+x.ic+'</span><div><div class="n">'+x.n+'</div><div class="l">'+x.l+'</div></div></div>';}).join('');
+ var log=lj('dq_kho_log');var el=document.getElementById('recentActs');
+ if(!log.length){el.innerHTML='<div class="empty">Chưa có hoạt động kho nào.</div>';}
+ else{el.innerHTML=log.slice(0,12).map(function(x){var d=new Date(x.t);return '<div class="row"><span class="'+(x.type==='nhập'?'in':'out')+'">'+(x.type==='nhập'?'▲ Nhập':'▼ Xuất')+' '+x.qty+'</span><span>'+esc(x.name)+'</span><span style="color:var(--muted)">'+pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+pad(d.getHours())+':'+pad(d.getMinutes())+'</span></div>';}).join('');}
+ var n=new Date();document.getElementById('todayStr').textContent='Hôm nay '+pad(n.getDate())+'/'+pad(n.getMonth()+1)+'/'+n.getFullYear();
+}
 
-async function tryL1(){var v=document.getElementById('pw1').value;if(!v)return;var h=await sha(v);if(h===HASH.l1){try{sessionStorage.setItem('ql_l1','1');}catch(e){}showHub();var nx=qs('next');if(nx&&HASH[nx])openTool(nx);}else{document.getElementById('err1').textContent='Sai mật khẩu.';document.getElementById('pw1').value='';}}
-function showHub(){document.getElementById('gate1').classList.add('hide');document.getElementById('hub').style.visibility='visible';}
+/* ===== navigation ===== */
+var _cur='dash';
+function setActive(key){document.querySelectorAll('.navi').forEach(function(n){n.classList.toggle('active',n.getAttribute('data-key')===key);});}
+function showDash(){document.getElementById('dashboard').style.display='block';document.getElementById('framewrap').style.display='none';setActive('dash');_cur='dash';renderDash();}
+function loadFrame(key){var t=TOOLS[key];document.getElementById('frameTitle').innerHTML=t.ic+' <b>'+t.name+'</b>';document.getElementById('toolFrame').src=t.url+'?embed=1';document.getElementById('dashboard').style.display='none';document.getElementById('framewrap').style.display='block';setActive(key);_cur=key;document.body.classList.remove('snav');}
+function openNav(key){if(key==='dash'){showDash();return;}if(sessionStorage.getItem('ql_'+key)==='1'){loadFrame(key);}else{openGate2(key);}}
+function reloadFrame(){var f=document.getElementById('toolFrame');f.src=f.src;}
+function openInTab(){if(TOOLS[_cur])window.open(TOOLS[_cur].url,'_blank');}
 
-var _curTool=null;
-function openTool(key){var t=TOOLS.filter(function(x){return x.key===key;})[0];if(!t)return;_curTool=t;document.getElementById('g2ic').textContent=t.ic;document.getElementById('g2name').textContent=t.name;document.getElementById('err2').textContent='';document.getElementById('pw2').value='';document.getElementById('gate2').classList.remove('hide');setTimeout(function(){document.getElementById('pw2').focus();},50);}
-function closeG2(){document.getElementById('gate2').classList.add('hide');_curTool=null;}
-async function tryTool(){if(!_curTool)return;var v=document.getElementById('pw2').value;if(!v)return;var h=await sha(v);if(h===HASH[_curTool.key]){try{sessionStorage.setItem('ql_'+_curTool.key,'1');}catch(e){}location.href=_curTool.url;}else{document.getElementById('err2').textContent='Sai mật khẩu mục này.';document.getElementById('pw2').value='';}}
+/* ===== gates ===== */
+async function tryL1(){var v=document.getElementById('pw1').value;if(!v)return;var h=await sha(v);if(h===HASH.l1){try{sessionStorage.setItem('ql_l1','1');}catch(e){}showShell();var nx=qs('next');if(nx&&TOOLS[nx])openNav(nx);}else{document.getElementById('err1').textContent='Sai mật khẩu.';document.getElementById('pw1').value='';}}
+function showShell(){document.getElementById('gate1').classList.add('hide');document.getElementById('shell').style.visibility='visible';renderDash();}
+var _g2=null;
+function openGate2(key){_g2=key;var t=TOOLS[key];document.getElementById('g2ic').textContent=t.ic;document.getElementById('g2name').textContent=t.name;document.getElementById('err2').textContent='';document.getElementById('pw2').value='';document.getElementById('gate2').classList.remove('hide');setTimeout(function(){document.getElementById('pw2').focus();},50);}
+function closeG2(){document.getElementById('gate2').classList.add('hide');_g2=null;}
+async function tryTool(){if(!_g2)return;var v=document.getElementById('pw2').value;if(!v)return;var h=await sha(v);if(h===HASH[_g2]){try{sessionStorage.setItem('ql_'+_g2,'1');}catch(e){}var k=_g2;closeG2();loadFrame(k);}else{document.getElementById('err2').textContent='Sai mật khẩu mục này.';document.getElementById('pw2').value='';}}
+function lockAll(){try{sessionStorage.removeItem('ql_l1');Object.keys(TOOLS).forEach(function(k){sessionStorage.removeItem('ql_'+k);});}catch(e){}location.reload();}
 
-function lockAll(){try{sessionStorage.removeItem('ql_l1');TOOLS.forEach(function(t){sessionStorage.removeItem('ql_'+t.key);});}catch(e){}location.reload();}
-
-renderGrid();
-if(sessionStorage.getItem('ql_l1')==='1'){showHub();var nx=qs('next');if(nx&&HASH[nx])openTool(nx);}else{setTimeout(function(){document.getElementById('pw1').focus();},60);}
+/* init */
+if(sessionStorage.getItem('ql_l1')==='1'){showShell();var nx=qs('next');if(nx&&TOOLS[nx])openNav(nx);}else{setTimeout(function(){document.getElementById('pw1').focus();},60);}
 </script>
 </body>
 </html>
