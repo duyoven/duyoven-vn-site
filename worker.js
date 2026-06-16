@@ -46,13 +46,13 @@ const QUOTE_SYS = [
   "- Argentina Grill / Fastgrill / Lò quay / Eco: cần báo giá riêng (đặt p=0)",
   "QUY TẮC: chọn 1–3 sản phẩm hợp nhu cầu (số người ăn, trong nhà/sân vườn/camping, ngân sách). Số lượng mặc định 1 trừ khi khách cần nhiều suất/nhiều chi nhánh. Với mặt hàng 'cần báo giá riêng' đặt p=0 và nhắc nhân viên tự điền giá trong 'reply'. Tôn trọng ngân sách khách nếu nêu.",
   "THÔNG TIN KHÁCH: nếu nhân viên có mô tả tên khách, số điện thoại, công ty, mã số thuế, email, người liên hệ, hay địa chỉ giao hàng thì BÓC ra và điền vào object 'cust'. Trường nào không có thì để chuỗi rỗng \"\". TUYỆT ĐỐI không bịa thông tin khách (không tự tạo SĐT/email/tên giả).",
-  "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown, KHÔNG ```. Cấu trúc đúng: {\"items\":[{\"n\":\"Lò Tách khói 65L\",\"unit\":\"Cái\",\"p\":12100000,\"q\":1}],\"cust\":{\"name\":\"\",\"phone\":\"\",\"contact\":\"\",\"email\":\"\",\"company\":\"\",\"tax\":\"\",\"addr\":\"\"},\"note\":\"ghi chú/điều khoản gợi ý ngắn\",\"deliv\":\"7-10 ngày\",\"warr\":\"12 tháng\",\"valid\":30,\"reply\":\"giải thích ngắn 2-3 câu bằng tiếng Việt cho nhân viên: vì sao chọn các model này\"}. Giá 'p' là số nguyên VND, không dấu phân cách, không chữ. Nếu thiếu thông tin cứ đề xuất phương án hợp lý nhất và nêu giả định trong 'reply'."
+  "CHỈ trả về MỘT đối tượng JSON hợp lệ, KHÔNG kèm chữ nào khác, KHÔNG markdown, KHÔNG ```. Cấu trúc đúng: {\"items\":[{\"n\":\"Lò Tách khói 65L\",\"desc\":\"mô tả/quy cách: kích thước, chất liệu, đặc tính (mỗi ý một dòng)\",\"unit\":\"Cái\",\"p\":12100000,\"q\":1}],\"cust\":{\"name\":\"\",\"phone\":\"\",\"contact\":\"\",\"email\":\"\",\"company\":\"\",\"tax\":\"\",\"addr\":\"\"},\"note\":\"ghi chú/điều khoản gợi ý ngắn\",\"deliv\":\"7-10 ngày\",\"warr\":\"12 tháng\",\"valid\":30,\"reply\":\"giải thích ngắn 2-3 câu bằng tiếng Việt cho nhân viên: vì sao chọn các model này\"}. 'desc' là mô tả chi tiết hàng (nếu có); nếu là nội dung trích từ báo giá cũ thì GIỮ NGUYÊN đầy đủ mô tả. Giá 'p' là số nguyên VND, không dấu phân cách, không chữ. Nếu thiếu thông tin cứ đề xuất phương án hợp lý nhất và nêu giả định trong 'reply'."
 ].join("\n");
 
 const IMPORT_SYS = [
   "Bạn là trợ lý ĐỌC & SỐ HÓA BÁO GIÁ CŨ cho Duy's Oven. Người dùng gửi ẢNH hoặc PDF một bản báo giá/đơn hàng đã có. Hãy ĐỌC thật kỹ và trích xuất ĐÚNG nội dung trong tài liệu — KHÔNG bịa, KHÔNG thêm thông tin ngoài tài liệu.",
-  "DÙNG ĐÚNG dữ liệu trong tài liệu: từng dòng sản phẩm (tên/quy cách, ĐVT, số lượng, đơn giá), thông tin khách hàng (tên, công ty, MST, SĐT, email, người liên hệ, địa chỉ), và điều khoản nếu có (thanh toán, thời gian giao, bảo hành, hiệu lực). Đơn giá lấy ĐÚNG số trong báo giá, bỏ dấu phân cách, ra số nguyên VND. Ô nào không đọc được thì để rỗng hoặc 0.",
-  "CHỈ trả về MỘT JSON hợp lệ, KHÔNG markdown. Cấu trúc: {\"items\":[{\"n\":\"\",\"unit\":\"Cái\",\"p\":0,\"q\":1}],\"cust\":{\"name\":\"\",\"phone\":\"\",\"contact\":\"\",\"email\":\"\",\"company\":\"\",\"tax\":\"\",\"addr\":\"\"},\"note\":\"\",\"deliv\":\"\",\"warr\":\"\",\"valid\":30,\"reply\":\"tóm tắt ngắn tiếng Việt: đã đọc được mấy mục hàng, tên khách\"}."
+  "DÙNG ĐÚNG dữ liệu trong tài liệu: từng dòng sản phẩm gồm TÊN và toàn bộ MÔ TẢ CHI TIẾT (kích thước, chất liệu, màu, đặc tính, nhiên liệu… — giữ NGUYÊN VĂN, mỗi ý một dòng), ĐVT, số lượng, đơn giá; thông tin khách hàng (tên, công ty, MST, SĐT, email, người liên hệ, địa chỉ); và điều khoản nếu có (thanh toán, thời gian giao, bảo hành, hiệu lực). Đơn giá lấy ĐÚNG số trong báo giá, bỏ dấu phân cách, ra số nguyên VND. Ô nào không đọc được thì để rỗng hoặc 0.",
+  "CHỈ trả về MỘT JSON hợp lệ, KHÔNG markdown. Cấu trúc: {\"items\":[{\"n\":\"tên ngắn\",\"desc\":\"toàn bộ mô tả chi tiết, giữ nguyên các dòng kích thước/chất liệu/đặc tính\",\"unit\":\"Cái\",\"p\":0,\"q\":1}],\"cust\":{\"name\":\"\",\"phone\":\"\",\"contact\":\"\",\"email\":\"\",\"company\":\"\",\"tax\":\"\",\"addr\":\"\"},\"note\":\"\",\"deliv\":\"\",\"warr\":\"\",\"valid\":30,\"reply\":\"tóm tắt ngắn tiếng Việt: đã đọc được mấy mục hàng, tên khách\"}. 'n' là tên ngắn của hàng; 'desc' chứa đầy đủ phần mô tả chi tiết còn lại."
 ].join("\n");
 
 const CONTRACT_SYS = [
@@ -208,6 +208,7 @@ export default {
         if (!data || typeof data !== "object") return jsonResp({ reply: txt || "Xin lỗi, chưa tạo được gợi ý.", items: [] });
         const items = Array.isArray(data.items) ? data.items.slice(0, 20).map((it) => ({
           n: String(it.n || it.name || "").slice(0, 120),
+          desc: String(it.desc || "").slice(0, 1000),
           unit: String(it.unit || "Cái").slice(0, 20),
           p: Math.max(0, Math.round(Number(it.p || it.price || 0)) || 0),
           q: Math.max(1, Math.round(Number(it.q || it.qty || 1)) || 1),
@@ -315,7 +316,7 @@ export default {
         try { d = JSON.parse(txt); } catch (e) { const x = txt.match(/\{[\s\S]*\}/); if (x) { try { d = JSON.parse(x[0]); } catch (e2) {} } }
         if (!d || typeof d !== "object") return jsonResp({ reply: txt || "Chưa đọc được báo giá.", items: [] });
         const items = Array.isArray(d.items) ? d.items.slice(0, 30).map((it) => ({
-          n: String(it.n || it.name || "").slice(0, 200), unit: String(it.unit || "Cái").slice(0, 20),
+          n: String(it.n || it.name || "").slice(0, 200), desc: String(it.desc || "").slice(0, 1200), unit: String(it.unit || "Cái").slice(0, 20),
           p: Math.max(0, Math.round(Number(it.p || it.price || 0)) || 0), q: Math.max(1, Math.round(Number(it.q || it.qty || 1)) || 1),
         })).filter((it) => it.n) : [];
         const c = (d.cust && typeof d.cust === "object") ? d.cust : {};
