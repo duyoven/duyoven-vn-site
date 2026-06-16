@@ -162,3 +162,53 @@
     });
   });
 })();
+
+/* ====== CMS: nội dung động từ site-content.json (GĐ2) ====== */
+(function () {
+  fetch('/site-content.json?t=' + Date.now())
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (c) {
+      if (!c) return; window.__cms = c;
+      var co = c.company || {};
+      // Hotline (mọi link tel:)
+      if (co.hotline) {
+        var tel = co.hotline.replace(/[^0-9+]/g, '');
+        document.querySelectorAll('a[href^="tel:"]').forEach(function (a) {
+          a.setAttribute('href', 'tel:' + tel);
+          a.textContent = /Hotline/i.test(a.textContent) ? ('Hotline: ' + co.hotline) : co.hotline;
+        });
+      }
+      // Email (mọi link mailto:)
+      if (co.email) document.querySelectorAll('a[href^="mailto:"]').forEach(function (a) {
+        a.setAttribute('href', 'mailto:' + co.email); a.textContent = co.email;
+      });
+      // Địa chỉ trong footer
+      if (co.address) document.querySelectorAll('.site-footer p[data-en^="Address"]').forEach(function (p) {
+        var t = 'Địa chỉ: ' + co.address; p.textContent = t; p.setAttribute('data-vi', t);
+      });
+      // Phần tử bất kỳ có data-cms="company.hotline" v.v.
+      document.querySelectorAll('[data-cms]').forEach(function (el) {
+        var v = c, ks = el.getAttribute('data-cms').split('.');
+        for (var i = 0; i < ks.length && v != null; i++) v = v[ks[i]];
+        if (v != null && typeof v !== 'object') el.textContent = v;
+      });
+      // Chèn link "Tin tức" vào cột "Khám phá" của footer
+      var h4 = Array.prototype.find.call(document.querySelectorAll('.site-footer h4'), function (h) { return /Khám phá|Explore/i.test(h.textContent); });
+      if (h4 && h4.nextElementSibling && h4.nextElementSibling.tagName === 'UL') {
+        var ul = h4.nextElementSibling;
+        if (!ul.querySelector('a[href="tin-tuc.html"]')) {
+          var li = document.createElement('li'); li.innerHTML = '<a href="tin-tuc.html">Tin tức</a>';
+          ul.appendChild(li);
+        }
+      }
+      // Chèn link "Bảng giá" vào cột "Sản phẩm" của footer
+      var h4p = Array.prototype.find.call(document.querySelectorAll('.site-footer h4'), function (h) { return /Sản phẩm|Products/i.test(h.textContent); });
+      if (h4p && h4p.nextElementSibling && h4p.nextElementSibling.tagName === 'UL') {
+        var ulp = h4p.nextElementSibling;
+        if (!ulp.querySelector('a[href="bang-gia.html"]')) {
+          var li2 = document.createElement('li'); li2.innerHTML = '<a href="bang-gia.html">Bảng giá</a>';
+          ulp.appendChild(li2);
+        }
+      }
+    }).catch(function () {});
+})();
