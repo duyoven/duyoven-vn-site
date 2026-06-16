@@ -378,6 +378,52 @@ export default {
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
 
+    // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
+    if (url.pathname === "/api/cms") {
+      if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+      const repo = env.GH_REPO || "duyoven/duyoven-vn-site";
+      const ghPath = "site-content.json";
+      const ghApi = "https://api.github.com/repos/" + repo + "/contents/" + ghPath;
+      const ghHeaders = {
+        "Authorization": "Bearer " + (env.GH_TOKEN || ""),
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "duyoven-cms",
+      };
+      if (request.method === "GET") {
+        // luôn lấy bản mới nhất trong repo (kể cả vừa lưu xong)
+        if (!env.GH_TOKEN) {
+          // chưa có token: đọc bản tĩnh đang phục vụ
+          try { const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString()); if (a.ok) return new Response(await a.text(), { headers: { "Content-Type": "application/json; charset=UTF-8", "Cache-Control": "no-store" } }); } catch (e) {}
+          return jsonResp({ error: "Chưa cấu hình GH_TOKEN." }, 503);
+        }
+        const r = await fetch(ghApi + "?ref=main", { headers: ghHeaders });
+        if (!r.ok) return jsonResp({ error: "GitHub " + r.status }, 502);
+        const j = await r.json();
+        const txt = decodeURIComponent(escape(atob((j.content || "").replace(/\n/g, ""))));
+        return new Response(txt, { headers: { "Content-Type": "application/json; charset=UTF-8", "Cache-Control": "no-store" } });
+      }
+      if (request.method === "POST") {
+        if (!env.GH_TOKEN) return jsonResp({ error: "Chưa cấu hình chìa khóa GitHub (GH_TOKEN) trong Worker — xem hướng dẫn." }, 503);
+        let bodyTxt; try { bodyTxt = await request.text(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
+        let obj; try { obj = JSON.parse(bodyTxt); } catch (e) { return jsonResp({ error: "Nội dung JSON không hợp lệ." }, 400); }
+        obj.updatedAt = new Date().toISOString();
+        const pretty = JSON.stringify(obj, null, 2);
+        const b64 = btoa(unescape(encodeURIComponent(pretty)));
+        let sha = undefined;
+        const cur = await fetch(ghApi + "?ref=main", { headers: ghHeaders });
+        if (cur.ok) { const cj = await cur.json(); sha = cj.sha; }
+        const who = staffUser(request, env) || "staff";
+        const put = await fetch(ghApi, {
+          method: "PUT",
+          headers: { ...ghHeaders, "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "CMS: cập nhật nội dung site (" + who + ")", content: b64, sha, branch: "main" }),
+        });
+        if (!put.ok) return jsonResp({ error: "GitHub " + put.status + " " + (await put.text()).slice(0, 200) }, 502);
+        return jsonResp({ ok: true, updatedAt: obj.updatedAt });
+      }
+      return jsonResp({ error: "method" }, 405);
+    }
+
     // --- AI: ảnh sản phẩm studio (tạo 1 lần, cache vĩnh viễn ở edge) ---
     if (url.pathname === "/img/p") {
       const m = (url.searchParams.get("m") || "hero").slice(0, 40);
