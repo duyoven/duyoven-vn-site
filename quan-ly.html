@@ -70,6 +70,16 @@
   .pnl .err{color:#d4452f;font-size:13px;min-height:18px;margin-top:8px}
   .pnl .cancel{margin-top:8px;color:var(--muted);background:none;border:none;font:inherit;cursor:pointer;font-size:13px}
   .pnl .cancel:hover{color:var(--text)}
+  .cmstabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .ctab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;font:inherit;font-size:13.5px;cursor:pointer;font-weight:600;color:var(--text)}
+  .ctab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  #website input,#website textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff;color:var(--text)}
+  #website textarea{min-height:74px;resize:vertical}
+  #website input[type=checkbox]{width:auto}
+  #website label.fl{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  .crow{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfaf7}
+  .cmsbtn{padding:11px 20px;border:none;border-radius:10px;background:var(--ember);color:#160a02;font:inherit;font-weight:700;cursor:pointer;font-size:15px}
+  .cmsbtn.sec{background:#fff;color:var(--text);border:1px solid var(--line);font-size:13px;padding:7px 13px}
   @media(max-width:820px){
     .side{transform:translateX(-100%);transition:.2s;width:240px}
     body.snav .side{transform:none}
@@ -122,6 +132,8 @@
     <div class="navi" data-key="hopdong" onclick="openNav('hopdong')"><span class="ic">📑</span> Hợp Đồng</div>
     <div class="navi" data-key="kho" onclick="openNav('kho')"><span class="ic">📦</span> Quản Lý Kho</div>
     <div class="navi" data-key="nghiemthu" onclick="openNav('nghiemthu')"><span class="ic">✅</span> Bàn Giao Nghiệm Thu</div>
+    <div class="navsec">Website</div>
+    <div class="navi" data-key="website" onclick="openNav('website')"><span class="ic">🌐</span> Quản lý Website</div>
     <div class="navsec">Khác</div>
     <div class="navi" onclick="location.href='index.html'"><span class="ic">🏠</span> Về trang chủ</div>
   </nav>
@@ -143,6 +155,24 @@
       <div class="panel">
         <h2>🕘 Hoạt động kho gần đây</h2>
         <div class="acts" id="recentActs"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main" id="website" style="display:none">
+    <div class="dash">
+      <h1>🌐 Quản lý Website</h1>
+      <p class="sub">Sửa nội dung động của duyoven.vn. Bấm "Đăng lên web" để cập nhật (web tự build ~1 phút). <span id="cmsStatus" style="font-weight:600"></span></p>
+      <div class="cmstabs">
+        <button class="ctab active" data-t="company" onclick="cmsTab('company')">🏢 Công ty</button>
+        <button class="ctab" data-t="home" onclick="cmsTab('home')">🏠 Trang chủ</button>
+        <button class="ctab" data-t="products" onclick="cmsTab('products')">📦 Sản phẩm & giá</button>
+        <button class="ctab" data-t="news" onclick="cmsTab('news')">📰 Tin tức</button>
+      </div>
+      <div class="panel" id="cmsBody">Đang tải…</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
+        <button class="cmsbtn" onclick="saveCMS()">📤 Đăng lên web</button>
+        <button class="cmsbtn sec" onclick="loadCMS()" style="font-size:14px;padding:11px 16px">↺ Tải lại từ web</button>
       </div>
     </div>
   </div>
@@ -196,9 +226,39 @@ function renderDash(){
 /* ===== navigation ===== */
 var _cur='dash';
 function setActive(key){document.querySelectorAll('.navi').forEach(function(n){n.classList.toggle('active',n.getAttribute('data-key')===key);});}
-function showDash(){document.getElementById('dashboard').style.display='block';document.getElementById('framewrap').style.display='none';setActive('dash');_cur='dash';renderDash();}
-function loadFrame(key){var t=TOOLS[key];document.getElementById('frameTitle').innerHTML=t.ic+' <b>'+t.name+'</b>';document.getElementById('toolFrame').src=t.url+'?embed=1';document.getElementById('dashboard').style.display='none';document.getElementById('framewrap').style.display='block';setActive(key);_cur=key;document.body.classList.remove('snav');}
-function openNav(key){if(key==='dash'){showDash();return;}if(sessionStorage.getItem('ql_'+key)==='1'){loadFrame(key);}else{openGate2(key);}}
+function setView(v){document.getElementById('dashboard').style.display=(v==='dash')?'block':'none';document.getElementById('website').style.display=(v==='website')?'block':'none';document.getElementById('framewrap').style.display=(v==='frame')?'block':'none';}
+function showDash(){setView('dash');setActive('dash');_cur='dash';document.body.classList.remove('snav');renderDash();}
+function showWebsite(){setView('website');setActive('website');_cur='website';document.body.classList.remove('snav');loadCMS();}
+function loadFrame(key){var t=TOOLS[key];document.getElementById('frameTitle').innerHTML=t.ic+' <b>'+t.name+'</b>';document.getElementById('toolFrame').src=t.url+'?embed=1';setView('frame');setActive(key);_cur=key;document.body.classList.remove('snav');}
+function openNav(key){if(key==='dash'){showDash();return;}if(key==='website'){showWebsite();return;}if(sessionStorage.getItem('ql_'+key)==='1'){loadFrame(key);}else{openGate2(key);}}
+
+/* ===== CMS: Quản lý Website ===== */
+var CONTENT=null,_cmsTab='company';
+function vv(id){var e=document.getElementById(id);return e?e.value:'';}
+function fl(label,id,val,ta){return '<label class="fl">'+label+'</label>'+(ta?'<textarea id="'+id+'">'+esc(val||'')+'</textarea>':'<input id="'+id+'" value="'+esc(val||'')+'">');}
+async function loadCMS(){var b=document.getElementById('cmsBody');b.innerHTML='Đang tải…';var st=document.getElementById('cmsStatus');st.textContent='';CONTENT=null;
+ try{var r=await fetch('/api/cms',{headers:{'Accept':'application/json'}});if(r.ok){CONTENT=await r.json();}}catch(e){}
+ if(!CONTENT){try{var r2=await fetch('/site-content.json?t='+Date.now());if(r2.ok)CONTENT=await r2.json();}catch(e2){}}
+ if(!CONTENT){b.innerHTML='<div class="empty">Không tải được nội dung. Có thể chưa tạo site-content.json hoặc chưa gắn chìa khóa GitHub.</div>';return;}
+ renderCmsTab();}
+function cmsTab(t){cmsCollect();_cmsTab=t;document.querySelectorAll('.ctab').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-t')===t);});renderCmsTab();}
+function renderCmsTab(){var b=document.getElementById('cmsBody');var c=CONTENT;if(!c)return;
+ if(_cmsTab==='company'){var co=c.company||{};b.innerHTML=fl('Tên công ty','cm_name',co.name)+fl('Thương hiệu','cm_brand',co.brand)+fl('Địa chỉ','cm_address',co.address)+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+fl('Hotline','cm_hotline',co.hotline)+fl('Email','cm_email',co.email)+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+fl('Mã số thuế','cm_tax',co.tax)+fl('Giờ làm việc','cm_hours',co.hours)+'</div>'+fl('Tài khoản ngân hàng','cm_bank',co.bank);}
+ else if(_cmsTab==='home'){var h=c.home||{};b.innerHTML=fl('Tiêu đề lớn (hero)','cm_heroTitle',h.heroTitle)+fl('Phụ đề (hero)','cm_heroSub',h.heroSub,1)+fl('Băng-rôn khuyến mãi (để trống nếu không có)','cm_promo',h.promo);}
+ else if(_cmsTab==='products'){var ps=c.products||[];b.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="muted" style="font-size:13px">Bảng giá &amp; thẻ sản phẩm (không sửa nội dung chi tiết từng trang).</span><button class="cmsbtn sec" onclick="cmsAddProduct()">+ Thêm sản phẩm</button></div>'+(ps.map(function(p,i){return '<div class="crow"><div style="display:grid;grid-template-columns:2fr 1fr 70px;gap:8px"><input data-p="'+i+'" data-k="name" value="'+esc(p.name)+'" placeholder="Tên sản phẩm"><input data-p="'+i+'" data-k="price" type="number" value="'+(p.price||0)+'" placeholder="Giá (0=Liên hệ)"><input data-p="'+i+'" data-k="unit" value="'+esc(p.unit||'bộ')+'"></div><input data-p="'+i+'" data-k="short" value="'+esc(p.short||'')+'" placeholder="Mô tả ngắn" style="margin-top:8px"><div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-top:8px;align-items:center"><input data-p="'+i+'" data-k="link" value="'+esc(p.link||'')+'" placeholder="Trang chi tiết (vd: sp-hybrid-65l.html)"><label style="font-size:13px;white-space:nowrap"><input type="checkbox" data-p="'+i+'" data-k="active" '+(p.active!==false?'checked':'')+'> Hiện</label><button class="cmsbtn sec" onclick="cmsDelProduct('+i+')" style="color:#d4452f">Xóa</button></div></div>';}).join('')||'<div class="empty">Chưa có sản phẩm.</div>');}
+ else if(_cmsTab==='news'){var ns=c.news||[];b.innerHTML='<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="cmsbtn sec" onclick="cmsAddNews()">+ Viết bài mới</button></div>'+(ns.map(function(n,i){return '<div class="crow"><div style="display:grid;grid-template-columns:2fr 140px auto;gap:8px;align-items:center"><input data-n="'+i+'" data-k="title" value="'+esc(n.title)+'" placeholder="Tiêu đề bài"><input data-n="'+i+'" data-k="date" type="date" value="'+esc(n.date||'')+'"><label style="font-size:13px;white-space:nowrap"><input type="checkbox" data-n="'+i+'" data-k="active" '+(n.active!==false?'checked':'')+'> Hiện</label></div><input data-n="'+i+'" data-k="summary" value="'+esc(n.summary||'')+'" placeholder="Tóm tắt ngắn" style="margin-top:8px"><textarea data-n="'+i+'" data-k="body" placeholder="Nội dung bài viết">'+esc(n.body||'')+'</textarea><div style="text-align:right;margin-top:8px"><button class="cmsbtn sec" onclick="cmsDelNews('+i+')" style="color:#d4452f">Xóa bài</button></div></div>';}).join('')||'<div class="empty">Chưa có bài viết.</div>');}
+}
+function cmsCollect(){var c=CONTENT;if(!c)return;
+ if(_cmsTab==='company'){c.company={name:vv('cm_name'),brand:vv('cm_brand'),address:vv('cm_address'),hotline:vv('cm_hotline'),email:vv('cm_email'),tax:vv('cm_tax'),hours:vv('cm_hours'),bank:vv('cm_bank')};}
+ else if(_cmsTab==='home'){c.home={heroTitle:vv('cm_heroTitle'),heroSub:vv('cm_heroSub'),promo:vv('cm_promo')};}
+ else if(_cmsTab==='products'){if(c.products)document.querySelectorAll('#cmsBody [data-p]').forEach(function(el){var i=+el.getAttribute('data-p'),k=el.getAttribute('data-k');if(!c.products[i])return;c.products[i][k]=(k==='active')?el.checked:(k==='price'?(parseInt(el.value)||0):el.value);});}
+ else if(_cmsTab==='news'){if(c.news)document.querySelectorAll('#cmsBody [data-n]').forEach(function(el){var i=+el.getAttribute('data-n'),k=el.getAttribute('data-k');if(!c.news[i])return;c.news[i][k]=(k==='active')?el.checked:el.value;});}
+}
+function cmsAddProduct(){cmsCollect();CONTENT.products=CONTENT.products||[];CONTENT.products.push({id:'p'+Date.now(),name:'',price:0,unit:'bộ',short:'',img:'',link:'',active:true});renderCmsTab();}
+function cmsDelProduct(i){if(!confirm('Xóa sản phẩm này?'))return;cmsCollect();CONTENT.products.splice(i,1);renderCmsTab();}
+function cmsAddNews(){cmsCollect();CONTENT.news=CONTENT.news||[];CONTENT.news.unshift({id:'n'+Date.now(),date:new Date().toISOString().slice(0,10),title:'',summary:'',body:'',img:'',active:true});renderCmsTab();}
+function cmsDelNews(i){if(!confirm('Xóa bài này?'))return;cmsCollect();CONTENT.news.splice(i,1);renderCmsTab();}
+async function saveCMS(){if(!CONTENT){alert('Chưa có nội dung để đăng.');return;}cmsCollect();var st=document.getElementById('cmsStatus');st.style.color='var(--muted)';st.textContent='⏳ Đang đăng…';try{var r=await fetch('/api/cms',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(CONTENT)});var j=await r.json();if(!r.ok||j.error)throw new Error(j.error||('HTTP '+r.status));st.style.color='#2e9e57';st.textContent='✅ Đã đăng! Web sẽ cập nhật sau khoảng 1 phút.';}catch(e){st.style.color='#d4452f';st.textContent='⚠ '+e.message;}}
 function reloadFrame(){var f=document.getElementById('toolFrame');f.src=f.src;}
 function openInTab(){if(TOOLS[_cur])window.open(TOOLS[_cur].url,'_blank');}
 
