@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{if(sessionStorage.getItem('ql_nghiemthu')!=='1')location.replace('quan-ly.html?next=nghiemthu');}catch(e){location.replace('quan-ly.html');}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Bàn giao nghiệm thu — nội bộ Duy's Oven</title>
+<style>
+  :root{--bg:#0d0e10;--card:#16181c;--line:rgba(255,255,255,.12);--ember:#F47B20;--text:#eceae6;--muted:#9aa0aa}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+  .container{max-width:1180px;margin:0 auto;padding:0 18px}
+  header{position:sticky;top:0;z-index:30;background:rgba(13,14,16,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .hd{display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px;flex-wrap:wrap}
+  .hd a{color:var(--muted);text-decoration:none;font-size:14px;margin-right:14px} .hd a:hover{color:var(--ember)} .hd b{color:var(--text)}
+  h1{font-size:24px;margin:18px 0 4px} .sub{color:var(--muted);font-size:14px;margin:0 0 16px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+  .box h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .lbl{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  input,textarea,select{width:100%;padding:9px 11px;border-radius:9px;border:1px solid var(--line);background:rgba(0,0,0,.18);color:var(--text);font:inherit}
+  textarea{resize:vertical;min-height:46px}
+  .fg{display:grid;grid-template-columns:1fr 1fr;gap:10px} .fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .btn{display:inline-block;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+  .btn:hover{border-color:var(--ember)} .btn-p{background:var(--ember);color:#160a02;border-color:var(--ember)} .btn-sm{padding:6px 11px;font-size:13px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px} .muted{color:var(--muted)} small{color:var(--muted)}
+  .itm{display:grid;grid-template-columns:1fr 70px 70px 1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:8px;background:rgba(0,0,0,.12)}
+  .saved-item{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .radio{display:flex;gap:18px;margin-top:6px} .radio label{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer} .radio input{width:auto}
+  #docWrap{display:none}
+  .doc{background:#fff;color:#111;max-width:800px;margin:16px auto;padding:44px 52px;font-family:"Times New Roman",Georgia,serif;font-size:13pt;line-height:1.5}
+  .doc .ctr{text-align:center} .doc b{font-weight:bold} .doc h2{text-align:center;font-size:16pt;margin:6px 0 2px} .doc .small{font-size:11pt}
+  .doc table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11.5pt} .doc th,.doc td{border:1px solid #333;padding:6px 8px;vertical-align:top} .doc th{background:#f0eee9;text-align:center}
+  .doc .r{text-align:right} .doc .c{text-align:center} .doc .dieu{font-weight:bold;margin:14px 0 4px}
+  .doc .sign{display:flex;justify-content:space-around;margin-top:32px;text-align:center} .doc .sign .role{font-weight:bold} .doc .sign .gap{height:78px}
+  @media print{header,.noprint,#builder{display:none!important}body{background:#fff}#docWrap{display:block!important}.doc{margin:0;max-width:none}}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}.fg,.fg3{grid-template-columns:1fr}.itm{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header class="noprint"><div class="container hd">
+  <div><a href="quan-ly.html">← Quản Lý</a><a href="hop-dong.html">Hợp đồng</a><b>Bàn giao nghiệm thu</b></div>
+  <span class="muted">Duy's Oven · Phiên nội bộ</span>
+</div></header>
+
+<div id="builder"><div class="container">
+  <h1>Biên bản bàn giao &amp; nghiệm thu</h1>
+  <p class="sub">Lập biên bản giao hàng và nghiệm thu cho khách. Có thể nạp từ hợp đồng / báo giá đã lưu. Lưu trong trình duyệt máy này.</p>
+  <div class="box" style="font-size:13px;color:var(--muted)">Nhân viên: <b style="color:var(--text)" id="staffName">__STAFF__</b></div>
+
+  <div class="box">
+    <h3>📋 Nạp từ hợp đồng / báo giá đã lưu</h3>
+    <div class="fg"><select id="srcSel"><option value="">— Chọn nguồn —</option></select><button class="btn btn-sm" onclick="loadFromSrc()">Nạp khách &amp; hạng mục →</button></div>
+  </div>
+
+  <div class="grid2">
+    <div class="box">
+      <h3>🏭 Bên giao (Bên bán)</h3>
+      <span class="lbl">Tên</span><input id="gName" value="CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA">
+      <span class="lbl">Đại diện</span><input id="gRep" value="ông NGUYỄN VĨNH DUY">
+      <span class="lbl">Chức vụ</span><input id="gTitle" value="Giám đốc">
+    </div>
+    <div class="box">
+      <h3>👤 Bên nhận (Khách hàng)</h3>
+      <span class="lbl">Tên công ty / cá nhân</span><input id="cName" placeholder="CÔNG TY ...">
+      <span class="lbl">Đại diện</span><input id="cRep" placeholder="ông/bà ...">
+      <div class="fg"><div><span class="lbl">Chức vụ</span><input id="cTitle"></div><div><span class="lbl">Điện thoại</span><input id="cPhone"></div></div>
+      <span class="lbl">Địa điểm bàn giao</span><input id="cAddr">
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>📑 Thông tin biên bản</h3>
+    <div class="fg3">
+      <div><span class="lbl">Số biên bản</span><input id="bNo"></div>
+      <div><span class="lbl">Ngày bàn giao</span><input id="bDate" type="date"></div>
+      <div><span class="lbl">Căn cứ HĐ số (nếu có)</span><input id="bContract" placeholder="VD: 16062026/HĐMB/HAR"></div>
+    </div>
+    <span class="lbl">Dự án (nếu có)</span><input id="bProject">
+  </div>
+
+  <div class="box">
+    <h3>✅ Hạng mục bàn giao &amp; nghiệm thu</h3>
+    <button class="btn btn-sm" onclick="addBlank()">+ Thêm hạng mục</button>
+    <div id="itBody" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
+    <div style="margin-top:14px">
+      <span class="lbl">Kết luận nghiệm thu</span>
+      <div class="radio"><label><input type="radio" name="kq" value="đạt" checked> Đạt yêu cầu, đồng ý nghiệm thu</label><label><input type="radio" name="kq" value="khong"> Chưa đạt (ghi rõ bên dưới)</label></div>
+      <textarea id="bConclu" rows="2" style="margin-top:8px" placeholder="Nội dung kết luận / tồn tại cần khắc phục (nếu có)…">Hai bên thống nhất nghiệm thu và bàn giao toàn bộ hàng hóa nêu trên. Hàng hóa đầy đủ số lượng, đúng chủng loại, đảm bảo chất lượng. Bên nhận đồng ý nghiệm thu.</textarea>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-p" onclick="makeBB(true)">Lưu &amp; tạo biên bản</button>
+    <button class="btn" onclick="makeBB(false)">Xem trước (không lưu)</button>
+  </div>
+
+  <div class="box" style="margin-top:16px"><h3>🗂️ Biên bản đã lưu</h3><input id="savedSearch" placeholder="Tìm số BB / tên khách…" oninput="renderSaved()" style="margin-bottom:8px"><div id="savedList"></div></div>
+</div></div>
+
+<div id="docWrap">
+  <div class="container noprint" style="margin-top:14px">
+    <button class="btn btn-p" onclick="window.print()">🖨️ In / Lưu PDF</button>
+    <button class="btn" onclick="exportWord()">📄 Xuất Word (.doc)</button>
+    <button class="btn" onclick="saveToDrive()">☁️ Lưu lên Google Drive</button>
+    <button class="btn" onclick="document.getElementById('docWrap').style.display='none';window.scrollTo(0,0)">Đóng</button>
+  </div>
+  <div class="doc" id="docBody"></div>
+</div>
+
+<script>
+var KEY='dq_bbnt',QKEY='dq_quotes',CKEY='dq_contracts';
+var ITEMS=[];
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function val(id){var e=document.getElementById(id);return e?(e.value||'').trim():'';}
+function pad(x){return(x<10?'0':'')+x;}
+function loadJSON(k){try{return JSON.parse(localStorage.getItem(k)||'[]');}catch(e){return [];}}
+
+/* items */
+function addBlank(){ITEMS.push({n:'',unit:'bộ',q:1,note:'Đạt'});renderItems();}
+function setItem(i,k,v){if(k==='q')v=parseInt(v)||0;ITEMS[i][k]=v;}
+function delItem(i){ITEMS.splice(i,1);renderItems();}
+function renderItems(){var b=document.getElementById('itBody');b.innerHTML=ITEMS.map(function(x,i){return '<div class="itm">'+
+  '<input placeholder="Tên hạng mục / hàng hóa" value="'+esc(x.n)+'" oninput="setItem('+i+',\'n\',this.value)">'+
+  '<input placeholder="ĐVT" value="'+esc(x.unit)+'" oninput="setItem('+i+',\'unit\',this.value)">'+
+  '<input type="number" min="0" placeholder="SL" value="'+x.q+'" oninput="setItem('+i+',\'q\',this.value)">'+
+  '<input placeholder="Tình trạng / ghi chú" value="'+esc(x.note||'')+'" oninput="setItem('+i+',\'note\',this.value)">'+
+  '<button class="btn btn-sm" onclick="delItem('+i+')" style="color:#e25b4b">✕</button></div>';}).join('')||'<div class="muted" style="font-size:13px">Chưa có hạng mục. Bấm “+ Thêm hạng mục” hoặc nạp từ hợp đồng.</div>';}
+
+/* source load */
+function loadSources(){var sel=document.getElementById('srcSel');var html='<option value="">— Chọn nguồn —</option>';var cs=loadJSON(CKEY);if(cs.length){html+='<optgroup label="Hợp đồng">';cs.forEach(function(c,i){html+='<option value="c:'+i+'">'+esc(c.no)+' · '+esc(c.name||'—')+'</option>';});html+='</optgroup>';}var qs=loadJSON(QKEY);if(qs.length){html+='<optgroup label="Báo giá">';qs.forEach(function(q,i){html+='<option value="q:'+i+'">'+esc(q.no)+' · '+esc((q.cust&&q.cust.name)||'—')+'</option>';});html+='</optgroup>';}sel.innerHTML=html;}
+function loadFromSrc(){var v=document.getElementById('srcSel').value;if(!v)return;var parts=v.split(':');var e=function(id,val2){var el=document.getElementById(id);if(el&&val2)el.value=val2;};
+ if(parts[0]==='c'){var c=loadJSON(CKEY)[parseInt(parts[1])];if(!c||!c.obj)return;var k=c.obj;var A=k.A||{};e('cName',A.name);e('cRep',A.rep);e('cTitle',A.title);e('cPhone',A.phone);e('cAddr',A.addr);e('bContract',k.no);e('bProject',k.project);ITEMS=(k.items||[]).map(function(x){return {n:x.n,unit:x.unit||'bộ',q:x.q||1,note:'Đạt'};});renderItems();alert('Đã nạp từ hợp đồng '+k.no);}
+ else{var q=loadJSON(QKEY)[parseInt(parts[1])];if(!q)return;var u=q.cust||{};e('cName',u.company||u.name);e('cRep',u.contact);e('cPhone',u.phone);e('cAddr',u.addr);ITEMS=(q.items||[]).map(function(x){return {n:x.n,unit:x.unit||'bộ',q:x.q||1,note:'Đạt'};});renderItems();alert('Đã nạp từ báo giá '+q.no);}}
+
+/* numbering */
+function genNo(d){return 'BBNT-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds());}
+function kq(){var r=document.querySelector('input[name=kq]:checked');return r?r.value:'đạt';}
+function bbObj(){return{no:val('bNo'),date:val('bDate'),contract:val('bContract'),project:val('bProject'),conclu:val('bConclu'),kq:kq(),
+ G:{name:val('gName'),rep:val('gRep'),title:val('gTitle')},C:{name:val('cName'),rep:val('cRep'),title:val('cTitle'),phone:val('cPhone'),addr:val('cAddr')},
+ items:ITEMS.slice(),staff:document.getElementById('staffName').textContent};}
+
+function makeBB(save){if(!ITEMS.filter(function(x){return x.n;}).length){alert('Chưa có hạng mục.');return;}if(!val('cName')){alert('Chưa có tên Bên nhận.');return;}if(!val('bNo')){document.getElementById('bNo').value=genNo(new Date());}var k=bbObj();
+ if(save){var arr=loadJSON(KEY);arr.unshift({no:k.no,name:k.C.name,date:k.date||new Date().toISOString().slice(0,10),obj:k});localStorage.setItem(KEY,JSON.stringify(arr.slice(0,200)));renderSaved();alert('Đã lưu biên bản '+k.no);}
+ renderDoc(k);}
+
+function renderDoc(k){window.__lastNo=k.no;var d=k.date?new Date(k.date+'T00:00:00'):new Date();var rows='',i=0;
+ k.items.forEach(function(x){if(!x.n)return;i++;rows+='<tr><td class="c">'+i+'</td><td>'+esc(x.n)+'</td><td class="c">'+esc(x.unit||'')+'</td><td class="c">'+(x.q||0)+'</td><td>'+esc(x.note||'')+'</td></tr>';});
+ var h='';
+ h+='<div class="ctr"><b>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</b><br><b>Độc lập – Tự do – Hạnh phúc</b><br>———————</div>';
+ h+='<h2>BIÊN BẢN BÀN GIAO &amp; NGHIỆM THU</h2><div class="ctr">Số: '+esc(k.no||'')+(k.contract?'<br><span class="small">Căn cứ Hợp đồng số: '+esc(k.contract)+'</span>':'')+'</div>';
+ h+='<p>Hôm nay, ngày '+pad(d.getDate())+' tháng '+pad(d.getMonth()+1)+' năm '+d.getFullYear()+(k.C.addr?', tại '+esc(k.C.addr):'')+', chúng tôi gồm:</p>';
+ h+='<p><b>BÊN GIAO (BÊN BÁN):</b> '+esc(k.G.name||'')+'<br>Đại diện: <b>'+esc(k.G.rep||'')+'</b>'+(k.G.title?' – '+esc(k.G.title):'')+'</p>';
+ h+='<p><b>BÊN NHẬN (KHÁCH HÀNG):</b> '+esc(k.C.name||'')+'<br>Đại diện: <b>'+esc(k.C.rep||'…')+'</b>'+(k.C.title?' – '+esc(k.C.title):'')+(k.C.phone?'<br>Điện thoại: '+esc(k.C.phone):'')+'</p>';
+ h+='<p>Hai bên cùng tiến hành bàn giao và nghiệm thu hàng hóa'+(k.project?' thuộc dự án <b>'+esc(k.project)+'</b>':'')+' với nội dung như sau:</p>';
+ h+='<div class="dieu">1. Danh mục hàng hóa bàn giao – nghiệm thu:</div>';
+ h+='<table><thead><tr><th>STT</th><th>Tên hàng hóa / hạng mục</th><th>ĐVT</th><th>SL</th><th>Tình trạng / Kết quả</th></tr></thead><tbody>'+(rows||'<tr><td colspan="5" class="c">(chưa có)</td></tr>')+'</tbody></table>';
+ h+='<div class="dieu">2. Kết luận nghiệm thu:</div>';
+ h+='<p>'+(k.kq==='đạt'?'<b>ĐẠT YÊU CẦU.</b> ':'<b>CHƯA ĐẠT.</b> ')+esc(k.conclu||'')+'</p>';
+ h+='<p>Biên bản được lập thành 02 (hai) bản, mỗi bên giữ 01 (một) bản có giá trị pháp lý như nhau và là căn cứ để hai bên thực hiện nghĩa vụ thanh toán theo hợp đồng.</p>';
+ h+='<div class="sign"><div><div class="role">ĐẠI DIỆN BÊN NHẬN</div><div class="small">(Ký, ghi rõ họ tên)</div><div class="gap"></div><b>'+esc(k.C.rep||'')+'</b></div><div><div class="role">ĐẠI DIỆN BÊN GIAO</div><div class="small">(Ký, đóng dấu)</div><div class="gap"></div><b>'+esc(k.G.rep||'')+'</b></div></div>';
+ document.getElementById('docBody').innerHTML=h;var w=document.getElementById('docWrap');w.style.display='block';w.scrollIntoView({behavior:'smooth'});}
+
+/* saved */
+function filtered(){var q=(val('savedSearch')||'').toLowerCase();return loadJSON(KEY).filter(function(z){return !q||(z.no+' '+(z.name||'')).toLowerCase().indexOf(q)>=0;});}
+function renderSaved(){var arr=filtered();var el=document.getElementById('savedList');if(!arr.length){el.innerHTML='<div class="muted">Chưa có biên bản nào.</div>';return;}el.innerHTML=arr.map(function(x,i){return '<div class="saved-item"><span><b>'+esc(x.no)+'</b> · '+esc(x.name||'—')+'</span><span><button class="btn btn-sm" onclick="viewSaved('+i+')">Xem</button> <button class="btn btn-sm" onclick="delSaved('+i+')">Xóa</button></span></div>';}).join('');}
+function viewSaved(i){var x=filtered()[i];if(x&&x.obj)renderDoc(x.obj);}
+function delSaved(i){var t=filtered()[i];if(!t)return;var all=loadJSON(KEY);var idx=all.findIndex(function(z){return z.no===t.no;});if(idx>=0&&confirm('Xóa biên bản '+t.no+'?')){all.splice(idx,1);localStorage.setItem(KEY,JSON.stringify(all));renderSaved();}}
+
+/* export / drive */
+function buildWordHtml(){var inner=document.getElementById('docBody').innerHTML;if(!inner)return null;var css=document.querySelector('style')?document.querySelector('style').innerHTML:'';var no=(window.__lastNo||'BienBan').replace(/[\/\\:*?"<>|]/g,'-');return {no:no,html:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>'+esc(no)+'</title><style>'+css+'</style></head><body><div class="doc">'+inner+'</div></body></html>'};}
+function exportWord(){var wd=buildWordHtml();if(!wd){alert('Chưa có biên bản. Tạo trước.');return;}var blob=new Blob(['﻿'+wd.html],{type:'application/msword'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=wd.no+'.doc';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(a.href);},600);}
+var GDKEY='dq_gdclient',_gdToken=null,_gdExp=0,GD_DEFAULT='692061670720-n836gc68b3k5q5ceq8jb8bcb7nvt50on.apps.googleusercontent.com';
+function gdClientId(){return (localStorage.getItem(GDKEY)||GD_DEFAULT).trim();}
+function ensureGdToken(cb){var cid=gdClientId();if(!cid){alert('Chưa cấu hình Google Client ID.');return;}if(!window.google||!google.accounts||!google.accounts.oauth2){alert('Đang tải Google… đợi vài giây rồi thử lại.');return;}if(_gdToken&&Date.now()<_gdExp-60000){cb(_gdToken);return;}var tc=google.accounts.oauth2.initTokenClient({client_id:cid,scope:'https://www.googleapis.com/auth/drive.file',callback:function(r){if(r&&r.access_token){_gdToken=r.access_token;_gdExp=Date.now()+(r.expires_in||3600)*1000;cb(_gdToken);}else{alert('Không lấy được quyền Google Drive.');}}});tc.requestAccessToken();}
+async function gdFolder(token,name,parentId){var q="mimeType='application/vnd.google-apps.folder' and name='"+name.replace(/'/g,"\\'")+"' and trashed=false"+(parentId?(" and '"+parentId+"' in parents"):'');var r=await fetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id)',{headers:{Authorization:'Bearer '+token}}).then(function(x){return x.json();});if(r.files&&r.files.length)return r.files[0].id;var body={name:name,mimeType:'application/vnd.google-apps.folder'};if(parentId)body.parents=[parentId];var c=await fetch('https://www.googleapis.com/drive/v3/files?fields=id',{method:'POST',headers:{Authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify(body)}).then(function(x){return x.json();});return c.id;}
+function saveToDrive(){var wd=buildWordHtml();if(!wd){alert('Chưa có biên bản. Tạo trước.');return;}ensureGdToken(function(token){(async function(){try{var root=await gdFolder(token,"Báo giá - Duy's Oven",null);var folder=await gdFolder(token,'Nghiệm thu',root);var meta={name:wd.no+'.doc',mimeType:'application/msword',parents:[folder]};var form=new FormData();form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));form.append('file',new Blob(['﻿'+wd.html],{type:'application/msword'}));var res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink',{method:'POST',headers:{Authorization:'Bearer '+token},body:form}).then(function(x){return x.json();});if(res.id){if(confirm('✅ Đã lưu "'+wd.no+'.doc" vào Google Drive › Báo giá - Duy\'s Oven › Nghiệm thu.\nMở file?'))window.open(res.webViewLink,'_blank');}else{alert('Lỗi lưu Drive: '+JSON.stringify(res).slice(0,300));}}catch(e){alert('Lỗi: '+e.message);}})();});}
+
+/* init */
+loadSources();renderItems();renderSaved();
+(function(){var n=new Date();document.getElementById('bDate').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('bNo').value=genNo(n);})();
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</body>
+</html>
