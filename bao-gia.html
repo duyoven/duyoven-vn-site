@@ -471,6 +471,7 @@ async function renderQuoteDoc(q){
  if(q.terms&&q.terms.trim()){termsHtml=q.terms.split('\n').filter(function(l){return l.trim();}).map(function(l){return '• '+B(l.trim());}).join('<br>');}
  else{termsHtml='• '+B('Hình thức thanh toán')+': '+B(q.pay||'Chuyển khoản')+'.<br>• '+B('Thời gian giao hàng')+': '+B(q.deliv||'theo thỏa thuận')+'.<br>• '+B('Bảo hành')+': '+B(q.warr||'12 tháng')+'.<br>• '+B('Báo giá có hiệu lực')+' '+q.valid+' '+B('ngày');}
  h+='<div class="terms"><div class="tlabel">'+B('Điều khoản & cam kết')+'</div>'+termsHtml+'</div>';
+ h+='<div class="terms"><div class="tlabel">'+B('Thông tin chuyển khoản')+'</div>• '+B('Chủ tài khoản')+': <b>CTY CO PHAN CONG NGHE CO KHI NONG NGHIEP HARMONIA</b><br>• '+B('Số tài khoản')+': <b>153238</b> — '+B('Ngân hàng')+' TMCP Á Châu (ACB)<br>• '+B('Chi nhánh')+': PGD Nguyễn Hữu Thọ · SWIFT: ASCBVNVX</div>';
  h+='<div class="sign"><div><div class="role">'+B('Bên mua')+'</div><div class="hint">'+B('(Ký, ghi rõ họ tên)')+'</div><div class="gap"></div></div><div><div class="role">Duy\x27s Oven</div><div class="hint">'+B('(Ký, đóng dấu)')+'</div><div class="gap"></div></div></div>';
  h+='</div><div class="qfoot">'+B('Cảm ơn Quý khách đã tin tưởng')+' <b>Duy\x27s Oven</b> · duyoven.vn · Hotline 090 169 1717 · info@duyoven.com</div>';
  document.getElementById('qdocBody').innerHTML=h;var qd=document.getElementById('quoteDoc');qd.style.display='block';qd.scrollIntoView({behavior:'smooth'});}
