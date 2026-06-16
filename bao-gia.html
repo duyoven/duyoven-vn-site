@@ -113,6 +113,12 @@
     .saved-item{background:#fff}
     .saved-item button{color:#23201b}
     .cart-line .ci{background:none;border:0;cursor:pointer;font-size:1rem;margin:0 2px;padding:0;color:inherit;vertical-align:middle}
+    .ie{border:1px solid #e3ddd2;border-radius:10px;padding:10px 12px;margin-top:8px;background:#fff}
+    .ie input,.ie textarea{width:100%;background:#fff;border:1px solid #d9d3c8;border-radius:6px;color:#23201b;padding:8px 10px;font:inherit;font-size:13.5px;box-sizing:border-box;margin-bottom:6px}
+    .ie textarea{min-height:44px;resize:vertical}
+    .ier{display:grid;grid-template-columns:80px 70px 1fr auto;gap:8px;align-items:center}
+    .ier input{margin-bottom:0}
+    @media(max-width:560px){.ier{grid-template-columns:1fr 1fr}}
     /* ===== Tối ưu khổ A4 khi in — ưu tiên bảng hàng hóa ===== */
     @media print{
       @page{size:A4;margin:9mm}
@@ -253,6 +259,7 @@
         <textarea id="ciDesc" placeholder="Mô tả / quy cách (mỗi ý một dòng) — tuỳ chọn" style="width:100%;margin-top:8px;min-height:46px"></textarea>
         <button class="btn btn-sm" style="margin-top:10px" onclick="addCustom()">+ Thêm vào đơn</button>
       </div>
+      <div id="itemsEdit"></div>
     </div>
     <aside class="cart">
       <h3>Đơn / Báo giá</h3>
@@ -402,7 +409,7 @@ function val(id){var e=document.getElementById(id);return e?(e.value||'').trim()
 function num(id){return parseFloat(val(id))||0;}
 function cart(){var a=[];PRODUCTS.forEach(function(g){g.items.forEach(function(it){var q=qty[it.n]||0;if(q)a.push({n:it.n,p:it.p,q:q,unit:'Cái'});});});customItems.forEach(function(it){a.push({n:it.n,desc:it.desc||'',p:it.p,q:it.q,unit:it.unit,img:it.img||'',custom:true});});return a;}
 function calc(){var sub=0,contact=false;cart().forEach(function(x){if(x.p)sub+=x.p*x.q;else contact=true;});var disc=num('cDisc'),ship=num('cShip');var net=sub-disc;if(net<0)net=0;var hasVat=document.getElementById('cVat')?document.getElementById('cVat').checked:true;var vat=hasVat?Math.round(net*0.1):0;var total=net+vat+ship;return{sub:sub,disc:disc,net:net,vat:vat,ship:ship,total:total,hasVat:hasVat,contact:contact};}
-function render(){var c=cart(),lines='';if(!c.length){document.getElementById('cartLines').innerHTML='<div class="empty">Chưa chọn sản phẩm nào.</div>';document.getElementById('cartTotals').style.display='none';return;}
+function renderCart(){var c=cart(),lines='';if(!c.length){document.getElementById('cartLines').innerHTML='<div class="empty">Chưa chọn sản phẩm nào.</div>';document.getElementById('cartTotals').style.display='none';return;}
  c.forEach(function(x,i){var price=x.p?fmt(x.p*x.q):'<span style="color:var(--muted)">Liên hệ</span>';
   var thumb=x.img?'<img src="'+x.img+'" style="width:28px;height:28px;object-fit:cover;border-radius:5px;vertical-align:middle;margin-right:6px">':'';
   var imgbtn='<button class="ci" title="'+(x.img?'Đổi/xóa ảnh':'Thêm ảnh')+'" onclick="pickItemImg('+i+')">'+(x.img?'🖼':'📷')+'</button>';
@@ -410,6 +417,9 @@ function render(){var c=cart(),lines='';if(!c.length){document.getElementById('c
   lines+='<div class="cart-line"><span>'+thumb+esc(x.n)+' <span class="q">×'+x.q+'</span></span><span>'+price+' '+dbtn+imgbtn+'<span class="x" title="Xóa" onclick="delCustom('+i+')">✕</span></span></div>';});
  document.getElementById('cartLines').innerHTML=lines;document.getElementById('cartTotals').style.display='block';
  var k=calc();document.getElementById('tSub').textContent=fmt(k.sub);document.getElementById('tDisc').textContent='−'+fmt(k.disc);document.getElementById('tShip').textContent='+'+fmt(k.ship);document.getElementById('tGrand').textContent=fmt(k.total);document.getElementById('tVat').textContent=fmt(k.vat);document.getElementById('tVatRow').style.display=k.hasVat?'flex':'none';document.getElementById('tNote').textContent=k.contact?'* Món "Liên hệ" báo giá riêng, chưa tính vào tổng.':'';}
+function render(){renderCart();renderItemsEdit();}
+function setItemField(i,k,v){if(k==='q')v=parseInt(v)||0;if(k==='p')v=parseFloat(v)||0;customItems[i][k]=v;renderCart();}
+function renderItemsEdit(){var b=document.getElementById('itemsEdit');if(!b)return;if(!customItems.length){b.innerHTML='';return;}var h='<div class="cat-h" style="margin-top:18px">Sản phẩm đã thêm — sửa trực tiếp ('+customItems.length+')</div>';customItems.forEach(function(x,i){var img=x.img?'<img src="'+x.img+'" style="width:46px;height:46px;object-fit:cover;border-radius:6px;border:1px solid #d9d3c8"> <button class="btn btn-sm" onclick="pickItemImg('+i+')">Đổi/xóa ảnh</button>':'<button class="btn btn-sm" onclick="pickItemImg('+i+')">📷 Thêm ảnh</button>';h+='<div class="ie"><input value="'+esc(x.n||'')+'" placeholder="Tên hàng" oninput="setItemField('+i+',\'n\',this.value)"><textarea placeholder="Mô tả / quy cách (mỗi ý một dòng)" oninput="setItemField('+i+',\'desc\',this.value)">'+esc(x.desc||'')+'</textarea><div class="ier"><input value="'+esc(x.unit||'Cái')+'" placeholder="ĐVT" oninput="setItemField('+i+',\'unit\',this.value)"><input type="number" min="0" value="'+(x.q||1)+'" placeholder="SL" oninput="setItemField('+i+',\'q\',this.value)"><input type="number" min="0" value="'+(x.p||0)+'" placeholder="Đơn giá" oninput="setItemField('+i+',\'p\',this.value)"><button class="btn btn-sm" onclick="delCustom('+i+')" style="color:#e25b4b">✕ Xóa</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">'+img+'</div></div>';});b.innerHTML=h;}
 function quoteObj(no,date){var c=calc();return{no:no,date:date,staff:document.getElementById('staffName').textContent,cust:{name:val('cName'),phone:val('cPhone'),contact:val('cContact'),email:val('cEmail'),company:val('cCompany'),tax:val('cTax'),addr:val('cAddr')},items:cart(),pay:val('cPay'),deliv:val('cDeliv'),valid:parseInt(val('cValid'))||30,warr:val('cWarr')||'12 tháng',terms:val('cTerms'),note:val('cNote'),lang:val('qLang')||'vi',calc:c};}
 function docSo(num){num=Math.round(num);if(num===0)return 'Không đồng';var d=['không','một','hai','ba','bốn','năm','sáu','bảy','tám','chín'];function r3(b,full){var tr=Math.floor(b/100),ch=Math.floor((b%100)/10),dv=b%10,s='';if(tr>0)s+=d[tr]+' trăm';else if(full)s+='không trăm';if(ch>1){s+=' '+d[ch]+' mươi';if(dv===1)s+=' mốt';else if(dv===5)s+=' lăm';else if(dv>0)s+=' '+d[dv];}else if(ch===1){s+=' mười';if(dv===5)s+=' lăm';else if(dv>0)s+=' '+d[dv];}else{if(dv>0){if(tr>0||full)s+=' lẻ';s+=' '+d[dv];}}return s.trim();}var units=['',' nghìn',' triệu',' tỷ'];var blocks=[],t=num;while(t>0){blocks.push(t%1000);t=Math.floor(t/1000);}var parts=[];for(var i=blocks.length-1;i>=0;i--){if(blocks[i]===0)continue;parts.push((r3(blocks[i],i!==blocks.length-1)+units[i]).trim());}var s=parts.join(' ').replace(/\s+/g,' ').trim();return s.charAt(0).toUpperCase()+s.slice(1)+' đồng';}
 var QLABELS=['BÁO GIÁ','Số báo giá','Ngày lập','Hiệu lực đến','ngày','Đơn vị báo giá','Kính gửi quý khách','Người liên hệ','Địa chỉ','STT','Tên sản phẩm / quy cách','ĐVT','SL','Đơn giá','Thành tiền','Liên hệ','Cộng tiền hàng (chưa VAT)','VAT 10%','Chiết khấu','Phí vận chuyển','Tổng cộng','Bằng chữ','Ghi chú','Điều khoản & cam kết','Hình thức thanh toán','Thời gian giao hàng','theo thỏa thuận','Bảo hành','chính hãng Duy Oven, giao hàng & lắp đặt toàn quốc','Báo giá có hiệu lực','ngày kể từ ngày lập. Giá đã bao gồm thuế GTGT 10%.','Bên mua','(Ký, ghi rõ họ tên)','(Ký, đóng dấu)','Cảm ơn Quý khách đã tin tưởng','Sản phẩm ghi Liên hệ sẽ được báo giá riêng và chưa tính vào tổng.'];
