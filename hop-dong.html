@@ -280,7 +280,7 @@ function applyPayText(t){if(!t)return;var lines=String(t).split('\n').map(functi
 /* seller persist */
 var SELLER=['bName','bAddr','bPhone','bEmail','bTax','bRep','bRepTitle','bBank'];
 function saveSeller(){var o={};SELLER.forEach(function(id){o[id]=val(id);});localStorage.setItem(BKEY,JSON.stringify(o));}
-function loadSeller(){try{var o=JSON.parse(localStorage.getItem(BKEY)||'{}');SELLER.forEach(function(id){if(o[id]){var e=document.getElementById(id);if(e)e.value=o[id];}});}catch(e){}}
+function loadSeller(){try{var o=JSON.parse(localStorage.getItem(BKEY)||'{}');if(o.bBank&&/Tân Thuận/.test(o.bBank)){o.bBank='153238 – Ngân hàng TMCP Á Châu (ACB) – PGD Nguyễn Hữu Thọ – SWIFT: ASCBVNVX';localStorage.setItem(BKEY,JSON.stringify(o));}SELLER.forEach(function(id){if(o[id]){var e=document.getElementById(id);if(e)e.value=o[id];}});}catch(e){}}
 
 /* build + render contract */
 function pad(x){return(x<10?'0':'')+x;}
