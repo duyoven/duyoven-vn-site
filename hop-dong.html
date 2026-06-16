@@ -88,7 +88,7 @@
     <h3>📋 Nạp từ báo giá</h3>
     <div class="fg"><select id="quoteSel"><option value="">— Chọn báo giá đã lưu (máy này) —</option></select><button class="btn btn-sm" onclick="loadFromQuote()">Nạp khách &amp; hàng →</button></div>
     <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <label class="btn btn-sm" style="cursor:pointer;margin:0">📎 Hoặc tải file báo giá (ảnh/PDF) → AI đọc<input type="file" accept="image/*,application/pdf" style="display:none" onchange="onQuoteFile(this)"></label>
+      <label class="btn btn-sm" style="cursor:pointer;margin:0">📎 Hoặc tải file báo giá (Word / ảnh / PDF) → AI đọc<input type="file" accept="image/*,application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" onchange="onQuoteFile(this)"></label>
       <span id="qImpLog" class="muted" style="font-size:12px"></span>
     </div>
   </div>
@@ -171,6 +171,8 @@
 <div id="docWrap">
   <div class="container noprint" style="margin-top:14px">
     <button class="btn btn-p" onclick="window.print()">🖨️ In / Lưu PDF</button>
+    <button class="btn" onclick="exportContractWord()">📄 Xuất Word (.doc)</button>
+    <button class="btn" onclick="saveContractToDrive()">☁️ Lưu lên Google Drive</button>
     <button class="btn" onclick="document.getElementById('docWrap').style.display='none';window.scrollTo(0,0)">Đóng</button>
   </div>
   <div class="doc" id="docBody"></div>
@@ -254,8 +256,29 @@ function fillFromQuoteData(cust,items){var u=cust||{};var e=function(id,v){var e
 function loadFromQuote(){var i=document.getElementById('quoteSel').value;if(i==='')return;var q=(window.__quotes||[])[i];if(!q)return;fillFromQuoteData(q.cust,q.items);var e=document.getElementById('kDelivery');if(q.deliv&&e&&!e.value)e.value='Giao hàng: '+q.deliv;alert('Đã nạp báo giá '+q.no+' ('+((q.items||[]).length)+' mục).');}
 function qImpLog(t){var e=document.getElementById('qImpLog');if(e)e.textContent=t;}
 function scaleQImg(durl,cb){var im=new Image();im.onload=function(){var max=1600,sc=Math.min(1,max/im.width);var cv=document.createElement('canvas');cv.width=Math.round(im.width*sc);cv.height=Math.round(im.height*sc);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);try{cb(cv.toDataURL('image/jpeg',0.82));}catch(e){cb(durl);}};im.onerror=function(){cb(durl);};im.src=durl;}
-function onQuoteFile(input){var f=input.files&&input.files[0];if(!f)return;qImpLog('Đang đọc "'+f.name+'"… (AI có thể mất ~10–20 giây)');var rd=new FileReader();rd.onload=function(){function send(durl){fetch('/api/bao-gia-import',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({file:durl})}).then(function(r){return r.json();}).then(function(j){if(j.error)throw new Error(j.error);fillFromQuoteData(j.cust,j.items);qImpLog('✓ Đã đọc & điền '+((j.items||[]).length)+' mục hàng + thông tin khách. Kiểm tra lại nhé.');}).catch(function(e){qImpLog('⚠ Lỗi: '+e.message);});}
- if(f.type.indexOf('image')===0)scaleQImg(rd.result,send);else send(rd.result);};rd.readAsDataURL(f);input.value='';}
+function isWord(f){return /\.docx?$/i.test(f.name)||f.type==='application/msword'||f.type.indexOf('officedocument.wordprocessing')>=0;}
+async function extractWordText(f){var buf=await f.arrayBuffer();
+ if(typeof JSZip!=='undefined'){try{var zip=await JSZip.loadAsync(buf);var ent=zip.file('word/document.xml');if(ent){var xml=await ent.async('string');xml=xml.replace(/<\/w:p>/g,'\n').replace(/<w:tab\/>/g,'\t').replace(/<[^>]+>/g,'');var ta=document.createElement('textarea');ta.innerHTML=xml;return ta.value.replace(/\n{3,}/g,'\n\n').trim();}}catch(e){}}
+ var txt=new TextDecoder('utf-8').decode(buf);
+ if(/<\w+[\s>\/]/.test(txt)){var dv=document.createElement('div');dv.innerHTML=txt.replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<script[\s\S]*?<\/script>/gi,' ');return (dv.innerText||dv.textContent||'').replace(/\n{3,}/g,'\n\n').trim();}
+ return txt.replace(/\n{3,}/g,'\n\n').trim();}
+function fileToData(f){return new Promise(function(res,rej){var rd=new FileReader();rd.onload=function(){if(f.type.indexOf('image/')===0)scaleQImg(rd.result,res);else res(rd.result);};rd.onerror=rej;rd.readAsDataURL(f);});}
+function onQuoteFile(input){var f=input.files&&input.files[0];if(!f)return;input.value='';qImpLog('Đang đọc "'+f.name+'"… (AI có thể mất ~10–20 giây)');
+ (async function(){try{var j;
+  if(isWord(f)){var text=await extractWordText(f);if(!text)throw new Error('File Word trống / không đọc được (nếu .doc cũ bản nhị phân, hãy lưu lại dạng .docx).');j=await fetch('/api/bao-gia',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({brief:'Đây là nội dung một BÁO GIÁ trích từ file Word. Trích xuất chính xác sản phẩm, mô tả/quy cách, đơn giá, số lượng và thông tin khách (dùng đúng số liệu, không bịa):\n\n'+text})}).then(function(r){return r.json();});}
+  else{var data=await fileToData(f);j=await fetch('/api/bao-gia-import',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({file:data})}).then(function(r){return r.json();});}
+  if(j.error)throw new Error(j.error);fillFromQuoteData(j.cust,j.items);qImpLog('✓ Đã đọc & điền '+((j.items||[]).length)+' mục hàng + thông tin khách. Kiểm tra lại nhé.');
+ }catch(e){qImpLog('⚠ Lỗi: '+e.message);}})();}
+
+/* ===== Google Drive: lưu hợp đồng vào "Báo giá - Duy's Oven" › "Hợp đồng" ===== */
+var GDKEY='dq_gdclient',_gdToken=null,_gdExp=0;
+var GD_DEFAULT='692061670720-n836gc68b3k5q5ceq8jb8bcb7nvt50on.apps.googleusercontent.com';
+function gdClientId(){return (localStorage.getItem(GDKEY)||GD_DEFAULT).trim();}
+function ensureGdToken(cb){var cid=gdClientId();if(!cid){alert('Chưa cấu hình Google Client ID.');return;}if(!window.google||!google.accounts||!google.accounts.oauth2){alert('Đang tải Google… đợi vài giây rồi thử lại.');return;}if(_gdToken&&Date.now()<_gdExp-60000){cb(_gdToken);return;}var tc=google.accounts.oauth2.initTokenClient({client_id:cid,scope:'https://www.googleapis.com/auth/drive.file',callback:function(r){if(r&&r.access_token){_gdToken=r.access_token;_gdExp=Date.now()+(r.expires_in||3600)*1000;cb(_gdToken);}else{alert('Không lấy được quyền Google Drive.');}}});tc.requestAccessToken();}
+async function gdFindOrCreateFolder(token,name,parentId){var q="mimeType='application/vnd.google-apps.folder' and name='"+name.replace(/'/g,"\\'")+"' and trashed=false"+(parentId?(" and '"+parentId+"' in parents"):'');var r=await fetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id)',{headers:{Authorization:'Bearer '+token}}).then(function(x){return x.json();});if(r.files&&r.files.length)return r.files[0].id;var body={name:name,mimeType:'application/vnd.google-apps.folder'};if(parentId)body.parents=[parentId];var c=await fetch('https://www.googleapis.com/drive/v3/files?fields=id',{method:'POST',headers:{Authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify(body)}).then(function(x){return x.json();});return c.id;}
+function buildContractWordHtml(){var inner=document.getElementById('docBody').innerHTML;if(!inner)return null;var css=document.querySelector('style')?document.querySelector('style').innerHTML:'';var no=(window.__lastContractNo||'HopDong').replace(/[\/\\:*?"<>|]/g,'-');return {no:no,html:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>'+esc(no)+'</title><style>'+css+'</style></head><body><div class="doc">'+inner+'</div></body></html>'};}
+function exportContractWord(){var w=buildContractWordHtml();if(!w){alert('Chưa có hợp đồng. Bấm "Tạo hợp đồng" trước.');return;}var blob=new Blob(['﻿'+w.html],{type:'application/msword'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=w.no+'.doc';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(a.href);},600);}
+function saveContractToDrive(){var w=buildContractWordHtml();if(!w){alert('Chưa có hợp đồng. Bấm "Tạo hợp đồng" trước.');return;}ensureGdToken(function(token){(async function(){try{var root=await gdFindOrCreateFolder(token,"Báo giá - Duy's Oven",null);var folder=await gdFindOrCreateFolder(token,'Hợp đồng',root);var meta={name:w.no+'.doc',mimeType:'application/msword',parents:[folder]};var form=new FormData();form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));form.append('file',new Blob(['﻿'+w.html],{type:'application/msword'}));var res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink',{method:'POST',headers:{Authorization:'Bearer '+token},body:form}).then(function(x){return x.json();});if(res.id){if(confirm('✅ Đã lưu "'+w.no+'.doc" vào Google Drive › Báo giá - Duy\'s Oven › Hợp đồng.\nMở file trên Drive?'))window.open(res.webViewLink,'_blank');}else{alert('Lỗi lưu Drive: '+JSON.stringify(res).slice(0,300));}}catch(e){alert('Lỗi: '+e.message);}})();});}
 
 /* payment installments — chọn số đợt, tự chia tiền theo %, điều kiện sửa được */
 var PAYMENTS=[];
@@ -293,7 +316,7 @@ function partyHtml(p){return '<b>'+esc(p.name||'—')+'</b><br>Địa chỉ: '+e
 function paras(t){return (t||'').split('\n').filter(function(x){return x.trim();}).map(function(x){return '<p>'+esc(x.trim())+'</p>';}).join('');}
 function bullets(t,fb){var l=(t||'').split('\n').filter(function(x){return x.trim();});if(!l.length)return '<ul><li>'+esc(fb)+'</li></ul>';return '<ul>'+l.map(function(x){return '<li>'+esc(x.trim())+'</li>';}).join('')+'</ul>';}
 function renderDoc(k){
- var d=k.date?new Date(k.date+'T00:00:00'):new Date();var c=k.calc,rows='',i=0;
+ var d=k.date?new Date(k.date+'T00:00:00'):new Date();var c=k.calc,rows='',i=0;window.__lastContractNo=k.no||genNo(d);
  k.items.forEach(function(x){i++;var cell='<b>'+esc(x.n)+'</b>'+(x.desc?'<br><span style="font-size:10.5pt">'+esc(x.desc).replace(/\n/g,'<br>')+'</span>':'')+(x.img?'<br><img src="'+x.img+'" style="max-height:130px;margin-top:4px">':'');rows+='<tr><td class="c">'+i+'</td><td>'+cell+'</td><td class="c">Duy\x27s Oven</td><td class="c">'+x.q+'</td><td class="r">'+(x.p?fmtn(x.p):'—')+'</td><td class="r">'+(x.p?fmtn(x.p*x.q):'—')+'</td></tr>';});
  var proj=k.project?'<p>Hàng hóa được sản xuất riêng với giá đặc biệt để cung cấp riêng cho '+esc(k.project)+'.</p>':'';
  var h='';
@@ -334,5 +357,7 @@ function delSaved(i){var t=filteredC()[i];if(!t)return;var all=loadC();var idx=a
 buildSel();loadClauses();loadSeller();loadQuotes();setPayCount(2);renderItems();renderSaved();
 (function(){var n=new Date();document.getElementById('kDate').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('kNo').value=genNo(n);})();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>
 </html>
