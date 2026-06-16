@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Quản Lý — nội bộ Duy's Oven</title>
+<style>
+  :root{--bg:#0d0e10;--card:#16181c;--line:rgba(255,255,255,.12);--ember:#F47B20;--text:#eceae6;--muted:#9aa0aa}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(1200px 600px at 50% -10%,rgba(244,123,32,.10),transparent),var(--bg);color:var(--text);min-height:100vh}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 18px 60px}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .brand h1{font-size:24px;margin:0}
+  .brand small{color:var(--muted)}
+  .staff{color:var(--muted);font-size:13px;margin:2px 0 26px}
+  .staff b{color:var(--text)}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;cursor:pointer;transition:.15s;display:flex;gap:16px;align-items:flex-start;text-align:left}
+  .tile:hover{border-color:var(--ember);transform:translateY(-2px)}
+  .tile .ic{font-size:30px;line-height:1}
+  .tile h3{margin:0 0 4px;font-size:17px}
+  .tile p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+  .tile .lock{margin-left:auto;color:var(--muted);font-size:13px}
+  .foot{margin-top:26px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12.5px;flex-wrap:wrap;gap:10px}
+  .foot a,.foot button{color:var(--muted);background:none;border:none;font:inherit;cursor:pointer;text-decoration:none}
+  .foot a:hover,.foot button:hover{color:var(--ember)}
+  /* overlay */
+  .ov{position:fixed;inset:0;background:rgba(8,9,11,.92);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:50;padding:18px}
+  .ov.hide{display:none}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 24px;width:100%;max-width:360px;text-align:center}
+  .panel .ic{font-size:34px}
+  .panel h2{margin:8px 0 2px;font-size:19px}
+  .panel p{margin:0 0 16px;color:var(--muted);font-size:13px}
+  .panel input{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:16px;text-align:center;letter-spacing:2px}
+  .panel input:focus{outline:none;border-color:var(--ember)}
+  .panel .btn{margin-top:12px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--ember);color:#160a02;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+  .panel .err{color:#ff7a6b;font-size:13px;min-height:18px;margin-top:8px}
+  .panel .cancel{margin-top:10px;color:var(--muted);background:none;border:none;font:inherit;cursor:pointer;font-size:13px}
+  .panel .cancel:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- LEVEL 1 GATE -->
+<div class="ov" id="gate1">
+  <div class="panel">
+    <div class="ic">🔒</div>
+    <h2>Quản Lý — Duy's Oven</h2>
+    <p>Nhập mật khẩu để vào khu vực quản lý</p>
+    <input type="password" id="pw1" autocomplete="off" placeholder="••••••" onkeydown="if(event.key==='Enter')tryL1()">
+    <button class="btn" onclick="tryL1()">Vào</button>
+    <div class="err" id="err1"></div>
+  </div>
+</div>
+
+<!-- PER-TOOL GATE -->
+<div class="ov hide" id="gate2">
+  <div class="panel">
+    <div class="ic" id="g2ic">🔑</div>
+    <h2 id="g2name">Mục</h2>
+    <p>Nhập mật khẩu riêng của mục này</p>
+    <input type="password" id="pw2" autocomplete="off" placeholder="••••••" onkeydown="if(event.key==='Enter')tryTool()">
+    <button class="btn" onclick="tryTool()">Mở</button>
+    <div class="err" id="err2"></div>
+    <button class="cancel" onclick="closeG2()">← Quay lại menu</button>
+  </div>
+</div>
+
+<!-- HUB -->
+<div class="wrap" id="hub" style="visibility:hidden">
+  <div class="brand"><span style="font-size:30px">🛠️</span><div><h1>Bảng Quản Lý</h1><small>Nội bộ · Duy's Oven</small></div></div>
+  <div class="staff">Nhân viên: <b id="staffName">__STAFF__</b></div>
+  <div class="grid" id="grid"></div>
+  <div class="foot">
+    <a href="index.html">← Về trang chủ</a>
+    <button onclick="lockAll()">🔒 Khóa & đăng xuất khu quản lý</button>
+  </div>
+</div>
+
+<script>
+var TOOLS=[
+ {key:'baogia',  url:'bao-gia.html',            ic:'📄', name:'Báo Giá',             desc:'Lập & lưu báo giá, song ngữ, xuất Word, lưu Google Drive.'},
+ {key:'hopdong', url:'hop-dong.html',           ic:'📑', name:'Hợp Đồng',            desc:'Soạn hợp đồng mua bán, chia đợt thanh toán, lưu Drive.'},
+ {key:'kho',     url:'quan-ly-kho.html',        ic:'📦', name:'Quản Lý Kho',         desc:'Tồn kho, nhập – xuất, lập Phiếu xuất kho.'},
+ {key:'nghiemthu',url:'ban-giao-nghiem-thu.html',ic:'✅', name:'Bàn Giao Nghiệm Thu', desc:'Biên bản bàn giao & nghiệm thu cho khách.'}
+];
+/* SHA-256 hashes của mật khẩu (mật khẩu KHÔNG nằm trong mã nguồn) */
+var HASH={
+ l1:'af73d138ab9df9df801490bd5beef3426d98616e21a79207a8fc18d9f7f1bf63',
+ baogia:'1e4e8b049223c94c574465b3d3755ad6fbabb1d8a2898480ff90b44d07c34369',
+ hopdong:'b70840a68b9054c16ecd6f8462fb107e93f8591e81b03086c5884ea9a82f9d27',
+ kho:'232c1e3db2dde518491404056ce47facdd4ea7ad9aee5f5a7aaa70a890d179b9',
+ nghiemthu:'73f58e3d9e6cea6475c7e68909e454f1367c2b6de5678585dcbd225ef7e385d3'
+};
+async function sha(s){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');}
+function qs(k){return new URLSearchParams(location.search).get(k);}
+
+function renderGrid(){document.getElementById('grid').innerHTML=TOOLS.map(function(t){return '<div class="tile" onclick="openTool(\''+t.key+'\')"><div class="ic">'+t.ic+'</div><div><h3>'+t.name+'</h3><p>'+t.desc+'</p></div><div class="lock">🔑</div></div>';}).join('');}
+
+async function tryL1(){var v=document.getElementById('pw1').value;if(!v)return;var h=await sha(v);if(h===HASH.l1){try{sessionStorage.setItem('ql_l1','1');}catch(e){}showHub();var nx=qs('next');if(nx&&HASH[nx])openTool(nx);}else{document.getElementById('err1').textContent='Sai mật khẩu.';document.getElementById('pw1').value='';}}
+function showHub(){document.getElementById('gate1').classList.add('hide');document.getElementById('hub').style.visibility='visible';}
+
+var _curTool=null;
+function openTool(key){var t=TOOLS.filter(function(x){return x.key===key;})[0];if(!t)return;_curTool=t;document.getElementById('g2ic').textContent=t.ic;document.getElementById('g2name').textContent=t.name;document.getElementById('err2').textContent='';document.getElementById('pw2').value='';document.getElementById('gate2').classList.remove('hide');setTimeout(function(){document.getElementById('pw2').focus();},50);}
+function closeG2(){document.getElementById('gate2').classList.add('hide');_curTool=null;}
+async function tryTool(){if(!_curTool)return;var v=document.getElementById('pw2').value;if(!v)return;var h=await sha(v);if(h===HASH[_curTool.key]){try{sessionStorage.setItem('ql_'+_curTool.key,'1');}catch(e){}location.href=_curTool.url;}else{document.getElementById('err2').textContent='Sai mật khẩu mục này.';document.getElementById('pw2').value='';}}
+
+function lockAll(){try{sessionStorage.removeItem('ql_l1');TOOLS.forEach(function(t){sessionStorage.removeItem('ql_'+t.key);});}catch(e){}location.reload();}
+
+renderGrid();
+if(sessionStorage.getItem('ql_l1')==='1'){showHub();var nx=qs('next');if(nx&&HASH[nx])openTool(nx);}else{setTimeout(function(){document.getElementById('pw1').focus();},60);}
+</script>
+</body>
+</html>
