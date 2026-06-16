@@ -85,8 +85,12 @@
   </div>
 
   <div class="box">
-    <h3>📋 Nạp từ báo giá đã lưu</h3>
-    <div class="fg"><select id="quoteSel"><option value="">— Chọn báo giá đã lưu —</option></select><button class="btn btn-sm" onclick="loadFromQuote()">Nạp sản phẩm &amp; khách →</button></div>
+    <h3>📋 Nạp từ báo giá</h3>
+    <div class="fg"><select id="quoteSel"><option value="">— Chọn báo giá đã lưu (máy này) —</option></select><button class="btn btn-sm" onclick="loadFromQuote()">Nạp khách &amp; hàng →</button></div>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <label class="btn btn-sm" style="cursor:pointer;margin:0">📎 Hoặc tải file báo giá (ảnh/PDF) → AI đọc<input type="file" accept="image/*,application/pdf" style="display:none" onchange="onQuoteFile(this)"></label>
+      <span id="qImpLog" class="muted" style="font-size:12px"></span>
+    </div>
   </div>
 
   <!-- Parties -->
@@ -136,7 +140,9 @@
     <span class="lbl">Tên dự án (ghi vào Điều 1, để trống nếu không có)</span><input id="kProject" placeholder="VD: Dự án IXORA2 Hồ Tràm">
     <span class="lbl">Địa điểm giao hàng (Điều 2.1)</span><input id="kWarehouse" value="1968/1 Lê Văn Lương, xã Hiệp Phước, TP Hồ Chí Minh">
     <span class="lbl">Đợt giao hàng — mỗi đợt một dòng (Điều 2.1)</span><textarea id="kDelivery" rows="2" placeholder="Đợt 1: Giao không quá ... bộ, không trễ hơn ngày .../.../...&#10;Đợt 2: Giao phần còn lại, không trễ hơn ngày .../.../..."></textarea>
-    <span class="lbl">Đợt thanh toán — mỗi đợt một dòng (Điều 2.2)</span><textarea id="kPayment" rows="3" placeholder="Đợt 1: 30% giá trị HĐ trong 07 ngày sau khi ký;&#10;Đợt 2: ...;"></textarea>
+    <span class="lbl">Thanh toán theo đợt (Điều 2.2) — tự chia tiền theo % của tổng gồm VAT</span>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px"><span class="muted" style="font-size:12.5px">Số đợt:</span><input type="number" id="payCount" min="1" max="8" value="2" style="width:74px" onchange="setPayCount(this.value)"><span class="muted" id="paySum" style="font-size:12px"></span></div>
+    <div id="payBody" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
 
   <!-- Editable clauses -->
@@ -213,7 +219,7 @@ function renderItems(){var b=document.getElementById('itBody'),h='';ITEMS.forEac
  '</div>';});
  b.innerHTML=h||'<div class="muted">Chưa có hàng. Bấm “+ Thêm từ danh sách” hoặc “+ Hàng tự nhập”.</div>';calcTot();}
 function calc(){var net=0;ITEMS.forEach(function(x){net+=(x.p||0)*(x.q||0);});return{net:net,vat:net*0.1,gross:net*1.1};}
-function calcTot(){var k=calc();document.getElementById('tNet').textContent=fmt(k.net);document.getElementById('tVat').textContent=fmt(k.vat);document.getElementById('tGross').textContent=fmt(k.gross);document.getElementById('tWords').textContent=k.net?docSo(k.gross):'';}
+function calcTot(){var k=calc();document.getElementById('tNet').textContent=fmt(k.net);document.getElementById('tVat').textContent=fmt(k.vat);document.getElementById('tGross').textContent=fmt(k.gross);document.getElementById('tWords').textContent=k.net?docSo(k.gross):'';if(typeof payRefresh==='function')payRefresh();}
 
 /* number to words */
 function docSo(num){num=Math.round(num);if(num===0)return 'Không đồng';var d=['không','một','hai','ba','bốn','năm','sáu','bảy','tám','chín'];function r3(b,full){var tr=Math.floor(b/100),ch=Math.floor((b%100)/10),dv=b%10,s='';if(tr>0)s+=d[tr]+' trăm';else if(full)s+='không trăm';if(ch>1){s+=' '+d[ch]+' mươi';if(dv===1)s+=' mốt';else if(dv===5)s+=' lăm';else if(dv>0)s+=' '+d[dv];}else if(ch===1){s+=' mười';if(dv===5)s+=' lăm';else if(dv>0)s+=' '+d[dv];}else{if(dv>0){if(tr>0||full)s+=' lẻ';s+=' '+d[dv];}}return s.trim();}var units=['',' nghìn',' triệu',' tỷ'];var blocks=[],t=num;while(t>0){blocks.push(t%1000);t=Math.floor(t/1000);}var parts=[];for(var i=blocks.length-1;i>=0;i--){if(blocks[i]===0)continue;parts.push((r3(blocks[i],i!==blocks.length-1)+units[i]).trim());}var s=parts.join(' ').replace(/\s+/g,' ').trim();return s.charAt(0).toUpperCase()+s.slice(1)+' đồng';}
@@ -232,7 +238,7 @@ function setIf(id,v){if(!v)return;var e=document.getElementById(id);if(e&&!e.val
 function fillParty(pre,p){if(!p)return;setIf(pre+'Name',p.name);setIf(pre+'Addr',p.addr);setIf(pre+'Phone',p.phone);setIf(pre+'Email',p.email);setIf(pre+'Tax',p.tax);setIf(pre+'Rep',p.rep);if(p.title)setIf(pre+'RepTitle',p.title);setIf(pre+'Bank',p.bank);}
 function aiApply(j){var n=0;(j.items||[]).forEach(function(it){if(it.n){ITEMS.push({n:it.n,desc:it.desc||'',img:'',unit:it.unit||'bộ',q:it.q||1,p:it.p||0});n++;}});if(n)renderItems();
  fillParty('a',j.A);if(j.B&&j.B.name)fillParty('b',j.B);
- setIf('kProject',j.project);setIf('kDelivery',j.delivery);setIf('kPayment',j.payment);
+ setIf('kProject',j.project);setIf('kDelivery',j.delivery);applyPayText(j.payment);
  if(j.warr){var c3=document.getElementById('cl3');if(c3)c3.value=c3.value.replace(/\d+\s*tháng/, j.warr+' tháng');}
  return n;}
 async function aiSuggest(){var t=val('aiBrief');if(!t){alert('Nhập mô tả trước.');return;}aiBusy(true);aiLog('user',t);aiHistory.push({role:'user',content:t});try{var j=await aiPost(t);aiHistory.push({role:'assistant',content:j.reply||''});var n=aiApply(j);aiLog('assistant',(j.reply||'(đã điền)')+(n?('\n→ Đã thêm '+n+' mục hàng.'):''));document.getElementById('aiBrief').value='';document.getElementById('aiChatRow').style.display='flex';}catch(e){aiLog('assistant','⚠ Lỗi: '+e.message);}aiBusy(false);}
@@ -244,7 +250,32 @@ function swapAB(){PF.forEach(function(k){var a=document.getElementById('a'+k),b=
 
 /* load from quote */
 function loadQuotes(){var arr=[];try{arr=JSON.parse(localStorage.getItem(QKEY)||'[]');}catch(e){}var sel=document.getElementById('quoteSel');sel.length=1;arr.forEach(function(q,i){var o=document.createElement('option');o.value=i;o.textContent=q.no+' · '+((q.cust&&q.cust.name)||'—');sel.appendChild(o);});window.__quotes=arr;}
-function loadFromQuote(){var i=document.getElementById('quoteSel').value;if(i==='')return;var q=(window.__quotes||[])[i];if(!q)return;var u=q.cust||{};var e=function(id,v){var el=document.getElementById(id);if(el)el.value=v||'';};e('aName',u.company||u.name);e('aAddr',u.addr);e('aPhone',u.phone);e('aEmail',u.email);e('aTax',u.tax);if(u.contact)e('aRep',u.contact);ITEMS=[];(q.items||[]).forEach(function(x){ITEMS.push({n:x.n,desc:'',img:'',unit:x.unit||'bộ',q:x.q||1,p:x.p||0});});renderItems();if(q.deliv)e('kDelivery','Giao hàng: '+q.deliv);alert('Đã nạp báo giá '+q.no);}
+function fillFromQuoteData(cust,items){var u=cust||{};var e=function(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;};e('aName',u.company||u.name);e('aAddr',u.addr);e('aPhone',u.phone);e('aEmail',u.email);e('aTax',u.tax);if(u.contact)e('aRep',u.contact);if(items&&items.length){ITEMS=items.map(function(x){return {n:x.n||'',desc:x.desc||'',img:x.img||'',unit:x.unit||'bộ',q:x.q||1,p:x.p||0};});renderItems();}}
+function loadFromQuote(){var i=document.getElementById('quoteSel').value;if(i==='')return;var q=(window.__quotes||[])[i];if(!q)return;fillFromQuoteData(q.cust,q.items);var e=document.getElementById('kDelivery');if(q.deliv&&e&&!e.value)e.value='Giao hàng: '+q.deliv;alert('Đã nạp báo giá '+q.no+' ('+((q.items||[]).length)+' mục).');}
+function qImpLog(t){var e=document.getElementById('qImpLog');if(e)e.textContent=t;}
+function scaleQImg(durl,cb){var im=new Image();im.onload=function(){var max=1600,sc=Math.min(1,max/im.width);var cv=document.createElement('canvas');cv.width=Math.round(im.width*sc);cv.height=Math.round(im.height*sc);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);try{cb(cv.toDataURL('image/jpeg',0.82));}catch(e){cb(durl);}};im.onerror=function(){cb(durl);};im.src=durl;}
+function onQuoteFile(input){var f=input.files&&input.files[0];if(!f)return;qImpLog('Đang đọc "'+f.name+'"… (AI có thể mất ~10–20 giây)');var rd=new FileReader();rd.onload=function(){function send(durl){fetch('/api/bao-gia-import',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({file:durl})}).then(function(r){return r.json();}).then(function(j){if(j.error)throw new Error(j.error);fillFromQuoteData(j.cust,j.items);qImpLog('✓ Đã đọc & điền '+((j.items||[]).length)+' mục hàng + thông tin khách. Kiểm tra lại nhé.');}).catch(function(e){qImpLog('⚠ Lỗi: '+e.message);});}
+ if(f.type.indexOf('image')===0)scaleQImg(rd.result,send);else send(rd.result);};rd.readAsDataURL(f);input.value='';}
+
+/* payment installments — chọn số đợt, tự chia tiền theo %, điều kiện sửa được */
+var PAYMENTS=[];
+function payDefault(n){var T={
+ 1:[[100,'Thanh toán 100% giá trị hợp đồng trong vòng 07 ngày kể từ ngày ký hợp đồng.']],
+ 2:[[50,'Tạm ứng 50% giá trị hợp đồng trong 07 ngày kể từ ngày ký hợp đồng.'],[50,'Thanh toán 50% còn lại trong 07 ngày sau khi nhận đủ hàng và hóa đơn GTGT.']],
+ 3:[[30,'Tạm ứng 30% trong 07 ngày kể từ ngày ký hợp đồng.'],[40,'Thanh toán 40% trước khi Bên B giao hàng.'],[30,'Thanh toán 30% còn lại sau khi nghiệm thu và nhận đủ hóa đơn GTGT.']],
+ 4:[[30,'Tạm ứng 30% sau khi ký hợp đồng.'],[30,'Thanh toán 30% trước đợt giao hàng thứ nhất.'],[30,'Thanh toán 30% trước đợt giao hàng cuối cùng.'],[10,'Thanh toán 10% còn lại sau nghiệm thu, nhận đủ hóa đơn GTGT.']]};
+ if(T[n])return T[n].map(function(x){return {pct:x[0],cond:x[1]};});
+ var base=Math.floor(100/n),arr=[];for(var i=0;i<n;i++)arr.push({pct:i===n-1?100-base*(n-1):base,cond:'Đợt '+(i+1)+' theo thỏa thuận giữa hai Bên.'});return arr;}
+function setPayCount(n){n=Math.max(1,Math.min(8,parseInt(n)||1));PAYMENTS=payDefault(n);var e=document.getElementById('payCount');if(e)e.value=n;renderPay();}
+function setPay(i,k,v){if(!PAYMENTS[i])return;if(k==='pct')v=parseFloat(String(v).replace(',','.'))||0;PAYMENTS[i][k]=v;payRefresh();}
+function payAmounts(){var g=Math.round(calc().gross),out=[],acc=0;PAYMENTS.forEach(function(p,i){var a;if(i===PAYMENTS.length-1)a=Math.max(0,g-acc);else{a=Math.round(g*(p.pct||0)/100);acc+=a;}out.push(a);});return out;}
+function payRefresh(){var amts=payAmounts(),sum=0;PAYMENTS.forEach(function(p){sum+=(p.pct||0);});for(var i=0;i<PAYMENTS.length;i++){var el=document.getElementById('payAmt'+i);if(el)el.textContent=fmt(amts[i]);}var s=document.getElementById('paySum');if(s){var ok=Math.abs(sum-100)<0.01;s.textContent='Tổng các đợt: '+(sum%1?sum.toFixed(2):sum)+'% '+(ok?'✓':'⚠ chưa đủ 100%');s.style.color=ok?'var(--muted)':'#e0a23a';}}
+function renderPay(){var b=document.getElementById('payBody');if(!b)return;b.innerHTML=PAYMENTS.map(function(p,i){return '<div class="itm"><div style="display:grid;grid-template-columns:48px 92px 132px 1fr;gap:8px;align-items:center"><b>Đợt '+(i+1)+'</b><div style="display:flex;align-items:center;gap:4px"><input type="number" min="0" step="0.01" value="'+p.pct+'" oninput="setPay('+i+',\'pct\',this.value)" style="padding:6px 7px"><span class="muted">%</span></div><span class="muted" id="payAmt'+i+'" style="font-size:13px;font-weight:600"></span><input placeholder="Điều kiện thanh toán đợt này" value="'+esc(p.cond)+'" oninput="setPay('+i+',\'cond\',this.value)" style="padding:6px 9px"></div></div>';}).join('');payRefresh();}
+function payLines(){var amts=payAmounts();return PAYMENTS.map(function(p,i){return 'Đợt '+(i+1)+': '+(p.pct||0)+'% giá trị hợp đồng ('+fmtn(amts[i])+' đồng) — '+(p.cond||'theo thỏa thuận giữa hai Bên');});}
+function applyPayText(t){if(!t)return;var lines=String(t).split('\n').map(function(s){return s.trim();}).filter(Boolean);
+ if(lines.length===1){var one=lines[0],pcts=(one.match(/\d+(?:[.,]\d+)?/g)||[]);if((one.match(/%/g)||[]).length<=1&&pcts.length>=2&&one.indexOf('/')>=0){PAYMENTS=pcts.map(function(p,i){return {pct:parseFloat(p.replace(',','.')),cond:'Đợt '+(i+1)+' theo thỏa thuận giữa hai Bên.'};});var e=document.getElementById('payCount');if(e)e.value=Math.min(8,PAYMENTS.length);renderPay();return;}}
+ var ps=lines.map(function(l){var m=l.match(/(\d+(?:[.,]\d+)?)\s*%/);var pct=m?parseFloat(m[1].replace(',','.')):0;var cond=l.replace(/^Đợt\s*\d+\s*[:\.\-–]?\s*/i,'').trim();return {pct:pct,cond:cond};});
+ if(ps.length){PAYMENTS=ps;var e2=document.getElementById('payCount');if(e2)e2.value=Math.min(8,ps.length);renderPay();}}
 
 /* seller persist */
 var SELLER=['bName','bAddr','bPhone','bEmail','bTax','bRep','bRepTitle','bBank'];
@@ -255,7 +286,7 @@ function loadSeller(){try{var o=JSON.parse(localStorage.getItem(BKEY)||'{}');SEL
 function pad(x){return(x<10?'0':'')+x;}
 function genNo(d){return pad(d.getDate())+pad(d.getMonth()+1)+d.getFullYear()+'/HĐMB/HAR';}
 function getParty(pre){return {name:val(pre+'Name'),addr:val(pre+'Addr'),phone:val(pre+'Phone'),email:val(pre+'Email'),tax:val(pre+'Tax'),rep:val(pre+'Rep'),title:val(pre+'RepTitle'),bank:val(pre+'Bank')};}
-function contractObj(){return{no:val('kNo'),date:val('kDate'),place:val('kPlace')||'TP.HCM',project:val('kProject'),warehouse:val('kWarehouse'),delivery:val('kDelivery'),payment:val('kPayment'),
+function contractObj(){return{no:val('kNo'),date:val('kDate'),place:val('kPlace')||'TP.HCM',project:val('kProject'),warehouse:val('kWarehouse'),delivery:val('kDelivery'),payment:payLines().join('\n'),
  cl1:val('cl1'),cl3:val('cl3'),cl4:val('cl4'),cl5:val('cl5'),cl6:val('cl6'),
  A:getParty('a'),B:getParty('b'),items:ITEMS.slice(),calc:calc(),staff:document.getElementById('staffName').textContent};}
 function partyHtml(p){return '<b>'+esc(p.name||'—')+'</b><br>Địa chỉ: '+esc(p.addr||'…')+'<br>Điện thoại: '+esc(p.phone||'…')+(p.email?' &nbsp; Email: '+esc(p.email):'')+'<br>Mã số thuế: '+esc(p.tax||'…')+'<br>Đại diện theo pháp luật: '+esc(p.rep||'…')+(p.title?' – '+esc(p.title):'')+'<br>Tài khoản số: '+esc(p.bank||'…');}
@@ -300,7 +331,7 @@ function viewSaved(i){var x=filteredC()[i];if(x&&x.obj)renderDoc(x.obj);}
 function delSaved(i){var t=filteredC()[i];if(!t)return;var all=loadC();var idx=all.findIndex(function(z){return z.no===t.no&&z.date===t.date;});if(idx>=0&&confirm('Xóa hợp đồng '+t.no+'?')){all.splice(idx,1);localStorage.setItem(KEY,JSON.stringify(all));renderSaved();}}
 
 /* init */
-buildSel();loadClauses();loadSeller();loadQuotes();renderItems();renderSaved();
+buildSel();loadClauses();loadSeller();loadQuotes();setPayCount(2);renderItems();renderSaved();
 (function(){var n=new Date();document.getElementById('kDate').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('kNo').value=genNo(n);})();
 </script>
 </body>
