@@ -22,7 +22,7 @@ const PROXY = {
     "https://duyoven.com/wp-content/uploads/2026/03/HDSD_FastGrill.pdf",
 };
 
-const INTERNAL = new Set(["/bao-gia.html", "/bao-gia", "/hop-dong.html", "/hop-dong", "/quan-tri.html", "/quan-tri"]);
+const INTERNAL = new Set(["/bao-gia.html", "/bao-gia", "/hop-dong.html", "/hop-dong", "/quan-tri.html", "/quan-tri", "/quan-ly.html", "/quan-ly", "/quan-ly-kho.html", "/quan-ly-kho", "/ban-giao-nghiem-thu.html", "/ban-giao-nghiem-thu"]);
 
 const AI_SYS = [
   "Bạn là trợ lý tư vấn của Duy's Oven (duyoven.vn) — thương hiệu Việt Nam chuyên lò nướng than tách khói, lò BBQ, lò xông khói (smoker) và lò pizza, sản xuất từ thép, sơn chịu nhiệt chuẩn Mỹ 600°C, vỉ inox.",
