@@ -501,3 +501,8 @@ a:hover { color: var(--ember-soft); }
 .show-link { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: #fff; border-bottom: 1px solid var(--ember); padding-bottom: 3px; transition: color .3s; white-space: nowrap; }
 .show:hover .show-link { color: var(--ember); }
 @media (max-width: 760px) { .show-grid { grid-template-columns: 1fr; } .show-body h3 { font-size: 1.5rem; } }
+
+/* === Thumbnail ảnh sản phẩm trong menu xổ xuống === */
+.mega-col a{display:flex;align-items:center;gap:10px}
+.mega-col a .mega-thumb{width:42px;height:42px;flex:none;object-fit:cover;border-radius:8px;background:#fff;padding:2px}
+.mega-col .all-link{display:block}
