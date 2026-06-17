@@ -272,4 +272,8 @@
   </url>
   <url><loc>https://duyoven.vn/tin-tuc.html</loc><changefreq>weekly</changefreq></url>
   <url><loc>https://duyoven.vn/bang-gia.html</loc><changefreq>weekly</changefreq></url>
+  <url>
+    <loc>https://duyoven.vn/sp-combo-quay-xien-argentina.html</loc>
+    <priority>0.7</priority>
+  </url>
 </urlset>
