@@ -426,9 +426,10 @@ a:hover { color: var(--ember-soft); }
   .footer-grid { grid-template-columns: 1fr; }
   .nav-toggle { display: block; }
   .main-nav {
-    position: fixed; top: var(--header-h); left: 0; right: 0;
+    position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0;
+    max-height: calc(100vh - var(--header-h)); overflow-y: auto; -webkit-overflow-scrolling: touch;
     background: rgba(11,10,9,0.97); border-bottom: 1px solid var(--line-soft);
-    flex-direction: column; align-items: flex-start; gap: 0; padding: 10px 7%; display: none;
+    flex-direction: column; align-items: flex-start; gap: 0; padding: 10px 7% 40px; display: none;
   }
   .nav-open .main-nav { display: flex; }
   .main-nav > a, .main-nav .nav-item > a { width: 100%; padding: 15px 0; border-bottom: 1px solid var(--line-soft); }
