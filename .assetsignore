@@ -2,3 +2,6 @@ worker.js
 wrangler.toml
 .assetsignore
 deploy
+.git
+.git/**
+node_modules
