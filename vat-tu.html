@@ -129,7 +129,7 @@ function loadJSON(k,d){try{return JSON.parse(localStorage.getItem(k)||d);}catch(
 var VKEY='dq_vattu';
 var MAT=[],BOM={},VLOG=[],VNHAP=[],NRECV=[],BOMEDIT=[];
 
-function showVt(k){document.querySelectorAll('.vtpanel').forEach(function(p){p.style.display='none';});var el=document.getElementById('vp-'+k);if(el)el.style.display='';document.querySelectorAll('.vtab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-k')===k);});try{window.scrollTo(0,0);}catch(e){}}
+function showVt(k){document.querySelectorAll('.vtpanel').forEach(function(p){p.style.display='none';});var el=document.getElementById('vp-'+k);if(el)el.style.display='';document.querySelectorAll('.vtab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-k')===k);});try{window.scrollTo(0,0);}catch(e){}if(k==='ai'&&!window._aiRan){window._aiRan=true;runAnalyze();}}
 
 /* ===== Đồng bộ máy chủ ===== */
 function vtBundle(){return {materials:MAT,bom:BOM,log:VLOG,phieunhap:VNHAP};}
