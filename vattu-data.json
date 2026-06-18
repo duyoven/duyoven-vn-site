@@ -1,1 +1,34 @@
-{"materials":[],"bom":{},"log":[],"phieunhap":[],"updatedAt":"","by":""}
+{
+  "materials": [
+    {
+      "name": "Thép tấm",
+      "unit": "kg",
+      "qty": 200,
+      "price": 25000
+    },
+    {
+      "name": "Van gas",
+      "unit": "cái",
+      "qty": 30,
+      "price": 120000
+    }
+  ],
+  "bom": {
+    "Lò Tách khói 80L": [
+      {
+        "mat": "Thép tấm",
+        "unit": "kg",
+        "qty": 15
+      },
+      {
+        "mat": "Van gas",
+        "unit": "cái",
+        "qty": 1
+      }
+    ]
+  },
+  "log": [],
+  "phieunhap": [],
+  "updatedAt": "2026-06-18T17:08:33.152Z",
+  "by": "chu@duyoven"
+}
