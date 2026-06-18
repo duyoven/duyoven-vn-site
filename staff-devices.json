@@ -19,6 +19,12 @@
       "label": "Android Chrome",
       "email": "v***@gmail.com",
       "ts": "2026-06-18T15:15:28.064Z"
+    },
+    {
+      "u": "7fab2c827979bc5caa134303093abd38a672b14cc16d2b44deb246502fe4a8f8",
+      "d": "4d40b451fc4885daa000a85f054d2dd0630fe2d6ab1c06ca9765aed471dd6c50",
+      "label": "iPhone Safari",
+      "ts": "2026-06-18T15:19:55.103Z"
     }
   ],
   "pending": []
