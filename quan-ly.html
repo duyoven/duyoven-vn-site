@@ -100,7 +100,8 @@
     <div class="err" id="errG"></div>
     <div style="margin-top:8px"><a href="#" onclick="togglePw();return false" style="color:var(--muted);font-size:13px;text-decoration:none">hoặc dùng mật khẩu chủ →</a></div>
     <div id="pwBox" style="display:none;margin-top:10px">
-      <input type="password" id="pw1" autocomplete="off" placeholder="Mật khẩu chủ" onkeydown="if(event.key==='Enter')tryL1()">
+      <input type="text" name="username" id="pwUser" autocomplete="username" value="chu-duyoven" style="position:absolute;left:-9999px;width:1px;height:1px" tabindex="-1" aria-hidden="true">
+      <input type="password" id="pw1" autocomplete="current-password" placeholder="Mật khẩu chủ" onkeydown="if(event.key==='Enter')tryL1()">
       <button class="go" onclick="tryL1()">Vào</button>
       <div class="err" id="err1"></div>
     </div>
