@@ -98,10 +98,11 @@ function _ghCfg(env, path) {
   const repo = env.GH_REPO || "duyoven/duyoven-vn-site";
   return { api: "https://api.github.com/repos/" + repo + "/contents/" + path, headers: { "Authorization": "Bearer " + (env.GH_TOKEN || ""), "Accept": "application/vnd.github+json", "User-Agent": "duyoven-cms" } };
 }
-async function ghGetJson(env, path) {
+async function ghGetJson(env, path, branch) {
   if (!env.GH_TOKEN) return { obj: null, sha: undefined };
+  branch = branch || "main";
   const c = _ghCfg(env, path);
-  const r = await fetch(c.api + "?ref=main", { headers: c.headers });
+  const r = await fetch(c.api + "?ref=" + branch, { headers: c.headers });
   if (r.status === 404) return { obj: null, sha: undefined };
   if (!r.ok) throw new Error("GitHub " + r.status);
   const j = await r.json();
@@ -109,10 +110,10 @@ async function ghGetJson(env, path) {
   let obj = null; try { obj = JSON.parse(txt); } catch (e) {}
   return { obj, sha: j.sha };
 }
-async function ghPutJson(env, path, obj, msg, sha) {
+async function ghPutJson(env, path, obj, msg, sha, branch) {
   const c = _ghCfg(env, path);
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
-  const r = await fetch(c.api, { method: "PUT", headers: { ...c.headers, "Content-Type": "application/json" }, body: JSON.stringify({ message: msg, content: b64, sha, branch: "main" }) });
+  const r = await fetch(c.api, { method: "PUT", headers: { ...c.headers, "Content-Type": "application/json" }, body: JSON.stringify({ message: msg, content: b64, sha, branch: branch || "main" }) });
   return r.ok;
 }
 function uaLabel(request) {
@@ -580,6 +581,31 @@ export default {
       const okw = await ghPutJson(env, DEVFILE, store, "device: " + act + " (" + who + ")", read.sha);
       if (!okw) return jsonResp({ error: "Lưu thiết bị lỗi." }, 502);
       return jsonResp({ ok: true, trusted: store.trusted, pending: store.pending });
+    }
+
+    // --- Kho chung (đồng bộ nhiều máy + backup): lưu trên nhánh "appdata" để KHÔNG kích hoạt build ---
+    if (url.pathname === "/api/kho") {
+      const who = await authUser(request, env);
+      if (!who) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+      if (!env.GH_TOKEN) return jsonResp({ error: "Chưa cấu hình GH_TOKEN." }, 503);
+      const BR = "appdata", FILE = "kho-data.json";
+      if (request.method === "GET") {
+        let r; try { r = await ghGetJson(env, FILE, BR); } catch (e) { return jsonResp({ error: "Đọc kho lỗi." }, 502); }
+        return jsonResp({ ok: true, data: r.obj || {} });
+      }
+      if (request.method === "POST") {
+        let body; try { body = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
+        const obj = (body && body.data) ? body.data : (body || {});
+        obj.updatedAt = new Date().toISOString();
+        obj.by = who;
+        // ghi với sha hiện tại; nếu xung đột (2 máy lưu cùng lúc) thì đọc lại sha và thử lại 1 lần
+        let cur; try { cur = await ghGetJson(env, FILE, BR); } catch (e) { cur = { sha: undefined }; }
+        let ok = await ghPutJson(env, FILE, obj, "kho: cap nhat (" + who + ")", cur.sha, BR);
+        if (!ok) { try { cur = await ghGetJson(env, FILE, BR); ok = await ghPutJson(env, FILE, obj, "kho: cap nhat (" + who + ")", cur.sha, BR); } catch (e) {} }
+        if (!ok) return jsonResp({ error: "Lưu kho lỗi." }, 502);
+        return jsonResp({ ok: true, updatedAt: obj.updatedAt });
+      }
+      return jsonResp({ error: "method" }, 405);
     }
 
     // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
