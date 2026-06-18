@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vật tư đầu vào — nội bộ Duy's Oven</title>
+<script>(function(){try{if(sessionStorage.getItem('ql_vattu')!=='1')location.replace('quan-ly.html?next=vattu');}catch(e){location.replace('quan-ly.html');}})();try{if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');}catch(e){}</script>
+<style>
+  :root{--bg:#0d0e10;--card:#16181c;--line:rgba(255,255,255,.12);--ember:#F47B20;--text:#eceae6;--muted:#9aa0aa}
+  *{box-sizing:border-box}
+  html.embed header{display:none!important}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+  .container{max-width:1180px;margin:0 auto;padding:0 18px}
+  header{position:sticky;top:0;z-index:30;background:rgba(13,14,16,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .hd{display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px;flex-wrap:wrap}
+  .hd a{color:var(--muted);text-decoration:none;font-size:14px;margin-right:14px}.hd a:hover{color:var(--ember)}.hd b{color:var(--text)}
+  h1{font-size:24px;margin:18px 0 4px}.sub{color:var(--muted);font-size:14px;margin:0 0 16px}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+  .box h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .lbl{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  input,textarea,select{width:100%;padding:9px 11px;border-radius:9px;border:1px solid var(--line);background:rgba(0,0,0,.18);color:var(--text);font:inherit}
+  .fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .btn{display:inline-block;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+  .btn:hover{border-color:var(--ember)}.btn-p{background:var(--ember);color:#160a02;border-color:var(--ember)}.btn-sm{padding:6px 11px;font-size:13px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.muted{color:var(--muted)}small{color:var(--muted)}
+  table.grid{width:100%;border-collapse:collapse;font-size:14px}
+  table.grid th,table.grid td{border-bottom:1px solid var(--line);padding:8px 8px;text-align:left}
+  table.grid th{color:var(--muted);font-weight:600;font-size:12.5px}
+  table.grid td input{padding:6px 8px}
+  .right{text-align:right}.center{text-align:center}
+  .chip{display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;border-radius:7px;border:1px solid var(--line);cursor:pointer;background:rgba(0,0,0,.15);font-weight:700}
+  .row-line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .vttabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 16px}
+  .vtab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer}
+  .vtab:hover{border-color:var(--ember)}.vtab.active{background:var(--ember);color:#160a02;border-color:var(--ember)}
+  .ovcard{flex:1;min-width:130px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .ovnum{font-size:24px;font-weight:800;line-height:1}.ovlbl{font-size:12px;color:var(--muted);margin-top:6px}
+  .report{font-size:14px;line-height:1.7}.report h3{font-size:16px;margin:14px 0 6px;color:var(--ember)}.report h4{font-size:14px;margin:12px 0 4px}.report ul{margin:6px 0;padding-left:20px}.report li{margin:3px 0}
+  @media(max-width:760px){.fg,.fg3{grid-template-columns:1fr}.vtab{padding:8px 13px;font-size:13px}.ovcard{min-width:46%}}
+</style>
+</head>
+<body>
+<header class="noprint"><div class="container hd">
+  <div><a href="quan-ly.html">← Quản Lý</a><a href="quan-ly-kho.html">Kho thành phẩm</a><b>Vật tư đầu vào</b></div>
+  <span class="muted">Duy's Oven · Phiên nội bộ</span>
+</div></header>
+
+<div class="container">
+  <h1>Vật tư đầu vào</h1>
+  <p class="sub">Quản lý vật tư (tôn, van gas, sơn…), định mức cho từng sản phẩm, và AI phân tích hiệu quả. Đồng bộ chung máy chủ.</p>
+  <div class="box" style="font-size:13px;color:var(--muted)">Nhân viên: <b style="color:var(--text)" id="staffName">__STAFF__</b></div>
+  <div class="box" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;padding:11px 14px">
+    <span id="syncStatus" class="muted">☁️ Đang kết nối máy chủ…</span>
+    <span style="flex:1;min-width:8px"></span>
+    <button class="btn btn-sm" onclick="vtServerLoad(true)">↻ Tải lại từ máy chủ</button>
+    <button class="btn btn-sm" onclick="vtBackup()">💾 Sao lưu file</button>
+    <button class="btn btn-sm" onclick="document.getElementById('vtRestore').click()">📂 Nạp file</button>
+    <input type="file" id="vtRestore" accept=".json,application/json" style="display:none" onchange="vtRestoreFile(this)">
+  </div>
+
+  <div class="vttabs">
+    <button class="vtab active" data-k="ton" onclick="showVt('ton')">📦 Tồn vật tư</button>
+    <button class="vtab" data-k="nhap" onclick="showVt('nhap')">🟢 Nhập vật tư</button>
+    <button class="vtab" data-k="dinhmuc" onclick="showVt('dinhmuc')">📐 Định mức</button>
+    <button class="vtab" data-k="ai" onclick="showVt('ai')">🤖 Phân tích AI</button>
+  </div>
+
+  <!-- TỒN VẬT TƯ -->
+  <div class="vtpanel" id="vp-ton">
+    <div class="box">
+      <h3>📦 Tồn vật tư hiện tại</h3>
+      <div class="row-line" style="margin-bottom:10px"><button class="btn btn-sm" onclick="addMat()">+ Thêm vật tư</button></div>
+      <div style="overflow:auto"><table class="grid"><thead><tr><th style="min-width:160px">Tên vật tư</th><th style="width:80px">ĐVT</th><th style="width:120px">Đơn giá</th><th class="center" style="width:120px">Tồn</th><th class="right" style="width:120px">Giá trị</th><th style="width:50px"></th></tr></thead><tbody id="matBody"></tbody></table></div>
+      <div class="muted" id="matSum" style="font-size:13px;margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- NHẬP VẬT TƯ -->
+  <div class="vtpanel" id="vp-nhap" style="display:none">
+    <div class="box" style="border-color:rgba(95,191,114,.4)">
+      <h3>🟢 Nhập vật tư</h3>
+      <div class="fg3">
+        <div><span class="lbl">Số phiếu</span><input id="nNo"></div>
+        <div><span class="lbl">Ngày nhập</span><input id="nDate" type="date"></div>
+        <div><span class="lbl">Người nhập</span><input id="nBy"></div>
+      </div>
+      <span class="lbl">Nhà cung cấp</span><input id="nSup" placeholder="VD: Cửa hàng thép ABC">
+      <div class="row-line" style="margin-top:10px"><button class="btn btn-sm" onclick="addNrecv()">+ Thêm dòng vật tư</button></div>
+      <div id="nrecvBody" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
+      <div class="btn-row"><button class="btn btn-p" onclick="doNhapVt()">Nhập kho vật tư</button></div>
+      <p class="muted" style="font-size:12px;margin-top:8px">Cộng số lượng vào tồn vật tư (vật tư mới sẽ tự tạo) và cập nhật đơn giá mới nhất.</p>
+    </div>
+    <div class="box"><h3>🕘 Lịch sử nhập vật tư</h3><div id="vnhapList" style="font-size:13px"></div></div>
+  </div>
+
+  <!-- ĐỊNH MỨC -->
+  <div class="vtpanel" id="vp-dinhmuc" style="display:none">
+    <div class="box">
+      <h3>📐 Định mức vật tư cho 1 sản phẩm</h3>
+      <p class="muted" style="font-size:13px;margin-top:0">Khai 1 lần: mỗi sản phẩm cần bao nhiêu vật tư gì. Khi sản xuất ra sản phẩm (nhập kho thành phẩm) → tự trừ vật tư đúng định mức. Sản phẩm chưa khai thì bỏ qua.</p>
+      <span class="lbl">Tên sản phẩm (đúng tên trong Kho thành phẩm)</span>
+      <input id="bomProd" placeholder="VD: Lò Tách khói 80L" list="prodList">
+      <datalist id="prodList"></datalist>
+      <div class="row-line" style="margin-top:10px"><button class="btn btn-sm" onclick="addBomLine()">+ Thêm vật tư vào định mức</button></div>
+      <div id="bomEditBody" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
+      <div class="btn-row"><button class="btn btn-p" onclick="saveBom()">Lưu định mức sản phẩm này</button></div>
+    </div>
+    <div class="box"><h3>📋 Các định mức đã khai</h3><div id="bomList" style="font-size:13.5px"></div></div>
+  </div>
+
+  <!-- AI PHÂN TÍCH -->
+  <div class="vtpanel" id="vp-ai" style="display:none">
+    <div class="box">
+      <h3>🤖 AI phân tích hiệu quả vật tư <small style="margin-left:auto">chỉ chủ</small></h3>
+      <p class="muted" style="font-size:13px;margin-top:0">AI so vật tư đã dùng với sản phẩm sản xuất ra → chi phí vật tư/sản phẩm, hao hụt, vật tư lãng phí, gợi ý tiết kiệm.</p>
+      <div class="btn-row"><button class="btn btn-p" id="aiBtn" onclick="runAnalyze()">📊 Phân tích ngay</button></div>
+      <div id="aiReport" class="report" style="margin-top:14px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function pad(n){return n<10?'0'+n:''+n;}
+function num(v){v=parseFloat(v);return isNaN(v)?0:v;}
+function money(n){return (Math.round(n)||0).toLocaleString('vi-VN')+' đ';}
+function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function loadJSON(k,d){try{return JSON.parse(localStorage.getItem(k)||d);}catch(e){return JSON.parse(d);}}
+var VKEY='dq_vattu';
+var MAT=[],BOM={},VLOG=[],VNHAP=[],NRECV=[],BOMEDIT=[];
+
+function showVt(k){document.querySelectorAll('.vtpanel').forEach(function(p){p.style.display='none';});var el=document.getElementById('vp-'+k);if(el)el.style.display='';document.querySelectorAll('.vtab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-k')===k);});try{window.scrollTo(0,0);}catch(e){}}
+
+/* ===== Đồng bộ máy chủ ===== */
+function vtBundle(){return {materials:MAT,bom:BOM,log:VLOG,phieunhap:VNHAP};}
+function setSync(txt,color){var el=document.getElementById('syncStatus');if(el){el.textContent=txt;el.style.color=color||'var(--muted)';}}
+function cacheLocal(){try{localStorage.setItem(VKEY,JSON.stringify(vtBundle()));}catch(e){}}
+var _syncT;
+function vtSync(now){clearTimeout(_syncT);cacheLocal();var go=function(){setSync('☁️ Đang lưu…');
+  fetch('/api/vattu',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'save',data:vtBundle()})}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok)setSync('☁️ Đã lưu máy chủ · '+new Date().toLocaleTimeString('vi-VN'),'#5fbf72');else setSync('⚠ Lưu lỗi','#e0863a');}).catch(function(){setSync('⚠ Mất kết nối — chưa lưu được','#e0863a');});};
+  if(now)go();else _syncT=setTimeout(go,1200);}
+function applyData(d){MAT=Array.isArray(d.materials)?d.materials:[];BOM=(d.bom&&typeof d.bom==='object')?d.bom:{};VLOG=Array.isArray(d.log)?d.log:[];VNHAP=Array.isArray(d.phieunhap)?d.phieunhap:[];renderAll();}
+function vtServerLoad(force){setSync('☁️ Đang tải từ máy chủ…');
+  fetch('/api/vattu').then(function(r){return r.json();}).then(function(j){
+   if(!j||!j.ok){setSync('⚠ Không tải được (dùng dữ liệu máy này)','#e0863a');return;}
+   var d=j.data||{},has=(d.materials&&d.materials.length)||(d.bom&&Object.keys(d.bom).length)||d.updatedAt;
+   if(has){applyData(d);setSync('☁️ Đã đồng bộ từ máy chủ'+(d.updatedAt?' · '+new Date(d.updatedAt).toLocaleString('vi-VN'):''),'#5fbf72');}
+   else{var local=loadJSON(VKEY,'null');if(local&&((local.materials&&local.materials.length)||(local.bom&&Object.keys(local.bom).length))){applyData(local);setSync('☁️ Đẩy dữ liệu máy này lên máy chủ…');vtSync(true);}else setSync('☁️ Vật tư (máy chủ) đang trống — bắt đầu nhập','var(--muted)');}
+  }).catch(function(){var local=loadJSON(VKEY,'null');if(local)applyData(local);setSync('⚠ Mất kết nối máy chủ (dùng dữ liệu máy này)','#e0863a');});}
+function vtBackup(){var data=JSON.stringify({_app:'duyoven-vattu',ts:new Date().toISOString(),data:vtBundle()},null,2);var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);a.download='sao-luu-vattu-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();}
+function vtRestoreFile(inp){var f=inp.files&&inp.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){try{var o=JSON.parse(rd.result);var d=o.data||o;if(!d||!Array.isArray(d.materials)){alert('File không hợp lệ.');return;}if(!confirm('Nạp dữ liệu vật tư từ file này? Sẽ thay thế và đẩy lên máy chủ.'))return;applyData(d);vtSync(true);alert('✅ Đã nạp & đẩy lên máy chủ.');}catch(e){alert('Lỗi đọc file: '+e.message);}};rd.readAsText(f);inp.value='';}
+
+/* ===== Tồn vật tư ===== */
+function addMat(){MAT.push({name:'',unit:'',qty:0,price:0});renderMat();}
+function setMat(i,k,v){if(!MAT[i])return;MAT[i][k]=(k==='qty'||k==='price')?num(v):v;if(k==='qty'||k==='price')renderMatSum();cacheLocal();vtSync();}
+function delMat(i){if(!confirm('Xóa vật tư này?'))return;MAT.splice(i,1);renderMat();vtSync();}
+function renderMat(){var b=document.getElementById('matBody');if(!b)return;b.innerHTML=MAT.map(function(m,i){var gt=num(m.qty)*num(m.price);return '<tr><td><input value="'+esc(m.name)+'" oninput="setMat('+i+',\'name\',this.value)"></td><td><input value="'+esc(m.unit)+'" oninput="setMat('+i+',\'unit\',this.value)"></td><td><input type="number" value="'+(m.price||0)+'" oninput="setMat('+i+',\'price\',this.value)"></td><td class="center"><input type="number" style="text-align:center" value="'+(m.qty||0)+'" oninput="setMat('+i+',\'qty\',this.value)"></td><td class="right">'+money(gt)+'</td><td class="right"><button class="btn btn-sm" onclick="delMat('+i+')" style="color:#e25b4b">✕</button></td></tr>';}).join('')||'<tr><td colspan="6" class="muted" style="padding:14px">Chưa có vật tư. Bấm "+ Thêm vật tư" hoặc dùng tab Nhập vật tư.</td></tr>';renderMatSum();buildProdList();}
+function renderMatSum(){var tong=0,n=0;MAT.forEach(function(m){tong+=num(m.qty)*num(m.price);n++;});var el=document.getElementById('matSum');if(el)el.innerHTML='Tổng <b>'+n+'</b> loại vật tư · Tổng giá trị tồn: <b style="color:var(--ember)">'+money(tong)+'</b>';}
+function addMatQty(name,unit,qty,price){if(!name)return;var m=MAT.filter(function(x){return x.name.toLowerCase()===name.toLowerCase();})[0];if(m){m.qty=num(m.qty)+num(qty);if(num(price)>0)m.price=num(price);if(unit&&!m.unit)m.unit=unit;}else MAT.push({name:name,unit:unit||'',qty:num(qty),price:num(price)});}
+
+/* ===== Nhập vật tư ===== */
+function addNrecv(){NRECV.push({name:'',unit:'',qty:1,price:0});renderNrecv();}
+function setNrecv(i,k,v){if(!NRECV[i])return;NRECV[i][k]=(k==='qty'||k==='price')?num(v):v;}
+function delNrecv(i){NRECV.splice(i,1);renderNrecv();}
+function renderNrecv(){var b=document.getElementById('nrecvBody');if(!b)return;b.innerHTML=NRECV.map(function(x,i){return '<div class="row-line"><input style="flex:2;min-width:120px" placeholder="Tên vật tư" value="'+esc(x.name)+'" oninput="setNrecv('+i+',\'name\',this.value)" list="matList"><input style="width:70px" placeholder="ĐVT" value="'+esc(x.unit)+'" oninput="setNrecv('+i+',\'unit\',this.value)"><input style="width:80px" type="number" placeholder="SL" value="'+x.qty+'" oninput="setNrecv('+i+',\'qty\',this.value)"><input style="width:110px" type="number" placeholder="Đơn giá" value="'+x.price+'" oninput="setNrecv('+i+',\'price\',this.value)"><button class="btn btn-sm" onclick="delNrecv('+i+')" style="color:#e25b4b">✕</button></div>';}).join('')||'<div class="muted" style="font-size:13px">Chưa có dòng nào. Bấm "+ Thêm dòng vật tư".</div>';
+  var dl=document.getElementById('matList')||document.createElement('datalist');dl.id='matList';dl.innerHTML=MAT.map(function(m){return '<option value="'+esc(m.name)+'">';}).join('');if(!dl.parentNode)document.body.appendChild(dl);}
+function doNhapVt(){var lines=NRECV.filter(function(x){return x.name&&num(x.qty)>0;});if(!lines.length){alert('Chưa có vật tư nhập.');return;}
+  if(!val('nNo'))document.getElementById('nNo').value='PNVT-'+Date.now().toString().slice(-8);
+  lines.forEach(function(x){addMatQty(x.name,x.unit,x.qty,x.price);VLOG.unshift({t:new Date().toISOString(),type:'nhập',name:x.name,qty:num(x.qty),note:'PNVT '+val('nNo')+(val('nSup')?' ← '+val('nSup'):'')});});
+  VLOG=VLOG.slice(0,500);
+  VNHAP.unshift({no:val('nNo'),date:val('nDate')||new Date().toISOString().slice(0,10),sup:val('nSup'),by:val('nBy'),items:lines.slice()});VNHAP=VNHAP.slice(0,200);
+  try{fetch('/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'Vật tư · nhập',detail:lines.map(function(x){return x.name+' ×'+x.qty;}).join(', ')})});}catch(e){}
+  NRECV=[];renderNrecv();renderMat();renderVnhap();document.getElementById('nNo').value='';vtSync(true);alert('✅ Đã nhập vật tư vào kho.');}
+function renderVnhap(){var b=document.getElementById('vnhapList');if(!b)return;b.innerHTML=VNHAP.length?VNHAP.map(function(p){return '<div style="padding:8px 0;border-bottom:1px dashed var(--line)"><b>'+esc(p.no)+'</b> · '+esc(p.date)+(p.sup?' · '+esc(p.sup):'')+'<br><span class="muted">'+p.items.map(function(x){return esc(x.name)+' ×'+x.qty+(num(x.price)?' @'+money(num(x.price)):'');}).join(' · ')+'</span></div>';}).join(''):'<div class="muted">Chưa có phiếu nhập vật tư.</div>';}
+
+/* ===== Định mức (BOM) ===== */
+function addBomLine(){BOMEDIT.push({mat:'',unit:'',qty:1});renderBomEdit();}
+function setBomLine(i,k,v){if(!BOMEDIT[i])return;BOMEDIT[i][k]=(k==='qty')?num(v):v;}
+function delBomLine(i){BOMEDIT.splice(i,1);renderBomEdit();}
+function renderBomEdit(){var b=document.getElementById('bomEditBody');if(!b)return;b.innerHTML=BOMEDIT.map(function(x,i){return '<div class="row-line"><input style="flex:2;min-width:120px" placeholder="Tên vật tư" value="'+esc(x.mat)+'" oninput="setBomLine('+i+',\'mat\',this.value)" list="matList"><input style="width:70px" placeholder="ĐVT" value="'+esc(x.unit)+'" oninput="setBomLine('+i+',\'unit\',this.value)"><input style="width:110px" type="number" placeholder="SL/1 sp" value="'+x.qty+'" oninput="setBomLine('+i+',\'qty\',this.value)"><button class="btn btn-sm" onclick="delBomLine('+i+')" style="color:#e25b4b">✕</button></div>';}).join('')||'<div class="muted" style="font-size:13px">Chưa có dòng. Bấm "+ Thêm vật tư vào định mức".</div>';}
+function loadBomFor(){var p=val('bomProd');BOMEDIT=(p&&Array.isArray(BOM[p]))?BOM[p].map(function(x){return {mat:x.mat,unit:x.unit||'',qty:x.qty};}):[];renderBomEdit();}
+function saveBom(){var p=val('bomProd');if(!p){alert('Nhập tên sản phẩm.');return;}var lines=BOMEDIT.filter(function(x){return x.mat&&num(x.qty)>0;});if(!lines.length){if(BOM[p]&&confirm('Xóa định mức của "'+p+'"?')){delete BOM[p];}else{alert('Chưa có vật tư trong định mức.');return;}}else{BOM[p]=lines.map(function(x){return {mat:x.mat,unit:x.unit||'',qty:num(x.qty)};});}
+  renderBomList();vtSync(true);alert('✅ Đã lưu định mức cho "'+p+'".');}
+function editBom(p){document.getElementById('bomProd').value=p;loadBomFor();showVt('dinhmuc');window.scrollTo(0,0);}
+function delBom(p){if(!confirm('Xóa định mức của "'+p+'"?'))return;delete BOM[p];renderBomList();vtSync(true);}
+function renderBomList(){var b=document.getElementById('bomList');if(!b)return;var ks=Object.keys(BOM);b.innerHTML=ks.length?ks.map(function(p){return '<div style="padding:9px 0;border-bottom:1px dashed var(--line)"><div class="row-line" style="justify-content:space-between"><b>'+esc(p)+'</b><span><button class="btn btn-sm" onclick="editBom(\''+esc(p).replace(/'/g,"\\'")+'\')">Sửa</button> <button class="btn btn-sm" onclick="delBom(\''+esc(p).replace(/'/g,"\\'")+'\')" style="color:#e25b4b">Xóa</button></span></div><span class="muted">'+BOM[p].map(function(x){return esc(x.mat)+': '+x.qty+(x.unit?' '+esc(x.unit):'');}).join(' · ')+'</span></div>';}).join(''):'<div class="muted">Chưa khai định mức nào.</div>';}
+
+function buildProdList(){var dl=document.getElementById('prodList');if(!dl)return;var names={};try{var kho=loadJSON('dq_kho','[]');kho.forEach(function(x){if(x.name)names[x.name]=1;});}catch(e){}Object.keys(BOM).forEach(function(p){names[p]=1;});dl.innerHTML=Object.keys(names).map(function(n){return '<option value="'+esc(n)+'">';}).join('');}
+
+/* ===== AI phân tích ===== */
+function mdToHtml(t){t=esc(t);t=t.replace(/^#{1,3}\s*(.+)$/gm,'<h3>$1</h3>');t=t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');t=t.replace(/^\s*[-*]\s+(.+)$/gm,'<li>$1</li>');t=t.replace(/(<li>[\s\S]*?<\/li>)(?!\s*<li>)/g,function(m){return '<ul>'+m+'</ul>';});t=t.replace(/\n{2,}/g,'<br><br>').replace(/\n/g,'<br>');t=t.replace(/<\/ul><br>/g,'</ul>').replace(/<br>(<h3>)/g,'$1').replace(/(<\/h3>)<br>/g,'$1');return t;}
+function runAnalyze(){var btn=document.getElementById('aiBtn'),rep=document.getElementById('aiReport');btn.disabled=true;btn.textContent='⏳ Đang phân tích…';rep.innerHTML='<div class="muted">AI đang đọc dữ liệu vật tư & sản phẩm…</div>';
+  fetch('/api/vattu-analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).then(function(r){return r.json();}).then(function(j){btn.disabled=false;btn.textContent='📊 Phân tích lại';if(j&&j.ok){rep.innerHTML=mdToHtml(j.report);}else{rep.innerHTML='<div style="color:#e0863a">⚠ '+esc((j&&j.error)||'Lỗi phân tích')+'</div>';}}).catch(function(){btn.disabled=false;btn.textContent='📊 Phân tích lại';rep.innerHTML='<div style="color:#e0863a">⚠ Mất kết nối.</div>';});}
+
+function renderAll(){renderMat();renderNrecv();renderVnhap();renderBomList();buildProdList();}
+/* init */
+(function(){var n=new Date();var ds=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());var nd=document.getElementById('nDate');if(nd)nd.value=ds;
+ document.getElementById('bomProd').addEventListener('change',loadBomFor);
+ var local=loadJSON(VKEY,'null');if(local)applyData(local);else renderAll();
+ vtServerLoad();})();
+</script>
+</body>
+</html>
