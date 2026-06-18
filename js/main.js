@@ -219,7 +219,10 @@
         if (!p || !p.specs) return; var s = p.specs;
         var rows = []; function add(l, v) { if (v != null && String(v).trim()) rows.push([l, String(v)]); }
         if (s.dai || s.rong || s.cao) add('Kích thước (D×R×C)', [s.dai, s.rong, s.cao].filter(Boolean).join(' × ') + ' mm');
-        add('Cân nặng', s.nang ? s.nang + ' kg' : ''); add('Số vỉ nướng', s.vi); add('Chất liệu', s.chatLieu);
+        add('Cân nặng', s.nang ? s.nang + ' kg' : ''); add('Số vỉ nướng', s.vi);
+        add('Vỉ 1 (kích thước · chất liệu)', [s.vi1kt, s.vi1cl].filter(Boolean).join(' · '));
+        add('Vỉ 2 (kích thước · chất liệu)', [s.vi2kt, s.vi2cl].filter(Boolean).join(' · '));
+        add('Chất liệu', s.chatLieu);
         add('Bánh xe', s.banhXe); add('Đồng hồ nhiệt', s.dongHo); add('Board điều khiển', s.board);
         if (s.khac) String(s.khac).split('\n').forEach(function (l) { l = l.trim(); var i = l.indexOf(':'); if (i > 0) add(l.slice(0, i).trim(), l.slice(i + 1).trim()); else if (l) add('•', l); });
         if (!rows.length || document.getElementById('cms-spec-table')) return;
