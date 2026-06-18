@@ -1,8 +1,15 @@
 {
-  "inv": [],
+  "inv": [
+    {
+      "name": "Lò Tách khói 65L",
+      "unit": "bộ",
+      "qty": 0,
+      "status": "Hoàn thiện"
+    }
+  ],
   "log": [],
   "phieuxuat": [],
   "phieunhap": [],
-  "updatedAt": "2026-06-18T16:29:28.086Z",
-  "by": "chu@duyoven"
+  "updatedAt": "2026-06-18T17:40:54.099Z",
+  "by": "vinhduynguyen@gmail.com"
 }
