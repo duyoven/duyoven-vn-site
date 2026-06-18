@@ -97,6 +97,7 @@
     <h2>Quản Lý — Duy's Oven</h2>
     <p>Đăng nhập bằng Google của nhân viên</p>
     <div id="gbtn" style="display:flex;justify-content:center;min-height:44px"></div>
+    <button id="gbtnRedirect" onclick="googleRedirect()" style="display:none;align-items:center;justify-content:center;gap:10px;margin:0 auto;padding:11px 22px;border:none;border-radius:24px;background:#1a73e8;color:#fff;font-size:15px;font-weight:600;cursor:pointer"><span style="background:#fff;color:#1a73e8;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800">G</span> Đăng nhập bằng Google</button>
     <div class="err" id="errG"></div>
     <div style="margin-top:8px"><a href="#" onclick="togglePw();return false" style="color:var(--muted);font-size:13px;text-decoration:none">hoặc dùng mật khẩu chủ →</a></div>
     <div id="pwBox" style="display:none;margin-top:10px">
@@ -333,6 +334,10 @@ function devAct(act,u,d){if((act==='remove'||act==='reject')&&!confirm(act==='re
 
 /* ===== Đăng nhập Google ===== */
 function togglePw(){var b=document.getElementById('pwBox');b.style.display=(b.style.display==='none'?'block':'none');if(b.style.display==='block')setTimeout(function(){document.getElementById('pw1').focus();},30);}
+/* Đăng nhập kiểu chuyển trang (chạy được trên Safari/Chrome iPhone, Android) */
+function googleRedirect(){try{var a=new Uint8Array(16);crypto.getRandomValues(a);var nonce=[].map.call(a,function(x){return x.toString(16).padStart(2,'0');}).join('');try{sessionStorage.setItem('g_nonce',nonce);}catch(e){}var u='https://accounts.google.com/o/oauth2/v2/auth?client_id='+encodeURIComponent(GOOGLE_CLIENT_ID)+'&redirect_uri='+encodeURIComponent(location.origin+'/quan-ly.html')+'&response_type=id_token&scope='+encodeURIComponent('openid email profile')+'&nonce='+nonce+'&prompt=select_account';location.href=u;}catch(e){alert('Lỗi mở đăng nhập Google: '+e.message);}}
+function jwtPayload(t){try{var b=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';return JSON.parse(decodeURIComponent(escape(atob(b))));}catch(e){return null;}}
+function handleGoogleRedirect(){if(!location.hash||location.hash.indexOf('id_token=')<0)return false;var parts=location.hash.replace(/^#/,'').split('&'),tok='';for(var i=0;i<parts.length;i++){var kv=parts[i].split('=');if(kv[0]==='id_token')tok=decodeURIComponent(kv[1]||'');}try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}if(!tok)return false;var pl=jwtPayload(tok),want='';try{want=sessionStorage.getItem('g_nonce')||'';}catch(e){}if(pl&&pl.nonce&&want&&pl.nonce!==want){var er=document.getElementById('errG');if(er){er.style.color='#d4452f';er.textContent='⚠ Phiên không khớp, bấm đăng nhập lại.';}return false;}onGoogleCred({credential:tok});return true;}
 function onGoogleCred(resp){var err=document.getElementById('errG');err.style.color='var(--muted)';err.textContent='Đang kiểm tra…';
  fetch('/api/glogin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential,device:devId()})}).then(function(r){return r.json();}).then(function(j){
   if(j.ok){try{sessionStorage.setItem('ql_user',j.name||j.email||'');}catch(e){}var sn=document.getElementById('staffName');if(sn&&(j.name||j.email))sn.textContent=(j.name||j.email);unlockL1(j.role,j.mods);}
@@ -344,7 +349,7 @@ function initGoogle(tries){tries=tries||0;if(!(window.google&&google.accounts&&g
  var el=document.getElementById('gbtn');if(el)google.accounts.id.renderButton(el,{theme:'filled_blue',size:'large',text:'signin_with',shape:'pill',width:260});}
 
 /* init */
-if(sessionStorage.getItem('ql_l1')==='1'){var _u=sessionStorage.getItem('ql_user');if(_u){var _sn=document.getElementById('staffName');if(_sn)_sn.textContent=_u;}var _r=sessionStorage.getItem('ql_role')||'owner',_m;try{_m=JSON.parse(sessionStorage.getItem('ql_mods')||'"all"');}catch(e){_m='all';}setPerms(_r,_m);showShell();var nx=qs('next');if(nx&&permitted(nx))openNav(nx);}else{initGoogle();loadOwnerPwHash();}
+if(sessionStorage.getItem('ql_l1')==='1'){var _u=sessionStorage.getItem('ql_user');if(_u){var _sn=document.getElementById('staffName');if(_sn)_sn.textContent=_u;}var _r=sessionStorage.getItem('ql_role')||'owner',_m;try{_m=JSON.parse(sessionStorage.getItem('ql_mods')||'"all"');}catch(e){_m='all';}setPerms(_r,_m);showShell();var nx=qs('next');if(nx&&permitted(nx))openNav(nx);}else{loadOwnerPwHash();if(/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){var rb=document.getElementById('gbtnRedirect');if(rb)rb.style.display='inline-flex';var gb=document.getElementById('gbtn');if(gb)gb.style.display='none';}else{initGoogle();}handleGoogleRedirect();}
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>
