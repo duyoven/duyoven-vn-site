@@ -181,6 +181,9 @@
       <div id="spFields" style="display:none;margin-top:12px">
         <div class="fg3"><input id="sp_dai" placeholder="Dài (mm)"><input id="sp_rong" placeholder="Rộng (mm)"><input id="sp_cao" placeholder="Cao (mm)"></div>
         <div class="fg" style="margin-top:8px"><input id="sp_nang" placeholder="Cân nặng (kg)"><input id="sp_vi" placeholder="Số vỉ"></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px">🔥 Vỉ nướng (mỗi vỉ kích thước &amp; chất liệu riêng):</div>
+        <div class="fg" style="margin-top:4px"><input id="sp_vi1kt" placeholder="Vỉ 1 - Kích thước"><input id="sp_vi1cl" placeholder="Vỉ 1 - Chất liệu"></div>
+        <div class="fg" style="margin-top:8px"><input id="sp_vi2kt" placeholder="Vỉ 2 - Kích thước"><input id="sp_vi2cl" placeholder="Vỉ 2 - Chất liệu"></div>
         <div class="fg" style="margin-top:8px"><input id="sp_chatLieu" placeholder="Chất liệu (VD Inox 304)"><input id="sp_banhXe" placeholder="Bánh xe"></div>
         <div class="fg" style="margin-top:8px"><input id="sp_dongHo" placeholder="Đồng hồ nhiệt"><input id="sp_board" placeholder="Board điều khiển"></div>
         <textarea id="sp_khac" placeholder="Thông số khác — mỗi dòng: Tên: Giá trị" style="margin-top:8px"></textarea>
@@ -391,7 +394,7 @@ function khoBundle(){return {inv:INV,log:loadJSON(LKEY,'[]'),phieuxuat:loadJSON(
 function auditPost(action,detail){try{fetch('/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,detail:detail})});}catch(e){}}
 function vattuConsume(product,qty){try{fetch('/api/vattu',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'consume',product:product,qty:qty})});}catch(e){}}
 /* ===== Thông số kỹ thuật sản phẩm (lưu vào site-content → website + AI) ===== */
-var SITECONTENT=null;var SPK=['dai','rong','cao','nang','vi','chatLieu','banhXe','dongHo','board','khac'];
+var SITECONTENT=null;var SPK=['dai','rong','cao','nang','vi','vi1kt','vi1cl','vi2kt','vi2cl','chatLieu','banhXe','dongHo','board','khac'];
 function loadProductsForSpec(){var sel=document.getElementById('spSel');if(!sel)return;fetch('/api/cms').then(function(r){return r.json();}).then(function(c){if(!c||c.error){sel.innerHTML='<option value="">'+esc((c&&c.error)||'Không tải được')+'</option>';return;}SITECONTENT=c;var ps=c.products||[];sel.innerHTML='<option value="">— Chọn sản phẩm —</option>'+ps.map(function(p,i){return '<option value="'+i+'">'+esc(p.name)+(p.specs&&Object.keys(p.specs).length?' ✓':'')+'</option>';}).join('');}).catch(function(){sel.innerHTML='<option value="">Không tải được sản phẩm</option>';});}
 function pickSpecProduct(){var i=document.getElementById('spSel').value,box=document.getElementById('spFields');if(i===''||!SITECONTENT||!SITECONTENT.products[i]){box.style.display='none';return;}var s=SITECONTENT.products[i].specs||{};SPK.forEach(function(k){var el=document.getElementById('sp_'+k);if(el)el.value=s[k]||'';});box.style.display='';}
 function saveSpec(){var i=document.getElementById('spSel').value;if(i===''||!SITECONTENT||!SITECONTENT.products[i]){alert('Chọn sản phẩm trước.');return;}var s={};SPK.forEach(function(k){var el=document.getElementById('sp_'+k);if(el&&el.value.trim())s[k]=el.value.trim();});SITECONTENT.products[i].specs=s;var btn=document.getElementById('spSaveBtn');btn.disabled=true;btn.textContent='⏳ Đang lưu…';
