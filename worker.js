@@ -737,6 +737,36 @@ export default {
       } catch (e) { return jsonResp({ error: "Lỗi AI: " + e.message }, 502); }
     }
 
+    // --- AI quét phiếu nhập vật tư (camera/ảnh) → trích xuất dòng vật tư ---
+    if (url.pathname === "/api/vattu-scan" && request.method === "POST") {
+      if (!(await authUser(request, env))) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+      if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
+      let body; try { body = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
+      const file = String(body.file || "");
+      const mm = file.match(/^data:([^;]+);base64,(.+)$/);
+      if (!mm) return jsonResp({ error: "Ảnh không hợp lệ." }, 400);
+      const mime = mm[1], data = mm[2];
+      let block;
+      if (mime === "application/pdf") block = { type: "document", source: { type: "base64", media_type: "application/pdf", data } };
+      else if (mime.indexOf("image/") === 0) block = { type: "image", source: { type: "base64", media_type: mime, data } };
+      else return jsonResp({ error: "Chỉ nhận ảnh hoặc PDF." }, 400);
+      const sys = "Bạn đọc PHIẾU NHẬP / HOÁ ĐƠN / PHIẾU GIAO HÀNG vật tư của một xưởng cơ khí làm lò nướng than (BBQ) ở Việt Nam. Trích xuất các DÒNG VẬT TƯ thành JSON. " +
+        "Mỗi dòng: {name (tên vật tư kèm quy cách như độ dày/kích thước nếu có, VD 'Tôn đen 1.2mm', 'Hộp 30x30x1.4mm'), unit (đơn vị: kg/cây/tấm/cái/lít/bình/cuộn/con/viên...), qty (số lượng, số), price (đơn giá VNĐ, số, 0 nếu không thấy), cat}. " +
+        "cat là LOẠI, chọn 1 trong: tole (tôn/thép tấm), ong (ống/hộp/la/V thép), son (sơn các loại), ocvit (ốc vít/bù lon/tán/vít), quehan (que hàn/dây hàn/đá cắt-mài/vật tư máy hàn), khihan (khí CO2/Argon/oxy/gas), vinuong (vỉ nướng), banhxe (bánh xe), dongho (đồng hồ nhiệt), board (board điều khiển/quạt/motor), khac (khác). " +
+        "CHỈ trả về JSON: {\"items\":[...]}. Không thêm chữ nào ngoài JSON. Đọc kỹ số lượng và đơn giá. Mờ/không chắc thì vẫn ghi tên, qty=1, price=0.";
+      const content = [block, { type: "text", text: "Đọc phiếu nhập vật tư này và trích xuất JSON các dòng vật tư." }];
+      const model = env.CLAUDE_MODEL_IMPORT || env.CLAUDE_MODEL_QUOTE || "claude-haiku-4-5";
+      try {
+        const r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" }, body: JSON.stringify({ model, max_tokens: 1800, system: sys, messages: [{ role: "user", content }] }) });
+        if (!r.ok) return jsonResp({ error: "anthropic " + r.status + " " + (await r.text()).slice(0, 150) }, 502);
+        const j = await r.json();
+        const txt = (j.content || []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
+        let d = null; try { d = JSON.parse(txt); } catch (e) { const x = txt.match(/\{[\s\S]*\}/); if (x) { try { d = JSON.parse(x[0]); } catch (e2) {} } }
+        const items = (d && Array.isArray(d.items) ? d.items : []).slice(0, 40).map((it) => ({ name: String(it.name || "").slice(0, 120), unit: String(it.unit || "").slice(0, 20), qty: Math.max(0, Number(it.qty) || 0), price: Math.max(0, Math.round(Number(it.price) || 0)), cat: String(it.cat || "khac").slice(0, 20) })).filter((it) => it.name);
+        return jsonResp({ ok: true, items });
+      } catch (e) { return jsonResp({ error: "Lỗi AI: " + e.message }, 502); }
+    }
+
     // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
     if (url.pathname === "/api/cms") {
       if (!(await authUser(request, env))) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
