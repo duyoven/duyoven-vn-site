@@ -142,6 +142,32 @@ function staffUser(request, env) {
   return null;
 }
 
+// ===== TOTP (Google Authenticator) =====
+function base32decode(s) {
+  s = (s || "").replace(/=+$/, "").toUpperCase().replace(/\s/g, "");
+  const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = "";
+  for (let i = 0; i < s.length; i++) { const v = alpha.indexOf(s[i]); if (v < 0) continue; bits += v.toString(2).padStart(5, "0"); }
+  const bytes = [];
+  for (let j = 0; j + 8 <= bits.length; j += 8) bytes.push(parseInt(bits.substr(j, 8), 2));
+  return new Uint8Array(bytes);
+}
+async function totpHotp(keyBytes, counter) {
+  const buf = new ArrayBuffer(8); const dv = new DataView(buf);
+  dv.setUint32(0, Math.floor(counter / 4294967296), false); dv.setUint32(4, counter >>> 0, false);
+  const key = await crypto.subtle.importKey("raw", keyBytes, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
+  const sig = new Uint8Array(await crypto.subtle.sign("HMAC", key, buf));
+  const off = sig[19] & 0xf;
+  const bin = ((sig[off] & 0x7f) << 24) | ((sig[off + 1] & 0xff) << 16) | ((sig[off + 2] & 0xff) << 8) | (sig[off + 3] & 0xff);
+  return (bin % 1000000).toString().padStart(6, "0");
+}
+async function verifyTOTP(secret, code) {
+  const key = base32decode(secret); if (!key.length) return false;
+  const t = Math.floor(Date.now() / 1000 / 30);
+  for (let w = -1; w <= 1; w++) { if (await totpHotp(key, t + w) === code) return true; }
+  return false;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -376,6 +402,16 @@ export default {
         if (arr !== texts) { try { await cache.put(ckey, resp.clone()); } catch (e) {} }
         return resp;
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
+
+    // --- Xác thực 2 lớp Google Authenticator (TOTP) cho khu Quản Lý ---
+    if (url.pathname === "/api/totp" && request.method === "POST") {
+      if (!env.TOTP_SECRET) return jsonResp({ notconfigured: true });
+      let tb; try { tb = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
+      const code = String((tb && tb.code) || "").replace(/\D/g, "");
+      if (code.length < 6) return jsonResp({ error: "Thiếu mã 6 số." }, 400);
+      const ok = await verifyTOTP(env.TOTP_SECRET, code);
+      return jsonResp(ok ? { ok: true } : { error: "Mã không đúng hoặc đã hết hạn." }, ok ? 200 : 401);
     }
 
     // --- Đăng nhập Google cho khu Quản Lý: verify ID token ở máy chủ + allowlist ---
