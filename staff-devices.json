@@ -40,5 +40,13 @@
       "ts": "2026-06-18T15:23:12.995Z"
     }
   ],
-  "pending": []
+  "pending": [
+    {
+      "u": "7fab2c827979bc5caa134303093abd38a672b14cc16d2b44deb246502fe4a8f8",
+      "d": "33c1ac52bcfbc9723d21597554fceb3a453d196743edf01027d9a82bbb095ea3",
+      "label": "iPhone Safari",
+      "email": "t***@gmail.com",
+      "ts": "2026-06-18T15:25:27.609Z"
+    }
+  ]
 }
