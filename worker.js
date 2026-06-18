@@ -688,6 +688,8 @@ export default {
           store.bom = (d.bom && typeof d.bom === "object") ? d.bom : store.bom;
           store.log = Array.isArray(d.log) ? d.log : store.log;
           store.phieunhap = Array.isArray(d.phieunhap) ? d.phieunhap : store.phieunhap;
+          store.cats = Array.isArray(d.cats) ? d.cats : store.cats;
+          store.catalog = (d.catalog && typeof d.catalog === "object") ? d.catalog : store.catalog;
         }
         store.updatedAt = new Date().toISOString(); store.by = who;
         let ok = await ghPutJson(env, VFILE, store, "vattu: " + (act || "save") + " (" + who + ")", cur.sha, VBR);
