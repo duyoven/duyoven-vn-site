@@ -210,6 +210,26 @@
           ulp.appendChild(li2);
         }
       }
+      // ===== Thông số kỹ thuật trên trang chi tiết sản phẩm (từ products[].specs) =====
+      (function () {
+        function E(s){return String(s==null?'':s).replace(/[&<>"]/g,function(ch){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];});}
+        var page = (location.pathname.split('/').pop() || '').toLowerCase();
+        if (!page || !Array.isArray(c.products)) return;
+        var p = c.products.find(function (x) { return x && x.link && x.link.toLowerCase() === page; });
+        if (!p || !p.specs) return; var s = p.specs;
+        var rows = []; function add(l, v) { if (v != null && String(v).trim()) rows.push([l, String(v)]); }
+        if (s.dai || s.rong || s.cao) add('Kích thước (D×R×C)', [s.dai, s.rong, s.cao].filter(Boolean).join(' × ') + ' mm');
+        add('Cân nặng', s.nang ? s.nang + ' kg' : ''); add('Số vỉ nướng', s.vi); add('Chất liệu', s.chatLieu);
+        add('Bánh xe', s.banhXe); add('Đồng hồ nhiệt', s.dongHo); add('Board điều khiển', s.board);
+        if (s.khac) String(s.khac).split('\n').forEach(function (l) { l = l.trim(); var i = l.indexOf(':'); if (i > 0) add(l.slice(0, i).trim(), l.slice(i + 1).trim()); else if (l) add('•', l); });
+        if (!rows.length || document.getElementById('cms-spec-table')) return;
+        var wrap = document.createElement('section'); wrap.id = 'cms-spec-table'; wrap.style.cssText = 'max-width:1000px;margin:34px auto;padding:0 20px';
+        wrap.innerHTML = '<h2 style="font-size:22px;margin:0 0 14px">Thông số kỹ thuật</h2><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:15px">' +
+          rows.map(function (r) { return '<tr style="border-bottom:1px solid rgba(128,128,128,.2)"><td style="padding:11px 12px;color:#8a8a8a;width:42%">' + E(r[0]) + '</td><td style="padding:11px 12px;font-weight:600">' + E(r[1]) + '</td></tr>'; }).join('') +
+          '</table></div>';
+        var foot = document.querySelector('.site-footer');
+        if (foot && foot.parentNode) foot.parentNode.insertBefore(wrap, foot); else document.body.appendChild(wrap);
+      })();
     }).catch(function () {});
 })();
 
