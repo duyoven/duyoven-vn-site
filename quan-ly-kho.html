@@ -65,16 +65,28 @@
   .ktab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer}
   .ktab:hover{border-color:var(--ember)}
   .ktab.active{background:var(--ember);color:#160a02;border-color:var(--ember)}
+  .ovcard{flex:1;min-width:130px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .ovnum{font-size:26px;font-weight:800;line-height:1}
+  .ovlbl{font-size:12px;color:var(--muted);margin-top:6px}
   </style>
   <div class="khotabs">
-    <button class="ktab active" data-k="ton" onclick="showKho('ton')">📦 Tồn kho</button>
+    <button class="ktab active" data-k="tong" onclick="showKho('tong')">📊 Tổng quan</button>
+    <button class="ktab" data-k="ton" onclick="showKho('ton')">📦 Tồn kho</button>
     <button class="ktab" data-k="nhap" onclick="showKho('nhap')">🟢 Nhập kho</button>
     <button class="ktab" data-k="xuat" onclick="showKho('xuat')">🧾 Xuất kho</button>
     <button class="ktab" data-k="phieu" onclick="showKho('phieu')">🗂️ Phiếu &amp; lịch sử</button>
   </div>
 
+  <!-- Tổng quan -->
+  <div class="khopanel" id="kp-tong">
+    <div class="box">
+      <h3>📊 Tổng quan kho — số lượng theo tình trạng</h3>
+      <div id="overviewBody"></div>
+    </div>
+  </div>
+
   <!-- Inventory -->
-  <div class="khopanel" id="kp-ton">
+  <div class="khopanel" id="kp-ton" style="display:none">
   <div class="box">
     <h3>📦 Tồn kho hiện tại</h3>
     <div class="fg3" style="align-items:end">
@@ -200,7 +212,7 @@ function renderInv(){var b=document.getElementById('invBody');b.innerHTML=INV.ma
   '<td class="right"><button class="btn btn-sm" onclick="delInv('+i+')" style="color:#e25b4b">✕</button></td></tr>';}).join('');
  var rdy=0,wip=0;INV.forEach(function(x){if((x.status||READY)===READY)rdy+=(x.qty||0);else wip+=(x.qty||0);});
  document.getElementById('invEmpty').innerHTML=INV.length?('<span style="color:#5fbf72">✅ Sẵn sàng bán: <b>'+rdy+'</b></span> &nbsp;·&nbsp; <span style="color:#e0863a">🛠️ Đang sản xuất: <b>'+wip+'</b></span> &nbsp;— chỉ hàng <b>Hoàn thiện</b> mới chọn được khi xuất bán.'):'Kho trống. Thêm mặt hàng để bắt đầu theo dõi.';
- buildIssueSel();buildRecvSel();}
+ buildIssueSel();buildRecvSel();renderOverview();}
 function changeStatus(i,ns){var x=INV[i];if(!x)return;if((x.status||READY)===ns){renderInv();return;}var n=x.qty||0;
  if(x.qty>1){var inp=prompt('Chuyển bao nhiêu "'+x.name+'" sang "'+ns+'"? (đang có '+x.qty+')',String(x.qty));if(inp===null){renderInv();return;}n=parseInt(inp)||0;if(n<=0){renderInv();return;}if(n>x.qty)n=x.qty;}
  x.qty=(x.qty||0)-n;
@@ -208,7 +220,29 @@ function changeStatus(i,ns){var x=INV[i];if(!x)return;if((x.status||READY)===ns)
  if(tgt)tgt.qty=(tgt.qty||0)+n;else INV.push({name:x.name,unit:x.unit,qty:n,status:ns});
  if(x.qty<=0){var ix=INV.indexOf(x);if(ix>=0)INV.splice(ix,1);}
  logMove('trạng thái',x.name,n,'Chuyển '+n+' → "'+ns+'"');saveInv();renderInv();}
-function renderInvTotals(){/* placeholder for future totals */}
+function renderOverview(){var el=document.getElementById('overviewBody');if(!el)return;
+ if(!INV.length){el.innerHTML='<div class="muted" style="font-size:13px">Kho trống. Vào tab <b>🟢 Nhập kho</b> để thêm hàng.</div>';return;}
+ var byStatus={};STATUSES.forEach(function(s){byStatus[s]=0;});
+ var names=[],pivot={};
+ INV.forEach(function(x){var st=x.status||READY,q=x.qty||0;if(byStatus[st]==null)byStatus[st]=0;byStatus[st]+=q;if(!pivot[x.name]){pivot[x.name]={};names.push(x.name);}pivot[x.name][st]=(pivot[x.name][st]||0)+q;});
+ names.sort(function(a,b){return a.localeCompare(b,'vi');});
+ var rdy=byStatus[READY]||0,wip=0;STATUSES.forEach(function(s){if(s!==READY)wip+=(byStatus[s]||0);});
+ var h='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">';
+ h+='<div class="ovcard" style="border-color:#5fbf72"><div class="ovnum" style="color:#5fbf72">'+rdy+'</div><div class="ovlbl">✅ Sẵn sàng bán (Hoàn thiện)</div></div>';
+ h+='<div class="ovcard" style="border-color:#e0863a"><div class="ovnum" style="color:#e0863a">'+wip+'</div><div class="ovlbl">🛠️ Đang sản xuất</div></div>';
+ h+='<div class="ovcard"><div class="ovnum">'+(rdy+wip)+'</div><div class="ovlbl">📦 Tổng tồn kho</div></div>';
+ h+='<div class="ovcard"><div class="ovnum">'+names.length+'</div><div class="ovlbl">🏷️ Số mặt hàng</div></div>';
+ h+='</div>';
+ h+='<div style="overflow:auto"><table class="grid"><thead><tr><th style="min-width:150px">Tên hàng</th>';
+ STATUSES.forEach(function(s){h+='<th class="center"'+(s===READY?' style="color:#5fbf72"':'')+'>'+esc(s)+'</th>';});
+ h+='<th class="center">Tổng</th></tr></thead><tbody>';
+ names.forEach(function(nm){var row=pivot[nm],tot=0;h+='<tr><td><b>'+esc(nm)+'</b></td>';
+  STATUSES.forEach(function(s){var q=row[s]||0;tot+=q;h+='<td class="center"'+(q===0?' style="color:var(--muted)"':(s===READY?' style="color:#5fbf72;font-weight:700"':''))+'>'+(q||'–')+'</td>';});
+  h+='<td class="center"><b>'+tot+'</b></td></tr>';});
+ h+='<tr style="border-top:2px solid var(--line)"><td><b>TỔNG</b></td>';
+ STATUSES.forEach(function(s){h+='<td class="center"><b'+(s===READY?' style="color:#5fbf72"':'')+'>'+(byStatus[s]||0)+'</b></td>';});
+ h+='<td class="center"><b>'+(rdy+wip)+'</b></td></tr></tbody></table></div>';
+ el.innerHTML=h;}
 
 /* movement log */
 function loadLog(){return loadJSON(LKEY,'[]');}
