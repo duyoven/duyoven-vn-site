@@ -70,7 +70,7 @@
     <div class="box">
       <h3>📦 Tồn vật tư hiện tại</h3>
       <div class="row-line" style="margin-bottom:10px"><button class="btn btn-sm" onclick="addMat()">+ Thêm vật tư</button></div>
-      <div style="overflow:auto"><table class="grid"><thead><tr><th style="min-width:160px">Tên vật tư</th><th style="width:80px">ĐVT</th><th style="width:120px">Đơn giá</th><th class="center" style="width:120px">Tồn</th><th class="right" style="width:120px">Giá trị</th><th style="width:50px"></th></tr></thead><tbody id="matBody"></tbody></table></div>
+      <div style="overflow:auto"><table class="grid"><thead><tr><th style="min-width:150px">Tên vật tư</th><th style="width:140px">Loại</th><th style="width:70px">ĐVT</th><th style="width:110px">Đơn giá</th><th class="center" style="width:110px">Tồn</th><th class="right" style="width:110px">Giá trị</th><th style="width:46px"></th></tr></thead><tbody id="matBody"></tbody></table></div>
       <div class="muted" id="matSum" style="font-size:13px;margin-top:10px"></div>
     </div>
   </div>
@@ -85,7 +85,14 @@
         <div><span class="lbl">Người nhập</span><input id="nBy"></div>
       </div>
       <span class="lbl">Nhà cung cấp</span><input id="nSup" placeholder="VD: Cửa hàng thép ABC">
-      <div class="row-line" style="margin-top:10px"><button class="btn btn-sm" onclick="addNrecv()">+ Thêm dòng vật tư</button></div>
+      <div class="box" style="margin:12px 0;background:rgba(244,123,32,.06);border-color:rgba(244,123,32,.3)">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">📷 Quét phiếu nhập bằng camera (AI tự điền)</div>
+        <div class="row-line"><button class="btn btn-p btn-sm" onclick="document.getElementById('scanFile').click()">📷 Chụp / chọn ảnh phiếu</button><span id="scanStatus" class="muted" style="font-size:12.5px"></span></div>
+        <input type="file" id="scanFile" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="scanPhieu(this)">
+      </div>
+      <span class="lbl">Chọn nhanh từ danh mục chuẩn</span>
+      <div class="row-line"><select id="qpCat" onchange="fillQpItems()" style="flex:1;min-width:120px"></select><select id="qpItem" style="flex:2;min-width:150px"></select><button class="btn btn-sm" onclick="qpAdd()">+ Thêm</button></div>
+      <div class="row-line" style="margin-top:10px"><button class="btn btn-sm" onclick="addNrecv()">+ Tự nhập dòng</button></div>
       <div id="nrecvBody" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
       <div class="btn-row"><button class="btn btn-p" onclick="doNhapVt()">Nhập kho vật tư</button></div>
       <p class="muted" style="font-size:12px;margin-top:8px">Cộng số lượng vào tồn vật tư (vật tư mới sẽ tự tạo) và cập nhật đơn giá mới nhất.</p>
@@ -128,6 +135,22 @@ function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
 function loadJSON(k,d){try{return JSON.parse(localStorage.getItem(k)||d);}catch(e){return JSON.parse(d);}}
 var VKEY='dq_vattu';
 var MAT=[],BOM={},VLOG=[],VNHAP=[],NRECV=[],BOMEDIT=[];
+/* ===== Danh mục vật tư chuẩn cho xưởng cơ khí lò nướng ===== */
+var CATS=[['tole','Tôn / Thép tấm'],['ong','Ống / Hộp / La / V'],['son','Sơn'],['ocvit','Ốc vít / Bù lon'],['quehan','Vật tư hàn'],['khihan','Khí hàn'],['vinuong','Vỉ nướng'],['banhxe','Bánh xe'],['dongho','Đồng hồ nhiệt'],['board','Board / Điện'],['khac','Khác']];
+function catLabel(k){for(var i=0;i<CATS.length;i++)if(CATS[i][0]===k)return CATS[i][1];return k||'—';}
+var CATALOG={
+ tole:[{n:'Tôn đen 1.0mm',u:'kg'},{n:'Tôn đen 1.2mm',u:'kg'},{n:'Tôn đen 1.5mm',u:'kg'},{n:'Tôn đen 2.0mm',u:'kg'},{n:'Tôn đen 3.0mm',u:'kg'},{n:'Inox 304 0.8mm',u:'kg'},{n:'Inox 304 1.0mm',u:'kg'},{n:'Inox 304 1.2mm',u:'kg'},{n:'Inox 430 1.0mm',u:'kg'},{n:'Tôn mạ kẽm 0.8mm',u:'kg'},{n:'Tôn mạ kẽm 1.0mm',u:'kg'}],
+ ong:[{n:'Hộp 20×20×1.2mm',u:'cây'},{n:'Hộp 25×25×1.2mm',u:'cây'},{n:'Hộp 30×30×1.4mm',u:'cây'},{n:'Hộp 40×40×1.4mm',u:'cây'},{n:'Hộp 40×80×1.8mm',u:'cây'},{n:'Hộp 50×50×1.8mm',u:'cây'},{n:'Ống tròn Ø21×1.2mm',u:'cây'},{n:'Ống tròn Ø27×1.4mm',u:'cây'},{n:'Ống tròn Ø34×1.4mm',u:'cây'},{n:'La 30×3mm',u:'cây'},{n:'V 30×30×3mm',u:'cây'}],
+ son:[{n:'Sơn chịu nhiệt đen',u:'lít'},{n:'Sơn chịu nhiệt bạc',u:'lít'},{n:'Bột sơn tĩnh điện đen',u:'kg'},{n:'Bột sơn tĩnh điện xám',u:'kg'},{n:'Sơn lót chống gỉ',u:'lít'},{n:'Dung môi pha sơn',u:'lít'}],
+ ocvit:[{n:'Bù lon M6',u:'con'},{n:'Bù lon M8',u:'con'},{n:'Bù lon M10',u:'con'},{n:'Tán M6',u:'con'},{n:'Tán M8',u:'con'},{n:'Long đền M8',u:'con'},{n:'Vít bắn tôn',u:'con'},{n:'Vít nở M8',u:'con'},{n:'Ri-vê (đinh tán)',u:'con'}],
+ quehan:[{n:'Que hàn 2.6mm',u:'kg'},{n:'Que hàn 3.2mm',u:'kg'},{n:'Dây hàn MIG 0.8mm',u:'cuộn'},{n:'Dây hàn MIG 1.0mm',u:'cuộn'},{n:'Dây hàn lõi thuốc 0.8mm',u:'cuộn'},{n:'Đá cắt 100',u:'viên'},{n:'Đá cắt 180',u:'viên'},{n:'Đá mài 100',u:'viên'},{n:'Bép hàn MIG',u:'cái'},{n:'Chụp khí MIG',u:'cái'}],
+ khihan:[{n:'Khí CO2',u:'bình'},{n:'Khí Argon',u:'bình'},{n:'Khí hỗn hợp (CO2+Ar)',u:'bình'},{n:'Khí Oxy',u:'bình'},{n:'Khí Gas (LPG)',u:'bình'}],
+ vinuong:[{n:'Vỉ nướng inox 304',u:'cái'},{n:'Vỉ nướng mạ crom',u:'cái'},{n:'Vỉ nướng gang',u:'cái'},{n:'Vỉ than inox',u:'cái'}],
+ banhxe:[{n:'Bánh xe 3 inch có khoá',u:'cái'},{n:'Bánh xe 4 inch có khoá',u:'cái'},{n:'Bánh xe 5 inch',u:'cái'}],
+ dongho:[{n:'Đồng hồ nhiệt 0-400°C',u:'cái'},{n:'Đồng hồ nhiệt 0-500°C',u:'cái'}],
+ board:[{n:'Board điều khiển nhiệt',u:'cái'},{n:'Quạt thổi than',u:'cái'},{n:'Motor xoay vỉ',u:'cái'},{n:'Dây nguồn + công tắc',u:'bộ'}],
+ khac:[]
+};
 
 function showVt(k){document.querySelectorAll('.vtpanel').forEach(function(p){p.style.display='none';});var el=document.getElementById('vp-'+k);if(el)el.style.display='';document.querySelectorAll('.vtab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-k')===k);});try{window.scrollTo(0,0);}catch(e){}if(k==='ai'&&!window._aiRan){window._aiRan=true;runAnalyze();}}
 
@@ -154,23 +177,29 @@ function vtRestoreFile(inp){var f=inp.files&&inp.files[0];if(!f)return;var rd=ne
 function addMat(){MAT.push({name:'',unit:'',qty:0,price:0});renderMat();}
 function setMat(i,k,v){if(!MAT[i])return;MAT[i][k]=(k==='qty'||k==='price')?num(v):v;if(k==='qty'||k==='price')renderMatSum();cacheLocal();vtSync();}
 function delMat(i){if(!confirm('Xóa vật tư này?'))return;MAT.splice(i,1);renderMat();vtSync();}
-function renderMat(){var b=document.getElementById('matBody');if(!b)return;b.innerHTML=MAT.map(function(m,i){var gt=num(m.qty)*num(m.price);return '<tr><td><input value="'+esc(m.name)+'" oninput="setMat('+i+',\'name\',this.value)"></td><td><input value="'+esc(m.unit)+'" oninput="setMat('+i+',\'unit\',this.value)"></td><td><input type="number" value="'+(m.price||0)+'" oninput="setMat('+i+',\'price\',this.value)"></td><td class="center"><input type="number" style="text-align:center" value="'+(m.qty||0)+'" oninput="setMat('+i+',\'qty\',this.value)"></td><td class="right">'+money(gt)+'</td><td class="right"><button class="btn btn-sm" onclick="delMat('+i+')" style="color:#e25b4b">✕</button></td></tr>';}).join('')||'<tr><td colspan="6" class="muted" style="padding:14px">Chưa có vật tư. Bấm "+ Thêm vật tư" hoặc dùng tab Nhập vật tư.</td></tr>';renderMatSum();buildProdList();}
+function catSel(i,cur,fn){return '<select onchange="'+fn+'('+i+',\'cat\',this.value)" style="padding:6px 4px">'+CATS.map(function(c){return '<option value="'+c[0]+'"'+(c[0]===(cur||'khac')?' selected':'')+'>'+esc(c[1])+'</option>';}).join('')+'</select>';}
+function renderMat(){var b=document.getElementById('matBody');if(!b)return;b.innerHTML=MAT.map(function(m,i){var gt=num(m.qty)*num(m.price);return '<tr><td><input value="'+esc(m.name)+'" oninput="setMat('+i+',\'name\',this.value)"></td><td>'+catSel(i,m.cat,'setMat')+'</td><td><input value="'+esc(m.unit)+'" oninput="setMat('+i+',\'unit\',this.value)"></td><td><input type="number" value="'+(m.price||0)+'" oninput="setMat('+i+',\'price\',this.value)"></td><td class="center"><input type="number" style="text-align:center" value="'+(m.qty||0)+'" oninput="setMat('+i+',\'qty\',this.value)"></td><td class="right">'+money(gt)+'</td><td class="right"><button class="btn btn-sm" onclick="delMat('+i+')" style="color:#e25b4b">✕</button></td></tr>';}).join('')||'<tr><td colspan="7" class="muted" style="padding:14px">Chưa có vật tư. Bấm "+ Thêm vật tư" hoặc dùng tab Nhập vật tư.</td></tr>';renderMatSum();buildProdList();}
 function renderMatSum(){var tong=0,n=0;MAT.forEach(function(m){tong+=num(m.qty)*num(m.price);n++;});var el=document.getElementById('matSum');if(el)el.innerHTML='Tổng <b>'+n+'</b> loại vật tư · Tổng giá trị tồn: <b style="color:var(--ember)">'+money(tong)+'</b>';}
-function addMatQty(name,unit,qty,price){if(!name)return;var m=MAT.filter(function(x){return x.name.toLowerCase()===name.toLowerCase();})[0];if(m){m.qty=num(m.qty)+num(qty);if(num(price)>0)m.price=num(price);if(unit&&!m.unit)m.unit=unit;}else MAT.push({name:name,unit:unit||'',qty:num(qty),price:num(price)});}
+function addMatQty(name,unit,qty,price,cat){if(!name)return;var m=MAT.filter(function(x){return x.name.toLowerCase()===name.toLowerCase();})[0];if(m){m.qty=num(m.qty)+num(qty);if(num(price)>0)m.price=num(price);if(unit&&!m.unit)m.unit=unit;if(cat&&(!m.cat||m.cat==='khac'))m.cat=cat;}else MAT.push({name:name,unit:unit||'',qty:num(qty),price:num(price),cat:cat||'khac'});}
 
 /* ===== Nhập vật tư ===== */
-function addNrecv(){NRECV.push({name:'',unit:'',qty:1,price:0});renderNrecv();}
+function addNrecv(){NRECV.push({name:'',unit:'',qty:1,price:0,cat:'khac'});renderNrecv();}
 function setNrecv(i,k,v){if(!NRECV[i])return;NRECV[i][k]=(k==='qty'||k==='price')?num(v):v;}
 function delNrecv(i){NRECV.splice(i,1);renderNrecv();}
-function renderNrecv(){var b=document.getElementById('nrecvBody');if(!b)return;b.innerHTML=NRECV.map(function(x,i){return '<div class="row-line"><input style="flex:2;min-width:120px" placeholder="Tên vật tư" value="'+esc(x.name)+'" oninput="setNrecv('+i+',\'name\',this.value)" list="matList"><input style="width:70px" placeholder="ĐVT" value="'+esc(x.unit)+'" oninput="setNrecv('+i+',\'unit\',this.value)"><input style="width:80px" type="number" placeholder="SL" value="'+x.qty+'" oninput="setNrecv('+i+',\'qty\',this.value)"><input style="width:110px" type="number" placeholder="Đơn giá" value="'+x.price+'" oninput="setNrecv('+i+',\'price\',this.value)"><button class="btn btn-sm" onclick="delNrecv('+i+')" style="color:#e25b4b">✕</button></div>';}).join('')||'<div class="muted" style="font-size:13px">Chưa có dòng nào. Bấm "+ Thêm dòng vật tư".</div>';
+function fillQpCats(){var s=document.getElementById('qpCat');if(!s)return;s.innerHTML=CATS.map(function(c){return '<option value="'+c[0]+'">'+esc(c[1])+'</option>';}).join('');fillQpItems();}
+function fillQpItems(){var c=document.getElementById('qpCat').value,s=document.getElementById('qpItem');if(!s)return;var list=CATALOG[c]||[];s.innerHTML=(list.length?list:[{n:'(gõ tay tên vật tư)',u:''}]).map(function(it){return '<option value="'+esc(it.n)+'" data-u="'+esc(it.u)+'">'+esc(it.n)+'</option>';}).join('');}
+function qpAdd(){var c=document.getElementById('qpCat').value,sel=document.getElementById('qpItem'),o=sel.options[sel.selectedIndex];if(!o)return;var nm=o.value,u=o.getAttribute('data-u')||'';if(nm.indexOf('(gõ tay')===0){addNrecv();return;}NRECV.push({name:nm,unit:u,qty:1,price:0,cat:c});renderNrecv();}
+function renderNrecv(){var b=document.getElementById('nrecvBody');if(!b)return;b.innerHTML=NRECV.map(function(x,i){return '<div class="row-line" style="border-bottom:1px dashed var(--line);padding-bottom:8px"><input style="flex:2;min-width:110px" placeholder="Tên vật tư" value="'+esc(x.name)+'" oninput="setNrecv('+i+',\'name\',this.value)" list="matList">'+catSel(i,x.cat,'setNrecv')+'<input style="width:64px" placeholder="ĐVT" value="'+esc(x.unit)+'" oninput="setNrecv('+i+',\'unit\',this.value)"><input style="width:74px" type="number" placeholder="SL" value="'+x.qty+'" oninput="setNrecv('+i+',\'qty\',this.value)"><input style="width:104px" type="number" placeholder="Đơn giá" value="'+x.price+'" oninput="setNrecv('+i+',\'price\',this.value)"><button class="btn btn-sm" onclick="delNrecv('+i+')" style="color:#e25b4b">✕</button></div>';}).join('')||'<div class="muted" style="font-size:13px">Chưa có dòng nào — chọn từ danh mục, tự nhập, hoặc 📷 quét phiếu.</div>';
   var dl=document.getElementById('matList')||document.createElement('datalist');dl.id='matList';dl.innerHTML=MAT.map(function(m){return '<option value="'+esc(m.name)+'">';}).join('');if(!dl.parentNode)document.body.appendChild(dl);}
 function doNhapVt(){var lines=NRECV.filter(function(x){return x.name&&num(x.qty)>0;});if(!lines.length){alert('Chưa có vật tư nhập.');return;}
   if(!val('nNo'))document.getElementById('nNo').value='PNVT-'+Date.now().toString().slice(-8);
-  lines.forEach(function(x){addMatQty(x.name,x.unit,x.qty,x.price);VLOG.unshift({t:new Date().toISOString(),type:'nhập',name:x.name,qty:num(x.qty),note:'PNVT '+val('nNo')+(val('nSup')?' ← '+val('nSup'):'')});});
+  lines.forEach(function(x){addMatQty(x.name,x.unit,x.qty,x.price,x.cat);VLOG.unshift({t:new Date().toISOString(),type:'nhập',name:x.name,qty:num(x.qty),note:'PNVT '+val('nNo')+(val('nSup')?' ← '+val('nSup'):'')});});
   VLOG=VLOG.slice(0,500);
   VNHAP.unshift({no:val('nNo'),date:val('nDate')||new Date().toISOString().slice(0,10),sup:val('nSup'),by:val('nBy'),items:lines.slice()});VNHAP=VNHAP.slice(0,200);
   try{fetch('/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'Vật tư · nhập',detail:lines.map(function(x){return x.name+' ×'+x.qty;}).join(', ')})});}catch(e){}
   NRECV=[];renderNrecv();renderMat();renderVnhap();document.getElementById('nNo').value='';vtSync(true);alert('✅ Đã nhập vật tư vào kho.');}
+function scanPhieu(inp){var f=inp.files&&inp.files[0];if(!f)return;var st=document.getElementById('scanStatus');st.textContent='⏳ AI đang đọc phiếu…';st.style.color='var(--ember)';
+  var rd=new FileReader();rd.onload=function(){fetch('/api/vattu-scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({file:rd.result})}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok&&j.items&&j.items.length){j.items.forEach(function(it){NRECV.push({name:it.name,unit:it.unit||'',qty:num(it.qty)||1,price:num(it.price)||0,cat:it.cat||'khac'});});renderNrecv();st.innerHTML='✅ Đọc được <b>'+j.items.length+'</b> dòng — kiểm tra lại SL/đơn giá rồi bấm "Nhập kho vật tư".';st.style.color='#5fbf72';}else{st.textContent='⚠ '+((j&&j.error)||'Không đọc được. Thử chụp rõ, đủ sáng hơn.');st.style.color='#e0863a';}}).catch(function(){st.textContent='⚠ Mất kết nối.';st.style.color='#e0863a';});};rd.readAsDataURL(f);inp.value='';}
 function renderVnhap(){var b=document.getElementById('vnhapList');if(!b)return;b.innerHTML=VNHAP.length?VNHAP.map(function(p){return '<div style="padding:8px 0;border-bottom:1px dashed var(--line)"><b>'+esc(p.no)+'</b> · '+esc(p.date)+(p.sup?' · '+esc(p.sup):'')+'<br><span class="muted">'+p.items.map(function(x){return esc(x.name)+' ×'+x.qty+(num(x.price)?' @'+money(num(x.price)):'');}).join(' · ')+'</span></div>';}).join(''):'<div class="muted">Chưa có phiếu nhập vật tư.</div>';}
 
 /* ===== Định mức (BOM) ===== */
@@ -196,6 +225,7 @@ function renderAll(){renderMat();renderNrecv();renderVnhap();renderBomList();bui
 /* init */
 (function(){var n=new Date();var ds=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());var nd=document.getElementById('nDate');if(nd)nd.value=ds;
  document.getElementById('bomProd').addEventListener('change',loadBomFor);
+ fillQpCats();
  var local=loadJSON(VKEY,'null');if(local)applyData(local);else renderAll();
  vtServerLoad();})();
 </script>
