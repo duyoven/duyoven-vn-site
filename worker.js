@@ -434,16 +434,14 @@ export default {
       if (String(info.email_verified) !== "true") return jsonResp({ error: "Email chưa xác minh." }, 401);
       const allowed = (env.GLOGIN_ALLOWED || "vinhduynguyen@gmail.com").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
       const gemail = (info.email || "").toLowerCase();
-      let permit = allowed.indexOf(gemail) !== -1;
-      if (!permit) {
-        // danh sách nhân viên do chủ tự quản (lưu mã hoá trong site-content.json)
-        try {
-          const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString());
-          if (a.ok) { const c = await a.json(); const eh = await sha256hex(gemail); if (Array.isArray(c.staff) && c.staff.some((s) => s && s.hash === eh)) permit = true; }
-        } catch (e) {}
-      }
-      if (!permit) return jsonResp({ error: "Email " + gemail + " chưa được cấp quyền vào Quản Lý." }, 403);
-      return jsonResp({ ok: true, email: info.email, name: info.name || "" });
+      // Chủ: thấy hết mọi mục
+      if (allowed.indexOf(gemail) !== -1) return jsonResp({ ok: true, email: info.email, name: info.name || "", role: "owner", mods: "all" });
+      // Nhân viên: chỉ những mục được giao (lưu mã hoá trong site-content.json)
+      try {
+        const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString());
+        if (a.ok) { const c = await a.json(); const eh = await sha256hex(gemail); const entry = (Array.isArray(c.staff) ? c.staff : []).find((s) => s && s.hash === eh); if (entry) return jsonResp({ ok: true, email: info.email, name: info.name || "", role: "staff", mods: Array.isArray(entry.mods) ? entry.mods : [] }); }
+      } catch (e) {}
+      return jsonResp({ error: "Email " + gemail + " chưa được cấp quyền vào Quản Lý." }, 403);
     }
 
     // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
@@ -571,5 +569,3 @@ export default {
     return env.ASSETS.fetch(request);
   },
 };
-
-// retrigger 101410
