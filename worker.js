@@ -705,9 +705,10 @@ export default {
       if (!isOwnerUser(who, env)) return jsonResp({ error: "Chỉ chủ được xem phân tích." }, 403);
       if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
       // gom dữ liệu: vật tư + định mức + sản phẩm đã sản xuất (từ kho-data)
-      let vt = {}, kho = {};
+      let vt = {}, kho = {}, site = {};
       try { vt = (await ghGetJson(env, "vattu-data.json", "appdata")).obj || {}; } catch (e) {}
       try { kho = (await ghGetJson(env, "kho-data.json", "appdata")).obj || {}; } catch (e) {}
+      try { const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString()); if (a.ok) site = await a.json(); } catch (e) {}
       const materials = Array.isArray(vt.materials) ? vt.materials : [];
       const bom = (vt.bom && typeof vt.bom === "object") ? vt.bom : {};
       const vlog = Array.isArray(vt.log) ? vt.log : [];
@@ -715,13 +716,19 @@ export default {
       // tổng hợp sản phẩm sản xuất ra từ log nhập kho
       const produced = {};
       khoLog.forEach((e) => { if (e && /nh/i.test(e.type || "") && e.name) produced[e.name] = (produced[e.name] || 0) + (Number(e.qty) || 0); });
+      // thông số kỹ thuật từng lò (từ website): kích thước, cân nặng, vỉ, vật liệu...
+      const specs = (Array.isArray(site.products) ? site.products : []).filter((p) => p && p.specs && Object.keys(p.specs).some((k) => p.specs[k])).map((p) => ({ ten: p.name, gia_ban: p.price || 0, thong_so: p.specs }));
       const ctxData = {
         vat_tu_ton: materials.map((m) => ({ ten: m.name, dvt: m.unit, ton: m.qty, don_gia: m.price || 0, gia_tri: (Number(m.qty) || 0) * (Number(m.price) || 0) })),
         dinh_muc: bom,
+        thong_so_lo: specs,
         san_pham_san_xuat: produced,
         nhat_ky_xuat_vat_tu: vlog.slice(0, 60),
       };
-      const sys = "Bạn là chuyên gia quản lý sản xuất cơ khí (lò nướng/BBQ). Phân tích dữ liệu vật tư đầu vào và sản phẩm đầu ra của xưởng, đánh giá HIỆU QUẢ SỬ DỤNG VẬT TƯ. Trả lời bằng tiếng Việt, ngắn gọn, có số liệu cụ thể. Gồm các mục: 1) Chi phí vật tư ước tính mỗi sản phẩm (nếu có định mức + đơn giá). 2) Giá trị tồn kho vật tư & vật tư tồn nhiều/ít. 3) Hao hụt/bất thường (vật tư âm, dùng nhiều hơn định mức). 4) Vật tư có khả năng lãng phí. 5) 2-3 gợi ý tiết kiệm cụ thể. Nếu thiếu dữ liệu (chưa có định mức/đơn giá) thì nói rõ và phân tích theo những gì có. Dùng markdown, tiêu đề ngắn, gạch đầu dòng.";
+      const sys = "Bạn là chuyên gia quản lý sản xuất cơ khí (lò nướng than/BBQ bằng thép tấm, có sơn). Phân tích dữ liệu xưởng, đánh giá HIỆU QUẢ SỬ DỤNG VẬT TƯ. Trả lời tiếng Việt, ngắn gọn, SỐ LIỆU cụ thể, markdown. " +
+        "QUAN TRỌNG: dùng `thong_so_lo` (kích thước dài×rộng×cao mm, cân nặng kg, số vỉ, chất liệu...) để ƯỚC TÍNH cho từng lò: (a) KHỐI LƯỢNG TÔN/THÉP TẤM cần — suy từ cân nặng lò (phần lớn là thép) và/hoặc diện tích bề mặt từ kích thước; (b) LƯỢNG SƠN cần — theo diện tích bề mặt ngoài (m²); (c) số kg lò = cân nặng. " +
+        "Các mục: 1) Bảng ước tính cho mỗi lò: tôn (kg), sơn (m² hoặc kg), số kg, và CHI PHÍ vật tư/lò (dùng đơn giá vật tư tồn). 2) Giá trị tồn kho vật tư & vật tư tồn nhiều/ít/nút thắt. 3) Hao hụt/bất thường (vật tư âm, dùng vượt định mức). 4) Vật tư có khả năng lãng phí. 5) 2-3 gợi ý tiết kiệm cụ thể. " +
+        "Nếu thiếu dữ liệu (chưa có thông số/đơn giá/định mức) thì nói rõ mục nào thiếu và phân tích theo những gì có. Tiêu đề ngắn, gạch đầu dòng, có thể dùng bảng markdown.";
       const userMsg = "Dữ liệu xưởng (JSON):\n" + JSON.stringify(ctxData) + "\n\nHãy phân tích hiệu quả vật tư.";
       try {
         const reply = await callClaude(env, [{ role: "system", content: sys }, { role: "user", content: userMsg }]);
