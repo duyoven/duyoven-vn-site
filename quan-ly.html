@@ -189,6 +189,7 @@
         <button class="ctab" data-t="products" onclick="cmsTab('products')">📦 Sản phẩm & giá</button>
         <button class="ctab" data-t="news" onclick="cmsTab('news')">📰 Tin tức</button>
         <button class="ctab" data-t="staff" onclick="cmsTab('staff')">👥 Nhân viên</button>
+        <button class="ctab" data-t="devices" onclick="cmsTab('devices')">🖥️ Thiết bị</button>
       </div>
       <div class="panel" id="cmsBody">Đang tải…</div>
       <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
@@ -280,6 +281,7 @@ function renderCmsTab(){var b=document.getElementById('cmsBody');var c=CONTENT;i
   '<div class="crow"><div style="display:grid;grid-template-columns:1fr 1.4fr auto;gap:8px;align-items:center"><input id="stLabel" placeholder="Tên/chức danh (VD: Kế toán Hoa)"><input id="stEmail" type="email" placeholder="email Gmail nhân viên"><button class="cmsbtn" onclick="cmsAddStaff()" style="padding:9px 16px">+ Thêm</button></div></div>'+
   (st.length?st.map(function(s,i){var mods=Array.isArray(s.mods)?s.mods:[];return '<div class="crow"><div style="display:flex;justify-content:space-between;align-items:center"><span><b>'+esc(s.label||'(chưa đặt tên)')+'</b> &nbsp;<span class="muted" style="font-size:12.5px">'+esc(s.hint||'')+'</span></span><button class="cmsbtn sec" onclick="cmsDelStaff('+i+')" style="color:#d4452f">Xóa</button></div><div style="margin-top:8px;font-size:13px;display:flex;gap:14px;flex-wrap:wrap;align-items:center"><span class="muted">Được vào:</span>'+MK.map(function(m){return '<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" data-sm="'+i+'" data-mk="'+m[0]+'" '+(mods.indexOf(m[0])>=0?'checked':'')+'> '+m[1]+'</label>';}).join('')+'</div></div>';}).join(''):'<div class="empty">Chưa có nhân viên nào.</div>')+
   '<p class="muted" style="font-size:12px;margin-top:8px">⚠ Thêm/xóa/đổi quyền/đổi mật khẩu xong nhớ bấm <b>📤 Đăng lên web</b>.</p>';}
+ else if(_cmsTab==='devices'){b.innerHTML='<div class="muted" style="padding:10px">Đang tải danh sách thiết bị…</div>';loadDevices();}
 }
 function cmsCollect(){var c=CONTENT;if(!c)return;
  if(_cmsTab==='company'){c.company={name:vv('cm_name'),brand:vv('cm_brand'),address:vv('cm_address'),hotline:vv('cm_hotline'),email:vv('cm_email'),tax:vv('cm_tax'),hours:vv('cm_hours'),bank:vv('cm_bank')};}
@@ -314,11 +316,27 @@ function closeG2(){document.getElementById('gate2').classList.add('hide');_g2=nu
 async function tryTool(){if(!_g2)return;var v=document.getElementById('pw2').value;if(!v)return;var h=await sha(v);if(h===HASH[_g2]){try{sessionStorage.setItem('ql_'+_g2,'1');}catch(e){}var k=_g2;closeG2();if(k==='website'){showWebsite();}else{loadFrame(k);}}else{document.getElementById('err2').textContent='Sai mật khẩu mục này.';document.getElementById('pw2').value='';}}
 function lockAll(){try{sessionStorage.removeItem('ql_l1');sessionStorage.removeItem('ql_website');sessionStorage.removeItem('ql_user');Object.keys(TOOLS).forEach(function(k){sessionStorage.removeItem('ql_'+k);});if(window.google&&google.accounts&&google.accounts.id)google.accounts.id.disableAutoSelect();}catch(e){}location.reload();}
 
+/* ===== Mã thiết bị (khoá vào máy tin cậy) ===== */
+function devId(){try{var k='dq_device';var v=localStorage.getItem(k);if(!v){var a=new Uint8Array(16);crypto.getRandomValues(a);v=[].map.call(a,function(x){return x.toString(16).padStart(2,'0');}).join('');localStorage.setItem(k,v);}return v;}catch(e){return '';}}
+function showNeedApproval(){var err=document.getElementById('errG');err.style.color='#d4452f';err.innerHTML='⚠ <b>Thiết bị này chưa được duyệt.</b><br><span style="color:var(--muted);font-size:12.5px;line-height:1.5">Để bảo mật, chỉ máy đã duyệt mới vào được. Nhờ <b>chủ</b> mở <b>Quản lý Website → 🖥️ Thiết bị</b> để <b>Duyệt</b> máy này.<br>Nếu bạn là chủ: bấm “hoặc dùng mật khẩu chủ →” để vào, rồi vào mục Thiết bị duyệt máy.</span>';}
+/* ===== Quản lý thiết bị tin cậy (chủ) ===== */
+function loadDevices(){fetch('/api/device',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'list'})}).then(function(r){return r.json();}).then(renderDevices).catch(function(){var b=document.getElementById('cmsBody');if(b)b.innerHTML='<div class="empty">Không tải được danh sách thiết bị.</div>';});}
+function dtime(s){s=String(s||'');return s.slice(0,16).replace('T',' ');}
+function renderDevices(j){var b=document.getElementById('cmsBody');if(!b)return;if(!j||!j.ok){b.innerHTML='<div class="empty">'+esc((j&&j.error)||'Lỗi tải thiết bị')+'</div>';return;}var pend=j.pending||[],tr=j.trusted||[];
+ var html='<p class="muted" style="font-size:13px;margin:0 0 12px">Chỉ <b>máy đã duyệt</b> mới đăng nhập được — kể cả đúng Gmail. Ai hack được email nhưng dùng máy lạ → <b>vẫn bị chặn</b>. Máy đầu tiên của mỗi người tự tin cậy; máy mới phải anh duyệt ở đây.</p>';
+ html+='<h4 style="margin:6px 0 6px;color:#b45309">⏳ Máy đang chờ duyệt ('+pend.length+')</h4>';
+ html+=pend.length?pend.map(function(p){return '<div class="crow" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span>📱 <b>'+esc(p.label||'Máy')+'</b> · '+esc(p.email||'')+' <span class="muted" style="font-size:12px">'+esc(dtime(p.ts))+'</span></span><span style="display:flex;gap:6px"><button class="cmsbtn" onclick="devAct(\'approve\',\''+p.u+'\',\''+p.d+'\')">✓ Duyệt</button><button class="cmsbtn sec" onclick="devAct(\'reject\',\''+p.u+'\',\''+p.d+'\')" style="color:#d4452f">Từ chối</button></span></div>';}).join(''):'<div class="empty">Không có máy nào chờ duyệt.</div>';
+ html+='<h4 style="margin:16px 0 6px;color:#15803d">✅ Máy tin cậy ('+tr.length+')</h4>';
+ html+=tr.length?tr.map(function(t){return '<div class="crow" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span>💻 <b>'+esc(t.label||'Máy')+'</b> '+(t.email?'· '+esc(t.email):'')+' <span class="muted" style="font-size:12px">'+esc(dtime(t.ts))+'</span></span><button class="cmsbtn sec" onclick="devAct(\'remove\',\''+t.u+'\',\''+t.d+'\')" style="color:#d4452f">Gỡ máy</button></div>';}).join(''):'<div class="empty">Chưa có máy nào tin cậy.</div>';
+ b.innerHTML=html;}
+function devAct(act,u,d){if((act==='remove'||act==='reject')&&!confirm(act==='remove'?'Gỡ máy này khỏi danh sách tin cậy? Máy đó sẽ phải duyệt lại.':'Từ chối máy này?'))return;fetch('/api/device',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:act,u:u,d:d})}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok)renderDevices(j);else alert((j&&j.error)||'Lỗi');}).catch(function(){alert('Lỗi kết nối.');});}
+
 /* ===== Đăng nhập Google ===== */
 function togglePw(){var b=document.getElementById('pwBox');b.style.display=(b.style.display==='none'?'block':'none');if(b.style.display==='block')setTimeout(function(){document.getElementById('pw1').focus();},30);}
 function onGoogleCred(resp){var err=document.getElementById('errG');err.style.color='var(--muted)';err.textContent='Đang kiểm tra…';
- fetch('/api/glogin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential})}).then(function(r){return r.json();}).then(function(j){
+ fetch('/api/glogin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential,device:devId()})}).then(function(r){return r.json();}).then(function(j){
   if(j.ok){try{sessionStorage.setItem('ql_user',j.name||j.email||'');}catch(e){}var sn=document.getElementById('staffName');if(sn&&(j.name||j.email))sn.textContent=(j.name||j.email);unlockL1(j.role,j.mods);}
+  else if(j.needApproval){showNeedApproval();}
   else{err.style.color='#d4452f';err.textContent='⚠ '+(j.error||'Không đăng nhập được');}
  }).catch(function(e){err.style.color='#d4452f';err.textContent='⚠ '+e.message;});}
 function initGoogle(tries){tries=tries||0;if(!(window.google&&google.accounts&&google.accounts.id)){if(tries<25)setTimeout(function(){initGoogle(tries+1);},250);return;}
