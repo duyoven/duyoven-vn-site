@@ -1,6 +1,7 @@
 worker.js
 wrangler.toml
 .assetsignore
+staff-devices.json
 deploy
 .git
 .git/**
