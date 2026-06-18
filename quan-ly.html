@@ -254,7 +254,7 @@ function setActive(key){document.querySelectorAll('.navi').forEach(function(n){n
 function setView(v){document.getElementById('dashboard').style.display=(v==='dash')?'block':'none';document.getElementById('website').style.display=(v==='website')?'block':'none';document.getElementById('framewrap').style.display=(v==='frame')?'block':'none';}
 function showDash(){setView('dash');setActive('dash');_cur='dash';document.body.classList.remove('snav');renderDash();}
 function showWebsite(){setView('website');setActive('website');_cur='website';document.body.classList.remove('snav');loadCMS();}
-function loadFrame(key){var t=TOOLS[key];document.getElementById('frameTitle').innerHTML=t.ic+' <b>'+t.name+'</b>';document.getElementById('toolFrame').src=t.url+'?embed=1';setView('frame');setActive(key);_cur=key;document.body.classList.remove('snav');}
+function loadFrame(key){var t=TOOLS[key];document.getElementById('frameTitle').innerHTML=t.ic+' <b>'+t.name+'</b>';document.getElementById('toolFrame').src=t.url+'?embed=1&v='+Date.now();setView('frame');setActive(key);_cur=key;document.body.classList.remove('snav');}
 var PERMS={role:'owner',mods:'all'};
 function permitted(key){if(key==='dash')return true;if(PERMS.role==='owner'||PERMS.mods==='all')return true;if(key==='website')return false;return Array.isArray(PERMS.mods)&&PERMS.mods.indexOf(key)!==-1;}
 function applyPerms(){document.querySelectorAll('.navi[data-key]').forEach(function(n){n.style.display=permitted(n.getAttribute('data-key'))?'':'none';});var ws=document.getElementById('secWebsite');if(ws)ws.style.display=permitted('website')?'':'none';}
