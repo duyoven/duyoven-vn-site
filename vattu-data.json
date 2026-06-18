@@ -3,6 +3,350 @@
   "bom": {},
   "log": [],
   "phieunhap": [],
-  "updatedAt": "2026-06-18T18:21:12.359Z",
-  "by": "chu@duyoven"
+  "updatedAt": "2026-06-18T18:23:00.225Z",
+  "by": "vinhduynguyen@gmail.com",
+  "cats": [
+    [
+      "tole",
+      "Tôn / Thép tấm"
+    ],
+    [
+      "ong",
+      "Ống / Hộp / La / V"
+    ],
+    [
+      "son",
+      "Sơn"
+    ],
+    [
+      "ocvit",
+      "Ốc vít / Bù lon"
+    ],
+    [
+      "quehan",
+      "Vật tư hàn"
+    ],
+    [
+      "khihan",
+      "Khí hàn"
+    ],
+    [
+      "vinuong",
+      "Vỉ nướng"
+    ],
+    [
+      "banhxe",
+      "Bánh xe"
+    ],
+    [
+      "dongho",
+      "Đồng hồ nhiệt"
+    ],
+    [
+      "board",
+      "Board / Điện"
+    ],
+    [
+      "khac",
+      "Khác"
+    ],
+    [
+      "ff",
+      "ff"
+    ]
+  ],
+  "catalog": {
+    "tole": [
+      {
+        "n": "Tôn đen 1.0mm",
+        "u": "kg"
+      },
+      {
+        "n": "Tôn đen 1.2mm",
+        "u": "kg"
+      },
+      {
+        "n": "Tôn đen 1.5mm",
+        "u": "kg"
+      },
+      {
+        "n": "Tôn đen 2.0mm",
+        "u": "kg"
+      },
+      {
+        "n": "Tôn đen 3.0mm",
+        "u": "kg"
+      },
+      {
+        "n": "Inox 304 0.8mm",
+        "u": "kg"
+      },
+      {
+        "n": "Inox 304 1.0mm",
+        "u": "kg"
+      },
+      {
+        "n": "Inox 304 1.2mm",
+        "u": "kg"
+      },
+      {
+        "n": "Inox 430 1.0mm",
+        "u": "kg"
+      },
+      {
+        "n": "Tôn mạ kẽm 0.8mm",
+        "u": "kg"
+      },
+      {
+        "n": "Tôn mạ kẽm 1.0mm",
+        "u": "kg"
+      },
+      {
+        "n": "",
+        "u": "",
+        "tc": ""
+      },
+      {
+        "n": "",
+        "u": "",
+        "tc": ""
+      }
+    ],
+    "ong": [
+      {
+        "n": "Hộp 20×20×1.2mm",
+        "u": "cây"
+      },
+      {
+        "n": "Hộp 25×25×1.2mm",
+        "u": "cây"
+      },
+      {
+        "n": "Hộp 30×30×1.4mm",
+        "u": "cây"
+      },
+      {
+        "n": "Hộp 40×40×1.4mm",
+        "u": "cây"
+      },
+      {
+        "n": "Hộp 40×80×1.8mm",
+        "u": "cây"
+      },
+      {
+        "n": "Hộp 50×50×1.8mm",
+        "u": "cây"
+      },
+      {
+        "n": "Ống tròn Ø21×1.2mm",
+        "u": "cây"
+      },
+      {
+        "n": "Ống tròn Ø27×1.4mm",
+        "u": "cây"
+      },
+      {
+        "n": "Ống tròn Ø34×1.4mm",
+        "u": "cây"
+      },
+      {
+        "n": "La 30×3mm",
+        "u": "cây"
+      },
+      {
+        "n": "V 30×30×3mm",
+        "u": "cây"
+      }
+    ],
+    "son": [
+      {
+        "n": "Sơn chịu nhiệt đen",
+        "u": "lít"
+      },
+      {
+        "n": "Sơn chịu nhiệt bạc",
+        "u": "lít"
+      },
+      {
+        "n": "Bột sơn tĩnh điện đen",
+        "u": "kg"
+      },
+      {
+        "n": "Bột sơn tĩnh điện xám",
+        "u": "kg"
+      },
+      {
+        "n": "Sơn lót chống gỉ",
+        "u": "lít"
+      },
+      {
+        "n": "Dung môi pha sơn",
+        "u": "lít"
+      }
+    ],
+    "ocvit": [
+      {
+        "n": "Bù lon M6",
+        "u": "con"
+      },
+      {
+        "n": "Bù lon M8",
+        "u": "con"
+      },
+      {
+        "n": "Bù lon M10",
+        "u": "con"
+      },
+      {
+        "n": "Tán M6",
+        "u": "con"
+      },
+      {
+        "n": "Tán M8",
+        "u": "con"
+      },
+      {
+        "n": "Long đền M8",
+        "u": "con"
+      },
+      {
+        "n": "Vít bắn tôn",
+        "u": "con"
+      },
+      {
+        "n": "Vít nở M8",
+        "u": "con"
+      },
+      {
+        "n": "Ri-vê (đinh tán)",
+        "u": "con"
+      }
+    ],
+    "quehan": [
+      {
+        "n": "Que hàn 2.6mm",
+        "u": "kg"
+      },
+      {
+        "n": "Que hàn 3.2mm",
+        "u": "kg"
+      },
+      {
+        "n": "Dây hàn MIG 0.8mm",
+        "u": "cuộn"
+      },
+      {
+        "n": "Dây hàn MIG 1.0mm",
+        "u": "cuộn"
+      },
+      {
+        "n": "Dây hàn lõi thuốc 0.8mm",
+        "u": "cuộn"
+      },
+      {
+        "n": "Đá cắt 100",
+        "u": "viên"
+      },
+      {
+        "n": "Đá cắt 180",
+        "u": "viên"
+      },
+      {
+        "n": "Đá mài 100",
+        "u": "viên"
+      },
+      {
+        "n": "Bép hàn MIG",
+        "u": "cái"
+      },
+      {
+        "n": "Chụp khí MIG",
+        "u": "cái"
+      }
+    ],
+    "khihan": [
+      {
+        "n": "Khí CO2",
+        "u": "bình"
+      },
+      {
+        "n": "Khí Argon",
+        "u": "bình"
+      },
+      {
+        "n": "Khí hỗn hợp (CO2+Ar)",
+        "u": "bình"
+      },
+      {
+        "n": "Khí Oxy",
+        "u": "bình"
+      },
+      {
+        "n": "Khí Gas (LPG)",
+        "u": "bình"
+      }
+    ],
+    "vinuong": [
+      {
+        "n": "Vỉ nướng inox 304",
+        "u": "cái"
+      },
+      {
+        "n": "Vỉ nướng mạ crom",
+        "u": "cái"
+      },
+      {
+        "n": "Vỉ nướng gang",
+        "u": "cái"
+      },
+      {
+        "n": "Vỉ than inox",
+        "u": "cái"
+      }
+    ],
+    "banhxe": [
+      {
+        "n": "Bánh xe 3 inch có khoá",
+        "u": "cái"
+      },
+      {
+        "n": "Bánh xe 4 inch có khoá",
+        "u": "cái"
+      },
+      {
+        "n": "Bánh xe 5 inch",
+        "u": "cái"
+      }
+    ],
+    "dongho": [
+      {
+        "n": "Đồng hồ nhiệt 0-400°C",
+        "u": "cái"
+      },
+      {
+        "n": "Đồng hồ nhiệt 0-500°C",
+        "u": "cái"
+      }
+    ],
+    "board": [
+      {
+        "n": "Board điều khiển nhiệt",
+        "u": "cái"
+      },
+      {
+        "n": "Quạt thổi than",
+        "u": "cái"
+      },
+      {
+        "n": "Motor xoay vỉ",
+        "u": "cái"
+      },
+      {
+        "n": "Dây nguồn + công tắc",
+        "u": "bộ"
+      }
+    ],
+    "khac": [],
+    "ff": []
+  }
 }
