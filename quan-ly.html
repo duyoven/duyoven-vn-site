@@ -191,6 +191,7 @@
         <button class="ctab" data-t="news" onclick="cmsTab('news')">📰 Tin tức</button>
         <button class="ctab" data-t="staff" onclick="cmsTab('staff')">👥 Nhân viên</button>
         <button class="ctab" data-t="devices" onclick="cmsTab('devices')">🖥️ Thiết bị</button>
+        <button class="ctab" data-t="audit" onclick="cmsTab('audit')">📋 Nhật ký</button>
       </div>
       <div class="panel" id="cmsBody">Đang tải…</div>
       <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
@@ -283,6 +284,7 @@ function renderCmsTab(){var b=document.getElementById('cmsBody');var c=CONTENT;i
   (st.length?st.map(function(s,i){var mods=Array.isArray(s.mods)?s.mods:[];return '<div class="crow"><div style="display:flex;justify-content:space-between;align-items:center"><span><b>'+esc(s.label||'(chưa đặt tên)')+'</b> &nbsp;<span class="muted" style="font-size:12.5px">'+esc(s.hint||'')+'</span></span><button class="cmsbtn sec" onclick="cmsDelStaff('+i+')" style="color:#d4452f">Xóa</button></div><div style="margin-top:8px;font-size:13px;display:flex;gap:14px;flex-wrap:wrap;align-items:center"><span class="muted">Được vào:</span>'+MK.map(function(m){return '<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" data-sm="'+i+'" data-mk="'+m[0]+'" '+(mods.indexOf(m[0])>=0?'checked':'')+'> '+m[1]+'</label>';}).join('')+'</div></div>';}).join(''):'<div class="empty">Chưa có nhân viên nào.</div>')+
   '<p class="muted" style="font-size:12px;margin-top:8px">⚠ Thêm/xóa/đổi quyền/đổi mật khẩu xong nhớ bấm <b>📤 Đăng lên web</b>.</p>';}
  else if(_cmsTab==='devices'){b.innerHTML='<div class="muted" style="padding:10px">Đang tải danh sách thiết bị…</div>';loadDevices();}
+ else if(_cmsTab==='audit'){b.innerHTML='<div class="muted" style="padding:10px">Đang tải nhật ký…</div>';loadAudit();}
 }
 function cmsCollect(){var c=CONTENT;if(!c)return;
  if(_cmsTab==='company'){c.company={name:vv('cm_name'),brand:vv('cm_brand'),address:vv('cm_address'),hotline:vv('cm_hotline'),email:vv('cm_email'),tax:vv('cm_tax'),hours:vv('cm_hours'),bank:vv('cm_bank')};}
@@ -322,6 +324,17 @@ function devId(){try{var k='dq_device';var v=localStorage.getItem(k);if(!v){var 
 function showNeedApproval(){var err=document.getElementById('errG');err.style.color='#d4452f';err.innerHTML='⚠ <b>Thiết bị này chưa được duyệt.</b><br><span style="color:var(--muted);font-size:12.5px;line-height:1.5">Để bảo mật, chỉ máy đã duyệt mới vào được. Nhờ <b>chủ</b> mở <b>Quản lý Website → 🖥️ Thiết bị</b> để <b>Duyệt</b> máy này.<br>Nếu bạn là chủ: bấm “hoặc dùng mật khẩu chủ →” để vào, rồi vào mục Thiết bị duyệt máy.</span>';}
 /* ===== Quản lý thiết bị tin cậy (chủ) ===== */
 function loadDevices(){fetch('/api/device',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'list'})}).then(function(r){return r.json();}).then(renderDevices).catch(function(){var b=document.getElementById('cmsBody');if(b)b.innerHTML='<div class="empty">Không tải được danh sách thiết bị.</div>';});}
+function loadAudit(){fetch('/api/audit').then(function(r){return r.json();}).then(renderAudit).catch(function(){var b=document.getElementById('cmsBody');if(b)b.innerHTML='<div class="empty">Không tải được nhật ký.</div>';});}
+function fmtTs(s){try{return new Date(s).toLocaleString('vi-VN');}catch(e){return s;}}
+function renderAudit(j){var b=document.getElementById('cmsBody');if(!b)return;if(!j||!j.ok){b.innerHTML='<div class="empty">'+esc((j&&j.error)||'Lỗi tải nhật ký')+'</div>';return;}var es=j.entries||[];
+ var thc='text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px';
+ var c='padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top';
+ var html='<p class="muted" style="font-size:13px;margin:0 0 10px">Ghi lại hành động của nhân viên (đăng nhập, nhập/xuất kho…). Mới nhất ở trên — '+es.length+' dòng gần đây.</p>';
+ if(!es.length){html+='<div class="empty">Chưa có hoạt động nào.</div>';}
+ else{html+='<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th style="'+thc+'">Thời gian</th><th style="'+thc+'">Người</th><th style="'+thc+'">Hành động</th><th style="'+thc+'">Chi tiết</th></tr></thead><tbody>'+
+  es.map(function(e){return '<tr><td style="'+c+';white-space:nowrap">'+esc(fmtTs(e.ts))+'</td><td style="'+c+'"><b>'+esc(e.who||'?')+'</b></td><td style="'+c+'">'+esc(e.action||'')+'</td><td style="'+c+';color:var(--muted)">'+esc(e.detail||'')+'</td></tr>';}).join('')+
+  '</tbody></table></div>';}
+ b.innerHTML=html;}
 function dtime(s){s=String(s||'');return s.slice(0,16).replace('T',' ');}
 function renderDevices(j){var b=document.getElementById('cmsBody');if(!b)return;if(!j||!j.ok){b.innerHTML='<div class="empty">'+esc((j&&j.error)||'Lỗi tải thiết bị')+'</div>';return;}var pend=j.pending||[],tr=j.trusted||[];
  var html='<p class="muted" style="font-size:13px;margin:0 0 12px">Chỉ <b>máy đã duyệt</b> mới đăng nhập được — kể cả đúng Gmail. Ai hack được email nhưng dùng máy lạ → <b>vẫn bị chặn</b>. Máy đầu tiên của mỗi người tự tin cậy; máy mới phải anh duyệt ở đây.</p>';
