@@ -93,6 +93,67 @@ async function sha256hex(s) {
   return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
 }
 
+// ===== Lưu/đọc JSON trên GitHub (dùng cho danh sách thiết bị tin cậy) =====
+function _ghCfg(env, path) {
+  const repo = env.GH_REPO || "duyoven/duyoven-vn-site";
+  return { api: "https://api.github.com/repos/" + repo + "/contents/" + path, headers: { "Authorization": "Bearer " + (env.GH_TOKEN || ""), "Accept": "application/vnd.github+json", "User-Agent": "duyoven-cms" } };
+}
+async function ghGetJson(env, path) {
+  if (!env.GH_TOKEN) return { obj: null, sha: undefined };
+  const c = _ghCfg(env, path);
+  const r = await fetch(c.api + "?ref=main", { headers: c.headers });
+  if (r.status === 404) return { obj: null, sha: undefined };
+  if (!r.ok) throw new Error("GitHub " + r.status);
+  const j = await r.json();
+  const txt = decodeURIComponent(escape(atob((j.content || "").replace(/\n/g, ""))));
+  let obj = null; try { obj = JSON.parse(txt); } catch (e) {}
+  return { obj, sha: j.sha };
+}
+async function ghPutJson(env, path, obj, msg, sha) {
+  const c = _ghCfg(env, path);
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
+  const r = await fetch(c.api, { method: "PUT", headers: { ...c.headers, "Content-Type": "application/json" }, body: JSON.stringify({ message: msg, content: b64, sha, branch: "main" }) });
+  return r.ok;
+}
+function uaLabel(request) {
+  const ua = request.headers.get("User-Agent") || "";
+  let os = "Máy"; if (/iPhone/i.test(ua)) os = "iPhone"; else if (/iPad/i.test(ua)) os = "iPad"; else if (/Android/i.test(ua)) os = "Android"; else if (/Macintosh|Mac OS/i.test(ua)) os = "Mac"; else if (/Windows/i.test(ua)) os = "Windows"; else if (/Linux/i.test(ua)) os = "Linux";
+  let br = ""; if (/CriOS/i.test(ua)) br = "Chrome"; else if (/Edg/i.test(ua)) br = "Edge"; else if (/FxiOS|Firefox/i.test(ua)) br = "Firefox"; else if (/Chrome/i.test(ua)) br = "Chrome"; else if (/Safari/i.test(ua)) br = "Safari";
+  return (os + (br ? " " + br : "")).trim();
+}
+function maskEmailW(e) { e = String(e || ""); const at = e.indexOf("@"); if (at < 1) return e; return e[0] + "***" + e.slice(at); }
+
+// ===== Khoá thiết bị tin cậy =====
+const DEVFILE = "staff-devices.json";
+async function deviceGate(env, request, email, deviceId) {
+  if (!env.GH_TOKEN) return { state: "ok" }; // không có nơi lưu → không khoá được
+  if (!deviceId) return { state: "pending" };
+  let read; try { read = await ghGetJson(env, DEVFILE); } catch (e) { return { state: "ok" }; } // lỗi đọc → không khoá nhầm người
+  let store = read.obj; const sha = read.sha;
+  if (!store || typeof store !== "object") store = { trusted: [], pending: [] };
+  store.trusted = Array.isArray(store.trusted) ? store.trusted : [];
+  store.pending = Array.isArray(store.pending) ? store.pending : [];
+  const u = await sha256hex(email.toLowerCase());
+  const d = await sha256hex(deviceId);
+  const mine = store.trusted.filter((t) => t && t.u === u);
+  if (mine.some((t) => t.d === d)) return { state: "ok" };
+  if (mine.length === 0) { // bootstrap: tin cậy máy đầu tiên của người này
+    store.trusted.push({ u, d, label: uaLabel(request), ts: new Date().toISOString() });
+    try { await ghPutJson(env, DEVFILE, store, "device: tin cay may dau (" + maskEmailW(email) + ")", sha); } catch (e) {}
+    return { state: "ok" };
+  }
+  if (!store.pending.some((p) => p && p.u === u && p.d === d)) { // máy mới → chờ duyệt
+    store.pending.push({ u, d, label: uaLabel(request), email: maskEmailW(email), ts: new Date().toISOString() });
+    try { await ghPutJson(env, DEVFILE, store, "device: cho duyet may moi (" + maskEmailW(email) + ")", sha); } catch (e) {}
+  }
+  return { state: "pending" };
+}
+function isOwnerUser(who, env) {
+  if (who === "chu@duyoven") return true;
+  const allowedE = (env.GLOGIN_ALLOWED || "vinhduynguyen@gmail.com").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+  return allowedE.indexOf(String(who || "").toLowerCase()) !== -1;
+}
+
 const CHAT_MODELS = [
   "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   "@cf/meta/llama-4-scout-17b-16e-instruct",
@@ -469,14 +530,21 @@ export default {
       if (String(info.email_verified) !== "true") return jsonResp({ error: "Email chưa xác minh." }, 401);
       const allowed = (env.GLOGIN_ALLOWED || "vinhduynguyen@gmail.com").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
       const gemail = (info.email || "").toLowerCase();
-      // Chủ: thấy hết mọi mục
-      if (allowed.indexOf(gemail) !== -1) return await loginResponse({ ok: true, email: info.email, name: info.name || "", role: "owner", mods: "all" }, gemail, env);
-      // Nhân viên: chỉ những mục được giao (lưu mã hoá trong site-content.json)
-      try {
-        const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString());
-        if (a.ok) { const c = await a.json(); const eh = await sha256hex(gemail); const entry = (Array.isArray(c.staff) ? c.staff : []).find((s) => s && s.hash === eh); if (entry) return await loginResponse({ ok: true, email: info.email, name: info.name || "", role: "staff", mods: Array.isArray(entry.mods) ? entry.mods : [] }, gemail, env); }
-      } catch (e) {}
-      return jsonResp({ error: "Email " + gemail + " chưa được cấp quyền vào Quản Lý." }, 403);
+      // 1) Xác định vai trò + mục được phép
+      let role = null, mods = null;
+      if (allowed.indexOf(gemail) !== -1) { role = "owner"; mods = "all"; }
+      else {
+        try {
+          const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString());
+          if (a.ok) { const c = await a.json(); const eh = await sha256hex(gemail); const entry = (Array.isArray(c.staff) ? c.staff : []).find((s) => s && s.hash === eh); if (entry) { role = "staff"; mods = Array.isArray(entry.mods) ? entry.mods : []; } }
+        } catch (e) {}
+      }
+      if (!role) return jsonResp({ error: "Email " + gemail + " chưa được cấp quyền vào Quản Lý." }, 403);
+      // 2) Khoá thiết bị: chỉ máy tin cậy mới được vào (chặn hack email từ máy lạ)
+      const gdev = (gb && gb.device) ? String(gb.device) : "";
+      const gate = await deviceGate(env, request, gemail, gdev);
+      if (gate.state !== "ok") return jsonResp({ ok: false, needApproval: true, email: info.email, role: role }, 200);
+      return await loginResponse({ ok: true, email: info.email, name: info.name || "", role: role, mods: mods }, gemail, env);
     }
 
     // --- Đăng nhập bằng mật khẩu chủ (dự phòng) → cũng cấp phiên cookie để dùng API ---
@@ -488,7 +556,30 @@ export default {
       let ok = (h === DEFAULT_OWNER_HASH) || (!!env.OWNER_PW_HASH && h === env.OWNER_PW_HASH);
       if (!ok) { try { const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString()); if (a.ok) { const c = await a.json(); if (c && c.settings && c.settings.ownerPwHash && h === c.settings.ownerPwHash) ok = true; } } catch (e) {} }
       if (!ok) return jsonResp({ error: "Sai mật khẩu." }, 401);
+      // Mật khẩu chủ = lối vào dự phòng (break-glass), bỏ qua khoá thiết bị
       return await loginResponse({ ok: true, role: "owner", mods: "all" }, "chu@duyoven", env);
+    }
+
+    // --- Quản lý thiết bị tin cậy (chỉ chủ): list / approve / reject / remove ---
+    if (url.pathname === "/api/device" && request.method === "POST") {
+      const who = await authUser(request, env);
+      if (!who) return jsonResp({ error: "Chưa đăng nhập." }, 401);
+      if (!isOwnerUser(who, env)) return jsonResp({ error: "Chỉ chủ được quản thiết bị." }, 403);
+      if (!env.GH_TOKEN) return jsonResp({ error: "Chưa cấu hình GH_TOKEN." }, 503);
+      let b; try { b = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
+      const act = b && b.act;
+      let read; try { read = await ghGetJson(env, DEVFILE); } catch (e) { return jsonResp({ error: "Đọc thiết bị lỗi." }, 502); }
+      let store = read.obj || { trusted: [], pending: [] };
+      store.trusted = Array.isArray(store.trusted) ? store.trusted : [];
+      store.pending = Array.isArray(store.pending) ? store.pending : [];
+      if (act === "list") return jsonResp({ ok: true, trusted: store.trusted, pending: store.pending });
+      if (act === "approve") { const i = store.pending.findIndex((p) => p && p.u === b.u && p.d === b.d); if (i >= 0) { const p = store.pending.splice(i, 1)[0]; store.trusted.push({ u: p.u, d: p.d, label: p.label || "Máy", email: p.email || "", ts: new Date().toISOString() }); } }
+      else if (act === "reject") store.pending = store.pending.filter((p) => !(p && p.u === b.u && p.d === b.d));
+      else if (act === "remove") store.trusted = store.trusted.filter((t) => !(t && t.u === b.u && t.d === b.d));
+      else return jsonResp({ error: "act?" }, 400);
+      const okw = await ghPutJson(env, DEVFILE, store, "device: " + act + " (" + who + ")", read.sha);
+      if (!okw) return jsonResp({ error: "Lưu thiết bị lỗi." }, 502);
+      return jsonResp({ ok: true, trusted: store.trusted, pending: store.pending });
     }
 
     // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
