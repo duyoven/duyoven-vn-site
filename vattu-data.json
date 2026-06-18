@@ -3,13 +3,13 @@
     {
       "name": "Thép tấm",
       "unit": "kg",
-      "qty": 200,
+      "qty": 155,
       "price": 25000
     },
     {
       "name": "Van gas",
       "unit": "cái",
-      "qty": 30,
+      "qty": 27,
       "price": 120000
     }
   ],
@@ -27,8 +27,25 @@
       }
     ]
   },
-  "log": [],
+  "log": [
+    {
+      "t": "2026-06-18T17:08:35.451Z",
+      "type": "xuất-sx",
+      "who": "chu@duyoven",
+      "note": "Sản xuất 3 × Lò Tách khói 80L",
+      "items": [
+        {
+          "mat": "Thép tấm",
+          "qty": 45
+        },
+        {
+          "mat": "Van gas",
+          "qty": 3
+        }
+      ]
+    }
+  ],
   "phieunhap": [],
-  "updatedAt": "2026-06-18T17:08:33.152Z",
+  "updatedAt": "2026-06-18T17:08:35.451Z",
   "by": "chu@duyoven"
 }
