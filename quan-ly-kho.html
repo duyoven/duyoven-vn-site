@@ -60,7 +60,21 @@
   <p class="sub">Theo dõi tồn kho, nhập – xuất và lập Phiếu xuất kho. Lưu trong trình duyệt máy này.</p>
   <div class="box" style="font-size:13px;color:var(--muted)">Nhân viên: <b style="color:var(--text)" id="staffName">__STAFF__</b></div>
 
+  <style>
+  .khotabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 16px}
+  .ktab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer}
+  .ktab:hover{border-color:var(--ember)}
+  .ktab.active{background:var(--ember);color:#160a02;border-color:var(--ember)}
+  </style>
+  <div class="khotabs">
+    <button class="ktab active" data-k="ton" onclick="showKho('ton')">📦 Tồn kho</button>
+    <button class="ktab" data-k="nhap" onclick="showKho('nhap')">🟢 Nhập kho</button>
+    <button class="ktab" data-k="xuat" onclick="showKho('xuat')">🧾 Xuất kho</button>
+    <button class="ktab" data-k="phieu" onclick="showKho('phieu')">🗂️ Phiếu &amp; lịch sử</button>
+  </div>
+
   <!-- Inventory -->
+  <div class="khopanel" id="kp-ton">
   <div class="box">
     <h3>📦 Tồn kho hiện tại</h3>
     <div class="fg3" style="align-items:end">
@@ -73,8 +87,10 @@
     </div>
     <div class="muted" id="invEmpty" style="font-size:13px;margin-top:8px"></div>
   </div>
+  </div><!-- /kp-ton -->
 
   <!-- Phiếu nhập kho -->
+  <div class="khopanel" id="kp-nhap" style="display:none">
   <div class="box" style="border-color:rgba(95,191,114,.4)">
     <h3>🟢 Nhập kho từ sản xuất <small style="margin-left:auto">ghi nhận thành phẩm/bán thành phẩm sản xuất xong nhập kho</small></h3>
     <div class="fg3">
@@ -98,8 +114,10 @@
     </div>
     <p class="muted" style="font-size:12px;margin-top:8px">“Nhập kho &amp; tạo phiếu” sẽ <b style="color:#5fbf72">cộng số lượng vào tồn kho</b> (mặt hàng mới sẽ tự tạo) và ghi vào lịch sử.</p>
   </div>
+  </div><!-- /kp-nhap -->
 
   <!-- Phiếu xuất kho -->
+  <div class="khopanel" id="kp-xuat" style="display:none">
   <div class="box">
     <h3>🧾 Lập Phiếu xuất kho</h3>
     <div class="fg3">
@@ -123,11 +141,14 @@
     </div>
     <p class="muted" style="font-size:12px;margin-top:8px">“Xuất kho &amp; tạo phiếu” sẽ <b>trừ số lượng khỏi tồn kho</b> và ghi vào lịch sử.</p>
   </div>
+  </div><!-- /kp-xuat -->
 
+  <div class="khopanel" id="kp-phieu" style="display:none">
   <div class="fg">
     <div class="box"><h3>🗂️ Phiếu xuất đã lưu</h3><input id="savedSearch" placeholder="Tìm số phiếu / người nhận…" oninput="renderSaved()" style="margin-bottom:8px"><div id="savedList"></div></div>
     <div class="box"><h3>🕘 Lịch sử nhập – xuất</h3><div class="log" id="logBody"></div><button class="btn btn-sm" onclick="clearLog()" style="margin-top:8px">Xóa lịch sử</button></div>
   </div>
+  </div><!-- /kp-phieu -->
 </div></div>
 
 <div id="docWrap">
@@ -290,6 +311,7 @@ function saveToDrive(){var wd=buildWordHtml();if(!wd){alert('Chưa có phiếu. 
 
 /* init */
 INV=loadJSON(IKEY,'[]');INV.forEach(function(x){if(!x.status)x.status=READY;});buildSel();renderInv();renderRecv();renderIssue();renderSaved();renderLog();
+function showKho(k){document.querySelectorAll('.khopanel').forEach(function(p){p.style.display='none';});var el=document.getElementById('kp-'+k);if(el)el.style.display='';document.querySelectorAll('.ktab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-k')===k);});try{window.scrollTo(0,0);}catch(e){}}
 (function(){var n=new Date();var ds=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('pDate').value=ds;document.getElementById('pNo').value=genPNo(n);document.getElementById('nDate').value=ds;document.getElementById('nNo').value=genNNo(n);})();
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
