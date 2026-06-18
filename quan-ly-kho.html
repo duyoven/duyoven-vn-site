@@ -270,7 +270,7 @@ function renderOverview(){var el=document.getElementById('overviewBody');if(!el)
 
 /* movement log */
 function loadLog(){return loadJSON(LKEY,'[]');}
-function logMove(type,name,qty,note){var l=loadLog();l.unshift({t:new Date().toISOString(),type:type,name:name,qty:qty,note:note||''});localStorage.setItem(LKEY,JSON.stringify(l.slice(0,300)));renderLog();khoSync();}
+function logMove(type,name,qty,note){var l=loadLog();l.unshift({t:new Date().toISOString(),type:type,name:name,qty:qty,note:note||''});localStorage.setItem(LKEY,JSON.stringify(l.slice(0,300)));renderLog();khoSync();auditPost('Kho · '+type,name+' ×'+qty+(note?' — '+note:''));}
 function renderLog(){var l=loadLog();var b=document.getElementById('logBody');if(!l.length){b.innerHTML='<div class="muted">Chưa có giao dịch.</div>';return;}b.innerHTML=l.slice(0,80).map(function(x){var d=new Date(x.t);var lab=x.type==='nhập'?'▲ Nhập':(x.type==='xuất'?'▼ Xuất':'⇄ '+esc(x.type));var cls=x.type==='nhập'?'in':(x.type==='xuất'?'out':'muted');return '<div class="row"><span class="'+cls+'">'+lab+' '+x.qty+'</span><span>'+esc(x.name)+'</span><span class="muted">'+pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+pad(d.getHours())+':'+pad(d.getMinutes())+'</span></div>';}).join('');}
 function clearLog(){if(confirm('Xóa toàn bộ lịch sử nhập–xuất?')){localStorage.removeItem(LKEY);renderLog();}}
 
@@ -370,6 +370,7 @@ function saveToDrive(){var wd=buildWordHtml();if(!wd){alert('Chưa có phiếu. 
 /* init */
 /* ===== Đồng bộ kho lên máy chủ (dùng chung nhiều máy + backup) + sao lưu file ===== */
 function khoBundle(){return {inv:INV,log:loadJSON(LKEY,'[]'),phieuxuat:loadJSON(PKEY,'[]'),phieunhap:loadJSON(NKEY,'[]')};}
+function auditPost(action,detail){try{fetch('/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,detail:detail})});}catch(e){}}
 function setSync(txt,color){var el=document.getElementById('syncStatus');if(el){el.textContent=txt;el.style.color=color||'var(--muted)';}}
 function loadAll(){INV=loadJSON(IKEY,'[]');INV.forEach(function(x){if(!x.status)x.status=READY;});renderInv();renderRecv();renderIssue();renderSaved();renderLog();}
 var _syncT;
