@@ -3,25 +3,8 @@
   "bom": {},
   "log": [],
   "phieunhap": [],
-  "updatedAt": "2026-06-18T18:23:08.114Z",
+  "updatedAt": "2026-06-18T18:23:12.361Z",
   "by": "chu@duyoven",
-  "cats": [
-    [
-      "tole",
-      "Tôn"
-    ],
-    [
-      "banle",
-      "Bản lề (mới)"
-    ]
-  ],
-  "catalog": {
-    "banle": [
-      {
-        "n": "Bản lề lò 80L",
-        "u": "cái",
-        "tc": "inox, chịu nhiệt"
-      }
-    ]
-  }
+  "cats": [],
+  "catalog": {}
 }
