@@ -1,6 +1,6 @@
 {
   "_note": "Nội dung động của duyoven.vn — chỉnh trong Admin › Website. Đừng sửa tay nếu không rành.",
-  "updatedAt": "2026-06-16T17:25:16.078Z",
+  "updatedAt": "2026-06-18T03:32:14.943Z",
   "company": {
     "name": "CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA",
     "brand": "Duy's Oven",
@@ -8,8 +8,8 @@
     "hotline": "0901 691 717",
     "email": "info@duyoven.com",
     "tax": "0315700830",
-    "bank": "153238 – Ngân hàng TMCP Á Châu (ACB) – PGD Nguyễn Hữu Thọ – SWIFT: ASCBVNVX",
-    "hours": "8:00 – 17:30 (Thứ 2 – Thứ 7)"
+    "hours": "8:00 – 17:30 (Thứ 2 – Thứ 7)",
+    "bank": "153238 – Ngân hàng TMCP Á Châu (ACB) – PGD Nguyễn Hữu Thọ – SWIFT: ASCBVNVX"
   },
   "home": {
     "heroTitle": "Lò than tách khói · BBQ · Smoker",
@@ -127,6 +127,13 @@
       "body": "Chào mừng Quý khách đến với trang Tin tức của Duy's Oven. Tại đây chúng tôi sẽ cập nhật sản phẩm mới, chương trình khuyến mãi và các bài chia sẻ về nướng than không khói, lò xông khói kiểu Mỹ.",
       "img": "",
       "active": true
+    }
+  ],
+  "staff": [
+    {
+      "label": "Sai vat",
+      "hint": "d***@gmail.com",
+      "hash": "3f6f06e5eefdd0e7c584a01b1239ecd0ad79b3e8bf8f15ad35286676bd584c67"
     }
   ]
 }
