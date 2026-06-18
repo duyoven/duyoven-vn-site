@@ -1,94 +1,9 @@
 {
-  "materials": [
-    {
-      "name": "Hộp 30×30×1.4mm",
-      "unit": "m",
-      "qty": 76,
-      "price": 18000,
-      "cat": "ong"
-    },
-    {
-      "name": "Tôn đen 1.2mm",
-      "unit": "kg",
-      "qty": 183,
-      "price": 25000,
-      "cat": "tole"
-    },
-    {
-      "name": "Sơn chịu nhiệt đen",
-      "unit": "kg",
-      "qty": 19,
-      "price": 150000,
-      "cat": "son"
-    },
-    {
-      "name": "Bánh xe 4 inch có khoá",
-      "unit": "cái",
-      "qty": 32,
-      "price": 85000,
-      "cat": "banhxe"
-    }
-  ],
-  "bom": {
-    "Lò Tách khói 80L": [
-      {
-        "mat": "Hộp 30×30×1.4mm",
-        "cat": "ong",
-        "unit": "m",
-        "tc": "",
-        "qty": 12
-      },
-      {
-        "mat": "Tôn đen 1.2mm",
-        "cat": "tole",
-        "unit": "kg",
-        "tc": "",
-        "qty": 8.5
-      },
-      {
-        "mat": "Sơn chịu nhiệt đen",
-        "cat": "son",
-        "unit": "kg",
-        "tc": "",
-        "qty": 0.5
-      },
-      {
-        "mat": "Bánh xe 4 inch có khoá",
-        "cat": "banhxe",
-        "unit": "cái",
-        "tc": "",
-        "qty": 4
-      }
-    ]
-  },
-  "log": [
-    {
-      "t": "2026-06-18T18:39:48.475Z",
-      "type": "xuất-sx",
-      "who": "chu@duyoven",
-      "note": "Sản xuất 2 × Lò Tách khói 80L",
-      "items": [
-        {
-          "mat": "Hộp 30×30×1.4mm",
-          "qty": 24
-        },
-        {
-          "mat": "Tôn đen 1.2mm",
-          "qty": 17
-        },
-        {
-          "mat": "Sơn chịu nhiệt đen",
-          "qty": 1
-        },
-        {
-          "mat": "Bánh xe 4 inch có khoá",
-          "qty": 8
-        }
-      ]
-    }
-  ],
+  "materials": [],
+  "bom": {},
+  "log": [],
   "phieunhap": [],
-  "updatedAt": "2026-06-18T18:39:48.475Z",
+  "updatedAt": "2026-06-18T18:39:49.978Z",
   "by": "chu@duyoven",
   "cats": [],
   "catalog": {}
