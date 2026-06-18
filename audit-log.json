@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-18T16:50:48.174Z",
+      "who": "duy",
+      "action": "__WHOAMI_PROBE__",
+      "detail": "diagnostic"
+    },
+    {
       "ts": "2026-06-18T16:44:26.529Z",
       "who": "vinhduynguyen@gmail.com",
       "action": "Đăng nhập",
