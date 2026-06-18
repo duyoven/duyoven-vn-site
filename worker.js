@@ -253,8 +253,9 @@ async function sessionUser(request, env) {
   if (!exp || Date.now() > exp) return null;
   return dec.slice(0, sep) || "staff";
 }
-// Nhân viên hợp lệ nếu có Basic Auth (cũ, vẫn chấp nhận) HOẶC phiên cookie Google
-async function authUser(request, env) { return staffUser(request, env) || (await sessionUser(request, env)); }
+// Ưu tiên phiên đăng nhập Google (cookie); Basic Auth cũ chỉ dùng khi KHÔNG có phiên
+// (trình duyệt từng lưu Basic Auth "duy:…" vẫn tự gửi header — không được để nó đè lên Google).
+async function authUser(request, env) { return (await sessionUser(request, env)) || staffUser(request, env); }
 async function loginResponse(obj, user, env) {
   const cookie = "dq_sess=" + (await signSession(user, env)) + "; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=" + Math.floor(SESSION_TTL_MS / 1000);
   return new Response(JSON.stringify(obj), { status: 200, headers: { "Content-Type": "application/json; charset=UTF-8", "Cache-Control": "no-store", "Set-Cookie": cookie } });
