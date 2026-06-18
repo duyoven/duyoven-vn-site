@@ -88,6 +88,10 @@ async function sha1hex(s) {
   const b = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(s));
   return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
 }
+async function sha256hex(s) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
 
 const CHAT_MODELS = [
   "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
@@ -430,7 +434,15 @@ export default {
       if (String(info.email_verified) !== "true") return jsonResp({ error: "Email chưa xác minh." }, 401);
       const allowed = (env.GLOGIN_ALLOWED || "vinhduynguyen@gmail.com").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
       const gemail = (info.email || "").toLowerCase();
-      if (allowed.indexOf(gemail) === -1) return jsonResp({ error: "Email " + gemail + " chưa được cấp quyền vào Quản Lý." }, 403);
+      let permit = allowed.indexOf(gemail) !== -1;
+      if (!permit) {
+        // danh sách nhân viên do chủ tự quản (lưu mã hoá trong site-content.json)
+        try {
+          const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString());
+          if (a.ok) { const c = await a.json(); const eh = await sha256hex(gemail); if (Array.isArray(c.staff) && c.staff.some((s) => s && s.hash === eh)) permit = true; }
+        } catch (e) {}
+      }
+      if (!permit) return jsonResp({ error: "Email " + gemail + " chưa được cấp quyền vào Quản Lý." }, 403);
       return jsonResp({ ok: true, email: info.email, name: info.name || "" });
     }
 
