@@ -76,17 +76,17 @@
 
   <!-- Phiếu nhập kho -->
   <div class="box" style="border-color:rgba(95,191,114,.4)">
-    <h3>🟢 Lập Phiếu nhập kho <small style="margin-left:auto">cho nhân viên kho ghi nhận hàng nhận thực tế</small></h3>
+    <h3>🟢 Nhập kho từ sản xuất <small style="margin-left:auto">ghi nhận thành phẩm/bán thành phẩm sản xuất xong nhập kho</small></h3>
     <div class="fg3">
       <div><span class="lbl">Số phiếu</span><input id="nNo"></div>
       <div><span class="lbl">Ngày nhập</span><input id="nDate" type="date"></div>
       <div><span class="lbl">Người nhập kho (thủ kho)</span><input id="nReceiver"></div>
     </div>
     <div class="fg">
-      <div><span class="lbl">Nhà cung cấp / Người giao hàng</span><input id="nSupplier" placeholder="Tên NCC / người giao"></div>
-      <div><span class="lbl">Số chứng từ kèm (HĐ/PO/…)</span><input id="nRef" placeholder="VD: Hóa đơn số ..."></div>
+      <div><span class="lbl">Tổ / Bộ phận sản xuất</span><input id="nSupplier" placeholder="VD: Tổ cắt laser / Tổ hàn / Xưởng cơ khí"></div>
+      <div><span class="lbl">Lệnh sản xuất (nếu có)</span><input id="nRef" placeholder="VD: LSX-..."></div>
     </div>
-    <span class="lbl">Lý do / Nguồn nhập</span><input id="nReason" placeholder="VD: Nhập từ sản xuất / Mua vật tư / Trả lại ...">
+    <span class="lbl">Nội dung / Ghi chú</span><input id="nReason" placeholder="VD: Nhập thành phẩm sau khi sản xuất xong">
     <div class="fg3" style="align-items:end;margin-top:10px">
       <div style="grid-column:1/3"><span class="lbl">Chọn mặt hàng nhập</span><select id="recvSel"></select></div>
       <div><button class="btn btn-sm" onclick="addRecvFromSel()">+ Thêm hàng nhập</button> <button class="btn btn-sm" onclick="addRecvBlank()">+ Tự nhập</button></div>
@@ -263,7 +263,7 @@ function renderDoc(k,kind){kind=kind||'xuat';var nhap=kind==='nhap';window.__las
  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="small"><b>CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA</b><br>1968/1 Lê Văn Lương, Hiệp Phước, Nhà Bè, TP.HCM<br>MST: 0315700830 · ĐT: 0901691717</div><div class="small ctr">Mẫu số '+(nhap?'01':'02')+' - VT</div></div>';
  h+='<h2>'+(nhap?'PHIẾU NHẬP KHO':'PHIẾU XUẤT KHO')+'</h2><div class="ctr">Số: '+esc(k.no||'')+'<br>Ngày '+pad(d.getDate())+' tháng '+pad(d.getMonth()+1)+' năm '+d.getFullYear()+'</div>';
  if(nhap){
-   h+='<p style="margin-top:14px">- Nhà cung cấp / Người giao hàng: <b>'+esc(k.supplier||'…')+'</b>'+(k.ref?'<br>- Theo chứng từ: '+esc(k.ref):'')+'<br>';
+   h+='<p style="margin-top:14px">- Tổ / Bộ phận sản xuất: <b>'+esc(k.supplier||'…')+'</b>'+(k.ref?'<br>- Lệnh sản xuất: '+esc(k.ref):'')+'<br>';
    h+='- Lý do nhập: '+esc(k.reason||'…')+'<br>- Nhập tại kho: 1968/1 Lê Văn Lương, Hiệp Phước, Nhà Bè, TP.HCM</p>';
  }else{
    h+='<p style="margin-top:14px">- Họ tên người nhận hàng: <b>'+esc(k.recv||'…')+'</b>'+(k.recvCo?' — Đơn vị: '+esc(k.recvCo):'')+'<br>';
@@ -273,7 +273,7 @@ function renderDoc(k,kind){kind=kind||'xuat';var nhap=kind==='nhap';window.__las
  var totalQ=0;k.items.forEach(function(x){totalQ+=(x.q||0);});
  h+='<p>Tổng số mặt hàng: <b>'+i+'</b> — Tổng số lượng: <b>'+totalQ+'</b></p>';
  if(nhap){
-   h+='<div class="sign"><div><div class="role">Người giao hàng</div><div class="small">(Ký, họ tên)</div><div class="gap"></div><b>'+esc(k.supplier||'')+'</b></div><div><div class="role">Thủ kho</div><div class="small">(Ký, họ tên)</div><div class="gap"></div><b>'+esc(k.receiver||'')+'</b></div><div><div class="role">Người lập phiếu</div><div class="small">(Ký, họ tên)</div><div class="gap"></div></div></div>';
+   h+='<div class="sign"><div><div class="role">Tổ/Người sản xuất</div><div class="small">(Ký, họ tên)</div><div class="gap"></div><b>'+esc(k.supplier||'')+'</b></div><div><div class="role">Thủ kho</div><div class="small">(Ký, họ tên)</div><div class="gap"></div><b>'+esc(k.receiver||'')+'</b></div><div><div class="role">Người lập phiếu</div><div class="small">(Ký, họ tên)</div><div class="gap"></div></div></div>';
  }else{
    h+='<div class="sign"><div><div class="role">Người lập phiếu</div><div class="small">(Ký, họ tên)</div><div class="gap"></div><b>'+esc(k.maker||'')+'</b></div><div><div class="role">Thủ kho</div><div class="small">(Ký, họ tên)</div><div class="gap"></div></div><div><div class="role">Người nhận hàng</div><div class="small">(Ký, họ tên)</div><div class="gap"></div><b>'+esc(k.recv||'')+'</b></div></div>';
  }
