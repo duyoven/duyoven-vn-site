@@ -319,7 +319,7 @@ function genNNo(d){return 'PNK-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDa
 function receiveObj(){return{no:val('nNo'),date:val('nDate'),receiver:val('nReceiver'),supplier:val('nSupplier'),ref:val('nRef'),reason:val('nReason'),items:RECV.slice(),staff:document.getElementById('staffName').textContent};}
 function doReceive(){var lines=RECV.filter(function(x){return x.name&&x.q>0;});if(!lines.length){alert('Chưa có hàng nhập.');return;}
  if(!val('nNo'))document.getElementById('nNo').value=genNNo(new Date());
- lines.forEach(function(x){addItem(x.name,x.unit,x.q,x.status||'Chưa hoàn thiện');logMove('nhập',x.name,x.q,'PNK '+val('nNo')+' · '+(x.status||'Chưa hoàn thiện')+(val('nSupplier')?' ← '+val('nSupplier'):''));});
+ lines.forEach(function(x){addItem(x.name,x.unit,x.q,x.status||'Chưa hoàn thiện');logMove('nhập',x.name,x.q,'PNK '+val('nNo')+' · '+(x.status||'Chưa hoàn thiện')+(val('nSupplier')?' ← '+val('nSupplier'):''));vattuConsume(x.name,x.q);});
  saveInv();buildRecvSel();
  var k=receiveObj();var arr=loadJSON(NKEY,'[]');arr.unshift({no:k.no,supplier:k.supplier,date:k.date||new Date().toISOString().slice(0,10),obj:k});localStorage.setItem(NKEY,JSON.stringify(arr.slice(0,200)));renderSaved();
  renderDoc(k,'nhap');RECV=[];renderRecv();document.getElementById('nNo').value='';
@@ -371,6 +371,7 @@ function saveToDrive(){var wd=buildWordHtml();if(!wd){alert('Chưa có phiếu. 
 /* ===== Đồng bộ kho lên máy chủ (dùng chung nhiều máy + backup) + sao lưu file ===== */
 function khoBundle(){return {inv:INV,log:loadJSON(LKEY,'[]'),phieuxuat:loadJSON(PKEY,'[]'),phieunhap:loadJSON(NKEY,'[]')};}
 function auditPost(action,detail){try{fetch('/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,detail:detail})});}catch(e){}}
+function vattuConsume(product,qty){try{fetch('/api/vattu',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'consume',product:product,qty:qty})});}catch(e){}}
 function setSync(txt,color){var el=document.getElementById('syncStatus');if(el){el.textContent=txt;el.style.color=color||'var(--muted)';}}
 function loadAll(){INV=loadJSON(IKEY,'[]');INV.forEach(function(x){if(!x.status)x.status=READY;});renderInv();renderRecv();renderIssue();renderSaved();renderLog();}
 var _syncT;
