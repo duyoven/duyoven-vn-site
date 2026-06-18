@@ -31,15 +31,14 @@
       "d": "060319da8192d4b13e27147ae4dbeb34eb6bb048b868848359b5259d9a07611a",
       "label": "iPhone Safari",
       "ts": "2026-06-18T15:22:41.538Z"
-    }
-  ],
-  "pending": [
+    },
     {
       "u": "e747b6c35ea0a99ec634cf4170569380d7bd40d03c2538ff6e88bccd0aea3229",
       "d": "469c68b845f803c9861665b64ce849e964f87b37c0ff07e51c9f99fe4056e7c5",
       "label": "iPhone Safari",
       "email": "v***@gmail.com",
-      "ts": "2026-06-18T15:22:46.294Z"
+      "ts": "2026-06-18T15:23:12.995Z"
     }
-  ]
+  ],
+  "pending": []
 }
