@@ -68,6 +68,14 @@
   .ovcard{flex:1;min-width:130px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
   .ovnum{font-size:26px;font-weight:800;line-height:1}
   .ovlbl{font-size:12px;color:var(--muted);margin-top:6px}
+  .ov-mobile{display:none}
+  .ovprod{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:10px}
+  .ovprod-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:15px;gap:8px}
+  .ovprod-h .tot{color:var(--ember);font-weight:800;white-space:nowrap}
+  .ovprod-b{display:flex;flex-wrap:wrap;gap:6px}
+  .ovpill{font-size:12.5px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+  .ovpill.ready{background:rgba(95,191,114,.15);border-color:#5fbf72;color:#5fbf72;font-weight:700}
+  @media(max-width:760px){.ov-desktop{display:none}.ov-mobile{display:block}.ovcard{min-width:46%}.ovnum{font-size:22px}.khotabs{gap:6px}.ktab{padding:8px 13px;font-size:13px}}
   </style>
   <div class="khotabs">
     <button class="ktab active" data-k="tong" onclick="showKho('tong')">📊 Tổng quan</button>
@@ -233,7 +241,8 @@ function renderOverview(){var el=document.getElementById('overviewBody');if(!el)
  h+='<div class="ovcard"><div class="ovnum">'+(rdy+wip)+'</div><div class="ovlbl">📦 Tổng tồn kho</div></div>';
  h+='<div class="ovcard"><div class="ovnum">'+names.length+'</div><div class="ovlbl">🏷️ Số mặt hàng</div></div>';
  h+='</div>';
- h+='<div style="overflow:auto"><table class="grid"><thead><tr><th style="min-width:150px">Tên hàng</th>';
+ // Bảng pivot — cho máy tính
+ h+='<div class="ov-desktop" style="overflow:auto"><table class="grid"><thead><tr><th style="min-width:150px">Tên hàng</th>';
  STATUSES.forEach(function(s){h+='<th class="center"'+(s===READY?' style="color:#5fbf72"':'')+'>'+esc(s)+'</th>';});
  h+='<th class="center">Tổng</th></tr></thead><tbody>';
  names.forEach(function(nm){var row=pivot[nm],tot=0;h+='<tr><td><b>'+esc(nm)+'</b></td>';
@@ -242,6 +251,13 @@ function renderOverview(){var el=document.getElementById('overviewBody');if(!el)
  h+='<tr style="border-top:2px solid var(--line)"><td><b>TỔNG</b></td>';
  STATUSES.forEach(function(s){h+='<td class="center"><b'+(s===READY?' style="color:#5fbf72"':'')+'>'+(byStatus[s]||0)+'</b></td>';});
  h+='<td class="center"><b>'+(rdy+wip)+'</b></td></tr></tbody></table></div>';
+ // Thẻ từng mặt hàng — cho điện thoại
+ h+='<div class="ov-mobile">';
+ names.forEach(function(nm){var row=pivot[nm],tot=0;STATUSES.forEach(function(s){tot+=(row[s]||0);});
+  h+='<div class="ovprod"><div class="ovprod-h"><span><b>'+esc(nm)+'</b></span><span class="tot">Tổng: '+tot+'</span></div><div class="ovprod-b">';
+  STATUSES.forEach(function(s){var q=row[s]||0;if(q>0)h+='<span class="ovpill'+(s===READY?' ready':'')+'">'+(s===READY?'✅ ':'')+esc(s)+': '+q+'</span>';});
+  h+='</div></div>';});
+ h+='</div>';
  el.innerHTML=h;}
 
 /* movement log */
