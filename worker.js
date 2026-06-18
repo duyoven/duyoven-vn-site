@@ -155,6 +155,23 @@ function isOwnerUser(who, env) {
   return allowedE.indexOf(String(who || "").toLowerCase()) !== -1;
 }
 
+// ===== Nhật ký hành động (audit log) — lưu trên nhánh appdata (không build) =====
+const AUDITFILE = "audit-log.json";
+async function auditLog(env, who, action, detail) {
+  if (!env.GH_TOKEN) return;
+  const entry = { ts: new Date().toISOString(), who: who || "?", action: (action || "").slice(0, 80), detail: (detail || "").slice(0, 300) };
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const r = await ghGetJson(env, AUDITFILE, "appdata");
+      let arr = (r.obj && Array.isArray(r.obj.entries)) ? r.obj.entries : [];
+      arr.unshift(entry);
+      arr = arr.slice(0, 1000);
+      const ok = await ghPutJson(env, AUDITFILE, { entries: arr }, "audit", r.sha, "appdata");
+      if (ok) return;
+    } catch (e) { return; }
+  }
+}
+
 const CHAT_MODELS = [
   "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   "@cf/meta/llama-4-scout-17b-16e-instruct",
@@ -270,7 +287,7 @@ async function verifyTOTP(secret, code) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     // --- AI: tư vấn (chat) ---
@@ -545,6 +562,7 @@ export default {
       const gdev = (gb && gb.device) ? String(gb.device) : "";
       const gate = await deviceGate(env, request, gemail, gdev);
       if (gate.state !== "ok") return jsonResp({ ok: false, needApproval: true, email: info.email, role: role }, 200);
+      if (ctx && ctx.waitUntil) ctx.waitUntil(auditLog(env, gemail, "Đăng nhập", "Google · " + uaLabel(request)));
       return await loginResponse({ ok: true, email: info.email, name: info.name || "", role: role, mods: mods }, gemail, env);
     }
 
@@ -558,6 +576,7 @@ export default {
       if (!ok) { try { const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString()); if (a.ok) { const c = await a.json(); if (c && c.settings && c.settings.ownerPwHash && h === c.settings.ownerPwHash) ok = true; } } catch (e) {} }
       if (!ok) return jsonResp({ error: "Sai mật khẩu." }, 401);
       // Mật khẩu chủ = lối vào dự phòng (break-glass), bỏ qua khoá thiết bị
+      if (ctx && ctx.waitUntil) ctx.waitUntil(auditLog(env, "chu@duyoven", "Đăng nhập", "Mật khẩu chủ · " + uaLabel(request)));
       return await loginResponse({ ok: true, role: "owner", mods: "all" }, "chu@duyoven", env);
     }
 
@@ -604,6 +623,24 @@ export default {
         if (!ok) { try { cur = await ghGetJson(env, FILE, BR); ok = await ghPutJson(env, FILE, obj, "kho: cap nhat (" + who + ")", cur.sha, BR); } catch (e) {} }
         if (!ok) return jsonResp({ error: "Lưu kho lỗi." }, 502);
         return jsonResp({ ok: true, updatedAt: obj.updatedAt });
+      }
+      return jsonResp({ error: "method" }, 405);
+    }
+
+    // --- Nhật ký hành động: nhân viên ghi (POST), chỉ chủ xem (GET) ---
+    if (url.pathname === "/api/audit") {
+      const who = await authUser(request, env);
+      if (!who) return jsonResp({ error: "Chưa đăng nhập." }, 401);
+      if (request.method === "POST") {
+        let b; try { b = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
+        ctx && ctx.waitUntil ? ctx.waitUntil(auditLog(env, who, b && b.action, b && b.detail)) : await auditLog(env, who, b && b.action, b && b.detail);
+        return jsonResp({ ok: true });
+      }
+      if (request.method === "GET") {
+        if (!isOwnerUser(who, env)) return jsonResp({ error: "Chỉ chủ xem được nhật ký." }, 403);
+        let r; try { r = await ghGetJson(env, AUDITFILE, "appdata"); } catch (e) { return jsonResp({ error: "Đọc nhật ký lỗi." }, 502); }
+        const arr = (r.obj && Array.isArray(r.obj.entries)) ? r.obj.entries : [];
+        return jsonResp({ ok: true, entries: arr.slice(0, 300) });
       }
       return jsonResp({ error: "method" }, 405);
     }
