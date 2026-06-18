@@ -22,7 +22,7 @@ const PROXY = {
     "https://duyoven.com/wp-content/uploads/2026/03/HDSD_FastGrill.pdf",
 };
 
-const INTERNAL = new Set(["/bao-gia.html", "/bao-gia", "/hop-dong.html", "/hop-dong", "/quan-tri.html", "/quan-tri", "/quan-ly.html", "/quan-ly", "/quan-ly-kho.html", "/quan-ly-kho", "/ban-giao-nghiem-thu.html", "/ban-giao-nghiem-thu"]);
+const INTERNAL = new Set(["/bao-gia.html", "/bao-gia", "/hop-dong.html", "/hop-dong", "/quan-tri.html", "/quan-tri", "/quan-ly.html", "/quan-ly", "/quan-ly-kho.html", "/quan-ly-kho", "/ban-giao-nghiem-thu.html", "/ban-giao-nghiem-thu", "/vat-tu.html", "/vat-tu"]);
 
 const AI_SYS = [
   "Bạn là trợ lý tư vấn của Duy's Oven (duyoven.vn) — thương hiệu Việt Nam chuyên lò nướng than tách khói, lò BBQ, lò xông khói (smoker) và lò pizza, sản xuất từ thép, sơn chịu nhiệt chuẩn Mỹ 600°C, vỉ inox.",
@@ -644,6 +644,90 @@ export default {
         return jsonResp({ ok: true, entries: arr.slice(0, 300) });
       }
       return jsonResp({ error: "method" }, 405);
+    }
+
+    // --- Vật tư đầu vào (materials) + định mức (bom) — đồng bộ nhánh appdata ---
+    if (url.pathname === "/api/vattu") {
+      const who = await authUser(request, env);
+      if (!who) return jsonResp({ error: "Chưa đăng nhập." }, 401);
+      if (!env.GH_TOKEN) return jsonResp({ error: "Chưa cấu hình GH_TOKEN." }, 503);
+      const VBR = "appdata", VFILE = "vattu-data.json";
+      if (request.method === "GET") {
+        let r; try { r = await ghGetJson(env, VFILE, VBR); } catch (e) { return jsonResp({ error: "Đọc vật tư lỗi." }, 502); }
+        return jsonResp({ ok: true, data: r.obj || {} });
+      }
+      if (request.method === "POST") {
+        let body; try { body = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
+        const act = body && body.act;
+        // đọc bản hiện tại
+        let cur; try { cur = await ghGetJson(env, VFILE, VBR); } catch (e) { cur = { obj: null, sha: undefined }; }
+        let store = cur.obj && typeof cur.obj === "object" ? cur.obj : {};
+        store.materials = Array.isArray(store.materials) ? store.materials : [];
+        store.bom = (store.bom && typeof store.bom === "object") ? store.bom : {};
+        store.log = Array.isArray(store.log) ? store.log : [];
+        store.phieunhap = Array.isArray(store.phieunhap) ? store.phieunhap : [];
+        if (act === "consume") {
+          // tự trừ vật tư theo định mức khi sản xuất ra 1 sản phẩm
+          const product = String(body.product || ""), qty = Number(body.qty) || 0;
+          const recipe = store.bom[product];
+          if (!Array.isArray(recipe) || !recipe.length || qty <= 0) return jsonResp({ ok: true, consumed: [] }); // không có định mức → bỏ qua
+          const consumed = [];
+          recipe.forEach((r) => {
+            const need = (Number(r.qty) || 0) * qty;
+            if (need <= 0) return;
+            const m = store.materials.find((x) => x && x.name && r.mat && x.name.toLowerCase() === String(r.mat).toLowerCase());
+            if (m) { m.qty = (Number(m.qty) || 0) - need; consumed.push({ mat: r.mat, qty: need }); }
+            else { store.materials.push({ name: r.mat, unit: r.unit || "", qty: -need, price: 0 }); consumed.push({ mat: r.mat, qty: need, missing: true }); }
+          });
+          store.log.unshift({ t: new Date().toISOString(), type: "xuất-sx", who: who, note: "Sản xuất " + qty + " × " + product, items: consumed });
+          store.log = store.log.slice(0, 500);
+        } else {
+          // act 'save' (mặc định): lưu toàn bộ do client gửi
+          const d = body.data || {};
+          store.materials = Array.isArray(d.materials) ? d.materials : store.materials;
+          store.bom = (d.bom && typeof d.bom === "object") ? d.bom : store.bom;
+          store.log = Array.isArray(d.log) ? d.log : store.log;
+          store.phieunhap = Array.isArray(d.phieunhap) ? d.phieunhap : store.phieunhap;
+        }
+        store.updatedAt = new Date().toISOString(); store.by = who;
+        let ok = await ghPutJson(env, VFILE, store, "vattu: " + (act || "save") + " (" + who + ")", cur.sha, VBR);
+        if (!ok) { try { const c2 = await ghGetJson(env, VFILE, VBR); ok = await ghPutJson(env, VFILE, store, "vattu: " + (act || "save") + " (" + who + ")", c2.sha, VBR); } catch (e) {} }
+        if (!ok) return jsonResp({ error: "Lưu vật tư lỗi." }, 502);
+        return jsonResp({ ok: true, data: store });
+      }
+      return jsonResp({ error: "method" }, 405);
+    }
+
+    // --- AI phân tích hiệu quả vật tư (chỉ chủ) ---
+    if (url.pathname === "/api/vattu-analyze" && request.method === "POST") {
+      const who = await authUser(request, env);
+      if (!who) return jsonResp({ error: "Chưa đăng nhập." }, 401);
+      if (!isOwnerUser(who, env)) return jsonResp({ error: "Chỉ chủ được xem phân tích." }, 403);
+      if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
+      // gom dữ liệu: vật tư + định mức + sản phẩm đã sản xuất (từ kho-data)
+      let vt = {}, kho = {};
+      try { vt = (await ghGetJson(env, "vattu-data.json", "appdata")).obj || {}; } catch (e) {}
+      try { kho = (await ghGetJson(env, "kho-data.json", "appdata")).obj || {}; } catch (e) {}
+      const materials = Array.isArray(vt.materials) ? vt.materials : [];
+      const bom = (vt.bom && typeof vt.bom === "object") ? vt.bom : {};
+      const vlog = Array.isArray(vt.log) ? vt.log : [];
+      const khoLog = Array.isArray(kho.log) ? kho.log : [];
+      // tổng hợp sản phẩm sản xuất ra từ log nhập kho
+      const produced = {};
+      khoLog.forEach((e) => { if (e && /nh/i.test(e.type || "") && e.name) produced[e.name] = (produced[e.name] || 0) + (Number(e.qty) || 0); });
+      const ctxData = {
+        vat_tu_ton: materials.map((m) => ({ ten: m.name, dvt: m.unit, ton: m.qty, don_gia: m.price || 0, gia_tri: (Number(m.qty) || 0) * (Number(m.price) || 0) })),
+        dinh_muc: bom,
+        san_pham_san_xuat: produced,
+        nhat_ky_xuat_vat_tu: vlog.slice(0, 60),
+      };
+      const sys = "Bạn là chuyên gia quản lý sản xuất cơ khí (lò nướng/BBQ). Phân tích dữ liệu vật tư đầu vào và sản phẩm đầu ra của xưởng, đánh giá HIỆU QUẢ SỬ DỤNG VẬT TƯ. Trả lời bằng tiếng Việt, ngắn gọn, có số liệu cụ thể. Gồm các mục: 1) Chi phí vật tư ước tính mỗi sản phẩm (nếu có định mức + đơn giá). 2) Giá trị tồn kho vật tư & vật tư tồn nhiều/ít. 3) Hao hụt/bất thường (vật tư âm, dùng nhiều hơn định mức). 4) Vật tư có khả năng lãng phí. 5) 2-3 gợi ý tiết kiệm cụ thể. Nếu thiếu dữ liệu (chưa có định mức/đơn giá) thì nói rõ và phân tích theo những gì có. Dùng markdown, tiêu đề ngắn, gạch đầu dòng.";
+      const userMsg = "Dữ liệu xưởng (JSON):\n" + JSON.stringify(ctxData) + "\n\nHãy phân tích hiệu quả vật tư.";
+      try {
+        const reply = await callClaude(env, [{ role: "system", content: sys }, { role: "user", content: userMsg }]);
+        if (!reply) return jsonResp({ error: "AI không trả lời được." }, 502);
+        return jsonResp({ ok: true, report: reply, at: new Date().toISOString() });
+      } catch (e) { return jsonResp({ error: "Lỗi AI: " + e.message }, 502); }
     }
 
     // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
