@@ -378,26 +378,6 @@ export default {
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
     }
 
-    // --- Đăng nhập Google cho khu Quản Lý: verify ID token ở máy chủ + allowlist ---
-    if (url.pathname === "/api/glogin" && request.method === "POST") {
-      let b; try { b = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
-      const cred = b && b.credential;
-      if (!cred) return jsonResp({ error: "Thiếu credential." }, 400);
-      const CLIENT_ID = env.GOOGLE_CLIENT_ID || "692061670720-n836gc68b3k5q5ceq8jb8bcb7nvt50on.apps.googleusercontent.com";
-      let info;
-      try {
-        const r = await fetch("https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(cred));
-        if (!r.ok) return jsonResp({ error: "Token Google không hợp lệ." }, 401);
-        info = await r.json();
-      } catch (e) { return jsonResp({ error: "Lỗi xác minh: " + e.message }, 502); }
-      if (info.aud !== CLIENT_ID) return jsonResp({ error: "Sai ứng dụng (aud)." }, 401);
-      if (String(info.email_verified) !== "true") return jsonResp({ error: "Email chưa xác minh." }, 401);
-      const allowed = (env.GLOGIN_ALLOWED || "vinhduynguyen@gmail.com").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
-      const email = (info.email || "").toLowerCase();
-      if (allowed.indexOf(email) === -1) return jsonResp({ error: "Email " + email + " chưa được cấp quyền vào Quản Lý." }, 403);
-      return jsonResp({ ok: true, email: info.email, name: info.name || "" });
-    }
-
     // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
     if (url.pathname === "/api/cms") {
       if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
@@ -523,5 +503,3 @@ export default {
     return env.ASSETS.fetch(request);
   },
 };
-
-// build retrigger 082941
