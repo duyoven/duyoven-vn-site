@@ -146,6 +146,41 @@ function staffUser(request, env) {
   return null;
 }
 
+// ===== Phiên đăng nhập (cookie ký HMAC) — thay cho bảng Basic Auth =====
+const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 ngày
+function _b64urlEnc(bytes) { let s = ""; for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+function _b64urlDec(str) { str = str.replace(/-/g, "+").replace(/_/g, "/"); while (str.length % 4) str += "="; const bin = atob(str); const b = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i); return b; }
+async function _hmac(env, msg) {
+  const keyStr = env.SESSION_SECRET || env.GH_TOKEN || "duyoven-session-fallback";
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(keyStr), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign("HMAC", k, new TextEncoder().encode(msg));
+  return _b64urlEnc(new Uint8Array(sig));
+}
+async function signSession(user, env) {
+  const payload = _b64urlEnc(new TextEncoder().encode(user + "|" + (Date.now() + SESSION_TTL_MS)));
+  return payload + "." + (await _hmac(env, payload));
+}
+async function sessionUser(request, env) {
+  const m = (request.headers.get("Cookie") || "").match(/(?:^|;\s*)dq_sess=([^;]+)/);
+  if (!m) return null;
+  const val = m[1], dot = val.lastIndexOf(".");
+  if (dot < 0) return null;
+  const payload = val.slice(0, dot), sig = val.slice(dot + 1);
+  if (sig !== (await _hmac(env, payload))) return null;
+  let dec; try { dec = new TextDecoder().decode(_b64urlDec(payload)); } catch (e) { return null; }
+  const sep = dec.lastIndexOf("|");
+  if (sep < 0) return null;
+  const exp = parseInt(dec.slice(sep + 1), 10);
+  if (!exp || Date.now() > exp) return null;
+  return dec.slice(0, sep) || "staff";
+}
+// Nhân viên hợp lệ nếu có Basic Auth (cũ, vẫn chấp nhận) HOẶC phiên cookie Google
+async function authUser(request, env) { return staffUser(request, env) || (await sessionUser(request, env)); }
+async function loginResponse(obj, user, env) {
+  const cookie = "dq_sess=" + (await signSession(user, env)) + "; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=" + Math.floor(SESSION_TTL_MS / 1000);
+  return new Response(JSON.stringify(obj), { status: 200, headers: { "Content-Type": "application/json; charset=UTF-8", "Cache-Control": "no-store", "Set-Cookie": cookie } });
+}
+
 // ===== TOTP (Google Authenticator) =====
 function base32decode(s) {
   s = (s || "").replace(/=+$/, "").toUpperCase().replace(/\s/g, "");
@@ -212,7 +247,7 @@ export default {
     // --- AI: trợ lý báo giá nội bộ (chỉ nhân viên) ---
     if (url.pathname === "/api/bao-gia" && request.method === "POST") {
       try {
-        if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+        if (!(await authUser(request, env))) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
         if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
         const body = await request.json();
         const brief = String(body.brief || "").slice(0, 2000);
@@ -269,7 +304,7 @@ export default {
     // --- AI: trợ lý lập hợp đồng (chỉ nhân viên) ---
     if (url.pathname === "/api/hop-dong" && request.method === "POST") {
       try {
-        if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+        if (!(await authUser(request, env))) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
         if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
         const body = await request.json();
         const brief = String(body.brief || "").slice(0, 3000);
@@ -320,7 +355,7 @@ export default {
     // --- AI: import báo giá cũ từ ảnh/PDF (chỉ nhân viên) ---
     if (url.pathname === "/api/bao-gia-import" && request.method === "POST") {
       try {
-        if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+        if (!(await authUser(request, env))) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
         if (!env.ANTHROPIC_API_KEY) return jsonResp({ error: "Chưa cấu hình ANTHROPIC_API_KEY." }, 503);
         const body = await request.json();
         const file = String(body.file || "");
@@ -435,18 +470,30 @@ export default {
       const allowed = (env.GLOGIN_ALLOWED || "vinhduynguyen@gmail.com").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
       const gemail = (info.email || "").toLowerCase();
       // Chủ: thấy hết mọi mục
-      if (allowed.indexOf(gemail) !== -1) return jsonResp({ ok: true, email: info.email, name: info.name || "", role: "owner", mods: "all" });
+      if (allowed.indexOf(gemail) !== -1) return await loginResponse({ ok: true, email: info.email, name: info.name || "", role: "owner", mods: "all" }, gemail, env);
       // Nhân viên: chỉ những mục được giao (lưu mã hoá trong site-content.json)
       try {
         const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString());
-        if (a.ok) { const c = await a.json(); const eh = await sha256hex(gemail); const entry = (Array.isArray(c.staff) ? c.staff : []).find((s) => s && s.hash === eh); if (entry) return jsonResp({ ok: true, email: info.email, name: info.name || "", role: "staff", mods: Array.isArray(entry.mods) ? entry.mods : [] }); }
+        if (a.ok) { const c = await a.json(); const eh = await sha256hex(gemail); const entry = (Array.isArray(c.staff) ? c.staff : []).find((s) => s && s.hash === eh); if (entry) return await loginResponse({ ok: true, email: info.email, name: info.name || "", role: "staff", mods: Array.isArray(entry.mods) ? entry.mods : [] }, gemail, env); }
       } catch (e) {}
       return jsonResp({ error: "Email " + gemail + " chưa được cấp quyền vào Quản Lý." }, 403);
     }
 
+    // --- Đăng nhập bằng mật khẩu chủ (dự phòng) → cũng cấp phiên cookie để dùng API ---
+    if (url.pathname === "/api/plogin" && request.method === "POST") {
+      let pb; try { pb = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
+      const h = String((pb && pb.h) || "");
+      if (!h) return jsonResp({ error: "Thiếu mật khẩu." }, 400);
+      const DEFAULT_OWNER_HASH = "af73d138ab9df9df801490bd5beef3426d98616e21a79207a8fc18d9f7f1bf63"; // sha256("oven2026")
+      let ok = (h === DEFAULT_OWNER_HASH) || (!!env.OWNER_PW_HASH && h === env.OWNER_PW_HASH);
+      if (!ok) { try { const a = await env.ASSETS.fetch(new URL("/site-content.json", url).toString()); if (a.ok) { const c = await a.json(); if (c && c.settings && c.settings.ownerPwHash && h === c.settings.ownerPwHash) ok = true; } } catch (e) {} }
+      if (!ok) return jsonResp({ error: "Sai mật khẩu." }, 401);
+      return await loginResponse({ ok: true, role: "owner", mods: "all" }, "chu@duyoven", env);
+    }
+
     // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
     if (url.pathname === "/api/cms") {
-      if (!staffUser(request, env)) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
+      if (!(await authUser(request, env))) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
       const repo = env.GH_REPO || "duyoven/duyoven-vn-site";
       const ghPath = "site-content.json";
       const ghApi = "https://api.github.com/repos/" + repo + "/contents/" + ghPath;
@@ -478,7 +525,7 @@ export default {
         let sha = undefined;
         const cur = await fetch(ghApi + "?ref=main", { headers: ghHeaders });
         if (cur.ok) { const cj = await cur.json(); sha = cj.sha; }
-        const who = staffUser(request, env) || "staff";
+        const who = (await authUser(request, env)) || "staff";
         const put = await fetch(ghApi, {
           method: "PUT",
           headers: { ...ghHeaders, "Content-Type": "application/json" },
@@ -526,18 +573,9 @@ export default {
       return new Response(upstream.body, { status: upstream.status, statusText: upstream.statusText, headers });
     }
 
-    // --- internal staff quote tool (Basic Auth) ---
+    // --- trang nội bộ: KHÔNG còn bảng Basic Auth — bảo vệ bằng đăng nhập Google (gate phía client) + phiên cookie cho API ---
     if (INTERNAL.has(url.pathname)) {
-      const user = staffUser(request, env);
-      if (!user) {
-        return new Response("Khu vực nội bộ Duy's Oven — cần đăng nhập nhân viên.", {
-          status: 401,
-          headers: {
-            "WWW-Authenticate": 'Basic realm="Duy\'s Oven - Noi bo", charset="UTF-8"',
-            "Content-Type": "text/plain; charset=UTF-8",
-          },
-        });
-      }
+      const user = (await authUser(request, env)) || "Nhân viên";
       // serve the requested internal page with the logged-in staff name injected.
       // Fetch the asset directly and follow any internal redirect (e.g. Cloudflare's
       // .html -> clean-URL redirect) so we never bounce the browser into a loop.
