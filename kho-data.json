@@ -1,1 +1,15 @@
-{"inv":[],"log":[],"phieuxuat":[],"phieunhap":[],"updatedAt":"","by":""}
+{
+  "inv": [
+    {
+      "name": "TEST Lò 80L",
+      "unit": "bộ",
+      "qty": 7,
+      "status": "Hoàn thiện"
+    }
+  ],
+  "log": [],
+  "phieuxuat": [],
+  "phieunhap": [],
+  "updatedAt": "2026-06-18T16:29:04.034Z",
+  "by": "chu@duyoven"
+}
