@@ -1,0 +1,11 @@
+{
+  "trusted": [
+    {
+      "u": "e747b6c35ea0a99ec634cf4170569380d7bd40d03c2538ff6e88bccd0aea3229",
+      "d": "fa1deb8f1351df1bee8e753a498fea1997d00273f4e81fe7ac9a5899965a50af",
+      "label": "Mac Chrome",
+      "ts": "2026-06-18T14:55:33.609Z"
+    }
+  ],
+  "pending": []
+}
