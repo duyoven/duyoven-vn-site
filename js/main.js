@@ -212,3 +212,16 @@
       }
     }).catch(function () {});
 })();
+
+/* ====== Mục "Factory" trên menu chính → khu Quản Lý (nội bộ) ====== */
+(function () {
+  var nav = document.querySelector('.main-nav');
+  if (nav && !nav.querySelector('a[href="quan-ly.html"]')) {
+    var a = document.createElement('a');
+    a.href = 'quan-ly.html';
+    a.textContent = 'Factory';
+    a.setAttribute('data-en', 'Factory'); a.setAttribute('data-zh', 'Factory'); a.setAttribute('data-ko', 'Factory'); a.setAttribute('data-th', 'Factory'); a.setAttribute('data-de', 'Factory');
+    a.style.cssText = 'color:var(--ember,#F47B20);font-weight:700';
+    nav.appendChild(a);
+  }
+})();
