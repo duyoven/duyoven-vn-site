@@ -40,26 +40,9 @@
       "label": "KEY TEST (Duy)",
       "maxDevices": 5,
       "active": true,
-      "devices": [
-        {
-          "d": "15322bef5a971dc6221863533e2f5a9ab1854de3c657933dd5c88235e4d99059",
-          "name": "diag",
-          "ts": "2026-06-19T06:11:56.700Z"
-        },
-        {
-          "d": "2df5a999c2ad2b04fc67c86e0dbebd456d3874ff8c2fafa65a0688c91045386c",
-          "name": "d",
-          "ts": "2026-06-19T06:11:59.040Z"
-        },
-        {
-          "d": "8414932f895d50ae3707569dd5d54ff2bf9fb24776a3d863caaca94e605ffe03",
-          "name": "claude.local",
-          "ts": "2026-06-19T06:12:38.039Z"
-        }
-      ]
+      "devices": []
     }
   ],
-  "rev": 3,
-  "note": "App Xep Laser Duy's Oven - quan ly key kich hoat",
-  "updatedAt": "2026-06-19T06:12:38.039Z"
+  "rev": 0,
+  "note": "App Xep Laser Duy's Oven - quan ly key kich hoat"
 }
