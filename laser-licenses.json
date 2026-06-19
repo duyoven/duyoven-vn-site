@@ -5,7 +5,13 @@
       "label": "Nhan vien 1",
       "maxDevices": 1,
       "active": true,
-      "devices": []
+      "devices": [
+        {
+          "d": "1f33b9aebdfd9749dbdb357f012fdc092b6ea77a66df8d729bc521f0229f8295",
+          "name": "DESKTOP-ILPFQ9P",
+          "ts": "2026-06-19T07:38:33.414Z"
+        }
+      ]
     },
     {
       "key": "DOV-K54F-B8DB",
@@ -49,7 +55,7 @@
       "devices": []
     }
   ],
-  "rev": 1,
+  "rev": 2,
   "note": "App Xep Laser Duy's Oven - quan ly key kich hoat",
-  "updatedAt": "2026-06-19T07:23:23.143Z"
+  "updatedAt": "2026-06-19T07:38:33.414Z"
 }
