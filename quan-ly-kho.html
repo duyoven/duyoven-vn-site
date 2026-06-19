@@ -229,7 +229,10 @@ function loadJSON(k,d){try{return JSON.parse(localStorage.getItem(k)||d);}catch(
 function saveInv(){localStorage.setItem(IKEY,JSON.stringify(INV));khoSync();}
 
 /* dropdowns */
-function buildSel(){var h='<option value="">— Chọn sản phẩm —</option>';PRODUCTS.forEach(function(g){h+='<optgroup label="'+g.c+'">';g.items.forEach(function(n){h+='<option value="'+esc(n)+'">'+esc(n)+'</option>';});h+='</optgroup>';});document.getElementById('prodSel').innerHTML=h;}
+var SITEPRODS=null;
+function loadSiteProds(cb){if(SITEPRODS!==null){if(cb)cb();return;}fetch('/site-content.json?t='+Date.now()).then(function(r){return r.json();}).then(function(c){SITEPRODS=(((c&&c.products)||[]).filter(function(p){return p.active!==false;}).map(function(p){return p.name;}).filter(Boolean));if(cb)cb();}).catch(function(){SITEPRODS=[];if(cb)cb();});}
+function prodOptions(){if(SITEPRODS&&SITEPRODS.length){return SITEPRODS.map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>';}).join('');}return PRODUCTS.map(function(g){return '<optgroup label="'+esc(g.c)+'">'+g.items.map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>';}).join('')+'</optgroup>';}).join('');}
+function buildSel(){var s=document.getElementById('prodSel');if(s)s.innerHTML='<option value="">— Chọn sản phẩm —</option>'+prodOptions();}
 function buildIssueSel(){var h='<option value="">— Chọn hàng SẴN SÀNG BÁN —</option>';INV.forEach(function(x,i){if((x.status||READY)!==READY||(x.qty||0)<=0)return;h+='<option value="'+i+'">'+esc(x.name)+' (sẵn sàng '+x.qty+' '+esc(x.unit)+')</option>';});document.getElementById('issueSel').innerHTML=h;}
 
 /* inventory */
@@ -324,7 +327,7 @@ function previewIssue(){var lines=ISSUE.filter(function(x){return x.name;});if(!
 
 /* === Phiếu NHẬP kho (cộng vào tồn kho) === */
 var NKEY='dq_phieunhap',RECV=[];
-function buildRecvSel(){var h='<option value="">— Chọn mặt hàng —</option>';PRODUCTS.forEach(function(g){h+='<optgroup label="'+g.c+'">';g.items.forEach(function(n){h+='<option value="'+esc(n)+'">'+esc(n)+'</option>';});h+='</optgroup>';});if(INV.length){h+='<optgroup label="Đang có trong kho">';INV.forEach(function(x){h+='<option value="'+esc(x.name)+'">'+esc(x.name)+' (tồn '+x.qty+')</option>';});h+='</optgroup>';}var s=document.getElementById('recvSel');if(s)s.innerHTML=h;}
+function buildRecvSel(){var h='<option value="">— Chọn mặt hàng —</option>'+prodOptions();if(INV.length){h+='<optgroup label="Đang có trong kho">';INV.forEach(function(x){h+='<option value="'+esc(x.name)+'">'+esc(x.name)+' (tồn '+x.qty+')</option>';});h+='</optgroup>';}var s=document.getElementById('recvSel');if(s)s.innerHTML=h;}
 function addRecvFromSel(){var s=document.getElementById('recvSel');if(!s.value){alert('Chọn mặt hàng trước.');return;}var inv=INV.filter(function(y){return y.name===s.value;})[0];RECV.push({name:s.value,unit:inv?inv.unit:'bộ',q:1,status:'Chưa hoàn thiện',note:''});renderRecv();}
 function addRecvBlank(){RECV.push({name:'',unit:'bộ',q:1,status:'Chưa hoàn thiện',note:''});renderRecv();}
 function setRecv(i,k,v){if(k==='q')v=parseInt(v)||0;RECV[i][k]=v;}
@@ -340,7 +343,8 @@ function genNNo(d){return 'PNK-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDa
 function receiveObj(){return{no:val('nNo'),date:val('nDate'),receiver:val('nReceiver'),supplier:val('nSupplier'),ref:val('nRef'),reason:val('nReason'),items:RECV.slice(),staff:document.getElementById('staffName').textContent};}
 function doReceive(){var lines=RECV.filter(function(x){return x.name&&x.q>0;});if(!lines.length){alert('Chưa có hàng nhập.');return;}
  if(!val('nNo'))document.getElementById('nNo').value=genNNo(new Date());
- lines.forEach(function(x){addItem(x.name,x.unit,x.q,x.status||'Chưa hoàn thiện');logMove('nhập',x.name,x.q,'PNK '+val('nNo')+' · '+(x.status||'Chưa hoàn thiện')+(val('nSupplier')?' ← '+val('nSupplier'):''));vattuConsume(x.name,x.q);});
+ lines.forEach(function(x){addItem(x.name,x.unit,x.q,x.status||'Chưa hoàn thiện');logMove('nhập',x.name,x.q,'PNK '+val('nNo')+' · '+(x.status||'Chưa hoàn thiện')+(val('nSupplier')?' ← '+val('nSupplier'):''));});
+ vattuConsumeBatch(lines.map(function(x){return {product:x.name,qty:x.q};}));
  saveInv();buildRecvSel();
  var k=receiveObj();var arr=loadJSON(NKEY,'[]');arr.unshift({no:k.no,supplier:k.supplier,date:k.date||new Date().toISOString().slice(0,10),obj:k});localStorage.setItem(NKEY,JSON.stringify(arr.slice(0,200)));renderSaved();
  renderDoc(k,'nhap');RECV=[];renderRecv();document.getElementById('nNo').value='';
@@ -393,6 +397,7 @@ function saveToDrive(){var wd=buildWordHtml();if(!wd){alert('Chưa có phiếu. 
 function khoBundle(){return {inv:INV,log:loadJSON(LKEY,'[]'),phieuxuat:loadJSON(PKEY,'[]'),phieunhap:loadJSON(NKEY,'[]')};}
 function auditPost(action,detail){try{fetch('/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,detail:detail})});}catch(e){}}
 function vattuConsume(product,qty){try{fetch('/api/vattu',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'consume',product:product,qty:qty})});}catch(e){}}
+function vattuConsumeBatch(items){if(!items||!items.length)return;try{fetch('/api/vattu',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'consume',items:items})});}catch(e){}}
 /* ===== Thông số kỹ thuật sản phẩm (lưu vào site-content → website + AI) ===== */
 var SITECONTENT=null;var SPK=['dai','rong','cao','nang','vi','vi1kt','vi1cl','vi2kt','vi2cl','chatLieu','banhXe','dongHo','board','khac'];
 function loadProductsForSpec(){var sel=document.getElementById('spSel');if(!sel)return;fetch('/api/cms').then(function(r){return r.json();}).then(function(c){if(!c||c.error){sel.innerHTML='<option value="">'+esc((c&&c.error)||'Không tải được')+'</option>';return;}SITECONTENT=c;var ps=c.products||[];sel.innerHTML='<option value="">— Chọn sản phẩm —</option>'+ps.map(function(p,i){return '<option value="'+i+'">'+esc(p.name)+(p.specs&&Object.keys(p.specs).length?' ✓':'')+'</option>';}).join('');}).catch(function(){sel.innerHTML='<option value="">Không tải được sản phẩm</option>';});}
@@ -414,7 +419,7 @@ function khoServerLoad(force){setSync('☁️ Đang tải từ máy chủ…');
   }).catch(function(){setSync('⚠ Mất kết nối máy chủ (vẫn dùng dữ liệu máy này)','#e0863a');});}
 function khoBackup(){var data=JSON.stringify({_app:'duyoven-kho',ts:new Date().toISOString(),data:khoBundle()},null,2);var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);a.download='sao-luu-kho-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();}
 function khoRestoreFile(inp){var f=inp.files&&inp.files[0];if(!f){return;}var rd=new FileReader();rd.onload=function(){try{var o=JSON.parse(rd.result);var d=o.data||o;if(!d||!Array.isArray(d.inv)){alert('File sao lưu không hợp lệ.');return;}if(!confirm('Nạp dữ liệu từ file này?\nSẽ THAY THẾ kho hiện tại và đẩy lên máy chủ (mọi máy sẽ cập nhật theo).'))return;localStorage.setItem(IKEY,JSON.stringify(d.inv||[]));localStorage.setItem(LKEY,JSON.stringify(d.log||[]));localStorage.setItem(PKEY,JSON.stringify(d.phieuxuat||[]));localStorage.setItem(NKEY,JSON.stringify(d.phieunhap||[]));loadAll();khoSync(true);alert('✅ Đã nạp file và đẩy lên máy chủ.');}catch(e){alert('Lỗi đọc file: '+e.message);}};rd.readAsText(f);inp.value='';}
-buildSel();loadAll();khoServerLoad();
+loadSiteProds(function(){buildSel();buildRecvSel();});buildSel();loadAll();khoServerLoad();
 function showKho(k){document.querySelectorAll('.khopanel').forEach(function(p){p.style.display='none';});var el=document.getElementById('kp-'+k);if(el)el.style.display='';document.querySelectorAll('.ktab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-k')===k);});try{window.scrollTo(0,0);}catch(e){}if(k==='tsp'&&!SITECONTENT)loadProductsForSpec();}
 (function(){var n=new Date();var ds=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('pDate').value=ds;document.getElementById('pNo').value=genPNo(n);document.getElementById('nDate').value=ds;document.getElementById('nNo').value=genNNo(n);})();
 </script>
