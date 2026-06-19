@@ -437,6 +437,8 @@ export default {
           msgs.push({ role: "user", content: "Phan mem bao loi sau khi xep tam. Giai thich vi sao + cach sua, tieng Viet de hieu cho tho co khi:\n" + String(err).slice(0, 800) });
         } else if (mode === "detect") {
           msgs.push({ role: "user", content: "Cac nhom do day doc tu ban ve (JSON): " + JSON.stringify(context.groups || []) + ". Voi moi nhom suy ra vat lieu (SAT hoac INOX) va do day mm (1 trong: 0.8,1.0,1.2,1.4,1.5,2.0,2.5,3.0,4.0,5.0). Nhan ghi INOX/SUS -> INOX, mac dinh SAT. CHI tra ve JSON array [{\"index\":0,\"material\":\"SAT\",\"thickness\":\"2.0\"}], khong giai thich." });
+        } else if (mode === "deepread") {
+          msgs.push({ role: "user", content: "Day la ket qua phan tich ban ve (JSON): " + JSON.stringify(context.analysis || {}).slice(0, 1800) + ". Hay DOC SAU va tu van tieng Viet NGAN GON (gach dau dong): chat luong ban ve de cat laser; nhom nao xep se phi ton va vi sao; co nen dung Deepnest khong; co dau hieu loi don vi / net ho / chi tiet qua to khong; cach toi uu tiet kiem ton." });
         } else {
           if (ctxStr) sysContent += "\n\n[Boi canh] " + ctxStr;
           msgs[0].content = sysContent;
