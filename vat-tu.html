@@ -169,11 +169,14 @@ function showVt(k){document.querySelectorAll('.vtpanel').forEach(function(p){p.s
 function vtBundle(){return {materials:MAT,bom:BOM,log:VLOG,phieunhap:VNHAP,cats:CATS,catalog:CATALOG};}
 function setSync(txt,color){var el=document.getElementById('syncStatus');if(el){el.textContent=txt;el.style.color=color||'var(--muted)';}}
 function cacheLocal(){try{localStorage.setItem(VKEY,JSON.stringify(vtBundle()));}catch(e){}}
-var _syncT;
+var _syncT,_vtRev=null;
 function vtSync(now){clearTimeout(_syncT);cacheLocal();var go=function(){setSync('☁️ Đang lưu…');
-  fetch('/api/vattu',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'save',data:vtBundle()})}).then(function(r){return r.json();}).then(function(j){if(j&&j.ok)setSync('☁️ Đã lưu máy chủ · '+new Date().toLocaleTimeString('vi-VN'),'#5fbf72');else setSync('⚠ Lưu lỗi','#e0863a');}).catch(function(){setSync('⚠ Mất kết nối — chưa lưu được','#e0863a');});};
+  fetch('/api/vattu',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'save',data:vtBundle(),baseRev:_vtRev})}).then(function(r){return r.json();}).then(function(j){
+   if(j&&j.conflict){applyData(j.data||{});setSync('⚠ Người khác vừa cập nhật vật tư — đã tải lại bản mới, kiểm tra & nhập lại thao tác vừa rồi','#e0863a');}
+   else if(j&&j.ok){_vtRev=Number(j.rev)||_vtRev;setSync('☁️ Đã lưu máy chủ · '+new Date().toLocaleTimeString('vi-VN'),'#5fbf72');}
+   else setSync('⚠ Lưu lỗi','#e0863a');}).catch(function(){setSync('⚠ Mất kết nối — chưa lưu được','#e0863a');});};
   if(now)go();else _syncT=setTimeout(go,1200);}
-function applyData(d){MAT=Array.isArray(d.materials)?d.materials:[];BOM=(d.bom&&typeof d.bom==='object')?d.bom:{};VLOG=Array.isArray(d.log)?d.log:[];VNHAP=Array.isArray(d.phieunhap)?d.phieunhap:[];if(Array.isArray(d.cats)&&d.cats.length)CATS=d.cats;if(d.catalog&&typeof d.catalog==='object'&&Object.keys(d.catalog).length)CATALOG=d.catalog;renderAll();fillQpCats();}
+function applyData(d){_vtRev=Number(d.rev)||0;MAT=Array.isArray(d.materials)?d.materials:[];BOM=(d.bom&&typeof d.bom==='object')?d.bom:{};VLOG=Array.isArray(d.log)?d.log:[];VNHAP=Array.isArray(d.phieunhap)?d.phieunhap:[];if(Array.isArray(d.cats)&&d.cats.length)CATS=d.cats;if(d.catalog&&typeof d.catalog==='object'&&Object.keys(d.catalog).length)CATALOG=d.catalog;renderAll();fillQpCats();}
 function vtServerLoad(force){setSync('☁️ Đang tải từ máy chủ…');
   fetch('/api/vattu').then(function(r){return r.json();}).then(function(j){
    if(!j||!j.ok){setSync('⚠ Không tải được (dùng dữ liệu máy này)','#e0863a');return;}
