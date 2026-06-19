@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-19T00:36:42.046Z",
+      "who": "chu@duyoven",
+      "action": "Đăng nhập",
+      "detail": "Mật khẩu chủ · Máy"
+    },
+    {
       "ts": "2026-06-19T00:28:14.407Z",
       "who": "chu@duyoven",
       "action": "Đăng nhập",
