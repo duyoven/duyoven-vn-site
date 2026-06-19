@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-19T07:38:34.700Z",
+      "who": "laser:DESKTOP-ILPFQ9P",
+      "action": "Kich hoat app laser",
+      "detail": "DOV-NYR5-BETM"
+    },
+    {
       "ts": "2026-06-19T07:23:29.650Z",
       "who": "chu@duyoven",
       "action": "Đăng nhập",
