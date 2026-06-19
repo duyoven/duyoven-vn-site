@@ -65,6 +65,12 @@
       "label": "Mac Safari",
       "email": "v***@gmail.com",
       "ts": "2026-06-19T00:46:17.520Z"
+    },
+    {
+      "u": "58aa5a869c0064f8d01f5ee82cad6fa140bc7441461c4eddbe7394f3fa7ba51b",
+      "d": "65ef41e1d1ee2933e7a5fb98ec508253acb348340ee030edba24b6f6ca53e196",
+      "label": "Windows Chrome",
+      "ts": "2026-06-19T02:14:33.376Z"
     }
   ],
   "pending": []
