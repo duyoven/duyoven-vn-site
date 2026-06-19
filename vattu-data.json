@@ -1,10 +1,17 @@
 {
-  "materials": [],
+  "materials": [
+    {
+      "name": "TEST",
+      "unit": "kg",
+      "qty": 1
+    }
+  ],
   "bom": {},
   "log": [],
   "phieunhap": [],
-  "updatedAt": "2026-06-19T00:28:19.416Z",
+  "updatedAt": "2026-06-19T00:58:48.903Z",
   "by": "chu@duyoven",
   "cats": [],
-  "catalog": {}
+  "catalog": {},
+  "rev": 1
 }
