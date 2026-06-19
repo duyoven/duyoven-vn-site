@@ -34,6 +34,13 @@
       "maxDevices": 1,
       "active": true,
       "devices": []
+    },
+    {
+      "key": "DOV-TEST-2026",
+      "label": "KEY TEST (Duy)",
+      "maxDevices": 5,
+      "active": true,
+      "devices": []
     }
   ],
   "rev": 0,
