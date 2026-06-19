@@ -414,6 +414,44 @@ export default {
       } catch (e) { return jsonResp({ ok: false, reason: String(e) }, 500); }
     }
 
+    // --- APP XEP LASER: QUAN LY (chu xem may dang hoat dong, thu hoi) ---
+    if (url.pathname === "/api/laser-admin" && request.method === "POST") {
+      try {
+        const b = await request.json();
+        const h = String((b && b.h) || "");
+        const OWNER = "af73d138ab9df9df801490bd5beef3426d98616e21a79207a8fc18d9f7f1bf63"; // sha256("oven2026")
+        const ok = (h === OWNER) || (!!env.OWNER_PW_HASH && h === env.OWNER_PW_HASH) || (!!env.LASER_ADMIN_HASH && h === env.LASER_ADMIN_HASH);
+        if (!ok) return jsonResp({ ok: false, reason: "Sai mat khau quan ly." }, 401);
+        if (!env.GH_TOKEN) return jsonResp({ ok: false, reason: "May chu chua cau hinh." }, 503);
+        const act = (b && b.act) || "list";
+        if (act === "list") {
+          const r = await ghGetJson(env, LASER_LIC, "appdata");
+          const keys = (r.obj && Array.isArray(r.obj.keys)) ? r.obj.keys : [];
+          const out = keys.map((k) => {
+            const rev = Array.isArray(k.revoked) ? k.revoked : [];
+            const devs = (Array.isArray(k.devices) ? k.devices : []).map((d) => ({ d: d.d, name: d.name || "", ts: d.ts || "", revoked: rev.indexOf(d.d) !== -1 }));
+            return { key: k.key, label: k.label || "", active: k.active !== false, maxDevices: Number(k.maxDevices || 1), used: devs.filter((d) => !d.revoked).length, devices: devs };
+          });
+          const totalActive = out.reduce((s, k) => s + k.used, 0);
+          return jsonResp({ ok: true, keys: out, totalActive, updatedAt: (r.obj && r.obj.updatedAt) || "" });
+        }
+        if (act === "revoke" || act === "free") {
+          const key = String(b.key || "").toUpperCase();
+          const dhash = String(b.d || "");
+          const res = await ghUpdate(env, LASER_LIC, "appdata", (store) => {
+            const k = (Array.isArray(store.keys) ? store.keys : []).find((x) => x && String(x.key).toUpperCase() === key);
+            if (!k) return { reject: jsonResp({ ok: false, reason: "Khong thay key." }) };
+            if (act === "revoke") { k.revoked = Array.isArray(k.revoked) ? k.revoked : []; if (k.revoked.indexOf(dhash) === -1) k.revoked.push(dhash); }
+            k.devices = (Array.isArray(k.devices) ? k.devices : []).filter((d) => d && d.d !== dhash);
+            return { msg: "laser-admin: " + act + " " + key, result: {} };
+          });
+          if (res.rejected) return res.rejected;
+          return jsonResp({ ok: !!res.ok });
+        }
+        return jsonResp({ ok: false, reason: "act?" }, 400);
+      } catch (e) { return jsonResp({ ok: false, reason: String(e) }, 500); }
+    }
+
     // --- APP XEP LASER: AI (chat / phan tich / nhan dien / giai thich loi) ---
     if (url.pathname === "/api/laser-ai" && request.method === "POST") {
       try {
