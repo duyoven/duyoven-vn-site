@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-19T06:11:58.010Z",
+      "who": "laser:diag",
+      "action": "Kich hoat app laser",
+      "detail": "DOV-TEST-2026"
+    },
+    {
       "ts": "2026-06-19T05:40:20.125Z",
       "who": "vinhduynguyen@gmail.com",
       "action": "Đăng nhập",
