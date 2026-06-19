@@ -215,7 +215,7 @@
         function E(s){return String(s==null?'':s).replace(/[&<>"]/g,function(ch){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];});}
         var page = (location.pathname.split('/').pop() || '').toLowerCase();
         if (!page || !Array.isArray(c.products)) return;
-        var p = c.products.find(function (x) { return x && x.link && x.link.toLowerCase() === page; });
+        var p = c.products.find(function (x) { return x && x.approved !== false && x.link && x.link.toLowerCase() === page; });
         if (!p || !p.specs) return; var s = p.specs;
         var rows = []; function add(l, v) { if (v != null && String(v).trim()) rows.push([l, String(v)]); }
         if (s.dai || s.rong || s.cao) add('Kích thước (D×R×C)', [s.dai, s.rong, s.cao].filter(Boolean).join(' × ') + ' mm');
