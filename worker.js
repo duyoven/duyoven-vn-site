@@ -690,8 +690,9 @@ export default {
             const batch = Array.isArray(body.items) ? body.items : [{ product: body.product, qty: body.qty }];
             const consumed = [];
             batch.forEach((b2) => {
-              const product = String((b2 && b2.product) || ""), q = Number(b2 && b2.qty) || 0;
-              const recipe = store.bom[product];
+              const code = String((b2 && b2.code) || ""), product = String((b2 && b2.product) || ""), q = Number(b2 && b2.qty) || 0;
+              // ĐỊNH MỨC KHOÁ THEO MÃ SP: ưu tiên bom[code], dự phòng bom[tên]
+              const recipe = (code && store.bom[code]) ? store.bom[code] : store.bom[product];
               if (!Array.isArray(recipe) || !recipe.length || q <= 0) return;
               recipe.forEach((rr) => {
                 const need = (Number(rr.qty) || 0) * q;
