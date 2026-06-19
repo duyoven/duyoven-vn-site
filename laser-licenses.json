@@ -8,8 +8,8 @@
       "devices": [
         {
           "d": "621f2d020caf8dc8e3b5607d9aba280e60022bac1d70d4bf2a28a6e3d99fa221",
-          "name": "May test cua Claude",
-          "ts": "2026-06-19T05:21:52.679Z"
+          "name": "May test",
+          "ts": "2026-06-19T05:22:12.629Z"
         }
       ]
     },
@@ -42,7 +42,7 @@
       "devices": []
     }
   ],
-  "rev": 1,
+  "rev": 2,
   "note": "App Xep Laser Duy's Oven - quan ly key kich hoat",
-  "updatedAt": "2026-06-19T05:21:52.679Z"
+  "updatedAt": "2026-06-19T05:22:12.629Z"
 }
