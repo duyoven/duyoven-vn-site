@@ -116,6 +116,25 @@ async function ghPutJson(env, path, obj, msg, sha, branch) {
   const r = await fetch(c.api, { method: "PUT", headers: { ...c.headers, "Content-Type": "application/json" }, body: JSON.stringify({ message: msg, content: b64, sha, branch: branch || "main" }) });
   return r.ok;
 }
+// Đọc-sửa-ghi NGUYÊN TỬ có kiểm tra phiên bản (rev). mutate(store) sửa store tại chỗ và trả:
+//  {reject:<resp>}  → xung đột phiên bản, KHÔNG ghi (trả resp cho client tải lại)
+//  {skip:true,result}→ không có gì để ghi
+//  {msg,result}     → đã sửa, sẽ ghi (rev tự +1). Conflict ghi (sha cũ) → đọc lại & thử lại.
+async function ghUpdate(env, path, branch, mutate, retries) {
+  retries = (retries == null) ? 5 : retries;
+  for (let i = 0; i <= retries; i++) {
+    let cur; try { cur = await ghGetJson(env, path, branch); } catch (e) { return { error: true }; }
+    const store = (cur.obj && typeof cur.obj === "object") ? cur.obj : {};
+    const res = mutate(store) || {};
+    if (res.reject) return { rejected: res.reject, store };
+    if (res.skip) return { ok: true, skipped: true, store, result: res.result };
+    store.rev = (Number(store.rev) || 0) + 1;
+    store.updatedAt = new Date().toISOString();
+    const ok = await ghPutJson(env, path, store, res.msg || "update", cur.sha, branch);
+    if (ok) return { ok: true, store, result: res.result };
+  }
+  return { error: true };
+}
 function uaLabel(request) {
   const ua = request.headers.get("User-Agent") || "";
   let os = "Máy"; if (/iPhone/i.test(ua)) os = "iPhone"; else if (/iPad/i.test(ua)) os = "iPad"; else if (/Android/i.test(ua)) os = "Android"; else if (/Macintosh|Mac OS/i.test(ua)) os = "Mac"; else if (/Windows/i.test(ua)) os = "Windows"; else if (/Linux/i.test(ua)) os = "Linux";
@@ -615,15 +634,17 @@ export default {
       }
       if (request.method === "POST") {
         let body; try { body = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
-        const obj = (body && body.data) ? body.data : (body || {});
-        obj.updatedAt = new Date().toISOString();
-        obj.by = who;
-        // ghi với sha hiện tại; nếu xung đột (2 máy lưu cùng lúc) thì đọc lại sha và thử lại 1 lần
-        let cur; try { cur = await ghGetJson(env, FILE, BR); } catch (e) { cur = { sha: undefined }; }
-        let ok = await ghPutJson(env, FILE, obj, "kho: cap nhat (" + who + ")", cur.sha, BR);
-        if (!ok) { try { cur = await ghGetJson(env, FILE, BR); ok = await ghPutJson(env, FILE, obj, "kho: cap nhat (" + who + ")", cur.sha, BR); } catch (e) {} }
-        if (!ok) return jsonResp({ error: "Lưu kho lỗi." }, 502);
-        return jsonResp({ ok: true, updatedAt: obj.updatedAt });
+        const d = (body && body.data) ? body.data : (body || {});
+        const r = await ghUpdate(env, FILE, BR, (store) => {
+          // kiểm tra phiên bản (rev): nếu người khác vừa lưu → báo xung đột, KHÔNG ghi đè
+          if (body.baseRev != null && Number(body.baseRev) !== (Number(store.rev) || 0)) return { reject: { ok: false, conflict: true, data: store } };
+          ["inv", "log", "phieuxuat", "phieunhap"].forEach((k) => { if (d[k] !== undefined) store[k] = d[k]; });
+          store.by = who;
+          return { msg: "kho: cap nhat (" + who + ")" };
+        });
+        if (r.rejected) return jsonResp(r.rejected, 200);
+        if (r.error) return jsonResp({ error: "Lưu kho lỗi." }, 502);
+        return jsonResp({ ok: true, rev: (r.store && r.store.rev) || 0, updatedAt: r.store && r.store.updatedAt });
       }
       return jsonResp({ error: "method" }, 405);
     }
@@ -659,35 +680,35 @@ export default {
       if (request.method === "POST") {
         let body; try { body = await request.json(); } catch (e) { return jsonResp({ error: "bad body" }, 400); }
         const act = body && body.act;
-        // đọc bản hiện tại
-        let cur; try { cur = await ghGetJson(env, VFILE, VBR); } catch (e) { cur = { obj: null, sha: undefined }; }
-        let store = cur.obj && typeof cur.obj === "object" ? cur.obj : {};
-        store.materials = Array.isArray(store.materials) ? store.materials : [];
-        store.bom = (store.bom && typeof store.bom === "object") ? store.bom : {};
-        store.log = Array.isArray(store.log) ? store.log : [];
-        store.phieunhap = Array.isArray(store.phieunhap) ? store.phieunhap : [];
-        if (act === "consume") {
-          // tự trừ vật tư theo định mức — gộp NHIỀU sản phẩm trong 1 lần đọc-ghi (tránh mất cập nhật khi nhập nhiều dòng)
-          const batch = Array.isArray(body.items) ? body.items : [{ product: body.product, qty: body.qty }];
-          const consumed = [];
-          batch.forEach((b2) => {
-            const product = String((b2 && b2.product) || ""), q = Number(b2 && b2.qty) || 0;
-            const recipe = store.bom[product];
-            if (!Array.isArray(recipe) || !recipe.length || q <= 0) return;
-            recipe.forEach((r) => {
-              const need = (Number(r.qty) || 0) * q;
-              if (need <= 0) return;
-              const m = store.materials.find((x) => x && x.name && r.mat && x.name.toLowerCase() === String(r.mat).toLowerCase());
-              if (m) m.qty = (Number(m.qty) || 0) - need;
-              else store.materials.push({ name: r.mat, unit: r.unit || "", qty: -need, price: 0, cat: r.cat || "khac" });
-              consumed.push({ mat: r.mat, qty: need, sp: product });
+        const r = await ghUpdate(env, VFILE, VBR, (store) => {
+          store.materials = Array.isArray(store.materials) ? store.materials : [];
+          store.bom = (store.bom && typeof store.bom === "object") ? store.bom : {};
+          store.log = Array.isArray(store.log) ? store.log : [];
+          store.phieunhap = Array.isArray(store.phieunhap) ? store.phieunhap : [];
+          if (act === "consume") {
+            // tự trừ vật tư theo định mức trên BẢN MỚI NHẤT (ghUpdate đọc lại & áp dụng lại nếu xung đột → không bao giờ sai)
+            const batch = Array.isArray(body.items) ? body.items : [{ product: body.product, qty: body.qty }];
+            const consumed = [];
+            batch.forEach((b2) => {
+              const product = String((b2 && b2.product) || ""), q = Number(b2 && b2.qty) || 0;
+              const recipe = store.bom[product];
+              if (!Array.isArray(recipe) || !recipe.length || q <= 0) return;
+              recipe.forEach((rr) => {
+                const need = (Number(rr.qty) || 0) * q;
+                if (need <= 0) return;
+                const m = store.materials.find((x) => x && x.name && rr.mat && x.name.toLowerCase() === String(rr.mat).toLowerCase());
+                if (m) m.qty = (Number(m.qty) || 0) - need;
+                else store.materials.push({ name: rr.mat, unit: rr.unit || "", qty: -need, price: 0, cat: rr.cat || "khac" });
+                consumed.push({ mat: rr.mat, qty: need, sp: product });
+              });
             });
-          });
-          if (!consumed.length) return jsonResp({ ok: true, consumed: [] }); // không định mức nào khớp → không ghi
-          store.log.unshift({ t: new Date().toISOString(), type: "xuất-sx", who: who, note: "Sản xuất: " + batch.filter((b2) => b2 && b2.product).map((b2) => (Number(b2.qty) || 0) + "×" + b2.product).join(", "), items: consumed });
-          store.log = store.log.slice(0, 500);
-        } else {
-          // act 'save' (mặc định): lưu toàn bộ do client gửi
+            if (!consumed.length) return { skip: true, result: { consumed: [] } };
+            store.log.unshift({ t: new Date().toISOString(), type: "xuất-sx", who: who, note: "Sản xuất: " + batch.filter((b2) => b2 && b2.product).map((b2) => (Number(b2.qty) || 0) + "×" + b2.product).join(", "), items: consumed });
+            store.log = store.log.slice(0, 500);
+            return { msg: "vattu consume (" + who + ")", result: { consumed } };
+          }
+          // save — kiểm tra phiên bản (rev) để KHÔNG ghi đè thay đổi của người khác
+          if (body.baseRev != null && Number(body.baseRev) !== (Number(store.rev) || 0)) return { reject: { ok: false, conflict: true, data: store } };
           const d = body.data || {};
           store.materials = Array.isArray(d.materials) ? d.materials : store.materials;
           store.bom = (d.bom && typeof d.bom === "object") ? d.bom : store.bom;
@@ -695,12 +716,12 @@ export default {
           store.phieunhap = Array.isArray(d.phieunhap) ? d.phieunhap : store.phieunhap;
           store.cats = Array.isArray(d.cats) ? d.cats : store.cats;
           store.catalog = (d.catalog && typeof d.catalog === "object") ? d.catalog : store.catalog;
-        }
-        store.updatedAt = new Date().toISOString(); store.by = who;
-        let ok = await ghPutJson(env, VFILE, store, "vattu: " + (act || "save") + " (" + who + ")", cur.sha, VBR);
-        if (!ok) { try { const c2 = await ghGetJson(env, VFILE, VBR); ok = await ghPutJson(env, VFILE, store, "vattu: " + (act || "save") + " (" + who + ")", c2.sha, VBR); } catch (e) {} }
-        if (!ok) return jsonResp({ error: "Lưu vật tư lỗi." }, 502);
-        return jsonResp({ ok: true, data: store });
+          store.by = who;
+          return { msg: "vattu save (" + who + ")" };
+        });
+        if (r.rejected) return jsonResp(r.rejected, 200);
+        if (r.error) return jsonResp({ error: "Lưu vật tư lỗi." }, 502);
+        return jsonResp({ ok: true, rev: (r.store && r.store.rev) || 0, data: r.store, consumed: (r.result && r.result.consumed) || undefined });
       }
       return jsonResp({ error: "method" }, 405);
     }
