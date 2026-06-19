@@ -1,1 +1,76 @@
-{"entries": [{"ts": "2026-06-19T02:04:37.007Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · Mac Chrome"}, {"ts": "2026-06-19T00:46:06.413Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · Mac Chrome"}, {"ts": "2026-06-19T00:17:55.352Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · iPhone Chrome"}, {"ts": "2026-06-18T18:42:06.541Z", "who": "vinhduynguyen@gmail.com", "action": "Vật tư · nhập", "detail": "Hộp 20×20×1.2mm ×10"}, {"ts": "2026-06-18T18:04:39.070Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · iPhone Chrome"}, {"ts": "2026-06-18T18:03:34.628Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · iPhone Chrome"}, {"ts": "2026-06-18T18:03:13.808Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · iPhone Chrome"}, {"ts": "2026-06-18T17:42:16.685Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · Mac Chrome"}, {"ts": "2026-06-18T17:41:02.698Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · Mac Chrome"}, {"ts": "2026-06-18T17:37:02.660Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · Mac Chrome"}, {"ts": "2026-06-18T17:11:05.127Z", "who": "vinhduynguyen@gmail.com", "action": "Đăng nhập", "detail": "Google · Mac Chrome"}]}
+{
+  "entries": [
+    {
+      "ts": "2026-06-19T02:14:34.250Z",
+      "who": "tronghieuckc@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · Windows Chrome"
+    },
+    {
+      "ts": "2026-06-19T02:04:37.007Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · Mac Chrome"
+    },
+    {
+      "ts": "2026-06-19T00:46:06.413Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · Mac Chrome"
+    },
+    {
+      "ts": "2026-06-19T00:17:55.352Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · iPhone Chrome"
+    },
+    {
+      "ts": "2026-06-18T18:42:06.541Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Vật tư · nhập",
+      "detail": "Hộp 20×20×1.2mm ×10"
+    },
+    {
+      "ts": "2026-06-18T18:04:39.070Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · iPhone Chrome"
+    },
+    {
+      "ts": "2026-06-18T18:03:34.628Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · iPhone Chrome"
+    },
+    {
+      "ts": "2026-06-18T18:03:13.808Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · iPhone Chrome"
+    },
+    {
+      "ts": "2026-06-18T17:42:16.685Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · Mac Chrome"
+    },
+    {
+      "ts": "2026-06-18T17:41:02.698Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · Mac Chrome"
+    },
+    {
+      "ts": "2026-06-18T17:37:02.660Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · Mac Chrome"
+    },
+    {
+      "ts": "2026-06-18T17:11:05.127Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · Mac Chrome"
+    }
+  ]
+}
