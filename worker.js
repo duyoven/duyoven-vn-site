@@ -667,19 +667,24 @@ export default {
         store.log = Array.isArray(store.log) ? store.log : [];
         store.phieunhap = Array.isArray(store.phieunhap) ? store.phieunhap : [];
         if (act === "consume") {
-          // tự trừ vật tư theo định mức khi sản xuất ra 1 sản phẩm
-          const product = String(body.product || ""), qty = Number(body.qty) || 0;
-          const recipe = store.bom[product];
-          if (!Array.isArray(recipe) || !recipe.length || qty <= 0) return jsonResp({ ok: true, consumed: [] }); // không có định mức → bỏ qua
+          // tự trừ vật tư theo định mức — gộp NHIỀU sản phẩm trong 1 lần đọc-ghi (tránh mất cập nhật khi nhập nhiều dòng)
+          const batch = Array.isArray(body.items) ? body.items : [{ product: body.product, qty: body.qty }];
           const consumed = [];
-          recipe.forEach((r) => {
-            const need = (Number(r.qty) || 0) * qty;
-            if (need <= 0) return;
-            const m = store.materials.find((x) => x && x.name && r.mat && x.name.toLowerCase() === String(r.mat).toLowerCase());
-            if (m) { m.qty = (Number(m.qty) || 0) - need; consumed.push({ mat: r.mat, qty: need }); }
-            else { store.materials.push({ name: r.mat, unit: r.unit || "", qty: -need, price: 0 }); consumed.push({ mat: r.mat, qty: need, missing: true }); }
+          batch.forEach((b2) => {
+            const product = String((b2 && b2.product) || ""), q = Number(b2 && b2.qty) || 0;
+            const recipe = store.bom[product];
+            if (!Array.isArray(recipe) || !recipe.length || q <= 0) return;
+            recipe.forEach((r) => {
+              const need = (Number(r.qty) || 0) * q;
+              if (need <= 0) return;
+              const m = store.materials.find((x) => x && x.name && r.mat && x.name.toLowerCase() === String(r.mat).toLowerCase());
+              if (m) m.qty = (Number(m.qty) || 0) - need;
+              else store.materials.push({ name: r.mat, unit: r.unit || "", qty: -need, price: 0, cat: r.cat || "khac" });
+              consumed.push({ mat: r.mat, qty: need, sp: product });
+            });
           });
-          store.log.unshift({ t: new Date().toISOString(), type: "xuất-sx", who: who, note: "Sản xuất " + qty + " × " + product, items: consumed });
+          if (!consumed.length) return jsonResp({ ok: true, consumed: [] }); // không định mức nào khớp → không ghi
+          store.log.unshift({ t: new Date().toISOString(), type: "xuất-sx", who: who, note: "Sản xuất: " + batch.filter((b2) => b2 && b2.product).map((b2) => (Number(b2.qty) || 0) + "×" + b2.product).join(", "), items: consumed });
           store.log = store.log.slice(0, 500);
         } else {
           // act 'save' (mặc định): lưu toàn bộ do client gửi
