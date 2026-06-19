@@ -1,6 +1,6 @@
 {
   "_note": "Nội dung động của duyoven.vn — chỉnh trong Admin › Website. Đừng sửa tay nếu không rành.",
-  "updatedAt": "2026-06-19T03:05:00.473Z",
+  "updatedAt": "2026-06-19T05:41:00.976Z",
   "company": {
     "name": "CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA",
     "brand": "Duy's Oven",
@@ -179,6 +179,18 @@
       "hint": "t***@gmail.com",
       "hash": "58aa5a869c0064f8d01f5ee82cad6fa140bc7441461c4eddbe7394f3fa7ba51b",
       "mods": [
+        "kho",
+        "vattu",
+        "nghiemthu"
+      ]
+    },
+    {
+      "label": "Công",
+      "hint": "t***@gmail.com",
+      "hash": "b358b685f67cb82e5a32c9b4b6b102452093329e40241f5ee33e0b47788888f0",
+      "mods": [
+        "baogia",
+        "hopdong",
         "kho",
         "vattu",
         "nghiemthu"
