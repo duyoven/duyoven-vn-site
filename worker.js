@@ -306,6 +306,37 @@ async function verifyTOTP(secret, code) {
   return false;
 }
 
+
+// ===== APP XEP LASER (Duy's Oven): kich hoat key + AI, khoa theo may =====
+const LASER_LIC = "laser-licenses.json"; // tren nhanh appdata (khong trigger build)
+const LASER_SYS = "Ban la tro ly AI trong phan mem 'Xep Laser - Duy's Oven' giup tho co khi xep ban ve AutoCAD len tam ton (sat/inox) de cat laser. Phan mem tu tach chi tiet theo do day, xep N bo len kho tam (mac dinh 1250x2500mm), tach net CAT (layer CUT mau do) va net CHAN/gap (layer CHAN_KHONG_CAT mau xanh, KHONG duoc cat), xuat file DXF mo thang tren may cat. Tra loi NGAN GON, tieng Viet, thuc te cho tho. Hieu biet: do day ton sat/inox pho bien, hao hut khi cat laser, cach xep tiet kiem ton, vi sao file khong tach duoc chi tiet (sai don vi khong phai mm, net ho), an toan. KHONG bia dat con so.";
+async function signLaser(env, device, key) {
+  const exp = Date.now() + 365 * 24 * 60 * 60 * 1000;
+  const payload = _b64urlEnc(new TextEncoder().encode(device + "|" + key + "|" + exp));
+  return payload + "." + (await _hmac(env, "laser:" + payload));
+}
+async function verifyLaser(env, token, device) {
+  if (!token || typeof token !== "string") return null;
+  const dot = token.lastIndexOf("."); if (dot < 0) return null;
+  const payload = token.slice(0, dot), sig = token.slice(dot + 1);
+  if (sig !== (await _hmac(env, "laser:" + payload))) return null;
+  let dec; try { dec = new TextDecoder().decode(_b64urlDec(payload)); } catch (e) { return null; }
+  const p = dec.split("|");
+  if (p[0] !== device) return null;
+  if (Date.now() > Number(p[2] || 0)) return null;
+  return { device: p[0], key: p[1] };
+}
+async function laserDeviceOk(env, device, key) {
+  try {
+    const d = await sha256hex(device);
+    const r = await ghGetJson(env, LASER_LIC, "appdata");
+    const keys = (r.obj && Array.isArray(r.obj.keys)) ? r.obj.keys : [];
+    const k = keys.find((x) => x && x.active !== false && String(x.key).toUpperCase() === String(key).toUpperCase());
+    if (!k) return false;
+    return (Array.isArray(k.devices) ? k.devices : []).some((dev) => dev && dev.d === d);
+  } catch (e) { return false; }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -341,6 +372,77 @@ export default {
         if (!reply) return jsonResp({ error: "Không có model khả dụng. " + lastErr }, 502);
         return jsonResp({ reply, model: used });
       } catch (e) { return jsonResp({ error: String(e) }, 500); }
+    }
+
+
+    // --- APP XEP LASER: kich hoat key (khoa vao may) ---
+    if (url.pathname === "/api/laser-activate" && request.method === "POST") {
+      try {
+        const b = await request.json();
+        const key = String(b.key || "").trim().toUpperCase();
+        const device = String(b.device || "").trim();
+        const name = String(b.name || "").slice(0, 60);
+        if (!key || !device) return jsonResp({ ok: false, reason: "Thieu key hoac ma may." }, 400);
+        if (!env.GH_TOKEN) return jsonResp({ ok: false, reason: "May chu chua cau hinh." }, 503);
+        const d = await sha256hex(device);
+        const res = await ghUpdate(env, LASER_LIC, "appdata", (store) => {
+          if (!Array.isArray(store.keys)) store.keys = [];
+          const k = store.keys.find((x) => x && String(x.key).toUpperCase() === key);
+          if (!k) return { reject: jsonResp({ ok: false, reason: "Key khong dung." }) };
+          if (k.active === false) return { reject: jsonResp({ ok: false, reason: "Key da bi thu hoi." }) };
+          if (!Array.isArray(k.devices)) k.devices = [];
+          const max = Number(k.maxDevices || 1);
+          const has = k.devices.find((dev) => dev && dev.d === d);
+          if (!has) {
+            if (k.devices.length >= max) return { reject: jsonResp({ ok: false, reason: "Key da dung het so may cho phep (" + max + "). Bao anh Duy." }) };
+            k.devices.push({ d, name, ts: new Date().toISOString() });
+          } else { has.name = name; has.ts = new Date().toISOString(); }
+          return { msg: "laser: kich hoat " + key + " (" + name + ")", result: { label: k.label || "" } };
+        });
+        if (res.rejected) return res.rejected;
+        if (!res.ok) return jsonResp({ ok: false, reason: "Loi luu kich hoat, thu lai." }, 500);
+        const token = await signLaser(env, device, key);
+        try { ctx && ctx.waitUntil && ctx.waitUntil(auditLog(env, "laser:" + name, "Kich hoat app laser", key)); } catch (e) {}
+        return jsonResp({ ok: true, token, label: (res.result && res.result.label) || "" });
+      } catch (e) { return jsonResp({ ok: false, reason: String(e) }, 500); }
+    }
+
+    // --- APP XEP LASER: AI (chat / phan tich / nhan dien / giai thich loi) ---
+    if (url.pathname === "/api/laser-ai" && request.method === "POST") {
+      try {
+        if (!env.ANTHROPIC_API_KEY) return jsonResp({ ok: false, reason: "May chu chua cau hinh AI." }, 503);
+        const b = await request.json();
+        const device = String(b.device || "").trim();
+        const v = await verifyLaser(env, String(b.token || ""), device);
+        if (!v) return jsonResp({ ok: false, reason: "Chua kich hoat hoac token sai." }, 401);
+        if (!(await laserDeviceOk(env, device, v.key))) return jsonResp({ ok: false, reason: "May khong duoc phep (key da bi thu hoi)." }, 403);
+        const mode = String(b.mode || "chat");
+        const context = (b.context && typeof b.context === "object") ? b.context : {};
+        const hist = Array.isArray(b.messages) ? b.messages : [];
+        let ctxStr = "";
+        if (context.report) ctxStr = "Ket qua xep gan nhat (JSON): " + JSON.stringify(context.report).slice(0, 1500);
+        let sysContent = LASER_SYS;
+        const msgs = [{ role: "system", content: sysContent }];
+        if (mode === "analyze") {
+          msgs.push({ role: "user", content: "Phan tich ket qua xep tam sau, goi y tiet kiem ton va canh bao tam phi, tieng Viet ngan gon gach dau dong. " + ctxStr });
+        } else if (mode === "explain") {
+          const err = (hist[0] && hist[0].content) || JSON.stringify(context);
+          msgs.push({ role: "user", content: "Phan mem bao loi sau khi xep tam. Giai thich vi sao + cach sua, tieng Viet de hieu cho tho co khi:\n" + String(err).slice(0, 800) });
+        } else if (mode === "detect") {
+          msgs.push({ role: "user", content: "Cac nhom do day doc tu ban ve (JSON): " + JSON.stringify(context.groups || []) + ". Voi moi nhom suy ra vat lieu (SAT hoac INOX) va do day mm (1 trong: 0.8,1.0,1.2,1.4,1.5,2.0,2.5,3.0,4.0,5.0). Nhan ghi INOX/SUS -> INOX, mac dinh SAT. CHI tra ve JSON array [{\"index\":0,\"material\":\"SAT\",\"thickness\":\"2.0\"}], khong giai thich." });
+        } else {
+          if (ctxStr) sysContent += "\n\n[Boi canh] " + ctxStr;
+          msgs[0].content = sysContent;
+          hist.slice(-8).forEach((m) => { if (m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string") msgs.push({ role: m.role, content: m.content.slice(0, 1500) }); });
+        }
+        let reply = "";
+        try { reply = await callClaude(env, msgs); } catch (e) { return jsonResp({ ok: false, reason: "AI loi: " + String(e).slice(0, 150) }, 502); }
+        if (mode === "detect") {
+          let data = []; try { const m = reply.match(/\[[\s\S]*\]/); if (m) data = JSON.parse(m[0]); } catch (e) {}
+          return jsonResp({ ok: true, data, reply });
+        }
+        return jsonResp({ ok: true, reply });
+      } catch (e) { return jsonResp({ ok: false, reason: String(e) }, 500); }
     }
 
     // --- AI: trợ lý báo giá nội bộ (chỉ nhân viên) ---
