@@ -40,9 +40,16 @@
       "label": "KEY TEST (Duy)",
       "maxDevices": 5,
       "active": true,
-      "devices": []
+      "devices": [
+        {
+          "d": "59cb44e31159455e51355f21ac3b86bd3f2bee50890b9e0ed4e9a8e048c47f63",
+          "name": "v",
+          "ts": "2026-06-19T06:23:24.978Z"
+        }
+      ]
     }
   ],
-  "rev": 0,
-  "note": "App Xep Laser Duy's Oven - quan ly key kich hoat"
+  "rev": 1,
+  "note": "App Xep Laser Duy's Oven - quan ly key kich hoat",
+  "updatedAt": "2026-06-19T06:23:24.978Z"
 }
