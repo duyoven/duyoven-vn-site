@@ -3,14 +3,14 @@
     {
       "name": "Tôn đen 1.2mm",
       "unit": "kg",
-      "qty": 300,
+      "qty": 254,
       "price": 25000,
       "cat": "tole"
     },
     {
       "name": "Van gas",
       "unit": "cái",
-      "qty": 50,
+      "qty": 48,
       "price": 120000,
       "cat": "khac"
     }
@@ -39,9 +39,33 @@
       }
     ]
   },
-  "log": [],
+  "log": [
+    {
+      "t": "2026-06-19T00:28:16.302Z",
+      "type": "xuất-sx",
+      "who": "chu@duyoven",
+      "note": "Sản xuất: 3×Lò Tách khói 80L, 2×Hybrid 65L (than + gas)",
+      "items": [
+        {
+          "mat": "Tôn đen 1.2mm",
+          "qty": 30,
+          "sp": "Lò Tách khói 80L"
+        },
+        {
+          "mat": "Tôn đen 1.2mm",
+          "qty": 16,
+          "sp": "Hybrid 65L (than + gas)"
+        },
+        {
+          "mat": "Van gas",
+          "qty": 2,
+          "sp": "Hybrid 65L (than + gas)"
+        }
+      ]
+    }
+  ],
   "phieunhap": [],
-  "updatedAt": "2026-06-19T00:28:14.947Z",
+  "updatedAt": "2026-06-19T00:28:16.302Z",
   "by": "chu@duyoven",
   "cats": [
     [
