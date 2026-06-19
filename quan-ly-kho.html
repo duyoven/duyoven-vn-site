@@ -333,9 +333,11 @@ function buildRecvSel(){var h='<option value="">— Chọn mặt hàng —</opti
 function addRecvFromSel(){var s=document.getElementById('recvSel');if(!s.value){alert('Chọn mặt hàng trước.');return;}var p=resolveProd(s.value);var inv=INV.filter(function(y){return y.name.toLowerCase()===p.name.toLowerCase();})[0];RECV.push({name:p.name,code:p.code,unit:inv?inv.unit:'bộ',q:1,status:'Chưa hoàn thiện',note:''});renderRecv();}
 function addRecvBlank(){RECV.push({name:'',code:'',unit:'bộ',q:1,status:'Chưa hoàn thiện',note:''});renderRecv();}
 function setRecv(i,k,v){if(k==='q')v=parseInt(v)||0;RECV[i][k]=v;}
+function recvProdSel(i,x){var cur=x.code||NAME2CODE[x.name]||'';var opts='<option value="">— Chọn sản phẩm —</option>';if(SITEPRODS&&SITEPRODS.length){SITEPRODS.forEach(function(o){var v=o.code||o.name;opts+='<option value="'+esc(v)+'"'+(v===cur?' selected':'')+'>'+(o.code?'['+esc(o.code)+'] ':'')+esc(o.name)+'</option>';});}if(x.name&&!cur){opts+='<option value="'+esc(x.name)+'" selected>'+esc(x.name)+' (chưa có mã)</option>';}return '<select onchange="setRecvProd('+i+',this.value)">'+opts+'</select>';}
+function setRecvProd(i,v){if(!RECV[i])return;var p=resolveProd(v);RECV[i].name=p.name;RECV[i].code=p.code;}
 function delRecv(i){RECV.splice(i,1);renderRecv();}
 function renderRecv(){var b=document.getElementById('recvBody');b.innerHTML=RECV.map(function(x,i){var opts=STATUSES.map(function(s){return '<option'+(s===(x.status||'Chưa hoàn thiện')?' selected':'')+'>'+esc(s)+'</option>';}).join('');return '<div style="display:grid;grid-template-columns:1.3fr 56px 52px 150px 1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:8px;background:rgba(0,0,0,.12)">'+
-  '<input placeholder="Tên hàng" value="'+esc(x.name)+'" oninput="setRecv('+i+',\'name\',this.value)">'+
+  recvProdSel(i,x)+
   '<input placeholder="ĐVT" value="'+esc(x.unit)+'" oninput="setRecv('+i+',\'unit\',this.value)">'+
   '<input type="number" min="0" placeholder="SL" value="'+x.q+'" oninput="setRecv('+i+',\'q\',this.value)">'+
   '<select title="Tình trạng" onchange="setRecv('+i+',\'status\',this.value)">'+opts+'</select>'+
@@ -426,7 +428,7 @@ function khoServerLoad(force){setSync('☁️ Đang tải từ máy chủ…');
   }).catch(function(){setSync('⚠ Mất kết nối máy chủ (vẫn dùng dữ liệu máy này)','#e0863a');});}
 function khoBackup(){var data=JSON.stringify({_app:'duyoven-kho',ts:new Date().toISOString(),data:khoBundle()},null,2);var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);a.download='sao-luu-kho-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();}
 function khoRestoreFile(inp){var f=inp.files&&inp.files[0];if(!f){return;}var rd=new FileReader();rd.onload=function(){try{var o=JSON.parse(rd.result);var d=o.data||o;if(!d||!Array.isArray(d.inv)){alert('File sao lưu không hợp lệ.');return;}if(!confirm('Nạp dữ liệu từ file này?\nSẽ THAY THẾ kho hiện tại và đẩy lên máy chủ (mọi máy sẽ cập nhật theo).'))return;localStorage.setItem(IKEY,JSON.stringify(d.inv||[]));localStorage.setItem(LKEY,JSON.stringify(d.log||[]));localStorage.setItem(PKEY,JSON.stringify(d.phieuxuat||[]));localStorage.setItem(NKEY,JSON.stringify(d.phieunhap||[]));loadAll();khoSync(true);alert('✅ Đã nạp file và đẩy lên máy chủ.');}catch(e){alert('Lỗi đọc file: '+e.message);}};rd.readAsText(f);inp.value='';}
-loadSiteProds(function(){buildSel();buildRecvSel();});buildSel();loadAll();khoServerLoad();
+loadSiteProds(function(){buildSel();buildRecvSel();renderRecv();});buildSel();loadAll();khoServerLoad();
 function showKho(k){document.querySelectorAll('.khopanel').forEach(function(p){p.style.display='none';});var el=document.getElementById('kp-'+k);if(el)el.style.display='';document.querySelectorAll('.ktab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-k')===k);});try{window.scrollTo(0,0);}catch(e){}if(k==='tsp'&&!SITECONTENT)loadProductsForSpec();}
 (function(){var n=new Date();var ds=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('pDate').value=ds;document.getElementById('pNo').value=genPNo(n);document.getElementById('nDate').value=ds;document.getElementById('nNo').value=genNNo(n);})();
 </script>
