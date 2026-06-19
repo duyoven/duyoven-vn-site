@@ -1,42 +1,48 @@
 {
   "materials": [
     {
-      "name": "Hộp 20×20×1.2mm",
-      "unit": "cây",
-      "qty": 10,
-      "price": 0,
-      "cat": "ong"
-    }
-  ],
-  "bom": {},
-  "log": [
+      "name": "Tôn đen 1.2mm",
+      "unit": "kg",
+      "qty": 300,
+      "price": 25000,
+      "cat": "tole"
+    },
     {
-      "t": "2026-06-18T18:42:06.179Z",
-      "type": "nhập",
-      "name": "Hộp 20×20×1.2mm",
-      "qty": 10,
-      "note": "PNVT 123 ← Manh Duy"
+      "name": "Van gas",
+      "unit": "cái",
+      "qty": 50,
+      "price": 120000,
+      "cat": "khac"
     }
   ],
-  "phieunhap": [
-    {
-      "no": "123",
-      "date": "2026-06-19",
-      "sup": "Manh Duy",
-      "by": "Hieu",
-      "items": [
-        {
-          "name": "Hộp 20×20×1.2mm",
-          "unit": "cây",
-          "qty": 10,
-          "price": 0,
-          "cat": "ong"
-        }
-      ]
-    }
-  ],
-  "updatedAt": "2026-06-18T18:42:07.286Z",
-  "by": "vinhduynguyen@gmail.com",
+  "bom": {
+    "Lò Tách khói 80L": [
+      {
+        "mat": "Tôn đen 1.2mm",
+        "cat": "tole",
+        "unit": "kg",
+        "qty": 10
+      }
+    ],
+    "Hybrid 65L (than + gas)": [
+      {
+        "mat": "Tôn đen 1.2mm",
+        "cat": "tole",
+        "unit": "kg",
+        "qty": 8
+      },
+      {
+        "mat": "Van gas",
+        "cat": "khac",
+        "unit": "cái",
+        "qty": 1
+      }
+    ]
+  },
+  "log": [],
+  "phieunhap": [],
+  "updatedAt": "2026-06-19T00:28:14.947Z",
+  "by": "chu@duyoven",
   "cats": [
     [
       "tole",
