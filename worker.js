@@ -454,6 +454,43 @@ export default {
       } catch (e) { return jsonResp({ ok: false, reason: String(e) }, 500); }
     }
 
+
+    // --- APP XEP LASER: thu vien part + phien lam viec (luu may chu) ---
+    if (url.pathname === "/api/laser-lib" && request.method === "POST") {
+      try {
+        const b = await request.json();
+        const device = String(b.device || "").trim();
+        const v = await verifyLaser(env, String(b.token || ""), device);
+        if (!v) return jsonResp({ ok: false, reason: "Chua kich hoat." }, 401);
+        if (!(await laserDeviceOk(env, device, v.key))) return jsonResp({ ok: false, reason: "May khong duoc phep." }, 403);
+        if (!env.GH_TOKEN) return jsonResp({ ok: false, reason: "May chu chua cau hinh." }, 503);
+        const act = String(b.action || "get");
+        if (act === "get") {
+          const r = await ghGetJson(env, "laser-library.json", "appdata");
+          const data = (r.obj && typeof r.obj === "object") ? r.obj : { parts: [], sessions: [], rev: 0 };
+          return jsonResp({ ok: true, data });
+        }
+        if (act === "save") {
+          const incoming = (b.data && typeof b.data === "object") ? b.data : null;
+          if (!incoming) return jsonResp({ ok: false, reason: "Thieu data." }, 400);
+          const baseRev = Number(b.baseRev || 0);
+          const res = await ghUpdate(env, "laser-library.json", "appdata", (store) => {
+            const curRev = Number(store.rev || 0);
+            if (Array.isArray(store.parts) && curRev !== baseRev) {
+              return { reject: jsonResp({ ok: false, conflict: true, data: store }) };
+            }
+            store.parts = Array.isArray(incoming.parts) ? incoming.parts : [];
+            store.sessions = Array.isArray(incoming.sessions) ? incoming.sessions : [];
+            return { msg: "laser-lib: cap nhat thu vien (" + (v.key) + ")" };
+          });
+          if (res.rejected) return res.rejected;
+          if (!res.ok) return jsonResp({ ok: false, reason: "Loi luu, thu lai." }, 500);
+          return jsonResp({ ok: true, data: res.store });
+        }
+        return jsonResp({ ok: false, reason: "action khong hop le." }, 400);
+      } catch (e) { return jsonResp({ ok: false, reason: String(e) }, 500); }
+    }
+
     // --- AI: trợ lý báo giá nội bộ (chỉ nhân viên) ---
     if (url.pathname === "/api/bao-gia" && request.method === "POST") {
       try {
