@@ -58,15 +58,14 @@
       "label": "Mac Chrome",
       "email": "d***@gmail.com",
       "ts": "2026-06-18T16:32:28.746Z"
-    }
-  ],
-  "pending": [
+    },
     {
       "u": "e747b6c35ea0a99ec634cf4170569380d7bd40d03c2538ff6e88bccd0aea3229",
       "d": "d5d9ccc061a3e84c3e85384631f0594c20efbb0b2d0621c55d16366f6a15e7af",
       "label": "Mac Safari",
       "email": "v***@gmail.com",
-      "ts": "2026-06-18T17:10:40.909Z"
+      "ts": "2026-06-19T00:46:17.520Z"
     }
-  ]
+  ],
+  "pending": []
 }
