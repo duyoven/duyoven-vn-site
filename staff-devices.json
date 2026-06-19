@@ -73,5 +73,13 @@
       "ts": "2026-06-19T02:14:33.376Z"
     }
   ],
-  "pending": []
+  "pending": [
+    {
+      "u": "e747b6c35ea0a99ec634cf4170569380d7bd40d03c2538ff6e88bccd0aea3229",
+      "d": "2e7fc1e44accc0674ed30b3b62799b766f17763a5faab623fa66f93fc5fa2bba",
+      "label": "Mac Chrome",
+      "email": "v***@gmail.com",
+      "ts": "2026-06-19T07:23:19.588Z"
+    }
+  ]
 }
