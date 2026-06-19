@@ -327,13 +327,20 @@ async function verifyLaser(env, token, device) {
   return { device: p[0], key: p[1] };
 }
 async function laserDeviceOk(env, device, key) {
+  // Token (HMAC) DA chung minh may kich hoat hop le voi key nay. O day chi
+  // ENFORCE THU HOI: chan khi key bi tat (active:false) hoac may nam trong
+  // danh sach revoked[]. KHONG dua vao devices[] (tranh ket qua sai do GitHub
+  // doc-sau-ghi tre ngay sau khi kich hoat).
   try {
     const d = await sha256hex(device);
     const r = await ghGetJson(env, LASER_LIC, "appdata");
     const keys = (r.obj && Array.isArray(r.obj.keys)) ? r.obj.keys : [];
-    const k = keys.find((x) => x && x.active !== false && String(x.key).toUpperCase() === String(key).toUpperCase());
+    const k = keys.find((x) => x && String(x.key).toUpperCase() === String(key).toUpperCase());
     if (!k) return false;
-    return (Array.isArray(k.devices) ? k.devices : []).some((dev) => dev && dev.d === d);
+    if (k.active === false) return false;
+    const revoked = Array.isArray(k.revoked) ? k.revoked : [];
+    if (revoked.indexOf(d) !== -1) return false;
+    return true;
   } catch (e) { return false; }
 }
 
