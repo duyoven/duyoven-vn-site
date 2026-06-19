@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-19T07:23:29.650Z",
+      "who": "chu@duyoven",
+      "action": "Đăng nhập",
+      "detail": "Mật khẩu chủ · Mac Chrome"
+    },
+    {
       "ts": "2026-06-19T07:23:24.452Z",
       "who": "laser:DESKTOP-6EOLOBN",
       "action": "Kich hoat app laser",
