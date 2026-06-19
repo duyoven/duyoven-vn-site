@@ -1,11 +1,28 @@
 {
-  "materials": [],
-  "bom": {},
+  "materials": [
+    {
+      "name": "Tôn đen 1.2mm",
+      "unit": "kg",
+      "qty": 100,
+      "price": 25000,
+      "cat": "tole"
+    }
+  ],
+  "bom": {
+    "LTK80": [
+      {
+        "mat": "Tôn đen 1.2mm",
+        "cat": "tole",
+        "unit": "kg",
+        "qty": 8.5
+      }
+    ]
+  },
   "log": [],
   "phieunhap": [],
-  "updatedAt": "2026-06-19T00:58:51.258Z",
+  "updatedAt": "2026-06-19T01:55:09.058Z",
   "by": "chu@duyoven",
   "cats": [],
   "catalog": {},
-  "rev": 2
+  "rev": 3
 }
