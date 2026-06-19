@@ -1,0 +1,41 @@
+{
+  "keys": [
+    {
+      "key": "DOV-NYR5-BETM",
+      "label": "Nhan vien 1",
+      "maxDevices": 1,
+      "active": true,
+      "devices": []
+    },
+    {
+      "key": "DOV-K54F-B8DB",
+      "label": "Nhan vien 2",
+      "maxDevices": 1,
+      "active": true,
+      "devices": []
+    },
+    {
+      "key": "DOV-QDN5-T638",
+      "label": "Nhan vien 3",
+      "maxDevices": 1,
+      "active": true,
+      "devices": []
+    },
+    {
+      "key": "DOV-NL8J-SLJC",
+      "label": "Nhan vien 4",
+      "maxDevices": 1,
+      "active": true,
+      "devices": []
+    },
+    {
+      "key": "DOV-JVQB-QPAP",
+      "label": "Nhan vien 5",
+      "maxDevices": 1,
+      "active": true,
+      "devices": []
+    }
+  ],
+  "rev": 0,
+  "note": "App Xep Laser Duy's Oven - quan ly key kich hoat"
+}
