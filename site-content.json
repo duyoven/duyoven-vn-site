@@ -1,6 +1,6 @@
 {
   "_note": "Nội dung động của duyoven.vn — chỉnh trong Admin › Website. Đừng sửa tay nếu không rành.",
-  "updatedAt": "2026-06-18T17:58:38.895Z",
+  "updatedAt": "2026-06-19T01:19:15.305Z",
   "company": {
     "name": "CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA",
     "brand": "Duy's Oven",
@@ -25,7 +25,9 @@
       "short": "Lò mini gập gọn, tiện mang đi.",
       "img": "",
       "link": "sp-pantina.html",
-      "active": true
+      "active": true,
+      "code": "PAN",
+      "approved": true
     },
     {
       "id": "tk80",
@@ -35,7 +37,9 @@
       "short": "Lò than tách khói 80L cho nhà hàng vừa.",
       "img": "",
       "link": "sp-tach-khoi-80l.html",
-      "active": true
+      "active": true,
+      "code": "LTK80",
+      "approved": true
     },
     {
       "id": "tk85",
@@ -45,7 +49,9 @@
       "short": "Lò than tách khói 85L.",
       "img": "",
       "link": "sp-tach-khoi-85l.html",
-      "active": true
+      "active": true,
+      "code": "LTK85",
+      "approved": true
     },
     {
       "id": "tk125",
@@ -55,7 +61,9 @@
       "short": "Lò than tách khói 125L công suất lớn.",
       "img": "",
       "link": "sp-tach-khoi-125l.html",
-      "active": true
+      "active": true,
+      "code": "LTK125",
+      "approved": true
     },
     {
       "id": "hy65",
@@ -65,7 +73,9 @@
       "short": "Lò Hybrid 65L kết hợp than và gas.",
       "img": "",
       "link": "sp-hybrid-65l.html",
-      "active": true
+      "active": true,
+      "code": "HYB65",
+      "approved": true
     },
     {
       "id": "hy80",
@@ -75,7 +85,9 @@
       "short": "Lò Hybrid 80L kết hợp than và gas.",
       "img": "",
       "link": "sp-hybrid-80l.html",
-      "active": true
+      "active": true,
+      "code": "HYB80",
+      "approved": true
     },
     {
       "id": "hy125",
@@ -85,7 +97,9 @@
       "short": "Lò Hybrid 125L công suất lớn.",
       "img": "",
       "link": "sp-hybrid-125l.html",
-      "active": true
+      "active": true,
+      "code": "HYB125",
+      "approved": true
     },
     {
       "id": "smk10050",
@@ -95,7 +109,9 @@
       "short": "Lò xông khói (smoker) Hybrid 10050.",
       "img": "",
       "link": "sp-xong-khoi-hybrid-10050.html",
-      "active": true
+      "active": true,
+      "code": "LXKH10050",
+      "approved": true
     },
     {
       "id": "offset10050",
@@ -105,7 +121,9 @@
       "short": "Lò xông khói offset 10050 kiểu Mỹ.",
       "img": "",
       "link": "sp-offset-10050.html",
-      "active": true
+      "active": true,
+      "code": "OS10050",
+      "approved": true
     },
     {
       "id": "pizza",
@@ -115,7 +133,9 @@
       "short": "Lò pizza dùng củi và gas.",
       "img": "",
       "link": "sp-pizza-wood-gas.html",
-      "active": true
+      "active": true,
+      "code": "LPWG",
+      "approved": true
     }
   ],
   "news": [
