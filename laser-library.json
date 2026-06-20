@@ -849,8 +849,38 @@
         "cost": 13558118,
         "ts": "2026-06-20 23:19:12"
       }
+    },
+    {
+      "id": "5d097cbb75",
+      "name": "SAT_1.4mm_GOP 1 - 20-06-2026 23h20",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 50
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1400,
+          2550
+        ],
+        "sets": 5,
+        "gap": 3,
+        "margin": 5
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/SAT_1.4mm_GOP 1 - 20-06-2026 23h20",
+        "sheets": 50,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 50
+        },
+        "cost": 57259765,
+        "ts": "2026-06-20 23:20:36"
+      }
     }
   ],
-  "rev": 18,
-  "updatedAt": "2026-06-20T16:19:15.105Z"
+  "rev": 19,
+  "updatedAt": "2026-06-20T16:20:39.214Z"
 }
