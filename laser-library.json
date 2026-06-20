@@ -919,8 +919,48 @@
         "cost": 74666792,
         "ts": "2026-06-20 23:23:11"
       }
+    },
+    {
+      "id": "2a53c2e184",
+      "name": "Nhiều file - 21-06-2026 01h11",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 95
+        },
+        {
+          "label": "SAT_2.0mm",
+          "sheets": 33
+        },
+        {
+          "label": "SAT_3.0mm",
+          "sheets": 9
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 10,
+        "gap": 3,
+        "margin": 3
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/Nhiều file - 21-06-2026 01h11",
+        "sheets": 137,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 95,
+          "SAT_2.0mm": 33,
+          "SAT_3.0mm": 9
+        },
+        "cost": 137224590,
+        "ts": "2026-06-21 01:13:01"
+      }
     }
   ],
-  "rev": 20,
-  "updatedAt": "2026-06-20T16:23:16.509Z"
+  "rev": 21,
+  "updatedAt": "2026-06-20T18:13:03.925Z"
 }
