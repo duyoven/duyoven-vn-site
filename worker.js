@@ -486,14 +486,28 @@ export default {
       } catch (e) { return H("<h2>Lỗi</h2><p><code>" + String(e).slice(0, 200) + "</code></p>"); }
     }
 
-    // --- TU TEST ma hoa khoa Drive (encrypt->decrypt round-trip voi khoa that) ---
-    if (url.pathname === "/api/laser-drive-selftest") {
+    // --- DON dep thu muc test trong Drive (1 lan, roi se go bo) ---
+    if (url.pathname === "/api/laser-drive-cleanup") {
       try {
-        const obj = { client_secret: "TEST_cs_123", refresh_token: "TEST_rt_456" };
-        const enc = await gdEncrypt(env, obj);
-        const dec = await gdDecrypt(env, enc);
-        const ok = JSON.stringify(dec) === JSON.stringify(obj);
-        return jsonResp({ ok, roundtrip: ok, encLen: enc.length, hasGhToken: !!env.GH_TOKEN });
+        const tok = await gdAccessToken(env);
+        if (!tok) return jsonResp({ ok: false, reason: "chua cau hinh" });
+        const root = await gdRootFolder(tok, env);
+        const names = (url.searchParams.get("names") || "").split(",").map(s => s.trim()).filter(Boolean);
+        const trashed = [];
+        for (const nm of names) {
+          const q = "mimeType='application/vnd.google-apps.folder' and trashed=false and name='" +
+            nm.replace(/'/g, "\\'") + "' and '" + root + "' in parents";
+          const r = await fetch("https://www.googleapis.com/drive/v3/files?fields=files(id)&q=" +
+            encodeURIComponent(q), { headers: { Authorization: "Bearer " + tok } });
+          const j = await r.json();
+          for (const f of (j.files || [])) {
+            await fetch("https://www.googleapis.com/drive/v3/files/" + f.id, { method: "PATCH",
+              headers: { Authorization: "Bearer " + tok, "Content-Type": "application/json" },
+              body: JSON.stringify({ trashed: true }) });
+            trashed.push(nm);
+          }
+        }
+        return jsonResp({ ok: true, trashed });
       } catch (e) { return jsonResp({ ok: false, error: String(e) }); }
     }
 
