@@ -448,6 +448,44 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // --- APP XEP LASER: OAuth callback tai redirect URI CO SAN (quan-ly.html) ---
+    // -> Duy KHONG can them/sua redirect URI trong Google (dung cai da dang ky).
+    if (url.pathname === "/quan-ly.html" && url.searchParams.get("state") === "laserdrive"
+        && url.searchParams.get("code")) {
+      const cid = env.GOOGLE_CLIENT_ID || GD_CLIENT_ID_DEFAULT;
+      const redirect = url.origin + "/quan-ly.html";
+      const code = url.searchParams.get("code");
+      const H = (b) => new Response("<!doctype html><html lang=vi><head><meta charset=utf-8>" +
+        "<meta name=viewport content='width=device-width,initial-scale=1'><title>Bật Drive</title>" +
+        "<style>body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#15110e;color:#eee;" +
+        "max-width:640px;margin:30px auto;padding:0 18px;line-height:1.7}h2{color:#ff7a45}a.btn{background:#e0431f;" +
+        "color:#fff;border-radius:8px;padding:12px 22px;text-decoration:none}code{background:#241c17;border:1px solid #5a3;" +
+        "border-radius:6px;color:#9f9;padding:3px 8px;word-break:break-all}</style></head><body>" + b + "</body></html>",
+        { headers: { "content-type": "text/html; charset=utf-8" } });
+      const creds = await gdLoadCreds(env);
+      const cs = creds && creds.client_secret;
+      if (!cs) return H("<h2>Hết phiên</h2><p>Mở lại <a class=btn href='/api/laser-drive-auth'>trang bật Drive</a> rồi làm lại.</p>");
+      try {
+        const r = await fetch("https://oauth2.googleapis.com/token", { method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "grant_type=authorization_code&code=" + encodeURIComponent(code) +
+            "&client_id=" + encodeURIComponent(cid) + "&client_secret=" + encodeURIComponent(cs) +
+            "&redirect_uri=" + encodeURIComponent(redirect) });
+        const j = await r.json();
+        if (!j.refresh_token) return H("<h2>Chưa lấy được mã</h2><p>Google: <code>" + JSON.stringify(j).slice(0, 280) +
+          "</code></p><p>Vào Google Account → Bảo mật → Quyền của bên thứ ba, gỡ ứng dụng rồi " +
+          "<a class=btn href='/api/laser-drive-auth'>cấp lại</a>.</p>");
+        await gdSaveCreds(env, { client_secret: cs, refresh_token: j.refresh_token });
+        _gdTokCache = null; _gdRootCache = null;
+        let ok = false;
+        try { const tk = await gdAccessToken(env); if (tk) ok = !!(await gdRootFolder(tk, env)); } catch (e) {}
+        try { ctx && ctx.waitUntil && ctx.waitUntil(auditLog(env, "laser", "Bat luu Drive", "OAuth")); } catch (e) {}
+        return H("<h2>✅ Đã bật lưu Google Drive thành công!</h2><p>Từ giờ mọi máy nhân viên tự đổ " +
+          "phiên xếp về thư mục <b>DuyNestPro</b> trong Drive của bạn" + (ok ? " (đã tạo sẵn thư mục)" : "") +
+          ". Có thể đóng trang này.</p>");
+      } catch (e) { return H("<h2>Lỗi</h2><p><code>" + String(e).slice(0, 200) + "</code></p>"); }
+    }
+
     // --- AI: tư vấn (chat) ---
     if (url.pathname === "/api/ai/chat" && request.method === "POST") {
       try {
@@ -681,8 +719,10 @@ export default {
         try { const fd = await request.formData(); cs = String(fd.get("cs") || "").trim(); } catch (e) {}
         if (!cs) return H("<h2>Thiếu mã</h2><p>Chưa nhập Client secret. <a class=btn href='" + redirect + "'>Quay lại</a></p>");
         await gdSaveCreds(env, { client_secret: cs });
+        // dung redirect URI CO SAN quan-ly.html (Duy khoi them URI moi) + state=laserdrive
+        const gredirect = url.origin + "/quan-ly.html";
         const auth = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + encodeURIComponent(cid) +
-          "&redirect_uri=" + encodeURIComponent(redirect) + "&response_type=code" +
+          "&redirect_uri=" + encodeURIComponent(gredirect) + "&response_type=code&state=laserdrive" +
           "&scope=" + encodeURIComponent("https://www.googleapis.com/auth/drive.file") +
           "&access_type=offline&prompt=consent";
         return Response.redirect(auth, 303);
@@ -719,15 +759,13 @@ export default {
           return H("<h2>Lỗi</h2><p><code>" + String(e).slice(0, 200) + "</code></p>");
         }
       }
-      // (3) GET dau tien: form nhap Client secret + huong dan
+      // (3) GET dau tien: form nhap Client secret (KHONG can them redirect URI nua)
       return H("<h2>Bật lưu phiên xếp về Google Drive</h2>" +
-        "<p><b>Đăng nhập trình duyệt bằng tài khoản <code>vinhduynguyen@gmail.com</code></b> (Drive sẽ lưu vào tài khoản này).</p>" +
-        "<ol><li>Mở Google Cloud → API & Services → Credentials → mở ứng dụng OAuth, thêm <b>Authorized redirect URI</b>:<br><code>" +
-        redirect + "</code> rồi Save.</li>" +
-        "<li>Copy <b>Client secret</b> của ứng dụng đó, dán vào ô dưới → bấm Cho phép.</li></ol>" +
-        "<form method=POST action='" + redirect + "'><input name=cs placeholder='Dán Client secret vào đây' required>" +
+        "<p><b>Đăng nhập trình duyệt bằng tài khoản <code>vinhduynguyen@gmail.com</code></b> (Drive sẽ lưu vào đây).</p>" +
+        "<p>Dán <b>Client secret</b> (mã <code>GOCSPX-…</code> bạn vừa tạo trong Google Cloud) vào ô dưới rồi bấm Cho phép:</p>" +
+        "<form method=POST action='" + redirect + "'><input name=cs placeholder='Dán Client secret (GOCSPX-...) vào đây' required>" +
         "<p><button type=submit>✅ Cho phép Google Drive</button></p></form>" +
-        "<p style='color:#888;font-size:13px'>Chỉ cấp quyền với file phần mềm tạo (drive.file). Mã được LƯU MÃ HOÁ trên máy chủ — bạn KHÔNG cần đụng Cloudflare.</p>");
+        "<p style='color:#888;font-size:13px'>Chỉ cấp quyền với file phần mềm tạo (drive.file). Mã được LƯU MÃ HOÁ trên máy chủ — bạn KHÔNG cần đụng Cloudflare, KHÔNG cần thêm địa chỉ redirect.</p>");
     }
 
     // --- AI: trợ lý báo giá nội bộ (chỉ nhân viên) ---
