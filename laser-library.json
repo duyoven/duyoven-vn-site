@@ -999,8 +999,38 @@
         "cost": 197567036,
         "ts": "2026-06-21 01:33:53"
       }
+    },
+    {
+      "id": "a277f33c1e",
+      "name": "Đơn hàng SAT_3mm_GOP×2 - 21-06-2026 01h55",
+      "items": [
+        {
+          "label": "SAT_Nonemm",
+          "sheets": 2
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 1,
+        "gap": 3,
+        "margin": 3
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/Đơn hàng SAT_3mm_GOP×2 - 21-06-2026 01h55",
+        "sheets": 2,
+        "all_ok": true,
+        "materials": {
+          "SAT_Nonemm": 2
+        },
+        "cost": 583410,
+        "ts": "2026-06-21 01:55:23"
+      }
     }
   ],
-  "rev": 22,
-  "updatedAt": "2026-06-20T18:33:55.944Z"
+  "rev": 23,
+  "updatedAt": "2026-06-20T18:55:26.385Z"
 }
