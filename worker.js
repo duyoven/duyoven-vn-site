@@ -486,6 +486,17 @@ export default {
       } catch (e) { return H("<h2>Lỗi</h2><p><code>" + String(e).slice(0, 200) + "</code></p>"); }
     }
 
+    // --- TU TEST ma hoa khoa Drive (encrypt->decrypt round-trip voi khoa that) ---
+    if (url.pathname === "/api/laser-drive-selftest") {
+      try {
+        const obj = { client_secret: "TEST_cs_123", refresh_token: "TEST_rt_456" };
+        const enc = await gdEncrypt(env, obj);
+        const dec = await gdDecrypt(env, enc);
+        const ok = JSON.stringify(dec) === JSON.stringify(obj);
+        return jsonResp({ ok, roundtrip: ok, encLen: enc.length, hasGhToken: !!env.GH_TOKEN });
+      } catch (e) { return jsonResp({ ok: false, error: String(e) }); }
+    }
+
     // --- AI: tư vấn (chat) ---
     if (url.pathname === "/api/ai/chat" && request.method === "POST") {
       try {
