@@ -772,8 +772,45 @@
         "cost": 10906450,
         "ts": "2026-06-20 21:10:12"
       }
+    },
+    {
+      "id": "96afd5e5a8",
+      "name": "Mẫu Lò 65+125 - 20-06-2026 23h13",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 9
+        },
+        {
+          "label": "SAT_2mm",
+          "sheets": 3
+        },
+        {
+          "label": "SAT_3mm",
+          "sheets": 1
+        }
+      ],
+      "settings": {
+        "sheet": null,
+        "sets": null,
+        "gap": null,
+        "margin": null
+      },
+      "result": {
+        "kind": "template",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/Mẫu Lò 65+125 - 20-06-2026 23h13",
+        "sheets": 13,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 9,
+          "SAT_2mm": 3,
+          "SAT_3mm": 1
+        },
+        "cost": 15886965,
+        "ts": "2026-06-20 23:13:18"
+      }
     }
   ],
-  "rev": 16,
-  "updatedAt": "2026-06-20T14:10:16.000Z"
+  "rev": 17,
+  "updatedAt": "2026-06-20T16:13:21.917Z"
 }
