@@ -435,8 +435,48 @@
         "cost": 2401510,
         "ts": "2026-06-20 15:19:15"
       }
+    },
+    {
+      "id": "33bec74f98",
+      "name": "BV laser lò 65 - đã đặt tên hoàn chỉnh.dxf - 2 - 20-06-2026 15h22",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 3
+        },
+        {
+          "label": "SAT_2.0mm",
+          "sheets": 1
+        },
+        {
+          "label": "SAT_3.0mm",
+          "sheets": 1
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 5,
+        "gap": 3,
+        "margin": 5
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "C:\\Users\\User\\DuyNestPro\\BV laser lò 65 - đã đặt tên hoàn chỉnh.dxf - 2 - 20-06-2026 15h22",
+        "sheets": 5,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 3,
+          "SAT_2.0mm": 1,
+          "SAT_3.0mm": 1
+        },
+        "cost": 6268918,
+        "ts": "2026-06-20 15:22:49"
+      }
     }
   ],
-  "rev": 7,
-  "updatedAt": "2026-06-20T08:19:18.090Z"
+  "rev": 8,
+  "updatedAt": "2026-06-20T08:22:53.289Z"
 }
