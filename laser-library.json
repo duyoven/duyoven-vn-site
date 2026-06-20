@@ -405,8 +405,38 @@
         "cost": 19211960,
         "ts": "2026-06-20 13:37:42"
       }
+    },
+    {
+      "id": "73bd8d5450",
+      "name": "213213123123123 - 20-06-2026 15h18",
+      "items": [
+        {
+          "label": "TATCA",
+          "sheets": 16
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 1,
+        "gap": 3,
+        "margin": 5
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "C:\\Users\\User\\DuyNestPro\\213213123123123 - 20-06-2026 15h18",
+        "sheets": 16,
+        "all_ok": true,
+        "materials": {
+          "TATCA": 16
+        },
+        "cost": 2401510,
+        "ts": "2026-06-20 15:19:15"
+      }
     }
   ],
-  "rev": 6,
-  "updatedAt": "2026-06-20T06:37:46.444Z"
+  "rev": 7,
+  "updatedAt": "2026-06-20T08:19:18.090Z"
 }
