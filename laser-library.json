@@ -809,8 +809,48 @@
         "cost": 15886965,
         "ts": "2026-06-20 23:13:18"
       }
+    },
+    {
+      "id": "0598c8d016",
+      "name": "BV laser lò 125 - 20-06-2026 23h19",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 6
+        },
+        {
+          "label": "SAT_2.0mm",
+          "sheets": 3
+        },
+        {
+          "label": "SAT_3.0mm",
+          "sheets": 1
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1400,
+          2550
+        ],
+        "sets": 5,
+        "gap": 3,
+        "margin": 5
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/BV laser lò 125 - 20-06-2026 23h19",
+        "sheets": 10,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 6,
+          "SAT_2.0mm": 3,
+          "SAT_3.0mm": 1
+        },
+        "cost": 13558118,
+        "ts": "2026-06-20 23:19:12"
+      }
     }
   ],
-  "rev": 17,
-  "updatedAt": "2026-06-20T16:13:21.917Z"
+  "rev": 18,
+  "updatedAt": "2026-06-20T16:19:15.105Z"
 }
