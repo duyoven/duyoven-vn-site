@@ -349,12 +349,48 @@ async function laserDeviceOk(env, device, key) {
 // Can bien Worker: GOOGLE_CLIENT_SECRET (secret) + GOOGLE_REFRESH_TOKEN (secret).
 // GOOGLE_CLIENT_ID mac dinh = client bao gia (cong khai); thu muc DuyNestPro tu tao trong Drive.
 const GD_CLIENT_ID_DEFAULT = "692061670720-n836gc68b3k5q5ceq8jb8bcb7nvt50on.apps.googleusercontent.com";
+// Khoa (client_secret + refresh_token) duoc LUU MA HOA tren nhanh appdata (laser-drive-token.json)
+// -> Duy KHONG can dat secret tren Cloudflare. Khoa giai ma = SHA-256(GH_TOKEN) (chi Worker biet).
+async function _gdCryptoKey(env) {
+  const seed = (env.SESSION_SECRET || env.GH_TOKEN || "laser-drive") + "|laser-drive-v1";
+  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(seed));
+  return crypto.subtle.importKey("raw", h, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+}
+async function gdEncrypt(env, obj) {
+  const key = await _gdCryptoKey(env);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key,
+    new TextEncoder().encode(JSON.stringify(obj))));
+  const out = new Uint8Array(iv.length + ct.length); out.set(iv); out.set(ct, iv.length);
+  return _b64urlEnc(out);
+}
+async function gdDecrypt(env, b64) {
+  const key = await _gdCryptoKey(env);
+  const raw = _b64urlDec(b64); const iv = raw.slice(0, 12); const ct = raw.slice(12);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+async function gdLoadCreds(env) {
+  try {
+    const r = await ghGetJson(env, "laser-drive-token.json", "appdata");
+    if (r.obj && r.obj.enc) return await gdDecrypt(env, r.obj.enc);
+  } catch (e) {}
+  return null;
+}
+async function gdSaveCreds(env, creds) {
+  const enc = await gdEncrypt(env, creds);
+  return ghUpdate(env, "laser-drive-token.json", "appdata",
+    (store) => { store.enc = enc; return { msg: "laser-drive: cap nhat cap quyen Drive" }; });
+}
 let _gdTokCache = null;
 async function gdAccessToken(env) {
-  const rt = env.GOOGLE_REFRESH_TOKEN;
+  let rt = env.GOOGLE_REFRESH_TOKEN, cs = env.GOOGLE_CLIENT_SECRET;
   const cid = env.GOOGLE_CLIENT_ID || GD_CLIENT_ID_DEFAULT;
-  const cs = env.GOOGLE_CLIENT_SECRET;
-  if (!rt || !cid || !cs) return null;
+  if (!rt || !cs) {                                   // khong co tren env -> doc kho ma hoa
+    const c = await gdLoadCreds(env);
+    if (c) { rt = rt || c.refresh_token; cs = cs || c.client_secret; }
+  }
+  if (!rt || !cs) return null;
   const now = Math.floor(Date.now() / 1000);
   if (_gdTokCache && _gdTokCache.exp > now + 60) return _gdTokCache.tok;
   const resp = await fetch("https://oauth2.googleapis.com/token", { method: "POST",
@@ -365,6 +401,10 @@ async function gdAccessToken(env) {
   if (!j.access_token) return null;
   _gdTokCache = { tok: j.access_token, exp: now + (Number(j.expires_in) || 3600) };
   return j.access_token;
+}
+function gdConfigured(env) {
+  return !!(env.GOOGLE_REFRESH_TOKEN && env.GOOGLE_CLIENT_SECRET) ||
+         !!(env.GH_TOKEN);   // co the doc kho ma hoa tren appdata
 }
 let _gdRootCache = null;
 async function gdRootFolder(tok, env) {
@@ -599,9 +639,8 @@ export default {
         const v = await verifyLaser(env, String(b.token || ""), device);
         if (!v) return jsonResp({ ok: false, reason: "Chua kich hoat." }, 401);
         if (!(await laserDeviceOk(env, device, v.key))) return jsonResp({ ok: false, reason: "May khong duoc phep." }, 403);
-        if (!env.GOOGLE_REFRESH_TOKEN || !env.GOOGLE_CLIENT_SECRET) return jsonResp({ ok: true, not_configured: true });
         const tok = await gdAccessToken(env);
-        if (!tok) return jsonResp({ ok: false, error: "Drive: khong lay duoc token (kiem tra GOOGLE_REFRESH_TOKEN/SECRET)." }, 502);
+        if (!tok) return jsonResp({ ok: true, not_configured: true });   // chua cap quyen Drive -> im lang
         const root = await gdRootFolder(tok, env);   // thu muc DuyNestPro trong My Drive (tu tao)
         if (!root) return jsonResp({ ok: false, error: "Khong tao duoc thu muc goc Drive." }, 502);
         const product = String(b.product || "Phien").replace(/[\/\\:*?"<>|]/g, "-").slice(0, 80) || "Phien";
@@ -623,53 +662,72 @@ export default {
       } catch (e) { return jsonResp({ ok: false, error: String(e) }, 500); }
     }
 
-    // --- APP XEP LASER: CAP QUYEN Drive 1 lan (chu bam link -> dong y -> hien refresh token) ---
+    // --- APP XEP LASER: CAP QUYEN Drive 1 lan (KHONG can Cloudflare; Worker tu luu khoa ma hoa) ---
     if (url.pathname === "/api/laser-drive-auth") {
       const cid = env.GOOGLE_CLIENT_ID || GD_CLIENT_ID_DEFAULT;
       const redirect = url.origin + "/api/laser-drive-auth";
-      const code = url.searchParams.get("code");
-      const err = url.searchParams.get("error");
       const H = (body) => new Response("<!doctype html><html lang=vi><head><meta charset=utf-8>" +
-        "<meta name=viewport content='width=device-width,initial-scale=1'><title>Cấp quyền Google Drive</title>" +
+        "<meta name=viewport content='width=device-width,initial-scale=1'><title>Bật lưu Google Drive</title>" +
         "<style>body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#15110e;color:#eee;" +
-        "max-width:640px;margin:30px auto;padding:0 18px;line-height:1.6}h2{color:#ff7a45}a.btn,button{background:#e0431f;" +
-        "color:#fff;border:0;border-radius:8px;padding:12px 20px;font-size:16px;text-decoration:none;display:inline-block;cursor:pointer}" +
-        "code,textarea{background:#241c17;border:1px solid #5a3;border-radius:8px;color:#9f9;padding:12px;" +
-        "width:100%;box-sizing:border-box;font-size:13px;word-break:break-all}ol{padding-left:20px}</style></head><body>" +
-        body + "</body></html>", { headers: { "content-type": "text/html; charset=utf-8" } });
-      if (err) return H("<h2>Chưa cấp quyền</h2><p>Google báo: " + String(err).slice(0,200) +
-        "</p><p><a class=btn href='" + redirect + "'>Thử lại</a></p>");
-      if (!code) {
+        "max-width:640px;margin:30px auto;padding:0 18px;line-height:1.7}h2{color:#ff7a45}button,a.btn{background:#e0431f;" +
+        "color:#fff;border:0;border-radius:8px;padding:12px 22px;font-size:16px;text-decoration:none;display:inline-block;cursor:pointer}" +
+        "code{background:#241c17;border:1px solid #5a3;border-radius:6px;color:#9f9;padding:3px 8px;font-size:13px;word-break:break-all}" +
+        "input{width:100%;padding:12px;border-radius:8px;border:1px solid #5a3;background:#241c17;color:#9f9;font-size:14px;box-sizing:border-box}" +
+        "ol{padding-left:20px}</style></head><body>" + body + "</body></html>",
+        { headers: { "content-type": "text/html; charset=utf-8" } });
+      // (1) POST: nhan Client secret -> luu ma hoa -> chuyen sang man DONG Y cua Google
+      if (request.method === "POST") {
+        let cs = "";
+        try { const fd = await request.formData(); cs = String(fd.get("cs") || "").trim(); } catch (e) {}
+        if (!cs) return H("<h2>Thiếu mã</h2><p>Chưa nhập Client secret. <a class=btn href='" + redirect + "'>Quay lại</a></p>");
+        await gdSaveCreds(env, { client_secret: cs });
         const auth = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + encodeURIComponent(cid) +
           "&redirect_uri=" + encodeURIComponent(redirect) + "&response_type=code" +
           "&scope=" + encodeURIComponent("https://www.googleapis.com/auth/drive.file") +
           "&access_type=offline&prompt=consent";
-        return H("<h2>Bật lưu phiên xếp lên Google Drive</h2>" +
-          "<p>Đăng nhập đúng tài khoản <b>vinhduy@duyoven.com</b> rồi bấm nút dưới để CHO PHÉP phần mềm " +
-          "lưu file phiên xếp vào Drive của bạn.</p><p><a class=btn href='" + auth + "'>✅ Cho phép Google Drive</a></p>" +
-          "<p style='color:#888;font-size:13px'>Chỉ cấp quyền với các file phần mềm tạo ra (drive.file). Bạn có thể thu hồi bất cứ lúc nào trong Google Account.</p>");
+        return Response.redirect(auth, 303);
       }
-      const cs = env.GOOGLE_CLIENT_SECRET;
-      if (!cs) return H("<h2>Thiếu cấu hình</h2><p>Chưa đặt <code>GOOGLE_CLIENT_SECRET</code> trong Cloudflare. " +
-        "Đặt xong rồi mở lại link này.</p>");
-      try {
-        const r = await fetch("https://oauth2.googleapis.com/token", { method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: "grant_type=authorization_code&code=" + encodeURIComponent(code) +
-            "&client_id=" + encodeURIComponent(cid) + "&client_secret=" + encodeURIComponent(cs) +
-            "&redirect_uri=" + encodeURIComponent(redirect) });
-        const j = await r.json();
-        if (!j.refresh_token) return H("<h2>Chưa lấy được mã</h2><p>Google trả về: <code>" +
-          JSON.stringify(j).slice(0, 300) + "</code></p><p>Thử lại: <a class=btn href='" + redirect + "'>Cấp quyền lại</a> " +
-          "(nếu đã cấp trước đó, vào Google Account → Bảo mật → Quyền của bên thứ ba → gỡ rồi cấp lại để nhận mã mới).</p>");
-        return H("<h2>✅ Thành công! Còn 1 bước cuối</h2>" +
-          "<p>Copy đoạn mã dưới đây, vào <b>Cloudflare → Worker → Settings → Variables</b>, thêm <b>Secret</b> tên " +
-          "<code>GOOGLE_REFRESH_TOKEN</code> với giá trị là đoạn này:</p>" +
-          "<textarea rows=4 readonly onclick='this.select()'>" + j.refresh_token + "</textarea>" +
-          "<p style='color:#888;font-size:13px'>Giữ kín đoạn mã này (như mật khẩu). Sau khi lưu vào Cloudflare là xong — mọi máy nhân viên sẽ tự lưu phiên về Drive của bạn.</p>");
-      } catch (e) {
-        return H("<h2>Lỗi</h2><p><code>" + String(e).slice(0, 200) + "</code></p>");
+      const err = url.searchParams.get("error");
+      if (err) return H("<h2>Chưa cấp quyền</h2><p>Google báo: " + String(err).slice(0, 200) +
+        "</p><p><a class=btn href='" + redirect + "'>Thử lại</a></p>");
+      const code = url.searchParams.get("code");
+      // (2) Callback co code -> doi lay refresh token -> luu ma hoa (XONG, khong can Cloudflare)
+      if (code) {
+        const creds = await gdLoadCreds(env);
+        const cs = creds && creds.client_secret;
+        if (!cs) return H("<h2>Hết phiên</h2><p>Vui lòng <a class=btn href='" + redirect + "'>làm lại từ đầu</a>.</p>");
+        try {
+          const r = await fetch("https://oauth2.googleapis.com/token", { method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "grant_type=authorization_code&code=" + encodeURIComponent(code) +
+              "&client_id=" + encodeURIComponent(cid) + "&client_secret=" + encodeURIComponent(cs) +
+              "&redirect_uri=" + encodeURIComponent(redirect) });
+          const j = await r.json();
+          if (!j.refresh_token) return H("<h2>Chưa lấy được mã</h2><p>Google: <code>" +
+            JSON.stringify(j).slice(0, 280) + "</code></p><p>Nếu đã cấp quyền trước đó: vào " +
+            "<b>Google Account → Bảo mật → Quyền của bên thứ ba</b>, gỡ ứng dụng rồi " +
+            "<a class=btn href='" + redirect + "'>cấp lại</a> để nhận mã mới.</p>");
+          await gdSaveCreds(env, { client_secret: cs, refresh_token: j.refresh_token });
+          _gdTokCache = null; _gdRootCache = null;
+          let ok = false;
+          try { const tk = await gdAccessToken(env); if (tk) ok = !!(await gdRootFolder(tk, env)); } catch (e) {}
+          try { ctx && ctx.waitUntil && ctx.waitUntil(auditLog(env, "laser", "Bat luu Drive", "OAuth refresh token")); } catch (e) {}
+          return H("<h2>✅ Đã bật lưu Google Drive thành công!</h2>" +
+            "<p>Từ giờ <b>mọi máy nhân viên</b> tự động đổ phiên xếp về thư mục <b>DuyNestPro</b> trong Google Drive của bạn" +
+            (ok ? " (đã tạo sẵn thư mục)" : "") + ". Không cần làm gì thêm — có thể đóng trang này.</p>");
+        } catch (e) {
+          return H("<h2>Lỗi</h2><p><code>" + String(e).slice(0, 200) + "</code></p>");
+        }
       }
+      // (3) GET dau tien: form nhap Client secret + huong dan
+      return H("<h2>Bật lưu phiên xếp về Google Drive</h2>" +
+        "<p><b>Đăng nhập trình duyệt bằng tài khoản <code>vinhduynguyen@gmail.com</code></b> (Drive sẽ lưu vào tài khoản này).</p>" +
+        "<ol><li>Mở Google Cloud → API & Services → Credentials → mở ứng dụng OAuth, thêm <b>Authorized redirect URI</b>:<br><code>" +
+        redirect + "</code> rồi Save.</li>" +
+        "<li>Copy <b>Client secret</b> của ứng dụng đó, dán vào ô dưới → bấm Cho phép.</li></ol>" +
+        "<form method=POST action='" + redirect + "'><input name=cs placeholder='Dán Client secret vào đây' required>" +
+        "<p><button type=submit>✅ Cho phép Google Drive</button></p></form>" +
+        "<p style='color:#888;font-size:13px'>Chỉ cấp quyền với file phần mềm tạo (drive.file). Mã được LƯU MÃ HOÁ trên máy chủ — bạn KHÔNG cần đụng Cloudflare.</p>");
     }
 
     // --- AI: trợ lý báo giá nội bộ (chỉ nhân viên) ---
