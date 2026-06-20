@@ -344,6 +344,67 @@ async function laserDeviceOk(env, device, key) {
   } catch (e) { return false; }
 }
 
+// ===== Google Drive (SERVICE ACCOUNT) — luu PHIEN xep cua app laser vao Drive cua Duy =====
+// Can 2 bien Worker: GDRIVE_SA_JSON (noi dung file key service account, JSON) va
+// GDRIVE_LASER_FOLDER (ID thu muc Drive da chia se quyen Editor cho email service account).
+let _gdTokCache = null;
+async function gdAccessToken(env) {
+  if (!env.GDRIVE_SA_JSON) return null;
+  const now = Math.floor(Date.now() / 1000);
+  if (_gdTokCache && _gdTokCache.exp > now + 60) return _gdTokCache.tok;
+  let sa; try { sa = JSON.parse(env.GDRIVE_SA_JSON); } catch (e) { return null; }
+  if (!sa.client_email || !sa.private_key) return null;
+  const enc = (o) => _b64urlEnc(new TextEncoder().encode(JSON.stringify(o)));
+  const claim = { iss: sa.client_email, scope: "https://www.googleapis.com/auth/drive",
+    aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 };
+  const unsigned = enc({ alg: "RS256", typ: "JWT" }) + "." + enc(claim);
+  const pem = String(sa.private_key).replace(/-----[^-]+-----/g, "").replace(/\s+/g, "");
+  const bin = atob(pem); const der = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) der[i] = bin.charCodeAt(i);
+  const key = await crypto.subtle.importKey("pkcs8", der.buffer,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign({ name: "RSASSA-PKCS1-v1_5" }, key,
+    new TextEncoder().encode(unsigned));
+  const jwt = unsigned + "." + _b64urlEnc(new Uint8Array(sig));
+  const resp = await fetch("https://oauth2.googleapis.com/token", { method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=" + encodeURIComponent(jwt) });
+  const j = await resp.json();
+  if (!j.access_token) return null;
+  _gdTokCache = { tok: j.access_token, exp: now + (Number(j.expires_in) || 3600) };
+  return j.access_token;
+}
+async function gdFindOrCreateFolder(tok, name, parent) {
+  const safe = String(name).replace(/'/g, "\\'");
+  const q = "mimeType='application/vnd.google-apps.folder' and trashed=false and name='" +
+    safe + "' and '" + parent + "' in parents";
+  const r = await fetch("https://www.googleapis.com/drive/v3/files?fields=files(id)&q=" +
+    encodeURIComponent(q) + "&supportsAllDrives=true&includeItemsFromAllDrives=true",
+    { headers: { Authorization: "Bearer " + tok } });
+  const j = await r.json();
+  if (j.files && j.files.length) return j.files[0].id;
+  const cr = await fetch("https://www.googleapis.com/drive/v3/files?supportsAllDrives=true",
+    { method: "POST", headers: { Authorization: "Bearer " + tok, "Content-Type": "application/json" },
+      body: JSON.stringify({ name: String(name), mimeType: "application/vnd.google-apps.folder", parents: [parent] }) });
+  const cj = await cr.json();
+  return cj.id || null;
+}
+async function gdUploadFile(tok, name, parent, bytes, mime) {
+  const boundary = "duynest" + Math.random().toString(36).slice(2);
+  const pre = "--" + boundary + "\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n" +
+    JSON.stringify({ name: String(name), parents: [parent] }) +
+    "\r\n--" + boundary + "\r\nContent-Type: " + mime + "\r\n\r\n";
+  const post = "\r\n--" + boundary + "--";
+  const te = new TextEncoder();
+  const preB = te.encode(pre), postB = te.encode(post);
+  const body = new Uint8Array(preB.length + bytes.length + postB.length);
+  body.set(preB, 0); body.set(bytes, preB.length); body.set(postB, preB.length + bytes.length);
+  const r = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id&supportsAllDrives=true",
+    { method: "POST", headers: { Authorization: "Bearer " + tok,
+      "Content-Type": "multipart/related; boundary=" + boundary }, body });
+  return await r.json();
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -529,6 +590,37 @@ export default {
         }
         return jsonResp({ ok: false, reason: "action khong hop le." }, 400);
       } catch (e) { return jsonResp({ ok: false, reason: String(e) }, 500); }
+    }
+
+    // --- APP XEP LASER: luu PHIEN (zip) len Google Drive cua Duy (service account) ---
+    if (url.pathname === "/api/laser-drive" && request.method === "POST") {
+      try {
+        const b = await request.json();
+        const device = String(b.device || "").trim();
+        const v = await verifyLaser(env, String(b.token || ""), device);
+        if (!v) return jsonResp({ ok: false, reason: "Chua kich hoat." }, 401);
+        if (!(await laserDeviceOk(env, device, v.key))) return jsonResp({ ok: false, reason: "May khong duoc phep." }, 403);
+        const root = env.GDRIVE_LASER_FOLDER;
+        if (!root || !env.GDRIVE_SA_JSON) return jsonResp({ ok: true, not_configured: true });
+        const tok = await gdAccessToken(env);
+        if (!tok) return jsonResp({ ok: false, error: "Drive: khong lay duoc token (kiem tra GDRIVE_SA_JSON)." }, 502);
+        const product = String(b.product || "Phien").replace(/[\/\\:*?"<>|]/g, "-").slice(0, 80) || "Phien";
+        const fname = String(b.fname || "phien.zip").replace(/[\/\\:*?"<>|]/g, "-").slice(0, 120);
+        const zipB64 = String(b.zip || "");
+        if (!zipB64) return jsonResp({ ok: false, error: "Thieu du lieu." }, 400);
+        let bytes; try {
+          const bin = atob(zipB64); bytes = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        } catch (e) { return jsonResp({ ok: false, error: "Du lieu zip loi." }, 400); }
+        const sub = await gdFindOrCreateFolder(tok, product, root);   // gom theo TEN FILE/san pham
+        if (!sub) return jsonResp({ ok: false, error: "Khong tao duoc thu muc Drive." }, 502);
+        const up = await gdUploadFile(tok, fname, sub, bytes, "application/zip");
+        if (up && up.id) {
+          try { ctx && ctx.waitUntil && ctx.waitUntil(auditLog(env, "laser", "Luu phien xep Drive", product + " / " + fname)); } catch (e) {}
+          return jsonResp({ ok: true, id: up.id });
+        }
+        return jsonResp({ ok: false, error: "Upload that bai: " + JSON.stringify(up || {}).slice(0, 200) }, 502);
+      } catch (e) { return jsonResp({ ok: false, error: String(e) }, 500); }
     }
 
     // --- AI: trợ lý báo giá nội bộ (chỉ nhân viên) ---
