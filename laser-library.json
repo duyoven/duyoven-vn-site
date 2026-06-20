@@ -475,8 +475,48 @@
         "cost": 6268918,
         "ts": "2026-06-20 15:22:49"
       }
+    },
+    {
+      "id": "7257a067c5",
+      "name": "BV laser lò 125- đã đặt tên hoàn chỉnh - 20-06-2026 15h23",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 4
+        },
+        {
+          "label": "SAT_2.0mm",
+          "sheets": 2
+        },
+        {
+          "label": "SAT_3.0mm",
+          "sheets": 1
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 3,
+        "gap": 3,
+        "margin": 5
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "C:\\Users\\User\\DuyNestPro\\BV laser lò 125- đã đặt tên hoàn chỉnh - 20-06-2026 15h23",
+        "sheets": 7,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 4,
+          "SAT_2.0mm": 2,
+          "SAT_3.0mm": 1
+        },
+        "cost": 8545984,
+        "ts": "2026-06-20 15:23:19"
+      }
     }
   ],
-  "rev": 8,
-  "updatedAt": "2026-06-20T08:22:53.289Z"
+  "rev": 9,
+  "updatedAt": "2026-06-20T08:23:22.770Z"
 }
