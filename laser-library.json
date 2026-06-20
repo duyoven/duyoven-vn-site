@@ -959,8 +959,48 @@
         "cost": 137224590,
         "ts": "2026-06-21 01:13:01"
       }
+    },
+    {
+      "id": "e2b906fb63",
+      "name": "Đơn hàng Lò 65L×3 Lò 80L×5 Lò 125L×4 - 21-06-2026 01h32",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 114
+        },
+        {
+          "label": "SAT_2mm",
+          "sheets": 39
+        },
+        {
+          "label": "SAT_3mm",
+          "sheets": 11
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 1,
+        "gap": 3,
+        "margin": 3
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/Đơn hàng Lò 65L×3 Lò 80L×5 Lò 125L×4 - 21-06-2026 01h32",
+        "sheets": 164,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 114,
+          "SAT_2mm": 39,
+          "SAT_3mm": 11
+        },
+        "cost": 197567036,
+        "ts": "2026-06-21 01:33:53"
+      }
     }
   ],
-  "rev": 21,
-  "updatedAt": "2026-06-20T18:13:03.925Z"
+  "rev": 22,
+  "updatedAt": "2026-06-20T18:33:55.944Z"
 }
