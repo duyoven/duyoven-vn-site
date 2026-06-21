@@ -1381,23 +1381,7 @@
       }
     }
   ],
-  "rev": 40,
-  "updatedAt": "2026-06-21T04:21:08.230Z",
-  "drawings": [
-    {
-      "id": "ZZTEST",
-      "name": "__test__",
-      "cur": 1,
-      "versions": [
-        {
-          "ver": 1,
-          "n_parts": 1,
-          "weight_kg": 0,
-          "dxf_gz": "x",
-          "materials": [],
-          "warnings": []
-        }
-      ]
-    }
-  ]
+  "rev": 41,
+  "updatedAt": "2026-06-21T04:21:15.278Z",
+  "drawings": []
 }
