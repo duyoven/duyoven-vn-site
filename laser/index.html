@@ -8,419 +8,359 @@
 <link rel="manifest" href="manifest.json">
 <style>
 :root{--bg:#0b0e13;--card:#151a22;--card2:#1c222c;--bd:#252c38;--fg:#e8edf4;--mut:#8a93a3;
---acc:#ff6a3d;--ok:#2ecc71;--info:#3b82f6;--danger:#ff5a5a;--hair:#222a36}
+--acc:#ff6a3d;--ok:#2ecc71;--info:#3b82f6;--danger:#ff5a5a;--hair:#222a36;--amber:#ffcd5a}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);
-font-family:-apple-system,Segoe UI,Roboto,system-ui,sans-serif;font-size:15px}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,Segoe UI,Roboto,system-ui,sans-serif;font-size:15px}
 .hide{display:none!important}
-header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#10141b;border-bottom:1px solid var(--hair);position:sticky;top:0;z-index:5}
-header .logo{font-weight:800;color:var(--acc);font-size:17px}
+header{display:flex;align-items:center;gap:6px;padding:9px 10px;background:#10141b;border-bottom:1px solid var(--hair);position:sticky;top:0;z-index:5}
+header .logo{font-weight:800;color:var(--acc);font-size:16px}
 header .ver{font-size:10px;color:var(--mut);border:1px solid var(--bd);border-radius:5px;padding:1px 5px}
 header .sp{flex:1}
+.icbtn{background:var(--card2);border:none;color:var(--fg);border-radius:8px;padding:7px 9px;font-size:14px}
 .sync{font-size:11px;color:var(--mut)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:10px;
-padding:11px 16px;font-size:15px;font-weight:700;color:#fff;background:var(--acc);cursor:pointer}
-.btn:active{filter:brightness(.9)}
-.btn.ok{background:var(--ok);color:#06210f}.btn.info{background:var(--info)}.btn.ghost{background:var(--card2);color:var(--fg);font-weight:600}
-.btn.sm{padding:8px 12px;font-size:13px;border-radius:8px}
-.btn:disabled{opacity:.5}
-nav{display:flex;background:#10141b;border-bottom:1px solid var(--hair);position:sticky;top:43px;z-index:4}
-nav button{flex:1;background:none;border:none;color:var(--mut);font-size:14px;font-weight:700;padding:12px 4px;border-bottom:2px solid transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:10px;padding:11px 16px;font-size:15px;font-weight:700;color:#fff;background:var(--acc)}
+.btn:active{filter:brightness(.9)}.btn:disabled{opacity:.5}
+.btn.ok{background:var(--ok);color:#06210f}.btn.info{background:var(--info)}.btn.ghost{background:var(--card2);color:var(--fg);font-weight:600}.btn.purple{background:#6c4cd6}
+.btn.sm{padding:8px 11px;font-size:13px;border-radius:8px}
+nav{display:flex;background:#10141b;border-bottom:1px solid var(--hair);position:sticky;top:42px;z-index:4;overflow-x:auto}
+nav button{flex:1;background:none;border:none;color:var(--mut);font-size:13px;font-weight:700;padding:11px 6px;border-bottom:2px solid transparent;white-space:nowrap}
 nav button.on{color:var(--fg);border-bottom-color:var(--acc)}
-main{padding:14px;max-width:760px;margin:0 auto}
+main{padding:13px;max-width:760px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
 .card h3{margin:0 0 10px;font-size:14px;color:var(--mut);font-weight:700}
 label.fld{display:block;font-size:12px;color:var(--mut);font-weight:700;margin:8px 0 3px}
-input[type=text],input[type=password],input[type=number]{width:100%;background:#0e1219;border:1px solid var(--bd);
-border-radius:9px;color:var(--fg);font-size:16px;padding:11px;outline:none}
+input{width:100%;background:#0e1219;border:1px solid var(--bd);border-radius:9px;color:var(--fg);font-size:16px;padding:11px;outline:none}
 input:focus{border-color:var(--acc)}
 .row{display:flex;gap:8px}.row>*{flex:1}
 .muted{color:var(--mut);font-size:12px;line-height:1.5}
 .big{font-size:18px;font-weight:800}
-.drop{border:2px dashed var(--bd);border-radius:14px;padding:26px 14px;text-align:center;color:var(--mut)}
-.drop.on{border-color:var(--acc);color:var(--fg)}
+.drop{border:2px dashed var(--bd);border-radius:14px;padding:24px 14px;text-align:center;color:var(--mut)}
 .item{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
-.item .nm{font-weight:800;font-size:15px}
-.item .me{color:var(--acc);font-weight:700;font-size:13px;margin-top:2px}
-.item .bd{color:var(--mut);font-size:11px;margin-top:2px}
+.item .nm{font-weight:800;font-size:15px}.item .me{color:var(--acc);font-weight:700;font-size:13px;margin-top:2px}
 .item .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.warn{color:#ffcd5a;font-size:11px;margin-top:4px}
+.warn{color:var(--amber);font-size:11px;margin-top:4px}
 .center{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
-.overlay{position:fixed;inset:0;background:rgba(7,9,13,.92);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(7,9,13,.93);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
 .spin{width:42px;height:42px;border:4px solid var(--bd);border-top-color:var(--acc);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:14px}
 @keyframes sp{to{transform:rotate(360deg)}}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000c;border:1px solid var(--bd);
-padding:10px 16px;border-radius:10px;font-size:13px;z-index:60;max-width:90%}
-/* viewer */
-#vwrap{position:fixed;inset:0;background:#0b0b0b;z-index:40;display:flex;flex-direction:column}
-#vbar{display:flex;gap:4px;padding:6px;background:#1b1f26;overflow-x:auto;align-items:center}
-#vbar button{background:#2a3038;color:#e8edf4;border:none;border-radius:8px;padding:8px 10px;font-size:13px;font-weight:700;white-space:nowrap}
-#vbar button.on{background:var(--info)}
-#vcanvas{flex:1;width:100%;touch-action:none;background:#0b0b0b}
-#vxy{padding:5px 10px;background:#1b1f26;color:var(--ok);font-family:monospace;font-size:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000d;border:1px solid var(--bd);padding:10px 16px;border-radius:10px;font-size:13px;z-index:70;max-width:90%}
+.full{position:fixed;inset:0;background:#0b0b0b;z-index:40;display:flex;flex-direction:column}
+.fbar{display:flex;gap:4px;padding:6px;background:#1b1f26;overflow-x:auto;align-items:center}
+.fbar button{background:#2a3038;color:#e8edf4;border:none;border-radius:8px;padding:8px 10px;font-size:13px;font-weight:700;white-space:nowrap}
+.fbar button.on{background:var(--info)}
+canvas.cv{flex:1;width:100%;touch-action:none;background:#0b0b0b}
+.fxy{padding:5px 10px;background:#1b1f26;color:var(--ok);font-family:monospace;font-size:12px}
+.chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.bub{max-width:84%;padding:9px 12px;border-radius:12px;font-size:14px;line-height:1.45;white-space:pre-wrap}
+.bub.ai{background:#1f242c;align-self:flex-start}.bub.me{background:var(--acc);color:#fff;align-self:flex-end}
+.chatin{display:flex;gap:6px;padding:8px;background:#10141b;border-top:1px solid var(--hair)}
 </style>
 </head>
 <body>
 
-<!-- ===== KICH HOAT ===== -->
+<!-- KICH HOAT -->
 <div id="act" class="center">
   <div class="logo" style="font-size:26px;color:var(--acc);font-weight:800">DuyNest</div>
   <div class="muted" style="margin:6px 0 20px">Phần mềm xếp laser — Duy's Oven</div>
   <div class="card" style="width:100%;max-width:380px;text-align:left">
     <h3>🔑 Kích hoạt bằng KEY</h3>
-    <label class="fld">Mã key</label>
-    <input id="actKey" type="text" placeholder="DOV-..." autocapitalize="characters" autocomplete="off">
-    <label class="fld">Tên máy / nhân viên</label>
-    <input id="actName" type="text" placeholder="VD: Điện thoại Tài">
+    <label class="fld">Mã key</label><input id="actKey" type="text" placeholder="DOV-..." autocapitalize="characters" autocomplete="off">
+    <label class="fld">Tên máy / nhân viên</label><input id="actName" type="text" placeholder="VD: Điện thoại Tài">
     <div id="actMsg" class="warn" style="color:var(--danger)"></div>
     <button id="actBtn" class="btn" style="width:100%;margin-top:12px">Kích hoạt</button>
-    <div class="muted" style="margin-top:10px">Mỗi máy/điện thoại 1 lần. Chủ duyệt máy mới (như trên Windows).</div>
+    <div class="muted" style="margin-top:10px">Mỗi máy 1 lần. Chủ duyệt máy mới (như Windows).</div>
   </div>
 </div>
 
-<!-- ===== APP ===== -->
+<!-- KHOA MAT KHAU -->
+<div id="lock" class="center hide">
+  <div style="font-size:40px">🔒</div><div class="big" style="margin:8px 0">Phần mềm đã khoá</div>
+  <input id="lockPw" type="password" inputmode="numeric" placeholder="Nhập mật khẩu" style="max-width:280px;text-align:center;font-size:20px">
+  <div id="lockMsg" class="warn" style="color:var(--danger)"></div>
+  <button id="lockBtn" class="btn" style="margin-top:12px;min-width:160px">Mở</button>
+</div>
+
+<!-- APP -->
 <div id="app" class="hide">
   <header>
-    <span class="logo">DuyNest</span><span class="ver" id="ver">web</span>
-    <span class="sp"></span>
+    <span class="logo">DuyNest</span><span class="ver">web</span><span class="sp"></span>
     <span class="sync" id="sync">·</span>
-    <button class="btn ghost sm" id="logout">Thoát</button>
+    <button class="icbtn" onclick="openAI()">🤖</button>
+    <button class="icbtn" onclick="pwSettings()">🔒</button>
+    <button class="icbtn" id="logout">⎋</button>
   </header>
   <nav>
-    <button data-tab="nest" class="on">✂ Xếp tấm</button>
-    <button data-tab="kho">📦 Kho bản vẽ</button>
+    <button data-tab="nest" class="on">✂ Xếp</button>
+    <button data-tab="order">📋 Đơn hàng</button>
+    <button data-tab="kho">📦 Kho</button>
+    <button data-tab="dash">📊 Tổng quan</button>
   </nav>
 
   <main id="mNest">
-    <div class="card">
-      <h3>1 · Chọn bản vẽ (DXF)</h3>
-      <div id="drop" class="drop">Bấm để chọn file .dxf<br><span class="muted">(điện thoại dùng DXF — DWG xuất từ máy tính)</span></div>
-      <input id="file" type="file" accept=".dxf" class="hide">
-      <div id="fileInfo" class="muted" style="margin-top:8px"></div>
-    </div>
-    <div class="card">
-      <h3>2 · Khổ tấm &amp; thông số</h3>
-      <div class="row">
-        <div><label class="fld">Rộng (mm)</label><input id="sw" type="number" value="1250"></div>
-        <div><label class="fld">Cao (mm)</label><input id="sh" type="number" value="2500"></div>
-      </div>
-      <div class="row">
-        <div><label class="fld">Hở (mm)</label><input id="gap" type="number" value="3"></div>
-        <div><label class="fld">Biên (mm)</label><input id="margin" type="number" value="3"></div>
-      </div>
-    </div>
+    <div class="card"><h3>1 · Chọn bản vẽ (DXF)</h3>
+      <div id="drop" class="drop">Bấm chọn file .dxf<br><span class="muted">(điện thoại dùng DXF)</span></div>
+      <input id="file" type="file" accept=".dxf" class="hide"><div id="fileInfo" class="muted" style="margin-top:8px"></div></div>
+    <div class="card"><h3>2 · Khổ tấm &amp; thông số</h3>
+      <div class="row"><div><label class="fld">Rộng</label><input id="sw" type="number" value="1250"></div><div><label class="fld">Cao</label><input id="sh" type="number" value="2500"></div></div>
+      <div class="row"><div><label class="fld">Hở</label><input id="gap" type="number" value="3"></div><div><label class="fld">Biên</label><input id="margin" type="number" value="3"></div></div></div>
     <button id="nestBtn" class="btn ok" style="width:100%;font-size:17px;padding:14px" disabled>✂ XẾP TẤM</button>
     <div id="nestOut" style="margin-top:14px"></div>
+  </main>
+
+  <main id="mOrder" class="hide">
+    <div class="card"><h3>📋 Đơn hàng nhiều lò</h3>
+      <div class="muted">Thêm bản vẽ (file hoặc từ kho) × số lượng → xếp CHUNG cho tiết kiệm tôn.</div>
+      <div class="row" style="margin-top:10px"><button class="btn info sm" onclick="$('#ordFile').click()">➕ Thêm file</button><button class="btn purple sm" onclick="ordFromKho()">📦 Thêm từ kho</button></div>
+      <input id="ordFile" type="file" accept=".dxf" multiple class="hide">
+      <div id="ordList" style="margin-top:10px"></div></div>
+    <button class="btn ok" style="width:100%;font-size:16px;padding:13px" onclick="orderGo()">✂ XẾP ĐƠN HÀNG</button>
+    <div id="orderOut" style="margin-top:14px"></div>
   </main>
 
   <main id="mKho" class="hide">
     <button id="khoUp" class="btn info" style="width:100%">⬆ Upload bản vẽ vào kho</button>
     <input id="khoFile" type="file" accept=".dxf" class="hide">
-    <button class="btn ok" style="width:100%;margin-top:8px" onclick="khoOrder()">✂ Xếp đơn hàng (bản vẽ đã chọn × SL)</button>
+    <input id="khoUpd" type="file" accept=".dxf" class="hide">
     <div id="khoList" style="margin-top:14px"></div>
   </main>
+
+  <main id="mDash" class="hide"><div id="dashOut"></div></main>
 </div>
 
-<!-- ===== VIEWER ===== -->
-<div id="vwrap" class="hide">
-  <div id="vbar">
-    <button id="vclose">✕ Đóng</button>
-    <button data-z="in">🔍+</button><button data-z="out">🔍−</button>
-    <button id="vfit">⛶ Vừa khít</button>
-    <button data-m="pan" class="on">✋ Di chuyển</button>
-    <button data-m="meas">📏 Đo</button>
-    <span style="flex:1"></span><span id="vname" class="muted" style="white-space:nowrap;padding-right:8px"></span>
-  </div>
-  <canvas id="vcanvas"></canvas>
-  <div id="vxy">X 0.00  Y 0.00</div>
-</div>
+<!-- VIEWER -->
+<div id="vwrap" class="full hide"><div class="fbar">
+  <button id="vclose">✕</button><button data-z="in">🔍+</button><button data-z="out">🔍−</button><button id="vfit">⛶ Vừa khít</button>
+  <button data-m="pan" class="on">✋</button><button data-m="meas">📏 Đo</button><span style="flex:1"></span><span id="vname" class="muted" style="white-space:nowrap;padding-right:6px"></span>
+</div><canvas id="vcanvas" class="cv"></canvas><div id="vxy" class="fxy">X 0  Y 0</div></div>
 
-<div id="py" class="overlay hide"><div class="spin"></div><div id="pyMsg">Đang khởi động bộ máy xếp…</div><div class="muted" style="margin-top:6px">Lần đầu tải ~15MB rồi lưu máy (nên dùng wifi)</div></div>
+<!-- MO PHONG -->
+<div id="swrap" class="full hide"><div class="fbar">
+  <button id="sclose">✕</button><button id="splay">⏸</button><button id="sreplay">⟲ Xem lại</button>
+  <span style="flex:1"></span><span id="scount" class="muted" style="white-space:nowrap;padding-right:6px"></span>
+</div><canvas id="scanvas" class="cv"></canvas></div>
+
+<!-- AI -->
+<div id="aiwrap" class="full hide"><div class="fbar"><button onclick="$('#aiwrap').classList.add('hide')">✕</button><b style="color:#fff">🤖 Trợ lý AI</b></div>
+  <div id="aiChat" class="chat"></div>
+  <div class="chatin"><input id="aiIn" type="text" placeholder="Hỏi gì đó…" style="flex:1"><button class="btn sm" onclick="aiSend()">Gửi</button></div></div>
+
+<div id="py" class="overlay hide"><div class="spin"></div><div id="pyMsg">Đang khởi động bộ máy xếp…</div><div class="muted" style="margin-top:6px">Lần đầu ~15MB rồi lưu máy (nên dùng wifi)</div></div>
 <div id="busy" class="overlay hide"><div class="spin"></div><div id="busyMsg">Đang xử lý…</div></div>
 
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
 <script>
-const API = location.origin;            // cùng tên miền -> không vướng CORS
-const $ = (s)=>document.querySelector(s);
-const LS = localStorage;
-function uuid(){return 'xxxxxxxxyxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c=='x'?r:(r&0x3|0x8)).toString(16)})+Date.now().toString(16)}
-function device(){let d=LS.getItem('dnz_device'); if(!d){d='web-'+uuid(); LS.setItem('dnz_device',d)} return d}
-function toast(m){let t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
-function setSync(s){const m={syncing:['🔄 Đang đồng bộ…','#8a93a3'],ok:['✅ Đã đồng bộ','#2ecc71'],local:['💾 Trên máy','#8a93a3'],err:['⚠ Lỗi mạng','#ff6a3d'],wait:['⏳ Chờ chủ duyệt máy','#ffcd5a']};const x=m[s]||m.local;$('#sync').textContent=x[0];$('#sync').style.color=x[1]}
-
-/* ---------- KICH HOAT ---------- */
-async function api(path, body){
-  const r = await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  return await r.json();
-}
-$('#actBtn').onclick = async ()=>{
-  const key=$('#actKey').value.trim(), name=$('#actName').value.trim()||'Web';
-  if(!key){$('#actMsg').textContent='Nhập key';return}
-  $('#actBtn').disabled=true;$('#actMsg').textContent='';$('#actBtn').textContent='Đang kích hoạt…';
-  try{
-    const r=await api('/api/laser-activate',{key,device:device(),name});
-    if(r.ok && r.token){ LS.setItem('dnz_token',r.token); LS.setItem('dnz_key',key); showApp(); }
-    else { $('#actMsg').textContent = r.reason||'Key không hợp lệ'; }
-  }catch(e){ $('#actMsg').textContent='Lỗi mạng: '+e.message; }
-  $('#actBtn').disabled=false;$('#actBtn').textContent='Kích hoạt';
-};
-$('#logout').onclick=()=>{ LS.removeItem('dnz_token'); location.reload(); };
+const API=location.origin, $=s=>document.querySelector(s), LS=localStorage;
+function uuid(){return 'xxxxxxxxyxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c=='x'?r:(r&3|8)).toString(16)})+Date.now().toString(16)}
+function device(){let d=LS.getItem('dnz_device');if(!d){d='web-'+uuid();LS.setItem('dnz_device',d)}return d}
 function token(){return LS.getItem('dnz_token')}
+function toast(m){let t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+function fmt(n){return Math.round(n).toLocaleString('vi-VN')}
+function setSync(s){const m={syncing:['🔄 Đồng bộ…','#8a93a3'],ok:['✅ Đã đồng bộ','#2ecc71'],local:['💾 Trên máy','#8a93a3'],err:['⚠ Lỗi mạng','#ff6a3d'],wait:['⏳ Chờ chủ duyệt','#ffcd5a']};const x=m[s]||m.local;$('#sync').textContent=x[0];$('#sync').style.color=x[1]}
+async function api(path,body){const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return await r.json()}
 
-/* ---------- PYODIDE ENGINE ---------- */
-let PY=null, GLUE=null;
-async function ensurePy(){
-  if(PY) return PY;
-  $('#py').classList.remove('hide');
-  try{
-    $('#pyMsg').textContent='Đang tải Pyodide…';
-    PY = await loadPyodide();
-    $('#pyMsg').textContent='Đang tải thư viện hình học…';
-    await PY.loadPackage(['shapely','micropip']);
-    const mp = PY.pyimport('micropip');
-    const q = '?t='+encodeURIComponent(token()||'')+'&d='+encodeURIComponent(device());
-    $('#pyMsg').textContent='Đang cài bộ đọc bản vẽ…';
-    await mp.install(new URL('rectpack-0.2.2-py3-none-any.whl'+q,location.href).href);
-    await mp.install(new URL('ezdxf-1.4.4-py3-none-any.whl'+q,location.href).href);
-    $('#pyMsg').textContent='Đang nạp thuật toán xếp…';
-    PY.FS.writeFile('/home/pyodide/core.py', await (await fetch('core.py'+q)).text());
-    PY.FS.writeFile('/home/pyodide/render.py', await (await fetch('render.py'+q)).text());
-    PY.FS.writeFile('/home/pyodide/glue.py', await (await fetch('glue.py'+q)).text());
-    await PY.runPythonAsync("import sys; sys.path.insert(0,'/home/pyodide'); import glue");
-    GLUE = PY.globals.get('glue');
-    $('#py').classList.add('hide');
-    return PY;
-  }catch(e){ $('#pyMsg').textContent='Lỗi nạp engine: '+e.message; throw e; }
+/* MAT KHAU (mo app + xoa) — sha256 luu localStorage */
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('dnz::'+s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function hasPw(){return !!LS.getItem('dnz_pw')}
+async function checkPw(p){return LS.getItem('dnz_pw')===await sha(p)}
+async function pwSettings(){
+  const has=hasPw();
+  if(has){const old=prompt('Mật khẩu hiện tại (Huỷ để giữ nguyên):');if(old===null)return;if(!await checkPw(old)){toast('Sai mật khẩu');return}}
+  const np=prompt(has?'Mật khẩu MỚI (bỏ trống = xoá):':'Đặt mật khẩu mở app:');if(np===null)return;
+  if(!np){LS.removeItem('dnz_pw');toast('Đã xoá mật khẩu')}else{LS.setItem('dnz_pw',await sha(np));toast('Đã đặt mật khẩu')}
 }
-async function pyCall(fn, ...args){
-  await ensurePy();
-  const g = PY.pyimport('glue');
-  const res = g.dispatch(fn, ...args);   // tra ve JSON string
-  const s = String(res);
-  if(g.destroy) try{g.destroy()}catch(e){}
-  return JSON.parse(s);
-}
+$('#lockBtn').onclick=async()=>{if(await checkPw($('#lockPw').value)){$('#lock').classList.add('hide');$('#app').classList.remove('hide')}else{$('#lockMsg').textContent='Sai mật khẩu';$('#lockPw').value=''}};
+$('#lockPw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#lockBtn').click()});
 
-/* ---------- XEP ---------- */
+/* KICH HOAT */
+$('#actBtn').onclick=async()=>{const key=$('#actKey').value.trim(),name=$('#actName').value.trim()||'Web';if(!key){$('#actMsg').textContent='Nhập key';return}
+  $('#actBtn').disabled=true;$('#actBtn').textContent='Đang kích hoạt…';$('#actMsg').textContent='';
+  try{const r=await api('/api/laser-activate',{key,device:device(),name});if(r.ok&&r.token){LS.setItem('dnz_token',r.token);LS.setItem('dnz_name',name);showApp()}else $('#actMsg').textContent=r.reason||'Key không hợp lệ'}
+  catch(e){$('#actMsg').textContent='Lỗi mạng: '+e.message}$('#actBtn').disabled=false;$('#actBtn').textContent='Kích hoạt'};
+$('#logout').onclick=()=>{LS.removeItem('dnz_token');location.reload()};
+function showApp(){$('#act').classList.add('hide');if(hasPw()){$('#lock').classList.remove('hide');$('#lockPw').focus()}else $('#app').classList.remove('hide');syncPull()}
+
+/* PYODIDE ENGINE */
+let PY=null;
+async function ensurePy(){if(PY)return PY;$('#py').classList.remove('hide');try{
+  $('#pyMsg').textContent='Đang tải Pyodide…';PY=await loadPyodide();
+  $('#pyMsg').textContent='Đang tải thư viện…';await PY.loadPackage(['shapely','micropip']);
+  const mp=PY.pyimport('micropip'),q='?t='+encodeURIComponent(token()||'')+'&d='+encodeURIComponent(device());
+  $('#pyMsg').textContent='Đang cài bộ đọc bản vẽ…';
+  await mp.install(new URL('rectpack-0.2.2-py3-none-any.whl'+q,location.href).href);
+  await mp.install(new URL('ezdxf-1.4.4-py3-none-any.whl'+q,location.href).href);
+  $('#pyMsg').textContent='Đang nạp thuật toán…';
+  for(const f of ['core.py','render.py','glue.py']) PY.FS.writeFile('/home/pyodide/'+f, await (await fetch(f+q)).text());
+  await PY.runPythonAsync("import sys;sys.path.insert(0,'/home/pyodide');import glue");
+  $('#py').classList.add('hide');return PY;
+}catch(e){$('#pyMsg').textContent='Lỗi nạp engine: '+e.message;throw e}}
+async function pyCall(fn,...args){await ensurePy();const g=PY.pyimport('glue');const r=String(g.dispatch(fn,...args));if(g.destroy)try{g.destroy()}catch(e){}return JSON.parse(r)}
+
+/* XEP DON LE */
 let curDxf=null;
 $('#drop').onclick=()=>$('#file').click();
-$('#file').onchange=async(e)=>{
-  const f=e.target.files[0]; if(!f) return;
-  curDxf=await f.text();
-  $('#fileInfo').textContent='✓ '+f.name+' ('+Math.round(f.size/1024)+'KB)';
-  $('#nestBtn').disabled=false;
-};
-$('#nestBtn').onclick=async()=>{
-  if(!curDxf) return;
-  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang xếp…';
-  try{
-    const sw=+$('#sw').value, sh=+$('#sh').value, gap=+$('#gap').value, margin=+$('#margin').value;
-    const r=await pyCall('do_nest', curDxf, sw, sh, gap, margin);
-    renderNestResult(r);
-  }catch(e){ toast('Lỗi xếp: '+(e.message||e)); }
-  $('#busy').classList.add('hide');
-};
-function fmt(n){return Math.round(n).toLocaleString('vi-VN')}
+$('#file').onchange=async e=>{const f=e.target.files[0];if(!f)return;curDxf=await f.text();$('#fileInfo').textContent='✓ '+f.name+' ('+Math.round(f.size/1024)+'KB)';$('#nestBtn').disabled=false};
+$('#nestBtn').onclick=async()=>{if(!curDxf)return;$('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang xếp…';
+  try{const r=await pyCall('do_nest',curDxf,+$('#sw').value,+$('#sh').value,+$('#gap').value,+$('#margin').value);showResult(r,'#nestOut')}catch(e){toast('Lỗi: '+(e.message||e))}$('#busy').classList.add('hide')};
+
+/* KET QUA + BANG GIA + MO PHONG */
 function costCard(r){
-  const pk=+(LS.getItem('dnz_pk')||25000), pc=+(LS.getItem('dnz_pc')||3000);
-  const kg=r.analysis.weight_kg||0, m=(r.groups||[]).reduce((s,g)=>s+(g.cut_m||0),0);
-  const tien=kg*pk + m*pc;
+  const P=k=>+(LS.getItem('dnz_'+k)||({pk:25000,pi:75000,pc:3000,pp:500})[k]);
+  let sat={kg:0,m:0,pi:0},inox={kg:0,m:0,pi:0};
+  (r.analysis.materials||[]).forEach(m=>{const t=/inox/i.test(m.material)?inox:sat;t.kg+=m.weight_kg||0});
+  (r.groups||[]).forEach(g=>{const t=/inox/i.test(g.label)?inox:sat;t.m+=g.cut_m||0;t.pi+=g.pierce||0});
+  const tien=sat.kg*P('pk')+inox.kg*P('pi')+(sat.m+inox.m)*P('pc')+(sat.pi+inox.pi)*P('pp');
+  window.__cost={sat,inox};
   return `<div class="card"><h3>💰 Bảng giá (ước tính)</h3>
-   <div class="row"><div><label class="fld">Giá tôn (đ/kg)</label><input id="pk" type="number" value="${pk}" oninput="reCost()"></div>
-   <div><label class="fld">Giá cắt (đ/m)</label><input id="pc" type="number" value="${pc}" oninput="reCost()"></div></div>
-   <div class="big" style="color:var(--ok);margin-top:10px">≈ ${fmt(tien)} đ</div>
-   <div class="bd" style="color:var(--mut)">${kg} kg × ${fmt(pk)} + ${m.toFixed(1)} m cắt × ${fmt(pc)}</div></div>`;
+   <div class="row"><div><label class="fld">Tôn SẮT đ/kg</label><input id="pk" type="number" value="${P('pk')}" oninput="reCost()"></div><div><label class="fld">Tôn INOX đ/kg</label><input id="pi2" type="number" value="${P('pi')}" oninput="reCost()"></div></div>
+   <div class="row"><div><label class="fld">Cắt đ/m</label><input id="pc" type="number" value="${P('pc')}" oninput="reCost()"></div><div><label class="fld">Đâm đ/lỗ</label><input id="pp" type="number" value="${P('pp')}" oninput="reCost()"></div></div>
+   <div class="big" id="costTot" style="color:var(--ok);margin-top:10px">≈ ${fmt(tien)} đ</div>
+   <div class="muted">Sắt ${sat.kg.toFixed(1)}kg·${sat.m.toFixed(1)}m · Inox ${inox.kg.toFixed(1)}kg·${inox.m.toFixed(1)}m</div></div>`;
 }
-window.reCost=()=>{ const r=window.__last; if(!r)return; LS.setItem('dnz_pk',$('#pk').value);LS.setItem('dnz_pc',$('#pc').value);
-  const kg=r.analysis.weight_kg||0,m=(r.groups||[]).reduce((s,g)=>s+(g.cut_m||0),0);
-  document.querySelector('#nestOut .card:last-child .big').textContent='≈ '+fmt(kg*(+$('#pk').value)+m*(+$('#pc').value))+' đ'; };
-function renderNestResult(r){
-  window.__last=r;
-  if(!r.ok && (!r.files||!r.files.length)){ $('#nestOut').innerHTML='<div class="card warn" style="color:var(--danger)">Không tách được chi tiết. Chọn file ĐÃ XẾP hoặc có nhãn vật liệu-độ dày.</div>'; return; }
-  let h='<div class="card"><h3>Kết quả</h3>';
-  h+=`<div class="big" style="color:var(--ok)">${r.sheets} tấm · ${r.analysis.n_parts} mảnh · ${r.analysis.weight_kg} kg phôi</div>`;
-  h+=`<div class="bd" style="color:var(--mut);margin-top:4px">${(r.analysis.materials||[]).map(m=>`${m.material} ${m.thickness}mm ×${m.count}`).join(' · ')}</div></div>`;
-  (r.files||[]).forEach((f,i)=>{
-    h+=`<div class="item"><div class="nm">${f.name}</div><div class="acts">
-      <button class="btn ok sm" onclick="viewDxf(${i})">👁 Xem</button>
-      <button class="btn info sm" onclick="dlDxf(${i})">⬇ Tải DXF cắt</button></div></div>`;
-  });
-  h+=costCard(r);
-  $('#nestOut').innerHTML=h;
-  window.__files=r.files;
+window.reCost=()=>{['pk','pi2','pc','pp'].forEach(id=>LS.setItem('dnz_'+(id==='pi2'?'pi':id),$('#'+id).value));
+  const c=window.__cost,t=c.sat.kg*(+$('#pk').value)+c.inox.kg*(+$('#pi2').value)+(c.sat.m+c.inox.m)*(+$('#pc').value)+(c.sat.pi+c.inox.pi)*(+$('#pp').value);
+  $('#costTot').textContent='≈ '+fmt(t)+' đ'};
+function showResult(r,where){
+  window.__last=r;window.__files=r.files||[];window.__sim=r.sim||[];
+  if(!r.ok&&!(r.files&&r.files.length)){$(where).innerHTML='<div class="card warn" style="color:var(--danger)">Không tách được chi tiết. Chọn file ĐÃ XẾP / có nhãn vật liệu-độ dày.</div>';return}
+  let h=`<div class="card"><h3>Kết quả</h3><div class="big" style="color:var(--ok)">${r.sheets} tấm · ${r.analysis.n_parts} mảnh · ${r.analysis.weight_kg} kg phôi</div>
+   <div class="muted" style="margin-top:4px">${(r.analysis.materials||[]).map(m=>`${m.material} ${m.thickness}mm ×${m.count}`).join(' · ')}</div>
+   ${(window.__sim.length)?`<button class="btn purple sm" style="margin-top:10px" onclick="playSim(window.__sim,[${+$('#sw').value},${+$('#sh').value}])">🎬 Mô phỏng xếp</button>`:''}</div>`;
+  (r.files||[]).forEach((f,i)=>h+=`<div class="item"><div class="nm">${f.name}</div><div class="acts"><button class="btn ok sm" onclick="viewFile(${i})">👁 Xem</button><button class="btn info sm" onclick="dlFile(${i})">⬇ Tải DXF cắt</button></div></div>`);
+  h+=costCard(r);$(where).innerHTML=h;
 }
-window.viewDxf=async(i)=>{ openViewer(window.__files[i].name, await pyCall('do_prims', window.__files[i].dxf)); };
-window.dlDxf=(i)=>{ const f=window.__files[i]; const b=new Blob([f.dxf],{type:'application/dxf'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=f.name; a.click(); };
+window.viewFile=async i=>openViewer(window.__files[i].name,await pyCall('do_prims',window.__files[i].dxf));
+window.dlFile=i=>{const f=window.__files[i],b=new Blob([f.dxf],{type:'application/dxf'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=f.name;a.click()};
 
-/* ---------- KHO + DONG BO ---------- */
+/* DON HANG (file + kho) */
+let ORD=[];
+$('#ordFile').onchange=async e=>{for(const f of e.target.files){ORD.push({name:f.name.replace(/\.dxf$/i,''),qty:1,dxf:await f.text()})}renderOrd();e.target.value=''};
+window.ordFromKho=()=>{const ds=(STORE.drawings||[]);if(!ds.length){toast('Kho trống');return}
+  const pick=prompt('Nhập tên bản vẽ trong kho (hoặc số thứ tự):\n'+ds.map((d,i)=>(i+1)+'. '+d.name).join('\n'));if(!pick)return;
+  let d=ds[+pick-1]||ds.find(x=>x.name===pick);if(!d){toast('Không thấy');return}
+  const r=drawDxf(d.id);if(!r){toast('Không đọc được');return}
+  gunzipB64(r.v.dxf_gz).then(dxf=>{ORD.push({name:d.name,qty:1,dxf});renderOrd()})};
+function renderOrd(){$('#ordList').innerHTML=ORD.map((o,i)=>`<div class="item"><div style="display:flex;align-items:center;gap:8px"><div class="nm" style="flex:1">${o.name}</div>
+  <input type="number" value="${o.qty}" onchange="ORD[${i}].qty=+this.value" style="width:54px;text-align:center;padding:6px"><button class="btn ghost sm" onclick="ORD.splice(${i},1);renderOrd()">✕</button></div></div>`).join('')||'<div class="muted" style="text-align:center;padding:20px">Chưa có lò nào</div>'}
+window.orderGo=async()=>{const items=ORD.filter(o=>o.qty>0);if(!items.length){toast('Thêm lò + số lượng');return}
+  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang xếp đơn hàng…';
+  try{const r=await pyCall('do_order',JSON.stringify(items),+$('#sw').value,+$('#sh').value,+$('#gap').value,+$('#margin').value);showResult(r,'#orderOut')}catch(e){toast('Lỗi: '+(e.message||e))}$('#busy').classList.add('hide')};
+
+/* KHO + DONG BO + VERSION */
 let STORE={parts:[],sessions:[],drawings:[],rev:0};
-async function syncPull(){
-  setSync('syncing');
-  try{
-    const r=await api('/api/laser-lib',{device:device(),token:token(),action:'get'});
-    if(r.ok && r.data){ STORE=r.data; STORE.drawings=STORE.drawings||[]; setSync('ok'); renderKho(); }
-    else if(r.reason && /phép|allow/i.test(r.reason)){ setSync('wait'); }
-    else setSync('local');
-  }catch(e){ setSync('err'); }
-}
-async function syncPush(){
-  setSync('syncing');
-  try{
-    const r=await api('/api/laser-lib',{device:device(),token:token(),action:'save',data:{parts:STORE.parts,sessions:STORE.sessions,drawings:STORE.drawings},baseRev:STORE.rev||0});
-    if(r.ok && r.data){ STORE=r.data; STORE.drawings=STORE.drawings||[]; setSync('ok'); renderKho(); }
-    else if(r.conflict && r.data){ STORE=r.data; STORE.drawings=STORE.drawings||[]; setSync('ok'); renderKho(); }
-    else setSync('err');
-  }catch(e){ setSync('err'); }
-}
-function renderKho(){
-  const ds=(STORE.drawings||[]).slice().sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-  if(!ds.length){ $('#khoList').innerHTML='<div class="muted" style="text-align:center;padding:30px">Kho trống — bấm Upload để thêm sản phẩm</div>'; return; }
-  $('#khoList').innerHTML=ds.map(d=>{
-    const v=(d.versions||[]).find(x=>x.ver===d.cur)||(d.versions||[]).slice(-1)[0]||{};
-    return `<div class="item"><div style="display:flex;align-items:center;gap:10px">
-        <input type="checkbox" class="oChk" data-id="${d.id}" style="width:20px;height:20px;flex:0 0 auto">
-        <div style="flex:1"><div class="nm">${d.name} <span style="color:var(--acc);font-size:11px">v${d.cur||1}</span></div>
-          <div class="me">${v.n_parts||0} mảnh · ${v.n_types||0} loại tôn · ${v.weight_kg||0} kg</div></div>
-        <div style="flex:0 0 auto;text-align:center"><div class="muted" style="font-size:10px">SL</div>
-          <input type="number" class="oQty" data-id="${d.id}" value="1" style="width:50px;padding:6px;text-align:center"></div>
-      </div>
-      ${(v.warnings&&v.warnings.length)?`<div class="warn">⚠ ${v.warnings[0]}</div>`:''}
-      <div class="acts">
-        <button class="btn ok sm" onclick="khoUse('${d.id}')">✂ Xếp riêng</button>
-        <button class="btn info sm" onclick="khoView('${d.id}')">👁 Xem</button>
-        <button class="btn ghost sm" onclick="khoDel('${d.id}')">🗑</button></div></div>`;
-  }).join('');
-}
-function drawDxf(id){ const d=(STORE.drawings||[]).find(x=>x.id===id); if(!d) return null;
-  const v=(d.versions||[]).find(x=>x.ver===d.cur)||(d.versions||[]).slice(-1)[0]; if(!v||!v.dxf_gz) return null;
-  return {d,v}; }
-async function gunzipB64(b64){ // dxf_gz = base64(gzip(dxf)) -> giai trong Python cho chac
-  return await pyCall('unzip_dxf', b64);
-}
+async function syncPull(){setSync('syncing');try{const r=await api('/api/laser-lib',{device:device(),token:token(),action:'get'});
+  if(r.ok&&r.data){STORE=r.data;STORE.drawings=STORE.drawings||[];setSync('ok')}else if(r.reason&&/phép|allow/i.test(r.reason))setSync('wait');else setSync('local')}catch(e){setSync('err')}renderKho();renderDash()}
+async function syncPush(){setSync('syncing');try{const r=await api('/api/laser-lib',{device:device(),token:token(),action:'save',data:{parts:STORE.parts,sessions:STORE.sessions,drawings:STORE.drawings},baseRev:STORE.rev||0});
+  if((r.ok||r.conflict)&&r.data){STORE=r.data;STORE.drawings=STORE.drawings||[];setSync('ok')}else setSync('err')}catch(e){setSync('err')}renderKho();renderDash()}
+function drawDxf(id){const d=(STORE.drawings||[]).find(x=>x.id===id);if(!d)return null;const v=(d.versions||[]).find(x=>x.ver===d.cur)||(d.versions||[]).slice(-1)[0];if(!v||!v.dxf_gz)return null;return{d,v}}
+async function gunzipB64(b){return await pyCall('unzip_dxf',b)}
+function renderKho(){const ds=(STORE.drawings||[]).slice().sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  if(!ds.length){$('#khoList').innerHTML='<div class="muted" style="text-align:center;padding:30px">Kho trống — bấm Upload</div>';return}
+  $('#khoList').innerHTML=ds.map(d=>{const v=(d.versions||[]).find(x=>x.ver===d.cur)||(d.versions||[]).slice(-1)[0]||{};const nv=(d.versions||[]).length;
+   return `<div class="item"><div class="nm">${d.name} <span style="color:var(--acc);font-size:11px">v${d.cur||1}</span>${nv>1?`<span class="muted">(${nv} bản)</span>`:''}</div>
+    <div class="me">${v.n_parts||0} mảnh · ${v.n_types||0} loại tôn · ${v.weight_kg||0} kg</div>
+    ${(v.warnings&&v.warnings.length)?`<div class="warn">⚠ ${v.warnings[0]}</div>`:''}
+    <div class="acts"><button class="btn ok sm" onclick="khoUse('${d.id}')">✂ Xếp</button>
+     <button class="btn info sm" onclick="khoView('${d.id}')">👁 Xem</button>
+     <button class="btn purple sm" onclick="khoTach('${d.id}')">🔎 Tách</button>
+     <button class="btn ghost sm" onclick="khoUpdate('${d.id}')">✏️ Cập nhật</button>
+     ${nv>1?`<button class="btn ghost sm" onclick="khoVers('${d.id}')">🕘 v${nv}</button>`:''}
+     <button class="btn ghost sm" onclick="khoDel('${d.id}')">🗑</button></div></div>`}).join('')}
 $('#khoUp').onclick=()=>$('#khoFile').click();
-$('#khoFile').onchange=async(e)=>{
-  const f=e.target.files[0]; if(!f) return;
-  const dxf=await f.text();
-  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang phân tích bản vẽ…';
-  try{
-    const a=await pyCall('do_analyze', dxf, 1250, 2500);
-    if(!a.n_parts){ toast('Bản vẽ không tách được chi tiết'); $('#busy').classList.add('hide'); return; }
-    const name=prompt('Đặt tên bản vẽ:', f.name.replace(/\.dxf$/i,''))||f.name;
-    const gz=await pyCall('zip_dxf', dxf);
-    const id='w'+uuid().slice(0,9);
-    const ver={ver:1,created:new Date().toISOString().slice(0,16).replace('T',' '),by:LS.getItem('dnz_name')||'web',
-      n_parts:a.n_parts,n_types:a.n_types,weight_kg:a.weight_kg,materials:a.materials,warnings:a.warnings,labels:a.labels,dxf_gz:gz};
-    STORE.drawings=STORE.drawings||[];
-    STORE.drawings.push({id,name,cur:1,created:ver.created,updated:ver.created,versions:[ver]});
-    await syncPush();
-    toast('Đã lưu vào kho + đồng bộ');
-  }catch(e){ toast('Lỗi: '+(e.message||e)); }
-  $('#busy').classList.add('hide');
-};
-window.khoUse=async(id)=>{
-  const r=drawDxf(id); if(!r){toast('Không đọc được');return}
-  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang lấy bản vẽ…';
-  curDxf=await gunzipB64(r.v.dxf_gz);
-  $('#busy').classList.add('hide');
-  $('#fileInfo').textContent='📦 '+r.d.name; $('#nestBtn').disabled=false;
-  switchTab('nest'); toast('Đã nạp — bấm XẾP TẤM');
-};
-window.khoView=async(id)=>{
-  const r=drawDxf(id); if(!r){toast('Không đọc được');return}
-  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang mở…';
-  const dxf=await gunzipB64(r.v.dxf_gz);
-  const prims=await pyCall('do_prims', dxf);
-  $('#busy').classList.add('hide');
-  openViewer(r.d.name, prims);
-};
-window.khoDel=async(id)=>{
-  const d=(STORE.drawings||[]).find(x=>x.id===id); if(!d) return;
-  if(!confirm('Xoá bản vẽ "'+d.name+'" khỏi kho?')) return;
-  STORE.drawings=STORE.drawings.filter(x=>x.id!==id);
-  await syncPush(); toast('Đã xoá');
-};
-window.khoOrder=async()=>{
-  const chks=[...document.querySelectorAll('.oChk:checked')];
-  if(!chks.length){ toast('Tick chọn bản vẽ + nhập SL trước'); return; }
-  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang lấy + xếp đơn hàng nhiều lò…';
-  try{
-    const items=[];
-    for(const c of chks){ const id=c.dataset.id, r=drawDxf(id); if(!r) continue;
-      const qty=+(document.querySelector('.oQty[data-id="'+id+'"]').value)||1;
-      items.push({dxf:await gunzipB64(r.v.dxf_gz), qty, name:r.d.name});
-    }
-    if(!items.length){ toast('Không đọc được bản vẽ'); }
-    else{
-      const sw=+$('#sw').value,sh=+$('#sh').value,gap=+$('#gap').value,margin=+$('#margin').value;
-      const res=await pyCall('do_order', JSON.stringify(items), sw, sh, gap, margin);
-      switchTab('nest'); renderNestResult(res); window.scrollTo(0,0); toast('Xong đơn hàng');
-    }
-  }catch(e){ toast('Lỗi đơn hàng: '+(e.message||e)); }
-  $('#busy').classList.add('hide');
-};
+$('#khoFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;await khoAdd(await f.text(),f.name.replace(/\.dxf$/i,''),null)};
+async function khoAdd(dxf,defName,updId){$('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang phân tích…';
+  try{const a=await pyCall('do_analyze',dxf,1250,2500);if(!a.n_parts){toast('Không tách được chi tiết');$('#busy').classList.add('hide');return}
+   const gz=await pyCall('zip_dxf',dxf),now=new Date().toISOString().slice(0,16).replace('T',' ');
+   if(updId){const d=STORE.drawings.find(x=>x.id===updId);const nv=Math.max(...d.versions.map(v=>v.ver))+1;
+     d.versions.push({ver:nv,created:now,by:LS.getItem('dnz_name')||'web',n_parts:a.n_parts,n_types:a.n_types,weight_kg:a.weight_kg,materials:a.materials,warnings:a.warnings,dxf_gz:gz});d.cur=nv;d.updated=now;toast('Đã cập nhật v'+nv)}
+   else{const name=prompt('Đặt tên bản vẽ:',defName)||defName;
+     STORE.drawings.push({id:'w'+uuid().slice(0,9),name,cur:1,created:now,updated:now,versions:[{ver:1,created:now,by:LS.getItem('dnz_name')||'web',n_parts:a.n_parts,n_types:a.n_types,weight_kg:a.weight_kg,materials:a.materials,warnings:a.warnings,dxf_gz:gz}]});toast('Đã lưu vào kho')}
+   await syncPush()}catch(e){toast('Lỗi: '+(e.message||e))}$('#busy').classList.add('hide')}
+let updTarget=null;
+window.khoUpdate=id=>{updTarget=id;$('#khoUpd').click()};
+$('#khoUpd').onchange=async e=>{const f=e.target.files[0];if(!f||!updTarget)return;await khoAdd(await f.text(),'',updTarget);updTarget=null;e.target.value=''};
+window.khoUse=async id=>{const r=drawDxf(id);if(!r){toast('Không đọc được');return}$('#busy').classList.remove('hide');curDxf=await gunzipB64(r.v.dxf_gz);$('#busy').classList.add('hide');$('#fileInfo').textContent='📦 '+r.d.name;$('#nestBtn').disabled=false;switchTab('nest');toast('Đã nạp — bấm XẾP')};
+window.khoView=async id=>{const r=drawDxf(id);if(!r){toast('Không đọc được');return}$('#busy').classList.remove('hide');const dxf=await gunzipB64(r.v.dxf_gz),p=await pyCall('do_prims',dxf);$('#busy').classList.add('hide');openViewer(r.d.name,p)};
+window.khoTach=async id=>{const r=drawDxf(id);if(!r){toast('Không đọc được');return}$('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang tách part…';const dxf=await gunzipB64(r.v.dxf_gz),s=await pyCall('do_extract_sim',dxf);$('#busy').classList.add('hide');
+  const xs=s.frames[0].parts.flatMap(p=>p.cut.flat());const bb=[Math.min(...xs.map(p=>p[0])),Math.min(...xs.map(p=>p[1])),Math.max(...xs.map(p=>p[0])),Math.max(...xs.map(p=>p[1]))];playSim(s.frames,[bb[2],bb[3]],bb)};
+window.khoVers=id=>{const d=STORE.drawings.find(x=>x.id===id);if(!d)return;
+  const msg='Phiên bản '+d.name+':\n'+d.versions.slice().reverse().map(v=>`v${v.ver}${v.ver===d.cur?' ★':''} — ${v.created} · ${v.n_parts}m · ${v.weight_kg}kg`).join('\n')+'\n\nNhập số v để KHÔI PHỤC (Huỷ = thôi):';
+  const x=prompt(msg);if(!x)return;const ver=+x;if(d.versions.some(v=>v.ver===ver)){d.cur=ver;syncPush();toast('Khôi phục v'+ver)}};
+window.khoDel=async id=>{const d=STORE.drawings.find(x=>x.id===id);if(!d)return;
+  if(hasPw()){const p=prompt('Nhập mật khẩu để xoá "'+d.name+'":');if(p===null)return;if(!await checkPw(p)){toast('Sai mật khẩu');return}}
+  else if(!confirm('Xoá "'+d.name+'"?'))return;
+  STORE.drawings=STORE.drawings.filter(x=>x.id!==id);await syncPush();toast('Đã xoá')};
 
-/* ---------- TABS / APP ---------- */
-function switchTab(t){
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
-  $('#mNest').classList.toggle('hide',t!=='nest'); $('#mKho').classList.toggle('hide',t!=='kho');
-}
+/* TONG QUAN */
+function renderDash(){const ds=STORE.drawings||[];let kg=0,parts=0,mats={};
+  ds.forEach(d=>{const v=(d.versions||[]).find(x=>x.ver===d.cur)||(d.versions||[]).slice(-1)[0]||{};kg+=v.weight_kg||0;parts+=v.n_parts||0;(v.materials||[]).forEach(m=>mats[m.material+' '+m.thickness+'mm']=(mats[m.material+' '+m.thickness+'mm']||0)+m.count)});
+  $('#dashOut').innerHTML=`<div class="card"><h3>📊 Tổng quan kho</h3>
+   <div class="big" style="color:var(--acc)">${ds.length} sản phẩm</div>
+   <div class="muted" style="margin-top:6px">${parts} mảnh · ${kg.toFixed(1)} kg phôi · ${Object.keys(mats).length} loại tôn</div></div>
+   <div class="card"><h3>Theo loại tôn</h3>${Object.entries(mats).sort().map(([k,n])=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--hair)"><span>${k}</span><b style="color:var(--acc)">${n} mảnh</b></div>`).join('')||'<div class="muted">Kho trống</div>'}</div>`}
+
+/* AI */
+let aiMsgs=[];
+function openAI(){$('#aiwrap').classList.remove('hide');if(!aiMsgs.length)aiBub('ai','Chào anh! Em là trợ lý DuyNest. Hỏi em về cách xếp tấm, tiết kiệm tôn, hay thao tác app nhé.')}
+function aiBub(role,txt){const d=document.createElement('div');d.className='bub '+role;d.textContent=txt;$('#aiChat').appendChild(d);$('#aiChat').scrollTop=9e9;return d}
+async function aiSend(){const t=$('#aiIn').value.trim();if(!t)return;$('#aiIn').value='';aiBub('me',t);aiMsgs.push({role:'user',content:t});
+  const b=aiBub('ai','…');try{const r=await api('/api/laser-ai',{device:device(),token:token(),mode:'chat',messages:aiMsgs,context:'Web app DuyNest xep laser'});
+   const ans=r.text||r.answer||r.reason||'(không có phản hồi)';b.textContent=ans;aiMsgs.push({role:'assistant',content:ans})}catch(e){b.textContent='Lỗi: '+e.message}}
+$('#aiIn').addEventListener('keydown',e=>{if(e.key==='Enter')aiSend()});
+
+/* TABS */
+function switchTab(t){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  ['nest','order','kho','dash'].forEach(x=>$('#m'+x[0].toUpperCase()+x.slice(1)).classList.toggle('hide',x!==t));if(t==='dash')renderDash();if(t==='order')renderOrd()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
-function showApp(){
-  $('#act').classList.add('hide'); $('#app').classList.remove('hide');
-  syncPull();
-}
-if(token()) showApp();
+if(token())showApp();
 
-/* ---------- VIEWER (kieu AutoCAD, canvas) ---------- */
+/* ===== VIEWER canvas (AutoCAD) ===== */
 let V={prims:[],bbox:[0,0,1,1],sc:1,ox:0,oy:0,mode:'pan',pan:false,px:0,py:0,meas:[]};
-const vc=$('#vcanvas'), vx=vc.getContext('2d');
-function openViewer(name, data){ $('#vname').textContent=name; V.prims=data.prims||data; V.bbox=data.bbox||[0,0,1,1]; V.meas=[]; $('#vwrap').classList.remove('hide'); resizeV(); fitV(); }
+const vc=$('#vcanvas'),vx=vc.getContext('2d');
+function openViewer(name,data){$('#vname').textContent=name;V.prims=data.prims||[];V.bbox=data.bbox||[0,0,1,1];V.meas=[];$('#vwrap').classList.remove('hide');rsz(vc);fitV()}
 $('#vclose').onclick=()=>$('#vwrap').classList.add('hide');
-function resizeV(){ const r=vc.getBoundingClientRect(); vc.width=r.width*devicePixelRatio; vc.height=r.height*devicePixelRatio; vx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
-function W2S(x,y){return [V.ox+x*V.sc, V.oy-y*V.sc]}
-function S2W(x,y){return [(x-V.ox)/V.sc,(V.oy-y)/V.sc]}
-function fitV(){ const w=vc.width/devicePixelRatio,h=vc.height/devicePixelRatio,m=24; const[a,b,c,d]=V.bbox;
-  V.sc=Math.min((w-2*m)/Math.max(1,c-a),(h-2*m)/Math.max(1,d-b)); V.ox=w/2-(a+c)/2*V.sc; V.oy=h/2+(b+d)/2*V.sc; drawV(); }
-function drawV(){
-  const w=vc.width/devicePixelRatio,h=vc.height/devicePixelRatio;
-  vx.clearRect(0,0,w,h); vx.fillStyle='#0b0b0b'; vx.fillRect(0,0,w,h);
-  vx.lineWidth=1;
-  for(const p of V.prims){ vx.strokeStyle=p.color; vx.setLineDash(p.dashed?[5,3]:[]); vx.beginPath();
-    const pts=p.pts; let mnx=9e9,mny=9e9,mxx=-9e9,mxy=-9e9;
-    for(let i=0;i<pts.length;i++){ const s=W2S(pts[i][0],pts[i][1]); if(i===0)vx.moveTo(s[0],s[1]);else vx.lineTo(s[0],s[1]);
-      mnx=Math.min(mnx,s[0]);mny=Math.min(mny,s[1]);mxx=Math.max(mxx,s[0]);mxy=Math.max(mxy,s[1]); }
-    if(mxx<-50||mnx>w+50||mxy<-50||mny>h+50){continue} vx.stroke();
-  }
-  vx.setLineDash([]);
-  // UCS
-  const x0=40,y0=h-40,L=28; vx.strokeStyle='#ff5555';vx.beginPath();vx.moveTo(x0,y0);vx.lineTo(x0+L,y0);vx.stroke();
-  vx.strokeStyle='#46d369';vx.beginPath();vx.moveTo(x0,y0);vx.lineTo(x0,y0-L);vx.stroke();
-  // measure
-  if(V.meas.length){ vx.strokeStyle='#ffd60a';vx.fillStyle='#ffd60a';vx.setLineDash([4,3]);
-    const ps=V.meas.map(p=>W2S(p[0],p[1])); ps.forEach(s=>{vx.beginPath();vx.arc(s[0],s[1],4,0,7);vx.stroke()});
-    if(ps.length===2){ vx.beginPath();vx.moveTo(ps[0][0],ps[0][1]);vx.lineTo(ps[1][0],ps[1][1]);vx.stroke();
-      const d=Math.hypot(V.meas[1][0]-V.meas[0][0],V.meas[1][1]-V.meas[0][1]);
-      vx.setLineDash([]);vx.font='bold 13px monospace';vx.fillText(d.toFixed(1)+' mm',(ps[0][0]+ps[1][0])/2,(ps[0][1]+ps[1][1])/2-8);}
-    vx.setLineDash([]); }
-}
-function zoomAt(cx,cy,f){ const[wx,wy]=S2W(cx,cy); V.sc*=f; V.ox=cx-wx*V.sc; V.oy=cy+wy*V.sc; drawV(); }
+function rsz(c){const r=c.getBoundingClientRect();c.width=r.width*devicePixelRatio;c.height=r.height*devicePixelRatio;c.getContext('2d').setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
+function vW2S(x,y){return[V.ox+x*V.sc,V.oy-y*V.sc]}function vS2W(x,y){return[(x-V.ox)/V.sc,(V.oy-y)/V.sc]}
+function fitV(){const w=vc.width/devicePixelRatio,h=vc.height/devicePixelRatio,m=24,[a,b,c,d]=V.bbox;V.sc=Math.min((w-2*m)/Math.max(1,c-a),(h-2*m)/Math.max(1,d-b));V.ox=w/2-(a+c)/2*V.sc;V.oy=h/2+(b+d)/2*V.sc;drawV()}
+function drawV(){const w=vc.width/devicePixelRatio,h=vc.height/devicePixelRatio;vx.fillStyle='#0b0b0b';vx.fillRect(0,0,w,h);vx.lineWidth=1;
+  for(const p of V.prims){vx.strokeStyle=p.color;vx.setLineDash(p.dashed?[5,3]:[]);vx.beginPath();let mn=[9e9,9e9],mx=[-9e9,-9e9];p.pts.forEach((q,i)=>{const s=vW2S(q[0],q[1]);i?vx.lineTo(s[0],s[1]):vx.moveTo(s[0],s[1]);mn=[Math.min(mn[0],s[0]),Math.min(mn[1],s[1])];mx=[Math.max(mx[0],s[0]),Math.max(mx[1],s[1])]});if(mx[0]<-50||mn[0]>w+50||mx[1]<-50||mn[1]>h+50)continue;vx.stroke()}
+  vx.setLineDash([]);const x0=40,y0=h-40,L=28;vx.strokeStyle='#ff5555';vx.beginPath();vx.moveTo(x0,y0);vx.lineTo(x0+L,y0);vx.stroke();vx.strokeStyle='#46d369';vx.beginPath();vx.moveTo(x0,y0);vx.lineTo(x0,y0-L);vx.stroke();
+  if(V.meas.length){vx.strokeStyle='#ffd60a';vx.fillStyle='#ffd60a';const ps=V.meas.map(p=>vW2S(p[0],p[1]));ps.forEach(s=>{vx.beginPath();vx.arc(s[0],s[1],4,0,7);vx.stroke()});if(ps.length===2){vx.setLineDash([4,3]);vx.beginPath();vx.moveTo(ps[0][0],ps[0][1]);vx.lineTo(ps[1][0],ps[1][1]);vx.stroke();vx.setLineDash([]);const d=Math.hypot(V.meas[1][0]-V.meas[0][0],V.meas[1][1]-V.meas[0][1]);vx.font='bold 13px monospace';vx.fillText(d.toFixed(1)+' mm',(ps[0][0]+ps[1][0])/2,(ps[0][1]+ps[1][1])/2-8)}}}
+function vzoom(cx,cy,f){const[wx,wy]=vS2W(cx,cy);V.sc*=f;V.ox=cx-wx*V.sc;V.oy=cy+wy*V.sc;drawV()}
 $('#vfit').onclick=fitV;
-document.querySelectorAll('#vbar [data-z]').forEach(b=>b.onclick=()=>{const w=vc.width/devicePixelRatio/2,h=vc.height/devicePixelRatio/2;zoomAt(w,h,b.dataset.z==='in'?1.3:1/1.3)});
-document.querySelectorAll('#vbar [data-m]').forEach(b=>b.onclick=()=>{V.mode=b.dataset.m;document.querySelectorAll('#vbar [data-m]').forEach(x=>x.classList.toggle('on',x===b));if(b.dataset.m!=='meas')V.meas=[];drawV()});
-// touch + mouse
-let lastDist=0;
-function evXY(e){const r=vc.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return[t.clientX-r.left,t.clientY-r.top]}
-vc.addEventListener('pointerdown',e=>{const[x,y]=evXY(e);
-  if(V.mode==='meas'){ if(V.meas.length>=2)V.meas=[]; V.meas.push(S2W(x,y)); drawV(); const[wx,wy]=S2W(x,y);$('#vxy').textContent='X '+wx.toFixed(2)+'  Y '+wy.toFixed(2); return;}
-  V.pan=true;V.px=x;V.py=y;});
-vc.addEventListener('pointermove',e=>{const[x,y]=evXY(e); const[wx,wy]=S2W(x,y); $('#vxy').textContent='X '+wx.toFixed(2)+'  Y '+wy.toFixed(2);
-  if(V.pan){ V.ox+=x-V.px;V.oy+=y-V.py;V.px=x;V.py=y;drawV(); }});
+document.querySelectorAll('#vwrap [data-z]').forEach(b=>b.onclick=()=>vzoom(vc.width/devicePixelRatio/2,vc.height/devicePixelRatio/2,b.dataset.z==='in'?1.3:1/1.3));
+document.querySelectorAll('#vwrap [data-m]').forEach(b=>b.onclick=()=>{V.mode=b.dataset.m;document.querySelectorAll('#vwrap [data-m]').forEach(x=>x.classList.toggle('on',x===b));if(b.dataset.m!=='meas')V.meas=[];drawV()});
+function exy(e,c){const r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return[t.clientX-r.left,t.clientY-r.top]}
+let vd=0;
+vc.addEventListener('pointerdown',e=>{const[x,y]=exy(e,vc);if(V.mode==='meas'){if(V.meas.length>=2)V.meas=[];V.meas.push(vS2W(x,y));drawV();return}V.pan=true;V.px=x;V.py=y});
+vc.addEventListener('pointermove',e=>{const[x,y]=exy(e,vc),[wx,wy]=vS2W(x,y);$('#vxy').textContent='X '+wx.toFixed(1)+'  Y '+wy.toFixed(1);if(V.pan){V.ox+=x-V.px;V.oy+=y-V.py;V.px=x;V.py=y;drawV()}});
 vc.addEventListener('pointerup',()=>V.pan=false);
-vc.addEventListener('wheel',e=>{e.preventDefault();const[x,y]=evXY(e);zoomAt(x,y,e.deltaY<0?1.15:1/1.15)},{passive:false});
-vc.addEventListener('touchmove',e=>{ if(e.touches.length===2){e.preventDefault();const a=e.touches[0],b=e.touches[1];const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
-  if(lastDist){const r=vc.getBoundingClientRect();zoomAt((a.clientX+b.clientX)/2-r.left,(a.clientY+b.clientY)/2-r.top,d/lastDist)}lastDist=d;}},{passive:false});
-vc.addEventListener('touchend',()=>lastDist=0);
-window.addEventListener('resize',()=>{if(!$('#vwrap').classList.contains('hide')){resizeV();drawV()}});
+vc.addEventListener('wheel',e=>{e.preventDefault();const[x,y]=exy(e,vc);vzoom(x,y,e.deltaY<0?1.15:1/1.15)},{passive:false});
+vc.addEventListener('touchmove',e=>{if(e.touches.length===2){e.preventDefault();const a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);if(vd){const r=vc.getBoundingClientRect();vzoom((a.clientX+b.clientX)/2-r.left,(a.clientY+b.clientY)/2-r.top,d/vd)}vd=d}},{passive:false});
+vc.addEventListener('touchend',()=>vd=0);
+
+/* ===== MO PHONG player ===== */
+let S={frames:[],wh:[1,1],bbox:null,si:0,pi:0,playing:true,timer:null,sc:1,ox:0,oy:0};
+const sc=$('#scanvas'),sx=sc.getContext('2d');
+function playSim(frames,wh,bbox){frames=(frames||[]).filter(f=>f.parts&&f.parts.length);if(!frames.length){toast('Không có dữ liệu mô phỏng');return}
+  S={frames,wh,bbox,si:0,pi:0,playing:true,timer:null,sc:1,ox:0,oy:0};$('#swrap').classList.remove('hide');rsz(sc);simFit();simStep()}
+$('#sclose').onclick=()=>{clearTimeout(S.timer);$('#swrap').classList.add('hide')};
+$('#splay').onclick=()=>{S.playing=!S.playing;$('#splay').textContent=S.playing?'⏸':'▶';if(S.playing)simStep()};
+$('#sreplay').onclick=()=>{clearTimeout(S.timer);S.si=0;S.pi=0;S.playing=true;$('#splay').textContent='⏸';simFit();simStep()};
+function simFit(){const fr=S.frames[S.si];let bb=S.bbox;if(!bb){const w=Math.max(S.wh[0],...fr.parts.map(p=>p.bbox[2])),h=Math.max(S.wh[1],...fr.parts.map(p=>p.bbox[3]));bb=[0,0,w,h]}
+  const W=sc.width/devicePixelRatio,H=sc.height/devicePixelRatio,m=20;S.sc=Math.min((W-2*m)/Math.max(1,bb[2]-bb[0]),(H-2*m)/Math.max(1,bb[3]-bb[1]));S.ox=W/2-(bb[0]+bb[2])/2*S.sc;S.oy=H/2+(bb[1]+bb[3])/2*S.sc;simBase()}
+function sW2S(x,y){return[S.ox+x*S.sc,S.oy-y*S.sc]}
+function simBase(){const W=sc.width/devicePixelRatio,H=sc.height/devicePixelRatio;sx.fillStyle='#0b0b0b';sx.fillRect(0,0,W,H);
+  const fr=S.frames[S.si];sx.lineWidth=1;
+  for(let k=0;k<S.pi&&k<fr.parts.length;k++)drawPart(fr.parts[k],'#ff5a44',false)}
+function drawPart(p,col,glow){sx.strokeStyle=col;sx.lineWidth=glow?3:1.5;
+  (p.cut||[]).forEach(poly=>{if(poly.length<2)return;sx.beginPath();poly.forEach((q,i)=>{const s=sW2S(q[0],q[1]);i?sx.lineTo(s[0],s[1]):sx.moveTo(s[0],s[1])});sx.stroke()});
+  sx.strokeStyle='#4d9bf0';sx.setLineDash([5,3]);(p.chan||[]).forEach(poly=>{if(poly.length<2)return;sx.beginPath();poly.forEach((q,i)=>{const s=sW2S(q[0],q[1]);i?sx.lineTo(s[0],s[1]):sx.moveTo(s[0],s[1])});sx.stroke()});sx.setLineDash([])}
+function simStep(){clearTimeout(S.timer);if(!S.playing)return;const fr=S.frames[S.si];
+  if(S.pi>=fr.parts.length){if(S.si+1<S.frames.length){S.si++;S.pi=0;simFit();S.timer=setTimeout(simStep,500);return}$('#scount').textContent='✓ Xong · '+S.frames.length+' tấm';$('#splay').textContent='▶';S.playing=false;return}
+  const p=fr.parts[S.pi];drawPart(p,'#ff5a44',false);drawPart(p,'#ffd24a',true);S.pi++;
+  $('#scount').textContent='Tấm '+(S.si+1)+'/'+S.frames.length+' · '+S.pi+'/'+fr.parts.length+' mảnh';
+  S.timer=setTimeout(()=>{simBase();simStep()},170)}
+window.addEventListener('resize',()=>{if(!$('#vwrap').classList.contains('hide')){rsz(vc);drawV()}if(!$('#swrap').classList.contains('hide')){rsz(sc);simFit()}});
 </script>
 </body>
 </html>
