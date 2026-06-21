@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-21T07:20:37.259Z",
+      "who": "laser:Ipad",
+      "action": "Kich hoat app laser",
+      "detail": "DOV-TEST-2026"
+    },
+    {
       "ts": "2026-06-21T05:35:45.624Z",
       "who": "laser:DOV",
       "action": "Kich hoat app laser",
