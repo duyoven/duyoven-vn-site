@@ -22,7 +22,7 @@ const PROXY = {
     "https://duyoven.com/wp-content/uploads/2026/03/HDSD_FastGrill.pdf",
 };
 
-const INTERNAL = new Set(["/bao-gia.html", "/bao-gia", "/hop-dong.html", "/hop-dong", "/quan-tri.html", "/quan-tri", "/quan-ly.html", "/quan-ly", "/quan-ly-kho.html", "/quan-ly-kho", "/ban-giao-nghiem-thu.html", "/ban-giao-nghiem-thu", "/vat-tu.html", "/vat-tu"]);
+const INTERNAL = new Set(["/bao-gia.html", "/bao-gia", "/hop-dong.html", "/hop-dong", "/quan-tri.html", "/quan-tri", "/quan-ly.html", "/quan-ly", "/quan-ly-kho.html", "/quan-ly-kho", "/ban-giao-nghiem-thu.html", "/ban-giao-nghiem-thu", "/vat-tu.html", "/vat-tu", "/quan-ly-hinh.html", "/quan-ly-hinh"]);
 
 const AI_SYS = [
   "Bạn là trợ lý tư vấn của Duy's Oven (duyoven.vn) — thương hiệu Việt Nam chuyên lò nướng than tách khói, lò BBQ, lò xông khói (smoker) và lò pizza, sản xuất từ thép, sơn chịu nhiệt chuẩn Mỹ 600°C, vỉ inox.",
@@ -1225,6 +1225,33 @@ export default {
     }
 
     // --- CMS: nội dung động của site (site-content.json), tự đăng lên GitHub ---
+    // ===== Đổi hình sản phẩm (chủ tự thay) — ghi đè đúng file ảnh => cập nhật card + menu + chi tiết =====
+    if (url.pathname === "/api/product-image" && request.method === "POST") {
+      const who = await authUser(request, env);
+      if (!who) return jsonResp({ error: "Chỉ dành cho nhân viên — hãy đăng nhập ở trang Quản Lý." }, 401);
+      if (!isOwnerUser(who, env)) return jsonResp({ error: "Chỉ chủ được đổi hình sản phẩm." }, 403);
+      if (!env.GH_TOKEN) return jsonResp({ error: "Chưa cấu hình GH_TOKEN." }, 503);
+      let body; try { body = await request.json(); } catch (e) { return jsonResp({ error: "Nội dung không hợp lệ." }, 400); }
+      const imgPath = String(body.imgPath || "");
+      const dataB64 = String(body.dataB64 || "").replace(/\s/g, "");
+      if (!dataB64 || dataB64.length > 5000000) return jsonResp({ error: "Ảnh trống hoặc quá lớn (tối đa ~3.5MB)." }, 400);
+      if (!/^[A-Za-z0-9+/=]+$/.test(dataB64)) return jsonResp({ error: "Dữ liệu ảnh không hợp lệ." }, 400);
+      // Chỉ cho ghi vào đúng đường dẫn ảnh có trong product-images.json (chống ghi bậy)
+      let allow; try { allow = await ghGetJson(env, "product-images.json", "main"); } catch (e) { return jsonResp({ error: "Không đọc được danh sách ảnh." }, 502); }
+      const items = (allow.obj && Array.isArray(allow.obj.items)) ? allow.obj.items : [];
+      if (!items.some((it) => it && it.img === imgPath)) return jsonResp({ error: "Đường dẫn ảnh không hợp lệ." }, 400);
+      const repo2 = env.GH_REPO || "duyoven/duyoven-vn-site";
+      const api2 = "https://api.github.com/repos/" + repo2 + "/contents/" + imgPath;
+      const hd2 = { "Authorization": "Bearer " + env.GH_TOKEN, "Accept": "application/vnd.github+json", "User-Agent": "duyoven-cms" };
+      let sha2 = undefined;
+      const cur2 = await fetch(api2 + "?ref=main", { headers: hd2 });
+      if (cur2.ok) { try { sha2 = (await cur2.json()).sha; } catch (e) {} }
+      const put2 = await fetch(api2, { method: "PUT", headers: { ...hd2, "Content-Type": "application/json" }, body: JSON.stringify({ message: "Doi hinh SP: " + imgPath + " (" + who + ")", content: dataB64, sha: sha2, branch: "main" }) });
+      if (!put2.ok) return jsonResp({ error: "GitHub " + put2.status + " " + (await put2.text()).slice(0, 150) }, 502);
+      try { await auditLog(env, who, "Đổi hình SP", imgPath); } catch (e) {}
+      return jsonResp({ ok: true });
+    }
+
     if (url.pathname === "/api/cms") {
       if (!(await authUser(request, env))) return jsonResp({ error: "Chỉ dành cho nhân viên." }, 401);
       const repo = env.GH_REPO || "duyoven/duyoven-vn-site";

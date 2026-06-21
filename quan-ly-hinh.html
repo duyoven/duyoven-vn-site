@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quản lý hình sản phẩm — Duy's Oven</title>
+<style>
+  :root{--bg:#0b0e13;--card:#16181c;--line:#2a2520;--ink:#f3efe7;--muted:#9b958c;--ember:#e8753b;--ok:#36c08a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:15px;line-height:1.5}
+  header{position:sticky;top:0;z-index:5;background:#0b0e13ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;gap:12px}
+  header h1{font-size:17px;margin:0;flex:1}
+  a.back{color:var(--muted);text-decoration:none;font-size:14px}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  .note{background:#1b2230;border:1px solid #2a3a52;border-radius:10px;padding:10px 12px;color:#bcd;font-size:13px;margin-bottom:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .pc{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .pc .thumb{aspect-ratio:1;background:#1a1817 center/contain no-repeat;display:block}
+  .pc .meta{padding:8px 10px}
+  .pc .nm{font-size:13px;font-weight:600;line-height:1.3;min-height:34px}
+  .pc button{margin:0 10px 10px;padding:8px;border:0;border-radius:8px;background:var(--ember);color:#1a0f08;font-weight:700;cursor:pointer;font-size:13px}
+  .pc .shared{font-size:11px;color:#caa86a;padding:0 10px 6px}
+  /* modal */
+  .ov{position:fixed;inset:0;background:#000c;display:none;align-items:flex-start;justify-content:center;z-index:20;overflow:auto;padding:16px}
+  .ov.on{display:flex}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:520px;width:100%;padding:16px;margin:auto}
+  .modal h2{font-size:16px;margin:0 0 4px}
+  .modal .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .cv{width:100%;max-width:360px;aspect-ratio:1;background:#1a1817;border-radius:10px;display:block;margin:0 auto 12px;border:1px solid var(--line)}
+  .row{display:flex;align-items:center;gap:10px;margin:10px 0;flex-wrap:wrap}
+  .row label{font-size:14px}
+  input[type=file]{font-size:13px;color:var(--muted)}
+  .btn{padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:#20242b;color:var(--ink);font-weight:600;cursor:pointer;font-size:14px}
+  .btn.primary{background:var(--ember);color:#1a0f08;border-color:var(--ember)}
+  .btn.ghost{background:transparent}
+  .btn:disabled{opacity:.5;cursor:default}
+  .switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+  input[type=range]{flex:1;min-width:120px}
+  .msg{font-size:13px;margin-top:10px;min-height:18px}
+  .msg.ok{color:var(--ok)} .msg.err{color:#f1736b}
+  .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid #fff5;border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="quan-ly.html">← Quản Lý</a>
+  <h1>🖼️ Hình sản phẩm</h1>
+</header>
+<div class="wrap">
+  <div class="note">Chọn sản phẩm → <b>Đổi hình</b> → tải ảnh lên. Hệ thống tự đưa về <b>nền đen vuông</b> (có thể xoá nền trắng / tách nền AI). Lưu xong web cập nhật sau <b>2–3 phút</b>. Đổi 1 ảnh sẽ cập nhật cả trang sản phẩm, menu và trang chi tiết.</div>
+  <div id="grid" class="grid"><div style="color:var(--muted)">Đang tải danh sách…</div></div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="modal">
+    <h2 id="mTitle">Đổi hình</h2>
+    <div class="sub" id="mSub"></div>
+    <canvas class="cv" id="cv" width="760" height="760"></canvas>
+    <div class="row"><input type="file" id="file" accept="image/*"></div>
+    <div class="row">
+      <label class="switch"><input type="checkbox" id="rmWhite"> Xoá nền trắng</label>
+      <input type="range" id="tol" min="0" max="80" value="36" title="Độ nhạy xoá trắng">
+    </div>
+    <div class="row">
+      <button class="btn ghost" id="aiBtn" type="button">✨ Tách nền AI (tải nặng lần đầu)</button>
+    </div>
+    <div class="msg" id="msg"></div>
+    <div class="actions">
+      <button class="btn" id="cancel" type="button">Đóng</button>
+      <button class="btn primary" id="save" type="button" disabled>💾 Lưu hình</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var ITEMS=[], CUR=null, srcImg=null, aiBlobUrl=null;
+var $=function(s){return document.querySelector(s)};
+function bust(u){return '/'+u+'?t='+Date.now()}
+function loadList(){
+  fetch('/product-images.json?t='+Date.now()).then(function(r){return r.json()}).then(function(d){
+    ITEMS=(d&&d.items)||[];
+    var g=$('#grid'); g.innerHTML='';
+    ITEMS.forEach(function(it,i){
+      var c=document.createElement('div'); c.className='pc';
+      c.innerHTML='<div class="thumb" style="background-image:url(\''+bust(it.img)+'\')"></div>'+
+        '<div class="meta"><div class="nm">'+esc(it.name)+'</div></div>'+
+        (it.shared?'<div class="shared">⚠️ dùng chung ảnh với SP khác</div>':'')+
+        '<button data-i="'+i+'">Đổi hình</button>';
+      c.querySelector('button').onclick=function(){openEditor(i)};
+      g.appendChild(c);
+    });
+  }).catch(function(e){$('#grid').innerHTML='<div style="color:#f1736b">Lỗi tải danh sách. Thử lại.</div>'});
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function openEditor(i){
+  CUR=ITEMS[i]; srcImg=null; aiBlobUrl=null;
+  $('#mTitle').textContent='Đổi hình: '+CUR.name;
+  $('#mSub').textContent=CUR.img + (CUR.shared?' · (đổi sẽ ảnh hưởng SP dùng chung)':'');
+  $('#file').value=''; $('#rmWhite').checked=false; $('#msg').textContent=''; $('#msg').className='msg';
+  $('#save').disabled=true;
+  var cv=$('#cv'),x=cv.getContext('2d'); x.fillStyle='#1a1817';x.fillRect(0,0,760,760);
+  // hiện ảnh hiện tại làm nền tham khảo
+  var im=new Image(); im.crossOrigin='anonymous'; im.onload=function(){drawFit(x,im)}; im.src=bust(CUR.img);
+  $('#ov').classList.add('on');
+}
+function drawFit(x,im){
+  x.fillStyle='#1a1817';x.fillRect(0,0,760,760);
+  var s=760*0.86/Math.max(im.width,im.height),dw=im.width*s,dh=im.height*s;
+  x.drawImage(im,(760-dw)/2,(760-dh)/2,dw,dh);
+}
+function floodWhite(ctx,w,h,tol){
+  var id=ctx.getImageData(0,0,w,h),d=id.data,vis=new Uint8Array(w*h),st=[],i,p;
+  function W(i){return d[i]>=255-tol&&d[i+1]>=255-tol&&d[i+2]>=255-tol}
+  for(var xx=0;xx<w;xx++){st.push(xx,0,xx,h-1)} for(var yy=0;yy<h;yy++){st.push(0,yy,w-1,yy)}
+  while(st.length){var y=st.pop(),x=st.pop(); if(x<0||y<0||x>=w||y>=h)continue; p=y*w+x; if(vis[p])continue; vis[p]=1; i=p*4; if(W(i)){d[i+3]=0; st.push(x+1,y,x-1,y,x,y+1,x,y-1)}}
+  ctx.putImageData(id,0,0);
+}
+function bbox(ctx,w,h){
+  var d=ctx.getImageData(0,0,w,h).data,minX=w,minY=h,maxX=0,maxY=0,any=false;
+  for(var y=0;y<h;y++)for(var x=0;x<w;x++){if(d[(y*w+x)*4+3]>20){any=true;if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y}}
+  return any?{x:minX,y:minY,w:maxX-minX+1,h:maxY-minY+1}:null;
+}
+function render(){
+  if(!srcImg){return}
+  var tmp=document.createElement('canvas'); tmp.width=srcImg.width; tmp.height=srcImg.height;
+  var t=tmp.getContext('2d'); t.drawImage(srcImg,0,0);
+  if($('#rmWhite').checked) floodWhite(t,tmp.width,tmp.height,parseInt($('#tol').value,10));
+  var bb=$('#rmWhite').checked?bbox(t,tmp.width,tmp.height):null;
+  var cv=$('#cv'),x=cv.getContext('2d'); x.clearRect(0,0,760,760); x.fillStyle='#1a1817'; x.fillRect(0,0,760,760);
+  var sx=0,sy=0,sw=tmp.width,sh=tmp.height; if(bb){sx=bb.x;sy=bb.y;sw=bb.w;sh=bb.h}
+  var s=760*0.86/Math.max(sw,sh),dw=sw*s,dh=sh*s;
+  x.drawImage(tmp,sx,sy,sw,sh,(760-dw)/2,(760-dh)/2,dw,dh);
+  $('#save').disabled=false;
+}
+$('#file').onchange=function(e){
+  var f=e.target.files[0]; if(!f)return;
+  aiBlobUrl=null; var im=new Image(); im.onload=function(){srcImg=im; render()}; im.src=URL.createObjectURL(f);
+};
+$('#rmWhite').onchange=render;
+$('#tol').oninput=function(){ if($('#rmWhite').checked) render() };
+$('#aiBtn').onclick=function(){
+  var f=$('#file').files[0]; if(!f){msg('Chọn ảnh trước đã.','err');return}
+  msg('Đang tải AI tách nền (lần đầu hơi lâu)… <span class="spin"></span>','');
+  $('#aiBtn').disabled=true;
+  import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.8/dist/index.mjs')
+    .then(function(m){ return m.removeBackground(f) })
+    .then(function(blob){
+      var im=new Image(); im.onload=function(){ srcImg=im; $('#rmWhite').checked=false; render(); msg('Đã tách nền AI ✓','ok') }; im.src=URL.createObjectURL(blob);
+    })
+    .catch(function(err){ msg('AI tách nền lỗi (thử "Xoá nền trắng" hoặc dùng ảnh khác).','err') })
+    .finally(function(){ $('#aiBtn').disabled=false });
+};
+function msg(t,c){var m=$('#msg'); m.innerHTML=t; m.className='msg'+(c?' '+c:'')}
+$('#cancel').onclick=function(){$('#ov').classList.remove('on')};
+$('#save').onclick=function(){
+  if(!CUR){return}
+  var cv=$('#cv');
+  cv.toBlob(function(blob){
+    if(!blob){msg('Lỗi tạo ảnh.','err');return}
+    var fr=new FileReader();
+    fr.onload=function(){
+      var b64=fr.result.split(',')[1];
+      msg('Đang lưu… <span class="spin"></span>','');
+      $('#save').disabled=true;
+      fetch('/api/product-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imgPath:CUR.img,dataB64:b64})})
+        .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+        .then(function(res){
+          if(res.ok&&res.j.ok){ msg('✅ Đã lưu! Web sẽ cập nhật sau 2–3 phút (đang build). Tải lại trang sau đó để xem.','ok');
+            setTimeout(function(){$('#ov').classList.remove('on'); loadList()},1800);
+          } else { msg('Lỗi: '+(res.j.error||'không lưu được')+(res.j.error&&/chủ|nhân viên/i.test(res.j.error)?' — hãy đăng nhập ở trang Quản Lý trước.':''),'err'); $('#save').disabled=false; }
+        }).catch(function(e){msg('Lỗi mạng. Thử lại.','err');$('#save').disabled=false});
+    };
+    fr.readAsDataURL(blob);
+  },'image/webp',0.86);
+};
+loadList();
+</script>
+</body>
+</html>
