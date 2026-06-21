@@ -1299,8 +1299,48 @@
         "cost": 7919260,
         "ts": "2026-06-21 09:13:44"
       }
+    },
+    {
+      "id": "e8fec74a4e",
+      "name": "Đơn hàng BV laser lò 65 - đã đặt tên hoàn chỉnh×12 BV laser lò 80 - đã  - 21-06-2026 09h17",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 19
+        },
+        {
+          "label": "SAT_2mm",
+          "sheets": 8
+        },
+        {
+          "label": "SAT_3mm",
+          "sheets": 2
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 1,
+        "gap": 3,
+        "margin": 3
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/Đơn hàng BV laser lò 65 - đã đặt tên hoàn chỉnh×12 BV laser lò 80 - đã  - 21-06-2026 09h17",
+        "sheets": 29,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 19,
+          "SAT_2mm": 8,
+          "SAT_3mm": 2
+        },
+        "cost": 34869909,
+        "ts": "2026-06-21 09:17:45"
+      }
     }
   ],
-  "rev": 30,
-  "updatedAt": "2026-06-21T02:13:45.915Z"
+  "rev": 31,
+  "updatedAt": "2026-06-21T02:17:47.931Z"
 }
