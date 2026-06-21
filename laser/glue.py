@@ -39,14 +39,19 @@ def do_analyze(dxf_text, sw, sh):
     return json.dumps(core.analyze_drawing(_dxf_to_file(dxf_text), sheet=(float(sw), float(sh))))
 
 
-def do_nest(dxf_text, sw, sh, gap, margin):
-    _cleanup(); sw = float(sw); sh = float(sh); p = _dxf_to_file(dxf_text)
+def do_nest(dxf_text, sw, sh, gap, margin, sets=1):
+    _cleanup(); sw = float(sw); sh = float(sh); sets = max(1, int(sets))
+    p = _dxf_to_file(dxf_text)
     pb = core.parts_from_file(p, sheet=(sw, sh))
     a = core.analyze_drawing(p, sheet=(sw, sh))
     if sum(len(v) for v in pb.values()) == 0:
         return json.dumps({"ok": False, "sheets": 0, "analysis": a, "groups": [], "files": [], "has_sim": False})
+    if sets > 1:                       # SO BO -> nhan phan tich len
+        for m in a.get("materials", []):
+            m["count"] *= sets; m["weight_kg"] = round(m["weight_kg"] * sets, 2)
+        a["n_parts"] *= sets; a["weight_kg"] = round(a["weight_kg"] * sets, 2)
     out = tempfile.mkdtemp()
-    rep = core.nest_order([(pb, 1, "Don")], out, sheet=(sw, sh), gap=float(gap), margin=float(margin))
+    rep = core.nest_order([(pb, sets, "Don")], out, sheet=(sw, sh), gap=float(gap), margin=float(margin))
     return json.dumps(_result(rep, a, out))
 
 

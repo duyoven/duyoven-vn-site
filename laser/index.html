@@ -101,7 +101,8 @@ canvas.cv{flex:1;width:100%;touch-action:none;background:#0b0b0b}
       <div id="drop" class="drop">Bấm chọn file .dxf<br><span class="muted">(điện thoại dùng DXF)</span></div>
       <input id="file" type="file" accept=".dxf" class="hide"><div id="fileInfo" class="muted" style="margin-top:8px"></div></div>
     <div class="card"><h3>2 · Khổ tấm &amp; thông số</h3>
-      <div class="row"><div><label class="fld">Rộng</label><input id="sw" type="number" value="1250"></div><div><label class="fld">Cao</label><input id="sh" type="number" value="2500"></div></div>
+      <label class="fld">Số bộ (cắt mấy bộ)</label><input id="sets" type="number" value="1" min="1">
+      <div class="row" style="margin-top:6px"><div><label class="fld">Rộng</label><input id="sw" type="number" value="1250"></div><div><label class="fld">Cao</label><input id="sh" type="number" value="2500"></div></div>
       <div class="row"><div><label class="fld">Hở</label><input id="gap" type="number" value="3"></div><div><label class="fld">Biên</label><input id="margin" type="number" value="3"></div></div></div>
     <button id="nestBtn" class="btn ok" style="width:100%;font-size:17px;padding:14px" disabled>✂ XẾP TẤM</button>
     <div id="nestOut" style="margin-top:14px"></div>
@@ -207,7 +208,7 @@ let curDxf=null;
 $('#drop').onclick=()=>$('#file').click();
 $('#file').onchange=async e=>{const f=e.target.files[0];if(!f)return;curDxf=await f.text();$('#fileInfo').textContent='✓ '+f.name+' ('+Math.round(f.size/1024)+'KB)';$('#nestBtn').disabled=false};
 $('#nestBtn').onclick=async()=>{if(!curDxf)return;$('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang xếp…';
-  try{const r=await pyCall('do_nest',curDxf,+$('#sw').value,+$('#sh').value,+$('#gap').value,+$('#margin').value);showResult(r,'#nestOut')}catch(e){toast('Lỗi: '+(e.message||e))}$('#busy').classList.add('hide')};
+  try{const r=await pyCall('do_nest',curDxf,+$('#sw').value,+$('#sh').value,+$('#gap').value,+$('#margin').value,+($('#sets').value||1));showResult(r,'#nestOut')}catch(e){if(e.message!=='Quá tải bộ nhớ')toast('Lỗi: '+(e.message||e))}$('#busy').classList.add('hide')};
 
 /* KET QUA + BANG GIA + MO PHONG */
 function costCard(r){
