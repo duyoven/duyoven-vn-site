@@ -68,11 +68,16 @@
           "d": "f0bc9c25d970a09a8a5bec9e647019ecf4f2d0800d6e389899ac694e0aeebb9a",
           "name": "claude.local",
           "ts": "2026-06-19T09:39:21.041Z"
+        },
+        {
+          "d": "dcbcae8726ba36a238962216dd8fb882a261260121de02ff335d023eaf1bc875",
+          "name": "web test",
+          "ts": "2026-06-21T05:21:46.862Z"
         }
       ]
     }
   ],
-  "rev": 8,
+  "rev": 9,
   "note": "App Xep Laser Duy's Oven - quan ly key kich hoat",
-  "updatedAt": "2026-06-19T10:57:41.449Z"
+  "updatedAt": "2026-06-21T05:21:46.862Z"
 }
