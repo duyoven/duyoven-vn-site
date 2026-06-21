@@ -14,7 +14,7 @@ def cad_primitives(dxf_text, max_sag=0.5):
         doc = ezdxf.read(io.StringIO(dxf_text))
     except Exception:
         # DXF co binary tag (ACIS/Embedded Object) lam tagger pure-python (Pyodide) vuong
-        # -> recover mode (chiu loi, bo qua tag hong). Stream BYTES de recover tu detect encoding.
+        # -> recover mode (chiu loi, bo qua tag hong) de viewer doc duoc ban ve THAT (vd lo 65)
         from ezdxf import recover
         try:
             raw = dxf_text.encode("utf-8", "replace")
