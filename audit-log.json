@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-21T05:21:47.701Z",
+      "who": "laser:web test",
+      "action": "Kich hoat app laser",
+      "detail": "DOV-TEST-2026"
+    },
+    {
       "ts": "2026-06-20T08:45:08.943Z",
       "who": "laser",
       "action": "Luu phien xep Drive",
