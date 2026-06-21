@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-21T05:33:42.860Z",
+      "who": "laser:iPhone 15promax",
+      "action": "Kich hoat app laser",
+      "detail": "DOV-TEST-2026"
+    },
+    {
       "ts": "2026-06-21T05:21:47.701Z",
       "who": "laser:web test",
       "action": "Kich hoat app laser",
