@@ -116,6 +116,7 @@ padding:10px 16px;border-radius:10px;font-size:13px;z-index:60;max-width:90%}
   <main id="mKho" class="hide">
     <button id="khoUp" class="btn info" style="width:100%">⬆ Upload bản vẽ vào kho</button>
     <input id="khoFile" type="file" accept=".dxf" class="hide">
+    <button class="btn ok" style="width:100%;margin-top:8px" onclick="khoOrder()">✂ Xếp đơn hàng (bản vẽ đã chọn × SL)</button>
     <div id="khoList" style="margin-top:14px"></div>
   </main>
 </div>
@@ -177,7 +178,7 @@ async function ensurePy(){
     $('#pyMsg').textContent='Đang tải thư viện hình học…';
     await PY.loadPackage(['shapely','micropip']);
     const mp = PY.pyimport('micropip');
-    const q = '?t='+encodeURIComponent(token()||'')+'&d='+encodeURIComponent(device());  // gate IP: chi may kich hoat tai duoc engine
+    const q = '?t='+encodeURIComponent(token()||'')+'&d='+encodeURIComponent(device());
     $('#pyMsg').textContent='Đang cài bộ đọc bản vẽ…';
     await mp.install(new URL('rectpack-0.2.2-py3-none-any.whl'+q,location.href).href);
     await mp.install(new URL('ezdxf-1.4.4-py3-none-any.whl'+q,location.href).href);
@@ -219,7 +220,22 @@ $('#nestBtn').onclick=async()=>{
   }catch(e){ toast('Lỗi xếp: '+(e.message||e)); }
   $('#busy').classList.add('hide');
 };
+function fmt(n){return Math.round(n).toLocaleString('vi-VN')}
+function costCard(r){
+  const pk=+(LS.getItem('dnz_pk')||25000), pc=+(LS.getItem('dnz_pc')||3000);
+  const kg=r.analysis.weight_kg||0, m=(r.groups||[]).reduce((s,g)=>s+(g.cut_m||0),0);
+  const tien=kg*pk + m*pc;
+  return `<div class="card"><h3>💰 Bảng giá (ước tính)</h3>
+   <div class="row"><div><label class="fld">Giá tôn (đ/kg)</label><input id="pk" type="number" value="${pk}" oninput="reCost()"></div>
+   <div><label class="fld">Giá cắt (đ/m)</label><input id="pc" type="number" value="${pc}" oninput="reCost()"></div></div>
+   <div class="big" style="color:var(--ok);margin-top:10px">≈ ${fmt(tien)} đ</div>
+   <div class="bd" style="color:var(--mut)">${kg} kg × ${fmt(pk)} + ${m.toFixed(1)} m cắt × ${fmt(pc)}</div></div>`;
+}
+window.reCost=()=>{ const r=window.__last; if(!r)return; LS.setItem('dnz_pk',$('#pk').value);LS.setItem('dnz_pc',$('#pc').value);
+  const kg=r.analysis.weight_kg||0,m=(r.groups||[]).reduce((s,g)=>s+(g.cut_m||0),0);
+  document.querySelector('#nestOut .card:last-child .big').textContent='≈ '+fmt(kg*(+$('#pk').value)+m*(+$('#pc').value))+' đ'; };
 function renderNestResult(r){
+  window.__last=r;
   if(!r.ok && (!r.files||!r.files.length)){ $('#nestOut').innerHTML='<div class="card warn" style="color:var(--danger)">Không tách được chi tiết. Chọn file ĐÃ XẾP hoặc có nhãn vật liệu-độ dày.</div>'; return; }
   let h='<div class="card"><h3>Kết quả</h3>';
   h+=`<div class="big" style="color:var(--ok)">${r.sheets} tấm · ${r.analysis.n_parts} mảnh · ${r.analysis.weight_kg} kg phôi</div>`;
@@ -229,6 +245,7 @@ function renderNestResult(r){
       <button class="btn ok sm" onclick="viewDxf(${i})">👁 Xem</button>
       <button class="btn info sm" onclick="dlDxf(${i})">⬇ Tải DXF cắt</button></div></div>`;
   });
+  h+=costCard(r);
   $('#nestOut').innerHTML=h;
   window.__files=r.files;
 }
@@ -260,11 +277,16 @@ function renderKho(){
   if(!ds.length){ $('#khoList').innerHTML='<div class="muted" style="text-align:center;padding:30px">Kho trống — bấm Upload để thêm sản phẩm</div>'; return; }
   $('#khoList').innerHTML=ds.map(d=>{
     const v=(d.versions||[]).find(x=>x.ver===d.cur)||(d.versions||[]).slice(-1)[0]||{};
-    return `<div class="item"><div class="nm">${d.name} <span style="color:var(--acc);font-size:11px">v${d.cur||1}</span></div>
-      <div class="me">${v.n_parts||0} mảnh · ${v.n_types||0} loại tôn · ${v.weight_kg||0} kg</div>
+    return `<div class="item"><div style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" class="oChk" data-id="${d.id}" style="width:20px;height:20px;flex:0 0 auto">
+        <div style="flex:1"><div class="nm">${d.name} <span style="color:var(--acc);font-size:11px">v${d.cur||1}</span></div>
+          <div class="me">${v.n_parts||0} mảnh · ${v.n_types||0} loại tôn · ${v.weight_kg||0} kg</div></div>
+        <div style="flex:0 0 auto;text-align:center"><div class="muted" style="font-size:10px">SL</div>
+          <input type="number" class="oQty" data-id="${d.id}" value="1" style="width:50px;padding:6px;text-align:center"></div>
+      </div>
       ${(v.warnings&&v.warnings.length)?`<div class="warn">⚠ ${v.warnings[0]}</div>`:''}
       <div class="acts">
-        <button class="btn ok sm" onclick="khoUse('${d.id}')">✂ Xếp</button>
+        <button class="btn ok sm" onclick="khoUse('${d.id}')">✂ Xếp riêng</button>
         <button class="btn info sm" onclick="khoView('${d.id}')">👁 Xem</button>
         <button class="btn ghost sm" onclick="khoDel('${d.id}')">🗑</button></div></div>`;
   }).join('');
@@ -316,6 +338,25 @@ window.khoDel=async(id)=>{
   if(!confirm('Xoá bản vẽ "'+d.name+'" khỏi kho?')) return;
   STORE.drawings=STORE.drawings.filter(x=>x.id!==id);
   await syncPush(); toast('Đã xoá');
+};
+window.khoOrder=async()=>{
+  const chks=[...document.querySelectorAll('.oChk:checked')];
+  if(!chks.length){ toast('Tick chọn bản vẽ + nhập SL trước'); return; }
+  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang lấy + xếp đơn hàng nhiều lò…';
+  try{
+    const items=[];
+    for(const c of chks){ const id=c.dataset.id, r=drawDxf(id); if(!r) continue;
+      const qty=+(document.querySelector('.oQty[data-id="'+id+'"]').value)||1;
+      items.push({dxf:await gunzipB64(r.v.dxf_gz), qty, name:r.d.name});
+    }
+    if(!items.length){ toast('Không đọc được bản vẽ'); }
+    else{
+      const sw=+$('#sw').value,sh=+$('#sh').value,gap=+$('#gap').value,margin=+$('#margin').value;
+      const res=await pyCall('do_order', JSON.stringify(items), sw, sh, gap, margin);
+      switchTab('nest'); renderNestResult(res); window.scrollTo(0,0); toast('Xong đơn hàng');
+    }
+  }catch(e){ toast('Lỗi đơn hàng: '+(e.message||e)); }
+  $('#busy').classList.add('hide');
 };
 
 /* ---------- TABS / APP ---------- */
