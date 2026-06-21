@@ -10,7 +10,17 @@ def cad_primitives(dxf_text, max_sag=0.5):
     import io
     import ezdxf
     from ezdxf import path as epath, colors as ezc
-    doc = ezdxf.read(io.StringIO(dxf_text))
+    try:
+        doc = ezdxf.read(io.StringIO(dxf_text))
+    except Exception:
+        # DXF co binary tag (ACIS/Embedded Object) lam tagger pure-python (Pyodide) vuong
+        # -> recover mode (chiu loi, bo qua tag hong). Stream BYTES de recover tu detect encoding.
+        from ezdxf import recover
+        try:
+            raw = dxf_text.encode("utf-8", "replace")
+        except Exception:
+            raw = dxf_text
+        doc, _auditor = recover.read(io.BytesIO(raw))
     msp = doc.modelspace()
 
     def _aci(e):
