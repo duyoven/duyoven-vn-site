@@ -175,6 +175,47 @@
     </div>
   </section>
 
+  <!-- ===== TIN TUC ===== -->
+  <section id="tin-tuc" style="padding: clamp(64px, 9vw, 110px) clamp(20px, 5vw, 64px); background: #0E0E10; border-top: 1px solid rgba(255,255,255,.07);">
+    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 38px;">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 14px; max-width: 720px;">
+          <span style="font-size: 11.5px; letter-spacing: .24em; text-transform: uppercase; color: #F47B20; font-weight: 700;">Tin tức &amp; cẩm nang</span>
+          <h2 style="margin: 0; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: clamp(29px, 4.4vw, 44px); line-height: 1.1; text-transform: uppercase;">Mới nhất từ lò than</h2>
+          <p style="margin: 0; font-size: 16px; line-height: 1.7; color: rgba(245,243,239,.62); text-wrap: pretty;">Cập nhật sản phẩm mới, mẹo nướng than tách khói và chuyện nghề từ xưởng Duy's Oven.</p>
+        </div>
+        <a href="tin-tuc.html" style="flex: none; font-size: 13px; font-weight: 700; color: #F47B20; text-decoration: none; border: 1px solid rgba(244,123,32,.45); border-radius: 99px; padding: 11px 22px; white-space: nowrap; transition: border-color .15s;" style-hover="border-color: #F47B20;">Xem tất cả tin tức →</a>
+      </div>
+      <div id="homeNews" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px;">
+        <p style="color: rgba(245,243,239,.5); font-size: 14px;">Đang tải tin tức…</p>
+      </div>
+    </div>
+  </section>
+  <script>
+  (function(){
+    function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+    function dvn(s){if(!s)return '';var d=new Date(s);if(isNaN(d))return esc(s);return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear();}
+    fetch('/site-content.json?t='+Date.now()).then(function(r){return r.json();}).then(function(c){
+      var ns=((c&&c.news)||[]).filter(function(n){return n.active!==false;}).slice(0,3);
+      var box=document.getElementById('homeNews'); if(!box) return;
+      if(!ns.length){box.innerHTML='<p style="color:rgba(245,243,239,.5);font-size:14px;">Chưa có tin tức.</p>';return;}
+      box.innerHTML=ns.map(function(n){
+        var href=n.url?esc(n.url):'tin-tuc.html';
+        var thumb=n.img?'<div style="aspect-ratio:16/10;overflow:hidden;background:#0A0A0B;"><img src="'+esc(n.img)+'" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>':'';
+        return '<a href="'+href+'" style="display:flex;flex-direction:column;background:#141417;border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;">'+
+          thumb+
+          '<div style="padding:22px 24px;display:flex;flex-direction:column;gap:9px;">'+
+            '<span style="font-size:12px;font-weight:700;letter-spacing:.06em;color:#F47B20;">'+dvn(n.date)+'</span>'+
+            '<h3 style="margin:0;font-family:\'Oswald\',sans-serif;font-weight:600;font-size:20px;line-height:1.25;letter-spacing:.02em;color:#F5F3EF;">'+esc(n.title)+'</h3>'+
+            (n.summary?'<p style="margin:0;font-size:14px;line-height:1.6;color:rgba(245,243,239,.58);text-wrap:pretty;">'+esc(n.summary)+'</p>':'')+
+            '<span style="margin-top:4px;font-size:13px;font-weight:700;color:#F47B20;">Đọc tiếp →</span>'+
+          '</div>'+
+        '</a>';
+      }).join('');
+    }).catch(function(){var box=document.getElementById('homeNews'); if(box) box.innerHTML='<p style="color:rgba(245,243,239,.5);font-size:14px;">Không tải được tin tức.</p>';});
+  })();
+  </script>
+
   <!-- ===== TRIET LY / VI SAO ===== -->
   <section style="padding: clamp(64px, 9vw, 110px) clamp(20px, 5vw, 64px); border-top: 1px solid rgba(255,255,255,.07); background: #0A0A0B;">
     <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 46px;">
