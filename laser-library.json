@@ -1269,8 +1269,38 @@
         "cost": 45052119,
         "ts": "2026-06-21 08:59:20"
       }
+    },
+    {
+      "id": "b46d04345b",
+      "name": "Đơn hàng SAT_1.4mm_GOP×2 SAT_1.4mm_GOP 1×4 - 21-06-2026 09h13",
+      "items": [
+        {
+          "label": "SAT_Nonemm",
+          "sheets": 51
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 1,
+        "gap": 3,
+        "margin": 3
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/Đơn hàng SAT_1.4mm_GOP×2 SAT_1.4mm_GOP 1×4 - 21-06-2026 09h13",
+        "sheets": 51,
+        "all_ok": true,
+        "materials": {
+          "SAT_Nonemm": 51
+        },
+        "cost": 7919260,
+        "ts": "2026-06-21 09:13:44"
+      }
     }
   ],
-  "rev": 29,
-  "updatedAt": "2026-06-21T01:59:22.936Z"
+  "rev": 30,
+  "updatedAt": "2026-06-21T02:13:45.915Z"
 }
