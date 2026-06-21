@@ -219,7 +219,8 @@
         if (!p || !p.specs) return; var s = p.specs;
         var rows = []; function add(l, v) { if (v != null && String(v).trim()) rows.push([l, String(v)]); }
         if (s.dai || s.rong || s.cao) add('Kích thước (D×R×C)', [s.dai, s.rong, s.cao].filter(Boolean).join(' × ') + ' mm');
-        add('Cân nặng', s.nang ? s.nang + ' kg' : ''); add('Số vỉ nướng', s.vi);
+        add('Cân nặng', s.nang ? s.nang + ' kg' : ''); add('Dung tích', s.dungTich); add('Số vỉ nướng', s.vi);
+        add('Công nghệ nướng', s.congNghe); add('Nguồn điện', s.nguonDien); add('Chất liệu sơn', s.sonCl);
         add('Vỉ 1 (kích thước · chất liệu)', [s.vi1kt, s.vi1cl].filter(Boolean).join(' · '));
         add('Vỉ 2 (kích thước · chất liệu)', [s.vi2kt, s.vi2cl].filter(Boolean).join(' · '));
         add('Chất liệu', s.chatLieu);
