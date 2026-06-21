@@ -78,11 +78,16 @@
           "d": "f8e105eecea344cc818f6b9fafad53616a1b38e3d253922f856a67bbef09d88e",
           "name": "iPhone 15promax",
           "ts": "2026-06-21T05:33:41.970Z"
+        },
+        {
+          "d": "5684520c79b4ca750dcf4c47440954742a984da3c0fa4b0a66802e7c19a5556d",
+          "name": "DOV",
+          "ts": "2026-06-21T05:35:44.766Z"
         }
       ]
     }
   ],
-  "rev": 10,
+  "rev": 11,
   "note": "App Xep Laser Duy's Oven - quan ly key kich hoat",
-  "updatedAt": "2026-06-21T05:33:41.970Z"
+  "updatedAt": "2026-06-21T05:35:44.766Z"
 }
