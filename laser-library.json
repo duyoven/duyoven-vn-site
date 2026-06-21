@@ -1339,8 +1339,48 @@
         "cost": 34869909,
         "ts": "2026-06-21 09:17:45"
       }
+    },
+    {
+      "id": "bbc5bb4131",
+      "name": "Đơn hàng BV laser lò 125- đã đặt tên hoàn chỉnh×5 BV laser lò 125×10 - 21-06-2026 09h41",
+      "items": [
+        {
+          "label": "SAT_1.4mm",
+          "sheets": 17
+        },
+        {
+          "label": "SAT_2mm",
+          "sheets": 8
+        },
+        {
+          "label": "SAT_3mm",
+          "sheets": 3
+        }
+      ],
+      "settings": {
+        "sheet": [
+          1250,
+          2500
+        ],
+        "sets": 1,
+        "gap": 3,
+        "margin": 3
+      },
+      "result": {
+        "kind": "nest",
+        "folder": "/Users/claudemachine/Library/CloudStorage/GoogleDrive-vinhduynguyen@gmail.com/My Drive/DuyNestPro/Đơn hàng BV laser lò 125- đã đặt tên hoàn chỉnh×5 BV laser lò 125×10 - 21-06-2026 09h41",
+        "sheets": 28,
+        "all_ok": true,
+        "materials": {
+          "SAT_1.4mm": 17,
+          "SAT_2mm": 8,
+          "SAT_3mm": 3
+        },
+        "cost": 33684365,
+        "ts": "2026-06-21 09:41:36"
+      }
     }
   ],
-  "rev": 31,
-  "updatedAt": "2026-06-21T02:17:47.931Z"
+  "rev": 32,
+  "updatedAt": "2026-06-21T02:41:39.831Z"
 }
