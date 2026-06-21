@@ -193,7 +193,14 @@ async function ensurePy(){if(PY)return PY;$('#py').classList.remove('hide');try{
   await PY.runPythonAsync("import sys;sys.path.insert(0,'/home/pyodide');import glue");
   $('#py').classList.add('hide');return PY;
 }catch(e){$('#pyMsg').textContent='Lỗi nạp engine: '+e.message;throw e}}
-async function pyCall(fn,...args){await ensurePy();const g=PY.pyimport('glue');const r=String(g.dispatch(fn,...args));if(g.destroy)try{g.destroy()}catch(e){}return JSON.parse(r)}
+async function pyCall(fn,...args){await ensurePy();
+  try{const g=PY.pyimport('glue');const r=String(g.dispatch(fn,...args));if(g.destroy)try{g.destroy()}catch(e){}return JSON.parse(r)}
+  catch(e){const s=String(e&&e.message||e);
+    if(/fatally|Aborted|out of memory|memory access|RangeError|allocation/i.test(s)){
+      PY=null;$('#busy').classList.add('hide');$('#py').classList.add('hide');
+      setTimeout(()=>{if(confirm('Bản vẽ quá nặng → tràn bộ nhớ điện thoại.\nTải lại app để thử lại? (file lớn nên xếp trên máy tính)'))location.reload()},60);
+      throw new Error('Quá tải bộ nhớ');}
+    throw e;}}
 
 /* XEP DON LE */
 let curDxf=null;
@@ -220,16 +227,20 @@ window.reCost=()=>{['pk','pi2','pc','pp'].forEach(id=>LS.setItem('dnz_'+(id==='p
   const c=window.__cost,t=c.sat.kg*(+$('#pk').value)+c.inox.kg*(+$('#pi2').value)+(c.sat.m+c.inox.m)*(+$('#pc').value)+(c.sat.pi+c.inox.pi)*(+$('#pp').value);
   $('#costTot').textContent='≈ '+fmt(t)+' đ'};
 function showResult(r,where){
-  window.__last=r;window.__files=r.files||[];window.__sim=r.sim||[];
+  window.__last=r;window.__files=r.files||[];window.__lastOut=r.out;window.__lastSheet=[+$('#sw').value,+$('#sh').value];
   if(!r.ok&&!(r.files&&r.files.length)){$(where).innerHTML='<div class="card warn" style="color:var(--danger)">Không tách được chi tiết. Chọn file ĐÃ XẾP / có nhãn vật liệu-độ dày.</div>';return}
   let h=`<div class="card"><h3>Kết quả</h3><div class="big" style="color:var(--ok)">${r.sheets} tấm · ${r.analysis.n_parts} mảnh · ${r.analysis.weight_kg} kg phôi</div>
    <div class="muted" style="margin-top:4px">${(r.analysis.materials||[]).map(m=>`${m.material} ${m.thickness}mm ×${m.count}`).join(' · ')}</div>
-   ${(window.__sim.length)?`<button class="btn purple sm" style="margin-top:10px" onclick="playSim(window.__sim,[${+$('#sw').value},${+$('#sh').value}])">🎬 Mô phỏng xếp</button>`:''}</div>`;
+   ${r.has_sim?`<button class="btn purple sm" style="margin-top:10px" onclick="simResult()">🎬 Mô phỏng xếp</button>`:''}</div>`;
   (r.files||[]).forEach((f,i)=>h+=`<div class="item"><div class="nm">${f.name}</div><div class="acts"><button class="btn ok sm" onclick="viewFile(${i})">👁 Xem</button><button class="btn info sm" onclick="dlFile(${i})">⬇ Tải DXF cắt</button></div></div>`);
   h+=costCard(r);$(where).innerHTML=h;
 }
 window.viewFile=async i=>openViewer(window.__files[i].name,await pyCall('do_prims',window.__files[i].dxf));
 window.dlFile=i=>{const f=window.__files[i],b=new Blob([f.dxf],{type:'application/dxf'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=f.name;a.click()};
+window.simResult=async()=>{if(!window.__lastOut){toast('Không có dữ liệu mô phỏng');return}
+  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang tạo mô phỏng…';
+  try{const s=await pyCall('do_sim',window.__lastOut,window.__lastSheet[0],window.__lastSheet[1]);$('#busy').classList.add('hide');playSim(s.frames,window.__lastSheet)}
+  catch(e){$('#busy').classList.add('hide');if(e.message!=='Quá tải bộ nhớ')toast('Lỗi: '+(e.message||e))}};
 
 /* DON HANG (file + kho) */
 let ORD=[];
