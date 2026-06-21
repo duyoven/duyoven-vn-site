@@ -646,7 +646,7 @@ export default {
         const act = String(b.action || "get");
         if (act === "get") {
           const r = await ghGetJson(env, "laser-library.json", "appdata");
-          const data = (r.obj && typeof r.obj === "object") ? r.obj : { parts: [], sessions: [], rev: 0 };
+          const data = (r.obj && typeof r.obj === "object") ? r.obj : { parts: [], sessions: [], drawings: [], rev: 0 };
           return jsonResp({ ok: true, data });
         }
         if (act === "save") {
@@ -660,6 +660,8 @@ export default {
             }
             store.parts = Array.isArray(incoming.parts) ? incoming.parts : [];
             store.sessions = Array.isArray(incoming.sessions) ? incoming.sessions : [];
+            // KHO BAN VE (drawings) — luu de DONG BO giua chu va nhan vien. Giu ban cu neu lan nay khong gui.
+            store.drawings = Array.isArray(incoming.drawings) ? incoming.drawings : (Array.isArray(store.drawings) ? store.drawings : []);
             return { msg: "laser-lib: cap nhat thu vien (" + (v.key) + ")" };
           });
           if (res.rejected) return res.rejected;
