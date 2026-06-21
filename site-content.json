@@ -1,6 +1,6 @@
 {
   "_note": "Nội dung động của duyoven.vn — chỉnh trong Admin › Website. Đừng sửa tay nếu không rành.",
-  "updatedAt": "2026-06-19T05:41:05.397Z",
+  "updatedAt": "2026-06-21T14:33:03.204Z",
   "company": {
     "name": "CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA",
     "brand": "Duy's Oven",
@@ -23,11 +23,20 @@
       "price": 7700000,
       "unit": "bộ",
       "short": "Lò mini gập gọn, tiện mang đi.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2026/06/pantina-DSCF8315.jpg",
       "link": "sp-pantina.html",
       "active": true,
       "code": "PAN",
-      "approved": true
+      "approved": true,
+      "specs": {
+        "dai": "600",
+        "rong": "300",
+        "cao": "380",
+        "nang": "17",
+        "nguonDien": "12VDC/2A hoặc Power Bank typeC (Không kèm theo sản phẩm)",
+        "congNghe": "Than tách khói",
+        "sonCl": "Sơn chịu nhiệt tiêu chuẩn Mỹ 600° C"
+      }
     },
     {
       "id": "tk80",
@@ -35,11 +44,20 @@
       "price": 15400000,
       "unit": "bộ",
       "short": "Lò than tách khói 80L cho nhà hàng vừa.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2023/03/80L-PHIATRUOC2-800x800.jpg",
       "link": "sp-tach-khoi-80l.html",
       "active": true,
       "code": "LTK80",
-      "approved": true
+      "approved": true,
+      "specs": {
+        "dai": "1100",
+        "rong": "600",
+        "cao": "1750",
+        "nang": "70",
+        "dungTich": "80L",
+        "vi": "2",
+        "nguonDien": "12VDC / 2A (Không kèm theo sản phẩm)"
+      }
     },
     {
       "id": "tk85",
@@ -47,23 +65,41 @@
       "price": 16500000,
       "unit": "bộ",
       "short": "Lò than tách khói 85L.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2023/06/toan-canh-800x800.jpg",
       "link": "sp-tach-khoi-85l.html",
       "active": true,
       "code": "LTK85",
-      "approved": true
+      "approved": true,
+      "specs": {
+        "dai": "850",
+        "rong": "500",
+        "cao": "1000",
+        "nang": "75",
+        "dungTich": "85L",
+        "vi": "1",
+        "nguonDien": "12VDC / 2A (Không kèm theo sản phẩm)"
+      }
     },
     {
       "id": "tk125",
       "name": "Lò Tách khói 125L",
-      "price": 0,
+      "price": 23100000,
       "unit": "bộ",
       "short": "Lò than tách khói 125L công suất lớn.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2021/04/125L-TOAN-CANH-800x800.jpg",
       "link": "sp-tach-khoi-125l.html",
       "active": true,
       "code": "LTK125",
-      "approved": true
+      "approved": true,
+      "specs": {
+        "dai": "1260",
+        "rong": "650",
+        "cao": "1750",
+        "nang": "90",
+        "dungTich": "125L",
+        "vi": "2",
+        "nguonDien": "12VDC 2A"
+      }
     },
     {
       "id": "hy65",
@@ -71,11 +107,21 @@
       "price": 15400000,
       "unit": "bộ",
       "short": "Lò Hybrid 65L kết hợp than và gas.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2021/04/HB-65L-800x800.webp",
       "link": "sp-hybrid-65l.html",
       "active": true,
       "code": "HYB65",
-      "approved": true
+      "approved": true,
+      "specs": {
+        "dai": "850",
+        "rong": "400",
+        "cao": "1550",
+        "nang": "60",
+        "dungTich": "65L",
+        "nguonDien": "12VDC2A hoặc Power Bank TypeC (Không kèm theo sản phẩm)",
+        "congNghe": "Tách khói kết hợp xông khói",
+        "sonCl": "Sơn chịu nhiệt tiêu chuẩn Mỹ 600° C"
+      }
     },
     {
       "id": "hy80",
@@ -83,11 +129,12 @@
       "price": 18700000,
       "unit": "bộ",
       "short": "Lò Hybrid 80L kết hợp than và gas.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2023/06/HB-80L.c-800x800.png",
       "link": "sp-hybrid-80l.html",
       "active": true,
       "code": "HYB80",
-      "approved": true
+      "approved": true,
+      "specs": {}
     },
     {
       "id": "hy125",
@@ -95,11 +142,12 @@
       "price": 27500000,
       "unit": "bộ",
       "short": "Lò Hybrid 125L công suất lớn.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2023/03/duys-oven-lo-nuong-hybrid-125L.jpg",
       "link": "sp-hybrid-125l.html",
       "active": true,
       "code": "HYB125",
-      "approved": true
+      "approved": true,
+      "specs": {}
     },
     {
       "id": "smk10050",
@@ -107,11 +155,12 @@
       "price": 33000000,
       "unit": "bộ",
       "short": "Lò xông khói (smoker) Hybrid 10050.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2018/07/NGHIENG-MO-NAP2-800x800.jpg",
       "link": "sp-xong-khoi-hybrid-10050.html",
       "active": true,
       "code": "LXKH10050",
-      "approved": true
+      "approved": true,
+      "specs": {}
     },
     {
       "id": "offset10050",
@@ -119,11 +168,12 @@
       "price": 24200000,
       "unit": "bộ",
       "short": "Lò xông khói offset 10050 kiểu Mỹ.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2019/11/hinh-web-big-size-copy-800x800.webp",
       "link": "sp-offset-10050.html",
       "active": true,
       "code": "OS10050",
-      "approved": true
+      "approved": true,
+      "specs": {}
     },
     {
       "id": "pizza",
@@ -131,11 +181,432 @@
       "price": 126500000,
       "unit": "bộ",
       "short": "Lò pizza dùng củi và gas.",
-      "img": "",
+      "img": "https://duyoven.com/wp-content/uploads/2024/11/IMG_0848-600x800.jpeg",
       "link": "sp-pizza-wood-gas.html",
       "active": true,
       "code": "LPWG",
-      "approved": true
+      "approved": true,
+      "specs": {
+        "dai": "1200",
+        "rong": "1200",
+        "cao": "1700",
+        "nang": "650"
+      }
+    },
+    {
+      "id": "dc1782052342079",
+      "code": "THNOG",
+      "name": "Tổ hợp nướng – Orchestra Grilling",
+      "price": 88000000,
+      "unit": "bộ",
+      "short": "Lò nướng than tách khói Camping 60L, nướng than tách khói chuyên dùng cho gia đình, cắm trại, kích thước ngang 50cm rộng 35cm, cao 65cm Nặng 18kg",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/IMG_2647-1051x800.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342080",
+      "code": "LXKOS9045",
+      "name": "Lò Xông Khói Offset Smoker 9045",
+      "price": 21725000,
+      "unit": "bộ",
+      "short": "Lò xông khói Offset Smoker 9050, chiếc lò bạn cần tìm kiếm cho môn xông khói, đỉnh cao của môn BBQ. Nó là vũ khí của bất kỳ pitmaster n",
+      "img": "https://duyoven.com/wp-content/uploads/2026/04/DSCF8237-533x800.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342081",
+      "code": "LXK1400",
+      "name": "Lò xông khói 1400",
+      "price": 77000000,
+      "unit": "bộ",
+      "short": "Lò xông khói D20090-1400L Dài: 300cm, Đường kính 90cmVới 2-3 tầng vỉ tuỳ theo yêu cầu Lò nặng 550KG Nướng Than theo kiểu truyền thống không lo cháy khét",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/IMG_1424-1067x800.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {
+        "dai": "3090",
+        "rong": "900",
+        "cao": "1400"
+      }
+    },
+    {
+      "id": "dc1782052342082",
+      "code": "FLSC",
+      "name": "FirePlace- Lò Sưởi Củi",
+      "price": 20900000,
+      "unit": "bộ",
+      "short": "Lò sưởi ấm trong nhà, Công dụng  sưởi trong nhà, Lò dùng: củi, gỗ, than để đốt",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/IMG_5712.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342083",
+      "code": "LNTKH",
+      "name": "Lò Nướng Tách Khói Hai Khoang",
+      "price": 38500000,
+      "unit": "bộ",
+      "short": "Lò nướng tách khói 18050 chuyên dùng cho nhà hàng nướng, dung tích: 18045L, dài: 180cm, rộng: 45cm, 2 cửa mỗi cửa 90cm, hai vỉ nướng, mỗi vỉ 90cm rộng 45cm",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/IMG_2927-1200x800.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342084",
+      "code": "LNTP",
+      "name": "LÒ NƯỚNG THAN PARRILLA",
+      "price": 52800000,
+      "unit": "bộ",
+      "short": "Argentia Steak Lò chuyên dùng cho món Steak, phong cách ArgentinaLàm bít tết phong cách Argentina, Ngang: 180cmRộng:  80cm",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/DSCF5164-1-450x800.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342085",
+      "code": "LNTYJ",
+      "name": "Lò Nướng Than Yakitori Japan",
+      "price": 8800000,
+      "unit": "bộ",
+      "short": "Lò nướng than đa chức năng Stove Oven: Nướng, Sưởi, Nấu Dùng cho Camping",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/EE597E57-F903-4DD4-9390-D945AEA0C9A1-2257-000001AAB75D3311-1200x800.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342086",
+      "code": "LND6080",
+      "name": "Lò nướng đứng OT6080",
+      "price": 13200000,
+      "unit": "bộ",
+      "short": "Lò nướng đứng OT6080, Lò đứng, dùng cho những buổi tiệc ngoài trời, đốt lửa và nướng cùng nhau",
+      "img": "https://duyoven.com/wp-content/uploads/2021/01/Lo-nuong-dung-Duy-Oven-OT6080.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342087",
+      "code": "LNTTK65",
+      "name": "Lò Nướng Than Tách Khói 65L",
+      "price": 12100000,
+      "unit": "bộ",
+      "short": "Lò nướng than tách khói 65L (60x40x155cm, 45kg, dung tích 65 lít) giúp nướng đa dạng món, hạn chế khói và mùi, phù hợp cho gia đình và quán ăn nhỏ. Sản phẩm chính hãng Duy Oven, bảo hành và giao hàng toàn quốc – liên hệ để nhận báo giá mới nhất. Đã bao gồm VAT 10%",
+      "img": "https://duyoven.com/wp-content/uploads/2021/04/65L-toan-canh-800x800.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {
+        "dai": "600",
+        "rong": "400",
+        "cao": "1550",
+        "nang": "45",
+        "dungTich": "65L",
+        "vi": "1",
+        "nguonDien": "12VDC/2A, hoặc PowerBank TypeC (Không kèm theo sản phẩm)"
+      }
+    },
+    {
+      "id": "dc1782052342088",
+      "code": "LNTTK250",
+      "name": "Lò Nướng Than Tách Khói 250L",
+      "price": 28600000,
+      "unit": "bộ",
+      "short": "Lò Nướng Than Tách Khói 250L dùng cho nhà hàng, khu ẩm thực Lò hai tầng vỉ Vỉ 1: 121x54cm Vỉ 2: 121x40cm Lò ngang 120 rộng 60 cao 110 cm Nặng: 150kg. Lưu ý: Giá chưa bao gồm phí vận chuyển và VAT. Đã bao gồm VAT 10%",
+      "img": "https://duyoven.com/wp-content/uploads/2021/04/Lo-tach-khoi-250L-d.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342089",
+      "code": "LNPO",
+      "name": "Lò nướng Pizza outdoor",
+      "price": 8800000,
+      "unit": "bộ",
+      "short": "Lò nướng pizza ngoài trời chuyên dụng với kích thước 43x43x112cm và nặng 40kg là sản phẩm lý tưởng cho những ai yêu thích nướng pizza tại nhà. Với cửa nướng rộng 34x24cm và khay đá kích thước 35x35cm, sản phẩm này sẽ giúp bạn nướng pizza với độ chín và độ giòn tuyệt vời. Khay đá được thiết kế để giữ",
+      "img": "https://duyoven.com/wp-content/uploads/2021/04/Lo-nuong-Pizza-outdoor.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342090",
+      "code": "LSGDD",
+      "name": "Lò sưởi gia đình, dùng than củi",
+      "price": 38500000,
+      "unit": "bộ",
+      "short": "Lò sưởi than củi trong nhà, dùng nhiệt đối lưu,trao đổi khí tuần hoàn. Chất đốt sẽ thoát khói ra bên ngooài, lò tự hút khí oxy bên ngoài.",
+      "img": "https://duyoven.com/wp-content/uploads/2022/03/DSC05735-1024x683.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342091",
+      "code": "FGNNN",
+      "name": "Fast Grill – Nướng Nhanh Nhiều Món Ăn",
+      "price": 132000000,
+      "unit": "bộ",
+      "short": "Fast Grill: Nướng nhanh mọi món nướng, dùng cho nhà hàng, quán ăn cần ra món ăn nhanh, thời gian tính bằng vài phút.beef steak, hải sản...",
+      "img": "https://duyoven.com/wp-content/uploads/2022/07/duys-oven-lo-nuong-fastgrill-800x800.webp",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342092",
+      "code": "LGXK",
+      "name": "Lò Gas Xông Khói",
+      "price": 49500000,
+      "unit": "bộ",
+      "short": "Lò gas xông khói có kích thước lớn với chiều ngang 210cm, chiều rộng 80cm và chiều cao 130cm. Với trọng lượng 140kg, đáp ứng nhu cầu nướng thịt xông khói cho các quán ăn hoặc nhà hàng.",
+      "img": "https://duyoven.com/wp-content/uploads/2023/03/XK-GAS.a.png",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342094",
+      "code": "LXKSM",
+      "name": "Lò Xông Khói SubMarine Mini",
+      "price": 63800000,
+      "unit": "bộ",
+      "short": "Lò Xông Khói SubMarine Mini đa năng với thiết kế sang trọng và tiện dụng. Với kích thước lớn lên đến 250cm x 50cm x 130cm. Thiết bị sử dụng than cấp nhiệt cho khoang xông khói mang tính tiện lợi cho môn xông khói truyền thống",
+      "img": "https://duyoven.com/wp-content/uploads/2023/03/XONG-KHOI-TAU-NGAM-NGHIENG-800x800.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342095",
+      "code": "AS",
+      "name": "Argentia Steak",
+      "price": 60500000,
+      "unit": "bộ",
+      "short": "Argentia Steak Lò là một lò nướng chuyên dụng được thiết kế đặc biệt cho việc làm bít tết phong cách Argentina. Với lò này, bạn có thể nướng được những miếng thịt bò tươi ngon đúng theo phong cách Argentina, một trong những phong cách nướng thịt bò nổi tiếng nhất thế giới. Với thiết kế độc đáo và ch",
+      "img": "https://duyoven.com/wp-content/uploads/2023/03/duys-oven-argentina-steak-800x800.webp",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342096",
+      "code": "LQHT",
+      "name": "Lò Quay Hai Trục",
+      "price": 44000000,
+      "unit": "bộ",
+      "short": "Lò Quay Heo - Gà - Bê với thông số kích thước ngang 155cm, rộng 75cm, cao 110cm và nặng 197kg, Đảm bảo sẽ mang đến cho bạn và khách hàng của mình những món nướng thơm ngon và đậm chất.",
+      "img": "https://duyoven.com/wp-content/uploads/2023/03/duys-oven-roll-pig.png",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {
+        "dai": "1700",
+        "rong": "750",
+        "cao": "1200",
+        "nang": "175"
+      }
+    },
+    {
+      "id": "dc1782052342097",
+      "code": "LNXT",
+      "name": "Lò Nướng Xiên Tre",
+      "price": 82500000,
+      "unit": "bộ",
+      "short": "Lò nướng xiên tre có kích thước lớn, với chiều dài 170cm, chiều rộng 53cm, chiều cao 103cm và cân nặng 70kg. Thiết bị này được trang bị 40 xiên, mỗi xiên có chiều dài 25cm, đủ để bạn nướng nhiều loại thực phẩm khác nhau cùng lúc. Lưu ý: Giá chưa bao gồm phí vận chuyển và VAT. Đã bao gồm VAT 10%",
+      "img": "https://duyoven.com/wp-content/uploads/2023/04/LQ-XT.png",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342098",
+      "code": "LQX",
+      "name": "Lò Quay Xiên",
+      "price": 52800000,
+      "unit": "bộ",
+      "short": "Lò quay xiên là sự lựa chọn tốt nhất cho những ai yêu thích nướng món thịt và mong muốn tạo ra những bữa tiệc tuyệt vời trong gia đình hay nhà hàng.",
+      "img": "https://duyoven.com/wp-content/uploads/2023/04/LQX.webp",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342099",
+      "code": "AG",
+      "name": "Argentia Grill",
+      "price": 48400000,
+      "unit": "bộ",
+      "short": "Argentia Grill Lò là một lò nướng chuyên dụng được thiết kế đặc biệt cho việc làm bít tết phong cách Argentina. Với lò này, bạn có thể nướng được những miếng thịt bò tươi ngon đúng theo phong cách Argentina, một trong những phong cách nướng thịt bò nổi tiếng nhất thế giới. Với thiết kế độc đáo và ch",
+      "img": "https://duyoven.com/wp-content/uploads/2023/04/argentina-steak-copy.f-800x800.webp",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342100",
+      "code": "LXKHD",
+      "name": "Lò Xông Khói Hybrid Đa Giác",
+      "price": 33000000,
+      "unit": "bộ",
+      "short": "Lò xông khói hybrid đa giác - Sự lựa chọn độc đáo cho các tín đồ nướng ngoài trời. Với kiểu dáng vô cùng đặc biệt và hiện đại, lò xông khói này sẽ khiến bạn trầm trồ ngay từ cái nhìn đầu tiên. Vật liệu chính là thép chắc chắn, kết hợp cùng phong cách Âu - Mỹ tạo nên một sự kết hợp độc đáo. Với lớp s",
+      "img": "https://duyoven.com/wp-content/uploads/2023/06/lo-toan-canh-800x800.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342101",
+      "code": "LNTDD",
+      "name": "Lò nướng treo di động Pantina",
+      "price": 7700000,
+      "unit": "bộ",
+      "short": "Lò tách khói treo đa năng với thiết kế sang trọng và thực hiện. Với kích thước lớn nhỏ nhưng khoang nướng cực lớn đến 46cm x 28cm x 36cm và nặng chỉ hơn 10kg. Thiết bị sử dụng gas và cung cấp nhiệt độ cho khoảng nướng kết hợp, sự kết hợp này mang lại lợi ích cho hoạt động và nướng dưới mưa dễ dàng h",
+      "img": "https://duyoven.com/wp-content/uploads/2023/08/4-1-800x800.png",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342102",
+      "code": "LSACF",
+      "name": "Lò sưởi ấm camping forester rocket",
+      "price": 5500000,
+      "unit": "bộ",
+      "short": "Lò sưởi ấm camping forester rocket (49x30x147cm, 7.4kg, inox 304) – lò sưởi đa nhiên liệu củi/gỗ/than, gọn nhẹ, có thể nấu nước, lý tưởng khi cắm trại. Chính hãng Duy Oven, bảo hành & giao hàng toàn quốc. Đã bao gồm VAT 10%",
+      "img": "https://duyoven.com/wp-content/uploads/2023/08/1-1-800x800.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342103",
+      "code": "LNTE",
+      "name": "Lò Nướng Than EcoGrill",
+      "price": 1089000,
+      "unit": "bộ",
+      "short": "Lò nướng than Eco Grill, nướng xiên que, steak, sườn, nấu, nướng các loại, hay đốt sưởi ấm, cần cho những buổi tiệc nhỏ",
+      "img": "https://duyoven.com/wp-content/uploads/2024/05/Eco-grill_anh-san-pham.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342104",
+      "code": "LSCFP",
+      "name": "Lò sưởi củi – Fire Place",
+      "price": 16500000,
+      "unit": "bộ",
+      "short": "Lò sưởi củi Fireplace (50x45x90cm) – giải pháp sưởi ấm hiệu suất cao, tiết kiệm củi, thép dày >3mm, kính cường lực chịu nhiệt, 2 chế độ sưởi. Chính hãng Duy Oven, bảo hành & giao hàng toàn quốc. Đã bao gồm VAT 10%",
+      "img": "https://duyoven.com/wp-admin/admin-ajax.php?action=rank_math_overlay_thumb&id=10340&type=play&hash=1183995ff1df51754de25a201bdf566f",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342105",
+      "code": "LNTTK85",
+      "name": "Lò nướng than tách khói Hybrid 85L",
+      "price": 17600000,
+      "unit": "bộ",
+      "short": "Lò nướng than tách khói Hybrid 85L – phiên bản nâng cấp với mâm inox tạo ẩm, đa năng cho nướng than tách khói, nướng trực tiếp steak, hải sản và xông khói. Chính hãng Duy Oven, bảo hành & giao hàng toàn quốc. Đã bao gồm VAT 10%",
+      "img": "https://duyoven.com/wp-content/uploads/2025/09/IMG_4181-600x800.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342106",
+      "code": "FP",
+      "name": "FastGrill Premium",
+      "price": 176000000,
+      "unit": "bộ",
+      "short": "Fast Grill: Nướng nhanh mọi món nướng, dùng cho nhà hàng, quán ăn cần ra món ăn nhanh, thời gian tính bằng vài phút.beef steak, hải sản...",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/IMG_9183.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342107",
+      "code": "CFBNT",
+      "name": "Combo Fastgrill – Bộ nướng than hoàng gia",
+      "price": 308000000,
+      "unit": "bộ",
+      "short": "Fast Grill: Nướng nhanh mọi món nướng, dùng cho nhà hàng, quán ăn cần ra món ăn nhanh, thời gian tính bằng vài phút.beef steak, hải sản...",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/DSCF6372-852x800.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342108",
+      "code": "LXKOS15070",
+      "name": "Lò xông khói Offset Smoker 15070",
+      "price": 41800000,
+      "unit": "bộ",
+      "short": "Lò xông khói offset smoker 10050, khoang xông khói dài: 100cm, Đường kính 50cm, Khoang đốt dài 45 rộng 45cmNặng 100kg, Hai tầng vỉ.",
+      "img": "https://duyoven.com/wp-content/uploads/2025/10/DSCF4882-1300x732.jpeg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {}
+    },
+    {
+      "id": "dc1782052342109",
+      "code": "LNTTK125",
+      "name": "Lò nướng than tách khói 125L Pro",
+      "price": 26400000,
+      "unit": "bộ",
+      "short": "Lò nướng than tách khói 125L cho sân vườn, nhà hàng, khách sạn...các khu resort hay khu dã ngoaị ngoài trời, nướng than, củi, không lo cháy",
+      "img": "https://duyoven.com/wp-content/uploads/2026/06/DSCF8404-wm.jpg",
+      "link": "",
+      "active": true,
+      "approved": false,
+      "specs": {
+        "dai": "1260",
+        "rong": "650",
+        "cao": "1750",
+        "nang": "90",
+        "dungTich": "125L",
+        "vi": "2",
+        "nguonDien": "12VDC 2A"
+      }
     }
   ],
   "news": [
@@ -145,7 +616,7 @@
       "title": "Nướng than đúng vị, không còn ai phải né khói",
       "summary": "Vì sao mỡ rơi vào than mới là thủ phạm khói khét — và cách lò tách khói Duy's Oven xử lý tận gốc. Kèm 3 đồ hoạ dễ hiểu và bảng chọn lò theo nhu cầu.",
       "body": "",
-      "img": "lo-65l.jpg",
+      "img": "lo-65l-3d.jpg",
       "url": "nuong-than-khong-ne-khoi.html",
       "active": true
     },
