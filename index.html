@@ -201,7 +201,7 @@
       if(!ns.length){box.innerHTML='<p style="color:rgba(245,243,239,.5);font-size:14px;">Chưa có tin tức.</p>';return;}
       box.innerHTML=ns.map(function(n){
         var href=n.url?esc(n.url):'tin-tuc.html';
-        var thumb=n.img?'<div style="aspect-ratio:4/3;overflow:hidden;background:#0b0a09;"><img src="'+esc(n.img)+'" alt="" loading="lazy" style="width:100%;height:100%;object-fit:contain;display:block;"></div>':'';
+        var thumb=n.img?'<div style="aspect-ratio:16/10;overflow:hidden;background:#0A0A0B;"><img src="'+esc(n.img)+'" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>':'';
         return '<a href="'+href+'" style="display:flex;flex-direction:column;background:#141417;border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;">'+
           thumb+
           '<div style="padding:22px 24px;display:flex;flex-direction:column;gap:9px;">'+
