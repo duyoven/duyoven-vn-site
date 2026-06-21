@@ -131,7 +131,7 @@
     var box=document.getElementById('newsList');
     if(!ns.length){box.innerHTML='<p style="color:var(--muted)">Chưa có bài viết.</p>';return;}
     box.innerHTML=ns.map(function(n){
-      var thumb=n.img?'<a href="'+(n.url?esc(n.url):'#')+'"><img src="'+esc(n.img)+'" alt="" loading="lazy" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:block"></a>':'';
+      var thumb=n.img?'<a href="'+(n.url?esc(n.url):'#')+'"><img src="'+esc(n.img)+'" alt="" loading="lazy" style="width:100%;max-height:320px;object-fit:contain;background:#0b0a09;border-radius:10px;margin-bottom:14px;display:block"></a>':'';
       var title=n.url?'<a href="'+esc(n.url)+'" style="color:#fff">'+esc(n.title)+'</a>':esc(n.title);
       var content=n.url?'':(n.body?'<div style="white-space:pre-wrap;line-height:1.6">'+esc(n.body)+'</div>':'');
       var more=n.url?'<a href="'+esc(n.url)+'" style="display:inline-block;margin-top:8px;color:var(--ember);font-weight:600">Đọc tiếp →</a>':'';
