@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-21T14:06:56.213Z",
+      "who": "vinhduynguyen@gmail.com",
+      "action": "Đăng nhập",
+      "detail": "Google · Mac Chrome"
+    },
+    {
       "ts": "2026-06-21T07:20:37.259Z",
       "who": "laser:Ipad",
       "action": "Kich hoat app laser",
