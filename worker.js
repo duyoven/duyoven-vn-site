@@ -1337,6 +1337,15 @@ export default {
       return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h });
     }
 
+    // BAO VE IP: file engine xep (/laser/*.py, *.whl) chi may DA KICH HOAT (token hop le) tai duoc.
+    if (url.pathname.startsWith("/laser/") && /\.(py|whl)$/.test(url.pathname)) {
+      const tok = url.searchParams.get("t") || "";
+      const dev = url.searchParams.get("d") || "";
+      let v = null;
+      try { v = await verifyLaser(env, tok, dev); } catch (e) {}
+      if (!v) return new Response("Forbidden — chua kich hoat", { status: 403 });
+    }
+
     return env.ASSETS.fetch(request);
   },
 };

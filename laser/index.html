@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b0e13">
+<title>DuyNest — Xếp laser</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#0b0e13;--card:#151a22;--card2:#1c222c;--bd:#252c38;--fg:#e8edf4;--mut:#8a93a3;
+--acc:#ff6a3d;--ok:#2ecc71;--info:#3b82f6;--danger:#ff5a5a;--hair:#222a36}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);
+font-family:-apple-system,Segoe UI,Roboto,system-ui,sans-serif;font-size:15px}
+.hide{display:none!important}
+header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#10141b;border-bottom:1px solid var(--hair);position:sticky;top:0;z-index:5}
+header .logo{font-weight:800;color:var(--acc);font-size:17px}
+header .ver{font-size:10px;color:var(--mut);border:1px solid var(--bd);border-radius:5px;padding:1px 5px}
+header .sp{flex:1}
+.sync{font-size:11px;color:var(--mut)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:10px;
+padding:11px 16px;font-size:15px;font-weight:700;color:#fff;background:var(--acc);cursor:pointer}
+.btn:active{filter:brightness(.9)}
+.btn.ok{background:var(--ok);color:#06210f}.btn.info{background:var(--info)}.btn.ghost{background:var(--card2);color:var(--fg);font-weight:600}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5}
+nav{display:flex;background:#10141b;border-bottom:1px solid var(--hair);position:sticky;top:43px;z-index:4}
+nav button{flex:1;background:none;border:none;color:var(--mut);font-size:14px;font-weight:700;padding:12px 4px;border-bottom:2px solid transparent}
+nav button.on{color:var(--fg);border-bottom-color:var(--acc)}
+main{padding:14px;max-width:760px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font-size:14px;color:var(--mut);font-weight:700}
+label.fld{display:block;font-size:12px;color:var(--mut);font-weight:700;margin:8px 0 3px}
+input[type=text],input[type=password],input[type=number]{width:100%;background:#0e1219;border:1px solid var(--bd);
+border-radius:9px;color:var(--fg);font-size:16px;padding:11px;outline:none}
+input:focus{border-color:var(--acc)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.muted{color:var(--mut);font-size:12px;line-height:1.5}
+.big{font-size:18px;font-weight:800}
+.drop{border:2px dashed var(--bd);border-radius:14px;padding:26px 14px;text-align:center;color:var(--mut)}
+.drop.on{border-color:var(--acc);color:var(--fg)}
+.item{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.item .nm{font-weight:800;font-size:15px}
+.item .me{color:var(--acc);font-weight:700;font-size:13px;margin-top:2px}
+.item .bd{color:var(--mut);font-size:11px;margin-top:2px}
+.item .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.warn{color:#ffcd5a;font-size:11px;margin-top:4px}
+.center{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(7,9,13,.92);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.spin{width:42px;height:42px;border:4px solid var(--bd);border-top-color:var(--acc);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:14px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000c;border:1px solid var(--bd);
+padding:10px 16px;border-radius:10px;font-size:13px;z-index:60;max-width:90%}
+/* viewer */
+#vwrap{position:fixed;inset:0;background:#0b0b0b;z-index:40;display:flex;flex-direction:column}
+#vbar{display:flex;gap:4px;padding:6px;background:#1b1f26;overflow-x:auto;align-items:center}
+#vbar button{background:#2a3038;color:#e8edf4;border:none;border-radius:8px;padding:8px 10px;font-size:13px;font-weight:700;white-space:nowrap}
+#vbar button.on{background:var(--info)}
+#vcanvas{flex:1;width:100%;touch-action:none;background:#0b0b0b}
+#vxy{padding:5px 10px;background:#1b1f26;color:var(--ok);font-family:monospace;font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- ===== KICH HOAT ===== -->
+<div id="act" class="center">
+  <div class="logo" style="font-size:26px;color:var(--acc);font-weight:800">DuyNest</div>
+  <div class="muted" style="margin:6px 0 20px">Phần mềm xếp laser — Duy's Oven</div>
+  <div class="card" style="width:100%;max-width:380px;text-align:left">
+    <h3>🔑 Kích hoạt bằng KEY</h3>
+    <label class="fld">Mã key</label>
+    <input id="actKey" type="text" placeholder="DOV-..." autocapitalize="characters" autocomplete="off">
+    <label class="fld">Tên máy / nhân viên</label>
+    <input id="actName" type="text" placeholder="VD: Điện thoại Tài">
+    <div id="actMsg" class="warn" style="color:var(--danger)"></div>
+    <button id="actBtn" class="btn" style="width:100%;margin-top:12px">Kích hoạt</button>
+    <div class="muted" style="margin-top:10px">Mỗi máy/điện thoại 1 lần. Chủ duyệt máy mới (như trên Windows).</div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" class="hide">
+  <header>
+    <span class="logo">DuyNest</span><span class="ver" id="ver">web</span>
+    <span class="sp"></span>
+    <span class="sync" id="sync">·</span>
+    <button class="btn ghost sm" id="logout">Thoát</button>
+  </header>
+  <nav>
+    <button data-tab="nest" class="on">✂ Xếp tấm</button>
+    <button data-tab="kho">📦 Kho bản vẽ</button>
+  </nav>
+
+  <main id="mNest">
+    <div class="card">
+      <h3>1 · Chọn bản vẽ (DXF)</h3>
+      <div id="drop" class="drop">Bấm để chọn file .dxf<br><span class="muted">(điện thoại dùng DXF — DWG xuất từ máy tính)</span></div>
+      <input id="file" type="file" accept=".dxf" class="hide">
+      <div id="fileInfo" class="muted" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <h3>2 · Khổ tấm &amp; thông số</h3>
+      <div class="row">
+        <div><label class="fld">Rộng (mm)</label><input id="sw" type="number" value="1250"></div>
+        <div><label class="fld">Cao (mm)</label><input id="sh" type="number" value="2500"></div>
+      </div>
+      <div class="row">
+        <div><label class="fld">Hở (mm)</label><input id="gap" type="number" value="3"></div>
+        <div><label class="fld">Biên (mm)</label><input id="margin" type="number" value="3"></div>
+      </div>
+    </div>
+    <button id="nestBtn" class="btn ok" style="width:100%;font-size:17px;padding:14px" disabled>✂ XẾP TẤM</button>
+    <div id="nestOut" style="margin-top:14px"></div>
+  </main>
+
+  <main id="mKho" class="hide">
+    <button id="khoUp" class="btn info" style="width:100%">⬆ Upload bản vẽ vào kho</button>
+    <input id="khoFile" type="file" accept=".dxf" class="hide">
+    <div id="khoList" style="margin-top:14px"></div>
+  </main>
+</div>
+
+<!-- ===== VIEWER ===== -->
+<div id="vwrap" class="hide">
+  <div id="vbar">
+    <button id="vclose">✕ Đóng</button>
+    <button data-z="in">🔍+</button><button data-z="out">🔍−</button>
+    <button id="vfit">⛶ Vừa khít</button>
+    <button data-m="pan" class="on">✋ Di chuyển</button>
+    <button data-m="meas">📏 Đo</button>
+    <span style="flex:1"></span><span id="vname" class="muted" style="white-space:nowrap;padding-right:8px"></span>
+  </div>
+  <canvas id="vcanvas"></canvas>
+  <div id="vxy">X 0.00  Y 0.00</div>
+</div>
+
+<div id="py" class="overlay hide"><div class="spin"></div><div id="pyMsg">Đang khởi động bộ máy xếp…</div><div class="muted" style="margin-top:6px">Lần đầu tải ~15MB rồi lưu máy (nên dùng wifi)</div></div>
+<div id="busy" class="overlay hide"><div class="spin"></div><div id="busyMsg">Đang xử lý…</div></div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
+<script>
+const API = location.origin;            // cùng tên miền -> không vướng CORS
+const $ = (s)=>document.querySelector(s);
+const LS = localStorage;
+function uuid(){return 'xxxxxxxxyxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c=='x'?r:(r&0x3|0x8)).toString(16)})+Date.now().toString(16)}
+function device(){let d=LS.getItem('dnz_device'); if(!d){d='web-'+uuid(); LS.setItem('dnz_device',d)} return d}
+function toast(m){let t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+function setSync(s){const m={syncing:['🔄 Đang đồng bộ…','#8a93a3'],ok:['✅ Đã đồng bộ','#2ecc71'],local:['💾 Trên máy','#8a93a3'],err:['⚠ Lỗi mạng','#ff6a3d'],wait:['⏳ Chờ chủ duyệt máy','#ffcd5a']};const x=m[s]||m.local;$('#sync').textContent=x[0];$('#sync').style.color=x[1]}
+
+/* ---------- KICH HOAT ---------- */
+async function api(path, body){
+  const r = await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  return await r.json();
+}
+$('#actBtn').onclick = async ()=>{
+  const key=$('#actKey').value.trim(), name=$('#actName').value.trim()||'Web';
+  if(!key){$('#actMsg').textContent='Nhập key';return}
+  $('#actBtn').disabled=true;$('#actMsg').textContent='';$('#actBtn').textContent='Đang kích hoạt…';
+  try{
+    const r=await api('/api/laser-activate',{key,device:device(),name});
+    if(r.ok && r.token){ LS.setItem('dnz_token',r.token); LS.setItem('dnz_key',key); showApp(); }
+    else { $('#actMsg').textContent = r.reason||'Key không hợp lệ'; }
+  }catch(e){ $('#actMsg').textContent='Lỗi mạng: '+e.message; }
+  $('#actBtn').disabled=false;$('#actBtn').textContent='Kích hoạt';
+};
+$('#logout').onclick=()=>{ LS.removeItem('dnz_token'); location.reload(); };
+function token(){return LS.getItem('dnz_token')}
+
+/* ---------- PYODIDE ENGINE ---------- */
+let PY=null, GLUE=null;
+async function ensurePy(){
+  if(PY) return PY;
+  $('#py').classList.remove('hide');
+  try{
+    $('#pyMsg').textContent='Đang tải Pyodide…';
+    PY = await loadPyodide();
+    $('#pyMsg').textContent='Đang tải thư viện hình học…';
+    await PY.loadPackage(['shapely','micropip']);
+    const mp = PY.pyimport('micropip');
+    const q = '?t='+encodeURIComponent(token()||'')+'&d='+encodeURIComponent(device());  // gate IP: chi may kich hoat tai duoc engine
+    $('#pyMsg').textContent='Đang cài bộ đọc bản vẽ…';
+    await mp.install(new URL('rectpack-0.2.2-py3-none-any.whl'+q,location.href).href);
+    await mp.install(new URL('ezdxf-1.4.4-py3-none-any.whl'+q,location.href).href);
+    $('#pyMsg').textContent='Đang nạp thuật toán xếp…';
+    PY.FS.writeFile('/home/pyodide/core.py', await (await fetch('core.py'+q)).text());
+    PY.FS.writeFile('/home/pyodide/render.py', await (await fetch('render.py'+q)).text());
+    PY.FS.writeFile('/home/pyodide/glue.py', await (await fetch('glue.py'+q)).text());
+    await PY.runPythonAsync("import sys; sys.path.insert(0,'/home/pyodide'); import glue");
+    GLUE = PY.globals.get('glue');
+    $('#py').classList.add('hide');
+    return PY;
+  }catch(e){ $('#pyMsg').textContent='Lỗi nạp engine: '+e.message; throw e; }
+}
+async function pyCall(fn, ...args){
+  await ensurePy();
+  const g = PY.pyimport('glue');
+  const res = g.dispatch(fn, ...args);   // tra ve JSON string
+  const s = String(res);
+  if(g.destroy) try{g.destroy()}catch(e){}
+  return JSON.parse(s);
+}
+
+/* ---------- XEP ---------- */
+let curDxf=null;
+$('#drop').onclick=()=>$('#file').click();
+$('#file').onchange=async(e)=>{
+  const f=e.target.files[0]; if(!f) return;
+  curDxf=await f.text();
+  $('#fileInfo').textContent='✓ '+f.name+' ('+Math.round(f.size/1024)+'KB)';
+  $('#nestBtn').disabled=false;
+};
+$('#nestBtn').onclick=async()=>{
+  if(!curDxf) return;
+  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang xếp…';
+  try{
+    const sw=+$('#sw').value, sh=+$('#sh').value, gap=+$('#gap').value, margin=+$('#margin').value;
+    const r=await pyCall('do_nest', curDxf, sw, sh, gap, margin);
+    renderNestResult(r);
+  }catch(e){ toast('Lỗi xếp: '+(e.message||e)); }
+  $('#busy').classList.add('hide');
+};
+function renderNestResult(r){
+  if(!r.ok && (!r.files||!r.files.length)){ $('#nestOut').innerHTML='<div class="card warn" style="color:var(--danger)">Không tách được chi tiết. Chọn file ĐÃ XẾP hoặc có nhãn vật liệu-độ dày.</div>'; return; }
+  let h='<div class="card"><h3>Kết quả</h3>';
+  h+=`<div class="big" style="color:var(--ok)">${r.sheets} tấm · ${r.analysis.n_parts} mảnh · ${r.analysis.weight_kg} kg phôi</div>`;
+  h+=`<div class="bd" style="color:var(--mut);margin-top:4px">${(r.analysis.materials||[]).map(m=>`${m.material} ${m.thickness}mm ×${m.count}`).join(' · ')}</div></div>`;
+  (r.files||[]).forEach((f,i)=>{
+    h+=`<div class="item"><div class="nm">${f.name}</div><div class="acts">
+      <button class="btn ok sm" onclick="viewDxf(${i})">👁 Xem</button>
+      <button class="btn info sm" onclick="dlDxf(${i})">⬇ Tải DXF cắt</button></div></div>`;
+  });
+  $('#nestOut').innerHTML=h;
+  window.__files=r.files;
+}
+window.viewDxf=async(i)=>{ openViewer(window.__files[i].name, await pyCall('do_prims', window.__files[i].dxf)); };
+window.dlDxf=(i)=>{ const f=window.__files[i]; const b=new Blob([f.dxf],{type:'application/dxf'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=f.name; a.click(); };
+
+/* ---------- KHO + DONG BO ---------- */
+let STORE={parts:[],sessions:[],drawings:[],rev:0};
+async function syncPull(){
+  setSync('syncing');
+  try{
+    const r=await api('/api/laser-lib',{device:device(),token:token(),action:'get'});
+    if(r.ok && r.data){ STORE=r.data; STORE.drawings=STORE.drawings||[]; setSync('ok'); renderKho(); }
+    else if(r.reason && /phép|allow/i.test(r.reason)){ setSync('wait'); }
+    else setSync('local');
+  }catch(e){ setSync('err'); }
+}
+async function syncPush(){
+  setSync('syncing');
+  try{
+    const r=await api('/api/laser-lib',{device:device(),token:token(),action:'save',data:{parts:STORE.parts,sessions:STORE.sessions,drawings:STORE.drawings},baseRev:STORE.rev||0});
+    if(r.ok && r.data){ STORE=r.data; STORE.drawings=STORE.drawings||[]; setSync('ok'); renderKho(); }
+    else if(r.conflict && r.data){ STORE=r.data; STORE.drawings=STORE.drawings||[]; setSync('ok'); renderKho(); }
+    else setSync('err');
+  }catch(e){ setSync('err'); }
+}
+function renderKho(){
+  const ds=(STORE.drawings||[]).slice().sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  if(!ds.length){ $('#khoList').innerHTML='<div class="muted" style="text-align:center;padding:30px">Kho trống — bấm Upload để thêm sản phẩm</div>'; return; }
+  $('#khoList').innerHTML=ds.map(d=>{
+    const v=(d.versions||[]).find(x=>x.ver===d.cur)||(d.versions||[]).slice(-1)[0]||{};
+    return `<div class="item"><div class="nm">${d.name} <span style="color:var(--acc);font-size:11px">v${d.cur||1}</span></div>
+      <div class="me">${v.n_parts||0} mảnh · ${v.n_types||0} loại tôn · ${v.weight_kg||0} kg</div>
+      ${(v.warnings&&v.warnings.length)?`<div class="warn">⚠ ${v.warnings[0]}</div>`:''}
+      <div class="acts">
+        <button class="btn ok sm" onclick="khoUse('${d.id}')">✂ Xếp</button>
+        <button class="btn info sm" onclick="khoView('${d.id}')">👁 Xem</button>
+        <button class="btn ghost sm" onclick="khoDel('${d.id}')">🗑</button></div></div>`;
+  }).join('');
+}
+function drawDxf(id){ const d=(STORE.drawings||[]).find(x=>x.id===id); if(!d) return null;
+  const v=(d.versions||[]).find(x=>x.ver===d.cur)||(d.versions||[]).slice(-1)[0]; if(!v||!v.dxf_gz) return null;
+  return {d,v}; }
+async function gunzipB64(b64){ // dxf_gz = base64(gzip(dxf)) -> giai trong Python cho chac
+  return await pyCall('unzip_dxf', b64);
+}
+$('#khoUp').onclick=()=>$('#khoFile').click();
+$('#khoFile').onchange=async(e)=>{
+  const f=e.target.files[0]; if(!f) return;
+  const dxf=await f.text();
+  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang phân tích bản vẽ…';
+  try{
+    const a=await pyCall('do_analyze', dxf, 1250, 2500);
+    if(!a.n_parts){ toast('Bản vẽ không tách được chi tiết'); $('#busy').classList.add('hide'); return; }
+    const name=prompt('Đặt tên bản vẽ:', f.name.replace(/\.dxf$/i,''))||f.name;
+    const gz=await pyCall('zip_dxf', dxf);
+    const id='w'+uuid().slice(0,9);
+    const ver={ver:1,created:new Date().toISOString().slice(0,16).replace('T',' '),by:LS.getItem('dnz_name')||'web',
+      n_parts:a.n_parts,n_types:a.n_types,weight_kg:a.weight_kg,materials:a.materials,warnings:a.warnings,labels:a.labels,dxf_gz:gz};
+    STORE.drawings=STORE.drawings||[];
+    STORE.drawings.push({id,name,cur:1,created:ver.created,updated:ver.created,versions:[ver]});
+    await syncPush();
+    toast('Đã lưu vào kho + đồng bộ');
+  }catch(e){ toast('Lỗi: '+(e.message||e)); }
+  $('#busy').classList.add('hide');
+};
+window.khoUse=async(id)=>{
+  const r=drawDxf(id); if(!r){toast('Không đọc được');return}
+  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang lấy bản vẽ…';
+  curDxf=await gunzipB64(r.v.dxf_gz);
+  $('#busy').classList.add('hide');
+  $('#fileInfo').textContent='📦 '+r.d.name; $('#nestBtn').disabled=false;
+  switchTab('nest'); toast('Đã nạp — bấm XẾP TẤM');
+};
+window.khoView=async(id)=>{
+  const r=drawDxf(id); if(!r){toast('Không đọc được');return}
+  $('#busy').classList.remove('hide');$('#busyMsg').textContent='Đang mở…';
+  const dxf=await gunzipB64(r.v.dxf_gz);
+  const prims=await pyCall('do_prims', dxf);
+  $('#busy').classList.add('hide');
+  openViewer(r.d.name, prims);
+};
+window.khoDel=async(id)=>{
+  const d=(STORE.drawings||[]).find(x=>x.id===id); if(!d) return;
+  if(!confirm('Xoá bản vẽ "'+d.name+'" khỏi kho?')) return;
+  STORE.drawings=STORE.drawings.filter(x=>x.id!==id);
+  await syncPush(); toast('Đã xoá');
+};
+
+/* ---------- TABS / APP ---------- */
+function switchTab(t){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  $('#mNest').classList.toggle('hide',t!=='nest'); $('#mKho').classList.toggle('hide',t!=='kho');
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+function showApp(){
+  $('#act').classList.add('hide'); $('#app').classList.remove('hide');
+  syncPull();
+}
+if(token()) showApp();
+
+/* ---------- VIEWER (kieu AutoCAD, canvas) ---------- */
+let V={prims:[],bbox:[0,0,1,1],sc:1,ox:0,oy:0,mode:'pan',pan:false,px:0,py:0,meas:[]};
+const vc=$('#vcanvas'), vx=vc.getContext('2d');
+function openViewer(name, data){ $('#vname').textContent=name; V.prims=data.prims||data; V.bbox=data.bbox||[0,0,1,1]; V.meas=[]; $('#vwrap').classList.remove('hide'); resizeV(); fitV(); }
+$('#vclose').onclick=()=>$('#vwrap').classList.add('hide');
+function resizeV(){ const r=vc.getBoundingClientRect(); vc.width=r.width*devicePixelRatio; vc.height=r.height*devicePixelRatio; vx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
+function W2S(x,y){return [V.ox+x*V.sc, V.oy-y*V.sc]}
+function S2W(x,y){return [(x-V.ox)/V.sc,(V.oy-y)/V.sc]}
+function fitV(){ const w=vc.width/devicePixelRatio,h=vc.height/devicePixelRatio,m=24; const[a,b,c,d]=V.bbox;
+  V.sc=Math.min((w-2*m)/Math.max(1,c-a),(h-2*m)/Math.max(1,d-b)); V.ox=w/2-(a+c)/2*V.sc; V.oy=h/2+(b+d)/2*V.sc; drawV(); }
+function drawV(){
+  const w=vc.width/devicePixelRatio,h=vc.height/devicePixelRatio;
+  vx.clearRect(0,0,w,h); vx.fillStyle='#0b0b0b'; vx.fillRect(0,0,w,h);
+  vx.lineWidth=1;
+  for(const p of V.prims){ vx.strokeStyle=p.color; vx.setLineDash(p.dashed?[5,3]:[]); vx.beginPath();
+    const pts=p.pts; let mnx=9e9,mny=9e9,mxx=-9e9,mxy=-9e9;
+    for(let i=0;i<pts.length;i++){ const s=W2S(pts[i][0],pts[i][1]); if(i===0)vx.moveTo(s[0],s[1]);else vx.lineTo(s[0],s[1]);
+      mnx=Math.min(mnx,s[0]);mny=Math.min(mny,s[1]);mxx=Math.max(mxx,s[0]);mxy=Math.max(mxy,s[1]); }
+    if(mxx<-50||mnx>w+50||mxy<-50||mny>h+50){continue} vx.stroke();
+  }
+  vx.setLineDash([]);
+  // UCS
+  const x0=40,y0=h-40,L=28; vx.strokeStyle='#ff5555';vx.beginPath();vx.moveTo(x0,y0);vx.lineTo(x0+L,y0);vx.stroke();
+  vx.strokeStyle='#46d369';vx.beginPath();vx.moveTo(x0,y0);vx.lineTo(x0,y0-L);vx.stroke();
+  // measure
+  if(V.meas.length){ vx.strokeStyle='#ffd60a';vx.fillStyle='#ffd60a';vx.setLineDash([4,3]);
+    const ps=V.meas.map(p=>W2S(p[0],p[1])); ps.forEach(s=>{vx.beginPath();vx.arc(s[0],s[1],4,0,7);vx.stroke()});
+    if(ps.length===2){ vx.beginPath();vx.moveTo(ps[0][0],ps[0][1]);vx.lineTo(ps[1][0],ps[1][1]);vx.stroke();
+      const d=Math.hypot(V.meas[1][0]-V.meas[0][0],V.meas[1][1]-V.meas[0][1]);
+      vx.setLineDash([]);vx.font='bold 13px monospace';vx.fillText(d.toFixed(1)+' mm',(ps[0][0]+ps[1][0])/2,(ps[0][1]+ps[1][1])/2-8);}
+    vx.setLineDash([]); }
+}
+function zoomAt(cx,cy,f){ const[wx,wy]=S2W(cx,cy); V.sc*=f; V.ox=cx-wx*V.sc; V.oy=cy+wy*V.sc; drawV(); }
+$('#vfit').onclick=fitV;
+document.querySelectorAll('#vbar [data-z]').forEach(b=>b.onclick=()=>{const w=vc.width/devicePixelRatio/2,h=vc.height/devicePixelRatio/2;zoomAt(w,h,b.dataset.z==='in'?1.3:1/1.3)});
+document.querySelectorAll('#vbar [data-m]').forEach(b=>b.onclick=()=>{V.mode=b.dataset.m;document.querySelectorAll('#vbar [data-m]').forEach(x=>x.classList.toggle('on',x===b));if(b.dataset.m!=='meas')V.meas=[];drawV()});
+// touch + mouse
+let lastDist=0;
+function evXY(e){const r=vc.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return[t.clientX-r.left,t.clientY-r.top]}
+vc.addEventListener('pointerdown',e=>{const[x,y]=evXY(e);
+  if(V.mode==='meas'){ if(V.meas.length>=2)V.meas=[]; V.meas.push(S2W(x,y)); drawV(); const[wx,wy]=S2W(x,y);$('#vxy').textContent='X '+wx.toFixed(2)+'  Y '+wy.toFixed(2); return;}
+  V.pan=true;V.px=x;V.py=y;});
+vc.addEventListener('pointermove',e=>{const[x,y]=evXY(e); const[wx,wy]=S2W(x,y); $('#vxy').textContent='X '+wx.toFixed(2)+'  Y '+wy.toFixed(2);
+  if(V.pan){ V.ox+=x-V.px;V.oy+=y-V.py;V.px=x;V.py=y;drawV(); }});
+vc.addEventListener('pointerup',()=>V.pan=false);
+vc.addEventListener('wheel',e=>{e.preventDefault();const[x,y]=evXY(e);zoomAt(x,y,e.deltaY<0?1.15:1/1.15)},{passive:false});
+vc.addEventListener('touchmove',e=>{ if(e.touches.length===2){e.preventDefault();const a=e.touches[0],b=e.touches[1];const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+  if(lastDist){const r=vc.getBoundingClientRect();zoomAt((a.clientX+b.clientX)/2-r.left,(a.clientY+b.clientY)/2-r.top,d/lastDist)}lastDist=d;}},{passive:false});
+vc.addEventListener('touchend',()=>lastDist=0);
+window.addEventListener('resize',()=>{if(!$('#vwrap').classList.contains('hide')){resizeV();drawV()}});
+</script>
+</body>
+</html>
