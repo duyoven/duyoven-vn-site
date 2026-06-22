@@ -91,10 +91,16 @@
       "label": "Chu - Duy (Android/test)",
       "maxDevices": 5,
       "active": true,
-      "devices": []
+      "devices": [
+        {
+          "d": "2559aa4ff2424735ce4c7da6924fbc987f5891fa31effc45e169b1d407be247c",
+          "name": "VERIFY",
+          "ts": "2026-06-22T01:37:03.252Z"
+        }
+      ]
     }
   ],
-  "rev": 12,
+  "rev": 13,
   "note": "App Xep Laser Duy's Oven - quan ly key kich hoat",
-  "updatedAt": "2026-06-21T07:20:36.447Z"
+  "updatedAt": "2026-06-22T01:37:03.252Z"
 }
