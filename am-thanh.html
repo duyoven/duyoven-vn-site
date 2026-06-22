@@ -285,6 +285,23 @@ body{
 .report-bar{text-align:center;margin:18px 0 4px}
 .btn-report{background:linear-gradient(90deg,#475569,#334155);display:inline-block;width:auto;padding:12px 22px}
 
+/* khuông nhạc (ký âm) */
+.staff-box{margin:6px 0 14px;background:#fbfbfd;border:1px solid var(--line);border-radius:10px;padding:10px}
+.staff-box .staff-svg{width:100%;height:auto;border-radius:6px}
+.ac-subnote{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic}
+
+/* mẫu tổng hợp */
+.btn-sample{background:var(--card);border:1px solid var(--line)!important;width:auto;padding:7px 12px;font-size:12.5px;font-weight:600}
+.btn-sample:hover{filter:brightness(1.15)}
+
+/* lịch sử / so sánh */
+.hist-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.hist-table th,.hist-table td{border:1px solid var(--line);padding:7px 9px;text-align:left}
+.hist-table th{background:var(--card2);color:var(--muted);font-weight:700}
+.hist-table tr.h-high td,.hist-table tr.h-ok td{border-left:3px solid #22c55e}
+.hist-table tr.h-conditional td{border-left:3px solid #f59e0b}
+.hist-table tr.h-low td{border-left:3px solid #ef4444}
+
 @media (max-width:720px){
   .input-grid,.input-grid.two{grid-template-columns:1fr}
   .raw-list{grid-template-columns:1fr}
@@ -418,6 +435,16 @@ body.locked .site-back{display:none}
         <div class="opt-label">Chọn nhiều nguồn gốc quan tâm (cùng lúc):</div>
         <div id="sourceFilters" class="chips"></div>
       </div>
+      <div class="opt-block">
+        <div class="opt-label">🧪 Mẫu tổng hợp minh hoạ — thử nhanh & so sánh:</div>
+        <div id="sampleBar" class="chips">
+          <button class="btn btn-sample" data-sample="melody">🎼 Giai điệu</button>
+          <button class="btn btn-sample" data-sample="beep">〰️ Tông/beep</button>
+          <button class="btn btn-sample" data-sample="noise">🌫️ Nhiễu/gió</button>
+          <button class="btn btn-sample" data-sample="voice">🗣️ Giọng (giả lập)</button>
+          <button class="btn btn-sample" data-sample="chirp">📈 Quét tần số</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -451,10 +478,17 @@ body.locked .site-back{display:none}
       </div>
       <div id="acType" class="ac-type"></div>
       <div id="acDistinct" class="ac-distinct"></div>
+      <div id="staffBox" class="staff-box" style="display:none"></div>
       <div id="acMetrics" class="ac-metrics"></div>
       <p class="ac-note">Phương pháp: FFT 1024 (Hann), tự tương quan ước lượng cao độ (70–1000 Hz),
         đặc trưng phổ (tâm phổ, lăn phổ, độ phẳng, HNR), phát hiện onset bằng spectral-flux.
         Kết quả là <b>số đo khách quan</b>, kết hợp với YAMNet theo tỉ lệ 70/30.</p>
+    </div>
+
+    <!-- LỊCH SỬ / SO SÁNH -->
+    <div id="historyPanel" class="panel" style="display:none">
+      <h2 class="sec-title">📊 Lịch sử & so sánh <span class="muted">(các âm đã phân tích trong phiên)</span></h2>
+      <div id="historyBody"></div>
     </div>
 
     <div class="report-bar">
@@ -891,19 +925,26 @@ window.ACOUSTICS = (function () {
   function hann(N) { var w = new Float32Array(N); for (var i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (N - 1)); return w; }
 
   // ---------- Pitch (autocorrelation) cho 1 khung thời gian ----------
+  // Chọn ĐỈNH ĐẦU TIÊN (lag nhỏ nhất) đạt ≥90% đỉnh lớn nhất → lấy đúng tần số cơ bản,
+  // tránh lỗi rớt quãng tám (subharmonic) thường gặp với sóng sin thuần.
   function pitch(frame, sr) {
-    var n = frame.length, minLag = Math.floor(sr / 1000), maxLag = Math.floor(sr / 70); // 70–1000 Hz
+    var n = frame.length, minLag = Math.floor(sr / 1000), maxLag = Math.min(Math.floor(sr / 70), n - 2);
     var e0 = 0, i; for (i = 0; i < n; i++) e0 += frame[i] * frame[i];
     if (e0 < 1e-6) return { f0: 0, clarity: 0 };
-    var best = 0, bestLag = -1;
+    var ac = new Float32Array(maxLag + 1), pmax = 0;
     for (var lag = minLag; lag <= maxLag; lag++) {
-      var ac = 0; for (i = 0; i < n - lag; i++) ac += frame[i] * frame[i + lag];
-      ac /= (n - lag);
-      if (ac > best) { best = ac; bestLag = lag; }
+      var s = 0; for (i = 0; i < n - lag; i++) s += frame[i] * frame[i + lag];
+      ac[lag] = s / (n - lag);
+      if (ac[lag] > pmax) pmax = ac[lag];
     }
-    var clarity = best / (e0 / n);
-    if (bestLag < 0 || clarity < 0.30) return { f0: 0, clarity: clarity };
-    return { f0: sr / bestLag, clarity: clarity };
+    var clarity = pmax / (e0 / n);
+    if (clarity < 0.30) return { f0: 0, clarity: clarity };
+    var thr = 0.9 * pmax, chosen = -1;
+    for (lag = minLag + 1; lag < maxLag; lag++) {
+      if (ac[lag] >= thr && ac[lag] > ac[lag - 1] && ac[lag] >= ac[lag + 1]) { chosen = lag; break; }
+    }
+    if (chosen < 0) { chosen = minLag; for (lag = minLag; lag <= maxLag; lag++) if (ac[lag] > ac[chosen]) chosen = lag; }
+    return { f0: sr / chosen, clarity: clarity };
   }
 
   // ---------- Phân tích chính ----------
@@ -986,12 +1027,42 @@ window.ACOUSTICS = (function () {
       flux.push(d);
     }
     var fmean = avg(flux), fstd = Math.sqrt(avg(flux.map(function (v) { return (v - fmean) * (v - fmean); })));
+    var fmax = 0; for (i = 0; i < flux.length; i++) if (flux[i] > fmax) fmax = flux[i];
+    var realRhythm = fmax > 2.2 * (fmean + 1e-9);  // có biến động thật (tránh đếm onset giả cho âm ổn định)
     var onsets = 0, lastOn = -10;
-    for (i = 0; i < flux.length; i++) if (flux[i] > fmean + 1.4 * fstd && i - lastOn > (sr / hop * 0.12)) { onsets++; lastOn = i; }
+    if (realRhythm) for (i = 0; i < flux.length; i++)
+      if (flux[i] > fmean + 1.4 * fstd && flux[i] > 0.30 * fmax && i - lastOn > (sr / hop * 0.12)) { onsets++; lastOn = i; }
     var tempo = duration > 0 ? Math.round(onsets / duration * 60) : 0; // nhịp/phút (xấp xỉ)
 
     // HNR xấp xỉ từ clarity trung bình của khung voiced
     var hnr = voicedIdx.length ? avg(voicedIdx.map(function (x) { return clarityArr[x]; })) : 0;
+
+    // ---------- Trích NỐT NHẠC (ký âm) từ đường cao độ ----------
+    var secPerFrame = hop / sr;
+    var minNoteFrames = Math.max(2, Math.round(0.07 / secPerFrame)); // >=70ms
+    var voicedSet = {}; voicedIdx.forEach(function (x) { voicedSet[x] = 1; });
+    var notes = [], curM = null, curStart = 0, curN = 0;
+    function midiOf(f) { return Math.round(69 + 12 * Math.log2(f / 440)); }
+    function pushNote(endFr) {
+      if (curM != null && curN >= minNoteFrames) notes.push({ midi: curM, start: curStart * secPerFrame, dur: curN * secPerFrame });
+    }
+    for (var fi = 0; fi < f0Arr.length; fi++) {
+      var on = voicedSet[fi] && f0Arr[fi] >= 70;
+      var m = on ? midiOf(f0Arr[fi]) : null;
+      if (m != null && curM != null && Math.abs(m - curM) <= 0) { curN++; }
+      else { pushNote(fi); curM = m; curStart = fi; curN = m != null ? 1 : 0; }
+    }
+    pushNote(f0Arr.length);
+    if (notes.length > 40) notes = notes.slice(0, 40); // giới hạn hiển thị
+    var noteMidis = {}; notes.forEach(function (nn) { noteMidis[nn.midi] = 1; });
+    var distinctNotes = Object.keys(noteMidis).length;
+
+    // ---------- Nguồn #3: vote giai điệu / cấu trúc nốt ----------
+    var melodyVote = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 }, melodyConf = 0;
+    if (notes.length >= 3 && distinctNotes >= 3) { melodyVote[7] = 0.95; melodyConf = 0.9; } // giai điệu rõ → sáng tạo
+    else if (notes.length >= 2 && distinctNotes >= 2) { melodyVote[7] = 0.5; melodyVote[4] = 0.25; melodyConf = 0.5; }
+    else if (notes.length === 1) { melodyVote[6] = 0.4; melodyVote[7] = 0.3; melodyConf = 0.35; } // 1 nốt giữ → tông/thiết bị
+    // notes.length===0 → abstain (melodyConf 0)
 
     // ---------- Phân loại loại tín hiệu ----------
     var type, typeIcon;
@@ -1044,6 +1115,8 @@ window.ACOUSTICS = (function () {
       { k: "Tốc độ qua-0 (ZCR)", v: Math.round(zcr) + " Hz" },
       { k: "Số onset", v: String(onsets) },
       { k: "Nhịp ước lượng", v: tempo ? tempo + " /phút" : "—" },
+      { k: "Số nốt trích được", v: String(notes.length) },
+      { k: "Số cao độ khác nhau", v: String(distinctNotes) },
     ];
 
     return {
@@ -1053,7 +1126,47 @@ window.ACOUSTICS = (function () {
         noiseLike: noiseLike, impulsive: impulsive },
       vote: vote, type: type, typeIcon: typeIcon, distinctiveness: distinctiveness, metrics: metrics,
       spectro: { data: spec, frames: spec.length, bins: half, sr: sr, fft: FFT, hop: hop },
+      notes: notes, distinctNotes: distinctNotes, melodyVote: melodyVote, melodyConf: melodyConf,
     };
+  }
+
+  // ---------- Vẽ KHUÔNG NHẠC 5 dòng (ký âm) từ danh sách nốt → SVG ----------
+  var PC = ["C", "C", "D", "D", "E", "F", "F", "G", "G", "A", "A", "B"]; // tên nốt
+  var SHARP = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0];
+  var DIAT = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]; // bậc diatonic trong quãng tám
+  function noteName(midi) { var pc = ((midi % 12) + 12) % 12, oct = Math.floor(midi / 12) - 1; return PC[pc] + (SHARP[pc] ? "♯" : "") + oct; }
+  function diatonicNumber(midi) { var pc = ((midi % 12) + 12) % 12, oct = Math.floor(midi / 12) - 1; return oct * 7 + DIAT[pc]; }
+
+  function buildStaffSVG(notes) {
+    var H = 150, padL = 56, padR = 16, gap = 12, top = 40; // gap = khoảng cách giữa 2 dòng kẻ
+    var n = Math.max(1, notes.length), stepX = 34;
+    var W = padL + padR + n * stepX + 10;
+    var halfStep = gap / 2;
+    // dòng kẻ: E4(bottom)…F5(top). diatonic E4 = 4*7+2 = 30 nằm ở dòng dưới cùng (y = top + 4*gap)
+    var E4d = 30, bottomY = top + 4 * gap;
+    function yOf(midi) { return bottomY - (diatonicNumber(midi) - E4d) * halfStep; }
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" class="staff-svg">';
+    s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fbfbfd"/>';
+    // 5 dòng kẻ
+    for (var L = 0; L < 5; L++) { var y = top + L * gap; s += '<line x1="' + (padL - 8) + '" y1="' + y + '" x2="' + (W - 8) + '" y2="' + y + '" stroke="#222" stroke-width="1"/>'; }
+    // khóa Sol
+    s += '<text x="14" y="' + (top + 3 * gap + 6) + '" font-size="' + (gap * 4.4) + '" fill="#111" font-family="serif">𝄞</text>';
+    // nốt
+    for (var i = 0; i < notes.length; i++) {
+      var midi = notes[i].midi, cx = padL + i * stepX + stepX / 2, cy = yOf(midi);
+      var pc = ((midi % 12) + 12) % 12;
+      // ledger lines (ngoài khuông)
+      var dnum = diatonicNumber(midi), dE4 = E4d, dF5 = E4d + 8; // F5 = dòng trên cùng (diatonic 38)
+      var ly;
+      if (dnum < dE4) for (var dd = dE4 - 2; dd >= dnum; dd -= 2) { ly = bottomY - (dd - dE4) * halfStep; if (ly > top + 4 * gap) s += '<line x1="' + (cx - 11) + '" y1="' + ly + '" x2="' + (cx + 11) + '" y2="' + ly + '" stroke="#222" stroke-width="1"/>'; }
+      if (dnum > dF5) for (var du = dF5 + 2; du <= dnum; du += 2) { ly = bottomY - (du - dE4) * halfStep; if (ly < top) s += '<line x1="' + (cx - 11) + '" y1="' + ly + '" x2="' + (cx + 11) + '" y2="' + ly + '" stroke="#222" stroke-width="1"/>'; }
+      if (SHARP[pc]) s += '<text x="' + (cx - 20) + '" y="' + (cy + 5) + '" font-size="16" fill="#111" font-family="serif">♯</text>';
+      s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="6.5" ry="5" fill="#111" transform="rotate(-18 ' + cx + ' ' + cy + ')"/>';
+      s += '<line x1="' + (cx + 6) + '" y1="' + cy + '" x2="' + (cx + 6) + '" y2="' + (cy - gap * 2.6) + '" stroke="#111" stroke-width="1.4"/>';
+      s += '<text x="' + (cx - 8) + '" y="' + (H - 8) + '" font-size="9" fill="#666" font-family="sans-serif">' + noteName(midi) + '</text>';
+    }
+    s += '</svg>';
+    return s;
   }
 
   // ---------- Vẽ spectrogram ----------
@@ -1108,7 +1221,8 @@ window.ACOUSTICS = (function () {
     ctx.stroke();
   }
 
-  return { analyze: analyze, drawSpectrogram: drawSpectrogram, drawWaveform: drawWaveform };
+  return { analyze: analyze, drawSpectrogram: drawSpectrogram, drawWaveform: drawWaveform,
+    buildStaffSVG: buildStaffSVG, noteName: noteName };
 })();
 
 </script>
@@ -1415,6 +1529,9 @@ window.AudioEngine = (function () {
     lastAgg: null,          // ket qua phan tich gan nhat (de tu danh gia dung)
     lastSamples: null,      // buffer mono 16k de phan tich DSP
     lastAcoustics: null,    // ket qua phan tich am hoc (DSP)
+    lastName: null,         // ten mau dang phan tich
+    lastSaResult: null,     // ket qua tu danh gia gan nhat
+    history: [],            // lich su cac am da phan tich
     simulated: false,       // che do mo phong (nhom 5)
     filters: { 1:true,2:true,3:true,4:true,5:true,6:true,7:true },
   };
@@ -1465,9 +1582,18 @@ window.AudioEngine = (function () {
       return true;
     });
     var ac = state.lastAcoustics;
+    // ensemble 3 nguồn: YAMNet 0.55 + DSP-timbre 0.25 + Melody 0.20 (động theo độ tin cậy melody)
+    var combinedAc = null, acWeight = 0.30;
+    if (ac) {
+      var wY = 0.55, wD = 0.25, wM = (ac.melodyConf > 0) ? 0.20 : 0;
+      var tot = wY + wD + wM;
+      combinedAc = {};
+      for (var g = 1; g <= 7; g++) combinedAc[g] = wD * (ac.vote[g] || 0) + wM * ((ac.melodyVote && ac.melodyVote[g]) || 0);
+      acWeight = (wD + wM) / tot;
+    }
     var agg = T.analyze(cats, {
       simulated: state.simulated,
-      acousticVote: ac ? ac.vote : null,
+      acousticVote: combinedAc, acousticWeight: acWeight,
       acoustic: ac ? { type: ac.type, distinctiveness: ac.distinctiveness, features: ac.features } : null,
     });
 
@@ -1485,6 +1611,31 @@ window.AudioEngine = (function () {
     renderAcoustics(agg);
     $("results").classList.add("show");
     state.lastAgg = agg;
+    pushHistory(agg);
+  }
+
+  // ---------- Lịch sử / so sánh ----------
+  function pushHistory(agg) {
+    if (state._noHist) return;
+    var ac = state.lastAcoustics;
+    state.history.push({
+      name: state.lastName || ("Âm #" + (state.history.length + 1)),
+      dom: agg.dominant, group: T.GROUPS[agg.dominant] ? T.GROUPS[agg.dominant].name : "—",
+      verdict: agg.verdict.title, level: agg.verdict.level,
+      distinct: ac ? ac.distinctiveness : null, type: ac ? ac.type : "—",
+    });
+    if (state.history.length > 20) state.history.shift();
+    renderHistory();
+  }
+  function renderHistory() {
+    var host = $("historyBody"); if (!host) return;
+    if (!state.history.length) { $("historyPanel").style.display = "none"; return; }
+    $("historyPanel").style.display = "block";
+    host.innerHTML = '<table class="hist-table"><thead><tr><th>#</th><th>Mẫu</th><th>Nhóm trội</th><th>Loại tín hiệu</th><th>Độ p/biệt</th><th>Kết luận</th></tr></thead><tbody>' +
+      state.history.map(function (h, i) {
+        return '<tr class="h-' + h.level + '"><td>' + (i + 1) + '</td><td>' + esc(h.name) + '</td><td>[' + h.dom + '] ' + h.group +
+          '</td><td>' + (h.type || "—") + '</td><td>' + (h.distinct != null ? h.distinct : "—") + '</td><td>' + h.verdict + '</td></tr>';
+      }).join("") + '</tbody></table>';
   }
 
   // ---------- Phan tich am hoc chuyen sau (nguon DSP) ----------
@@ -1514,31 +1665,47 @@ window.AudioEngine = (function () {
       return '<div class="ac-m"><span class="ac-mk">' + m.k + '</span><span class="ac-mv">' + m.v + '</span></div>';
     }).join("");
 
-    // so sanh dong gop 2 nguon (YAMNet vs DSP)
+    // khuông nhạc (ký âm) từ nốt trích được
+    var sb = $("staffBox");
+    if (sb) {
+      if (ac.notes && ac.notes.length) {
+        sb.style.display = "block";
+        sb.innerHTML = '<div class="ac-cap">🎼 Ký âm tự động — khuông nhạc 5 dòng (' + ac.notes.length + ' nốt: ' +
+          ac.notes.slice(0, 16).map(function (nn) { return A.noteName(nn.midi); }).join(" ") + (ac.notes.length > 16 ? "…" : "") + ')</div>' +
+          A.buildStaffSVG(ac.notes) +
+          '<div class="ac-subnote">Dùng tham khảo cho “bản thể hiện đồ họa (khuông nhạc 5 dòng kẻ)” bắt buộc khi nộp đơn (Điều 105 Luật SHTT; Thông tư 10/2026/TT-BKHCN).</div>';
+      } else { sb.style.display = "none"; }
+    }
+
+    // so sanh dong gop 3 nguon
     renderSources(agg, ac);
   }
 
   function renderSources(agg, ac) {
     var host = $("sourceBreakdown"); if (!host) return;
-    // YAMNet nhom troi
     var ya = T.aggregate(state.lastCategories.filter(function(c){var g=window.YAMNET_GROUP[c.index];return g>=1&&g<=7;}));
     T.summarize(ya, {});
-    var yTop = ya.dominant, dTop = topVote(ac.vote);
-    var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.GROUPS[g].name) : "—"; };
-    var agree = (yTop === agg.dominant);
-    var conf = confidence(agg);
+    var yTop = ya.dominant, dTop = topVote(ac.vote), mTop = ac.melodyConf > 0 ? topVote(ac.melodyVote) : 0;
+    var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.GROUPS[g].name) : "— (không xác định)"; };
+    var tops = [yTop, dTop]; if (ac.melodyConf > 0) tops.push(mTop);
+    var agreeN = tops.filter(function (t) { return t === agg.dominant; }).length;
+    var conf = confidence(agg, agreeN, tops.length);
+    state.lastSources = { yTop: yTop, dTop: dTop, mTop: ac.melodyConf > 0 ? mTop : null, conf: conf, agreeN: agreeN, total: tops.length };
     host.innerHTML =
-      '<div class="src-row"><span class="src-k">🤖 YAMNet (AI nhận dạng)</span><span class="src-v">' + gName(yTop) + '</span></div>' +
-      '<div class="src-row"><span class="src-k">🔬 DSP (phân tích âm học)</span><span class="src-v">' + gName(dTop) + '</span></div>' +
-      '<div class="src-row total"><span class="src-k">⚖️ Kết hợp (ensemble 70/30)</span><span class="src-v">' + gName(agg.dominant) + '</span></div>' +
-      '<div class="src-conf">Độ tin cậy: <b>' + conf.label + '</b> (' + conf.pct + '%) · 2 nguồn ' +
-        (agree ? '<span class="ok">đồng thuận</span>' : '<span class="warn">khác biệt → cần xem kỹ</span>') + '</div>';
+      '<div class="src-row"><span class="src-k">🤖 Nguồn 1 — YAMNet (AI nhận dạng)</span><span class="src-v">' + gName(yTop) + '</span></div>' +
+      '<div class="src-row"><span class="src-k">🔬 Nguồn 2 — DSP (âm sắc/phổ)</span><span class="src-v">' + gName(dTop) + '</span></div>' +
+      (ac.melodyConf > 0 ? '<div class="src-row"><span class="src-k">🎼 Nguồn 3 — Trích giai điệu/nốt</span><span class="src-v">' + gName(mTop) + '</span></div>' : '') +
+      '<div class="src-row total"><span class="src-k">⚖️ Kết hợp (ensemble đa nguồn)</span><span class="src-v">' + gName(agg.dominant) + '</span></div>' +
+      '<div class="src-conf">Độ tin cậy: <b>' + conf.label + '</b> (' + conf.pct + '%) · ' + agreeN + '/' + tops.length + ' nguồn ' +
+        (agreeN >= tops.length ? '<span class="ok">đồng thuận hoàn toàn</span>' : agreeN >= 2 ? '<span class="ok">đa số đồng thuận</span>' : '<span class="warn">phân tán → cần xem kỹ</span>') + '</div>';
   }
 
   function topVote(v) { var b = 0, bk = 0; for (var k = 1; k <= 7; k++) if ((v[k] || 0) > b) { b = v[k]; bk = k; } return b > 0 ? bk : 0; }
-  function confidence(agg) {
-    // do tin cay = ti le diem nhom troi / tong, co thuong khi 2 nguon dong thuan
-    var pct = Math.round((agg.pct[agg.dominant] || 0) * 100);
+  function confidence(agg, agreeN, total) {
+    // do tin cay = ti le diem nhom troi + thuong dong thuan da nguon
+    var base = (agg.pct[agg.dominant] || 0) * 100;
+    var bonus = (total ? (agreeN / total) : 0) * 18;   // +0..18 khi nhieu nguon dong thuan
+    var pct = Math.min(99, Math.round(base + bonus));
     var label = pct >= 60 ? "Cao" : pct >= 35 ? "Trung bình" : "Thấp";
     return { pct: pct, label: label };
   }
@@ -1623,6 +1790,7 @@ window.AudioEngine = (function () {
 
   async function analyzeArrayBuffer(arrayBuffer, name) {
     try {
+      state.lastName = name || null;
       E.onStatus(setStatus);
       await E.ready();
       setStatus("Đang phân tích âm thanh…");
@@ -1786,6 +1954,7 @@ window.AudioEngine = (function () {
 
     var badge = { ok:"✅", conditional:"🟡", low:"❌" }[level];
     var head = name ? ('“' + esc(name) + '”') : "Nhãn hiệu âm thanh";
+    state.lastSaResult = { name: name, nice: nice, level: level, title: title, badge: badge, notes: notes.slice() };
     $("saResult").innerHTML =
       '<div class="sa-card verdict v-' + level + '">' +
         '<div class="v-badge">' + badge + '</div>' +
@@ -1799,7 +1968,170 @@ window.AudioEngine = (function () {
     $("saResult").scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
-  function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  // ---------- Xuất BÁO CÁO phân tích (PDF / in) ----------
+  function exportReport() {
+    if (!state.lastAgg) { setStatus("Hãy phân tích một âm thanh (ghi âm/tải file) trước khi xuất báo cáo."); return; }
+    var html = composeReportHTML();
+    var w = window.open("", "_blank");
+    if (!w) {
+      var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "bao-cao-phan-tich-am-thanh.html";
+      document.body.appendChild(a); a.click(); a.remove();
+      setStatus("Trình duyệt chặn cửa sổ — đã tải báo cáo dạng HTML về máy (mở rồi In → Lưu PDF).");
+      return;
+    }
+    w.document.open(); w.document.write(html); w.document.close();
+    setTimeout(function () { try { w.focus(); w.print(); } catch (e) {} }, 700);
+  }
+
+  function composeReportHTML() {
+    var M = (window.DECUONG && DECUONG.META) || { title: "Pháp luật về bảo hộ nhãn hiệu âm thanh…", author: "Nguyễn Phú Thành", advisors: "", major: "", school: "Trường Đại học Thủ Dầu Một (TDMU)" };
+    var agg = state.lastAgg, ac = state.lastAcoustics, sa = state.lastSaResult, src = state.lastSources || {};
+    var d = new Date();
+    var z = function (x) { return (x < 10 ? "0" : "") + x; };
+    var ts = z(d.getDate()) + "/" + z(d.getMonth() + 1) + "/" + d.getFullYear() + " " + z(d.getHours()) + ":" + z(d.getMinutes());
+    var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.GROUPS[g].name) : "—"; };
+    var v = agg.verdict;
+    var lvlColor = { high: "#15803d", ok: "#15803d", conditional: "#b45309", low: "#b91c1c" }[v.level] || "#334155";
+
+    // ảnh phổ + sóng
+    var specImg = "", waveImg = "";
+    try { specImg = document.getElementById("specCanvas").toDataURL("image/png"); } catch (e) {}
+    try { waveImg = document.getElementById("waveCanvas").toDataURL("image/png"); } catch (e) {}
+    var staff = (ac && ac.notes && ac.notes.length) ? A.buildStaffSVG(ac.notes) : "";
+
+    // bảng 7 nhóm
+    var vLabel = { high: "✅ Rất nên chấp nhận", ok: "✅ Có thể chấp nhận", low: "❌ Không nên đơn lẻ" };
+    var rowsG = "";
+    for (var g = 1; g <= 7; g++) {
+      var pct = ((agg.pct[g] || 0) * 100).toFixed(1);
+      var on = agg.dominant === g;
+      rowsG += '<tr' + (on ? ' style="font-weight:700;background:#eef6ff"' : '') + '><td>' + gName(g) + '</td><td style="text-align:right">' + pct + '%</td><td>' + (vLabel[T.GROUPS[g].verdict] || "") + '</td></tr>';
+    }
+    // top nhãn YAMNet
+    var rawTop = (agg.raw || []).filter(function (r) { return r.score >= 0.05; }).slice(0, 10);
+    if (!rawTop.length) rawTop = (agg.raw || []).slice(0, 8);
+    var rowsR = rawTop.map(function (r) { return '<tr><td>' + esc(r.labelVi) + '</td><td style="text-align:center">' + (r.group || "–") + '</td><td style="text-align:right">' + Math.round(r.score * 100) + '%</td></tr>'; }).join("");
+    // chỉ số DSP
+    var rowsM = ac ? ac.metrics.map(function (m) { return '<tr><td>' + m.k + '</td><td style="text-align:right">' + m.v + '</td></tr>'; }).join("") : "";
+    // tự đánh giá
+    var saHTML = sa ? ('<div class="vb" style="border-color:' + ({ ok: "#15803d", conditional: "#b45309", low: "#b91c1c" }[sa.level] || "#334155") + '"><b>' + sa.badge + " " + esc(sa.title) + '</b>' +
+      (sa.name ? ' — “' + esc(sa.name) + '”' : '') + (sa.nice ? ' · nhóm Nice ' + esc(sa.nice) : '') +
+      '<ul>' + sa.notes.map(function (x) { return '<li>' + x + '</li>'; }).join("") + '</ul></div>')
+      : '<p class="muted">(Chưa thực hiện phần “Tự đánh giá khả năng bảo hộ”.)</p>';
+
+    // kết luận & khuyến nghị
+    var rec = {
+      high: "Âm thanh có tính phân biệt cao — RẤT NÊN tiến hành đăng ký. Chuẩn bị tệp .mp3 ≤5MB + bản khuông nhạc/ký âm và phân loại Nice phù hợp.",
+      ok: "Âm thanh có khả năng được bảo hộ — nên hoàn thiện hồ sơ (ký âm, mô tả âm sắc) và đăng ký. Cân nhắc bổ sung bằng chứng sử dụng nếu cần.",
+      conditional: "Cần bổ sung yếu tố sáng tạo/giai điệu HOẶC bằng chứng “ý nghĩa thứ hai” (thời gian sử dụng, nhận diện, doanh số) trước khi nộp đơn.",
+      low: "Khó được bảo hộ nếu để đơn lẻ — nên phối giai điệu/xử lý sáng tạo (chuyển hướng nhóm 7) hoặc tích lũy & chứng minh “ý nghĩa thứ hai”.",
+    }[v.level] || "";
+
+    var css = "@page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;color:#111;line-height:1.5;font-size:12.5px;margin:0}" +
+      ".rp-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1d4ed8;padding-bottom:8px}" +
+      ".rp-head .u{font-size:11px;color:#444;text-transform:uppercase;letter-spacing:.04em}.rp-head .t{font-weight:700;color:#1d4ed8}" +
+      "h1{font-size:18px;text-align:center;margin:14px 0 2px}.sub{text-align:center;color:#555;font-size:11.5px;margin-bottom:12px}" +
+      "h2{font-size:13.5px;color:#1d4ed8;border-bottom:1px solid #cbd5e1;padding-bottom:3px;margin:16px 0 7px}" +
+      "table{width:100%;border-collapse:collapse;margin:4px 0}td,th{border:1px solid #cbd5e1;padding:5px 8px;font-size:11.5px;vertical-align:top}th{background:#f1f5f9;text-align:left}" +
+      ".vb{border-left:4px solid #334155;background:#f8fafc;padding:8px 12px;margin:6px 0;border-radius:4px}.vb ul{margin:6px 0 0;padding-left:18px}.vb li{margin-bottom:3px}" +
+      ".grid2{display:flex;gap:12px}.grid2>div{flex:1}.muted{color:#777}img{max-width:100%;border:1px solid #ddd;border-radius:4px}" +
+      ".staff-svg{max-width:100%;border:1px solid #ddd;border-radius:4px;background:#fff}" +
+      ".kv{font-size:11.5px;color:#333}.foot{margin-top:22px;border-top:1px solid #cbd5e1;padding-top:8px;font-size:11px;color:#555;display:flex;justify-content:space-between}" +
+      ".sign{margin-top:26px;text-align:right;font-size:11.5px}.sign i{color:#777}";
+
+    var H = "<!DOCTYPE html><html lang=vi><head><meta charset=UTF-8><title>Báo cáo phân tích nhãn hiệu âm thanh</title><style>" + css + "</style></head><body>";
+    H += '<div class="rp-head"><div><div class="u">Ủy ban nhân dân TP. Hồ Chí Minh</div><div class="u t">' + esc(M.school) + '</div></div>' +
+      '<div style="text-align:right" class="kv">Đề án Thạc sĩ Luật Kinh tế<br>' + esc(M.author) + '<br>' + esc(M.advisors || "") + '</div></div>';
+    H += '<h1>BÁO CÁO PHÂN TÍCH NHÃN HIỆU ÂM THANH</h1>';
+    H += '<div class="sub">Công cụ phân loại 7 nhóm âm thanh theo nguồn gốc (AI YAMNet + DSP) · Lập lúc ' + ts + '</div>';
+
+    H += '<h2>I. Thông tin mẫu phân tích</h2><table>' +
+      '<tr><th style="width:32%">Tên / mô tả</th><td>' + esc(state.lastName || (sa && sa.name) || "(không đặt tên)") + '</td></tr>' +
+      '<tr><th>Nhóm hàng hóa/dịch vụ (Nice)</th><td>' + (sa && sa.nice ? "Nhóm " + esc(sa.nice) : "(chưa chọn)") + '</td></tr>' +
+      '<tr><th>Thời lượng</th><td>' + (ac ? ac.duration.toFixed(2) + " giây" : "—") + '</td></tr></table>';
+
+    H += '<h2>II. Kết quả phân loại nguồn gốc</h2>' +
+      '<div class="vb" style="border-color:' + lvlColor + '"><b style="color:' + lvlColor + '">' + v.badge + " " + esc(v.title) + '</b>' +
+      ' — nhóm trội: <b>' + gName(agg.dominant) + '</b><br>' + v.reason + '<br><i>⚖️ ' + v.legal + '</i></div>' +
+      '<table><thead><tr><th>Nhóm nguồn gốc</th><th style="text-align:right">Tỉ lệ</th><th>Khả năng chấp nhận</th></tr></thead><tbody>' + rowsG + '</tbody></table>';
+
+    H += '<h2>III. Phân tích đa nguồn (ensemble)</h2><table>' +
+      '<tr><th style="width:55%">🤖 Nguồn 1 — YAMNet (AI nhận dạng)</th><td>' + gName(src.yTop) + '</td></tr>' +
+      '<tr><th>🔬 Nguồn 2 — DSP (âm sắc/phổ)</th><td>' + gName(src.dTop) + '</td></tr>' +
+      (src.mTop ? '<tr><th>🎼 Nguồn 3 — Trích giai điệu/nốt</th><td>' + gName(src.mTop) + '</td></tr>' : '') +
+      '<tr style="font-weight:700"><th>⚖️ Kết hợp (ensemble)</th><td>' + gName(agg.dominant) + '</td></tr></table>' +
+      '<p class="kv">Độ tin cậy: <b>' + (src.conf ? src.conf.label + " (" + src.conf.pct + "%)" : "—") + '</b> · ' + (src.agreeN || 0) + '/' + (src.total || 0) + ' nguồn đồng thuận.</p>';
+
+    if (ac) {
+      H += '<h2>IV. Phân tích âm học chuyên sâu (DSP)</h2>' +
+        '<p class="kv">Loại tín hiệu: <b>' + esc(ac.type) + '</b> · Độ phân biệt âm học: <b>' + ac.distinctiveness + '/100</b></p>';
+      if (specImg) H += '<div class="kv" style="margin:6px 0 2px">Spectrogram (phổ tần số – thời gian):</div><img src="' + specImg + '">';
+      if (waveImg) H += '<div class="kv" style="margin:6px 0 2px">Waveform (dạng sóng):</div><img src="' + waveImg + '">';
+      if (staff) H += '<div class="kv" style="margin:8px 0 2px">🎼 Ký âm tự động (khuông nhạc 5 dòng – tham khảo cho bản thể hiện đồ họa):</div>' + staff;
+      H += '<div class="grid2" style="margin-top:8px"><div><table><thead><tr><th>Chỉ số</th><th style="text-align:right">Giá trị</th></tr></thead><tbody>' + rowsM + '</tbody></table></div>' +
+        '<div><div class="kv" style="margin-bottom:3px">Âm thanh mô hình nhận diện (YAMNet):</div><table><thead><tr><th>Nhãn</th><th>Nhóm</th><th style="text-align:right">%</th></tr></thead><tbody>' + rowsR + '</tbody></table></div></div>';
+    }
+
+    H += '<h2>V. Tự đánh giá khả năng bảo hộ nhãn hiệu</h2>' + saHTML;
+    H += '<h2>VI. Kết luận & khuyến nghị</h2><div class="vb" style="border-color:' + lvlColor + '">' + rec + '</div>';
+    H += '<h2>VII. Căn cứ pháp lý</h2><p class="kv">Luật Sở hữu trí tuệ 2005 (sửa đổi, bổ sung 2022): Điều 72 (dấu hiệu), Điều 73 (loại trừ), Điều 74 (khả năng phân biệt), Điều 105 (thể hiện đồ họa). Thông tư 10/2026/TT-BKHCN. Bảng phân loại Nice. Đề xuất hệ thống phân loại 7 nhóm — Nguyễn Phú Thành (2026).</p>';
+
+    H += '<div class="sign">Người phân tích / xác nhận<br><br>……………………………………<br><i>(Ký, ghi rõ họ tên)</i></div>';
+    H += '<div class="foot"><span>Báo cáo tạo tự động bằng công cụ nghiên cứu đề án — chỉ mang tính tham khảo học thuật, không thay thế kết luận của Cục SHTT.</span><span>' + ts + '</span></div>';
+    H += '<script>
+(function(){
+  var HASH="8ca66aacbc85bae5ec4c12f0998d55d156ade64c221c3ce6e214b68d4f8baac7", KEY="amthanh_unlocked";
+  function unlock(){ document.body.classList.remove('locked'); }
+  try{ if(sessionStorage.getItem(KEY)===HASH) unlock(); }catch(e){}
+  async function sha256(s){
+    var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+  }
+  var form=document.getElementById('gateForm');
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var h=await sha256(document.getElementById('gatePw').value);
+    if(h===HASH){ try{sessionStorage.setItem(KEY,HASH)}catch(e){}; unlock(); }
+    else{
+      document.getElementById('gateErr').textContent='Sai mật khẩu, thử lại.';
+      var c=document.querySelector('.gate-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
+      document.getElementById('gatePw').select();
+    }
+  });
+  setTimeout(function(){ var i=document.getElementById('gatePw'); if(i&&document.body.classList.contains('locked')) i.focus(); }, 150);
+})();
+</script>
+</body></html>';
+    return H;
+  }
+
+  // ---------- Mẫu tổng hợp minh hoạ ----------
+  function buildSample(type) {
+    var sr = 16000, dur = 3.6, n = Math.floor(sr * dur), b = new Float32Array(n), i, t, s, h;
+    if (type === "melody") {
+      var notes = [440, 554, 659, 880, 659, 554, 494, 587], per = Math.floor(n / notes.length);
+      for (var k = 0; k < notes.length; k++) { var f = notes[k], s0 = k * per; for (i = 0; i < per && s0 + i < n; i++) { t = i / sr; var env = Math.exp(-3.0 * t / (per / sr)); s = 0; for (h = 1; h <= 7; h++) s += (1 / h) * Math.sin(2 * Math.PI * f * h * t); b[s0 + i] = 0.3 * env * s; } }
+    } else if (type === "beep") { for (i = 0; i < n; i++) b[i] = 0.5 * Math.sin(2 * Math.PI * 440 * i / sr);
+    } else if (type === "noise") { for (i = 0; i < n; i++) b[i] = (Math.random() * 2 - 1) * 0.4;
+    } else if (type === "voice") { var f0 = 120; for (i = 0; i < n; i++) { t = i / sr; var vib = 1 + 0.01 * Math.sin(2 * Math.PI * 5 * t); s = Math.sin(2 * Math.PI * f0 * vib * t) + 0.7 * Math.sin(2 * Math.PI * 2 * f0 * vib * t) + 0.9 * Math.sin(2 * Math.PI * 5 * f0 * vib * t) + 0.5 * Math.sin(2 * Math.PI * 9 * f0 * vib * t); b[i] = 0.22 * s + 0.03 * (Math.random() * 2 - 1); }
+    } else if (type === "chirp") { for (i = 0; i < n; i++) { t = i / sr; b[i] = 0.4 * Math.sin(2 * Math.PI * (200 * t + (1800 / (2 * dur)) * t * t)); } }
+    return { buf: b, sr: sr };
+  }
+  function playFloat(b, sr) { try { var AC = window.AudioContext || window.webkitAudioContext; var ctx = new AC(); var ab = ctx.createBuffer(1, b.length, sr); ab.copyToChannel(b, 0); var s = ctx.createBufferSource(); s.buffer = ab; s.connect(ctx.destination); s.start(); } catch (e) {} }
+  var SAMP_NAME = { melody: "Mẫu giai điệu", beep: "Mẫu tông đơn/beep", noise: "Mẫu nhiễu/gió", voice: "Mẫu giọng (giả lập)", chirp: "Mẫu quét tần số" };
+  async function analyzeSample(type) {
+    var s = buildSample(type); playFloat(s.buf, s.sr);
+    try {
+      E.onStatus(setStatus); await E.ready(); setStatus("Đang phân tích mẫu…");
+      var cats = await E.classifyBuffer(s.buf); setStatus("");
+      state.lastName = SAMP_NAME[type] || ("Mẫu " + type);
+      runAnalysis(cats, s.buf);
+    } catch (err) { setStatus("❌ " + (err && err.message ? err.message : err)); }
+  }
 
   // ---------- Wire ----------
   function init() {
@@ -1831,13 +2163,15 @@ window.AudioEngine = (function () {
     // noi dung de an (3 chuong)
     if (window.DECUONG) window.DECUONG.build();
 
-    // xuat bao cao (in / PDF) — mo het accordion roi in
+    // xuat bao cao phan tich (PDF / in)
     var rb = $("btnReport");
-    if (rb) rb.addEventListener("click", function () {
-      try { document.querySelectorAll("#decuongBody details").forEach(function (d) { d.open = true; }); } catch (e) {}
-      document.body.classList.add("printing");
-      setTimeout(function () { window.print(); setTimeout(function(){document.body.classList.remove("printing");}, 500); }, 200);
+    if (rb) rb.addEventListener("click", exportReport);
+
+    // mau tong hop minh hoa
+    Array.prototype.forEach.call(document.querySelectorAll("[data-sample]"), function (b) {
+      b.addEventListener("click", function () { analyzeSample(b.getAttribute("data-sample")); });
     });
+    window.__report = composeReportHTML; // hook kiểm thử
 
     // warm-up model (khong chan UI)
     E.onStatus(setStatus);
@@ -1849,29 +2183,6 @@ window.AudioEngine = (function () {
   else init();
 })();
 
-</script>
-<script>
-(function(){
-  var HASH="8ca66aacbc85bae5ec4c12f0998d55d156ade64c221c3ce6e214b68d4f8baac7", KEY="amthanh_unlocked";
-  function unlock(){ document.body.classList.remove('locked'); }
-  try{ if(sessionStorage.getItem(KEY)===HASH) unlock(); }catch(e){}
-  async function sha256(s){
-    var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-    return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
-  }
-  var form=document.getElementById('gateForm');
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    var h=await sha256(document.getElementById('gatePw').value);
-    if(h===HASH){ try{sessionStorage.setItem(KEY,HASH)}catch(e){}; unlock(); }
-    else{
-      document.getElementById('gateErr').textContent='Sai mật khẩu, thử lại.';
-      var c=document.querySelector('.gate-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
-      document.getElementById('gatePw').select();
-    }
-  });
-  setTimeout(function(){ var i=document.getElementById('gatePw'); if(i&&document.body.classList.contains('locked')) i.focus(); }, 150);
-})();
 </script>
 </body>
 </html>
