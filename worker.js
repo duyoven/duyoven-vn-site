@@ -448,6 +448,11 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // --- TAI APP ANDROID (DuyNest Laser): link gon -> GitHub Release ---
+    if (url.pathname === "/tai-app" || url.pathname === "/laser/app.apk" || url.pathname === "/duynest.apk") {
+      return Response.redirect("https://github.com/duyoven/xep-laser-dl/releases/download/duynest-android-v1/DuyNest-Laser-Android.apk", 302);
+    }
+
     // --- APP XEP LASER: OAuth callback tai redirect URI CO SAN (quan-ly.html) ---
     // -> Duy KHONG can them/sua redirect URI trong Google (dung cai da dang ky).
     if (url.pathname === "/quan-ly.html" && url.searchParams.get("state") === "laserdrive"
