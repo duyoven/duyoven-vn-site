@@ -233,6 +233,30 @@ body{
 .legal-steps ol{margin:0;padding-left:20px}
 .legal-steps li{font-size:13.5px;margin-bottom:8px;line-height:1.55}
 
+/* ===== nội dung đề án (accordion) ===== */
+.dc-meta{font-size:13px;color:var(--muted);line-height:1.7;background:var(--card2);
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+.dc-meta b{color:var(--ink)}
+.dc-sec{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--card2);overflow:hidden}
+.dc-sec[open]{background:linear-gradient(180deg,var(--card2),var(--bg2))}
+.dc-sum{cursor:pointer;padding:14px 16px;font-weight:700;font-size:15px;list-style:none;
+  display:flex;align-items:center;gap:9px;user-select:none}
+.dc-sum::-webkit-details-marker{display:none}
+.dc-sum::after{content:"▸";margin-left:auto;color:var(--muted);transition:transform .2s}
+.dc-sec[open] .dc-sum::after{transform:rotate(90deg)}
+.dc-sum:hover{color:#c4b5fd}
+.dc-ic{font-size:17px}
+.dc-sec>.dc-h,.dc-sec>.dc-p,.dc-sec>.dc-ul,.dc-sec>.cite,.dc-sec>.dc-box{margin-left:16px;margin-right:16px}
+.dc-sec>:last-child{margin-bottom:14px}
+.dc-h{font-size:14px;color:#c4b5fd;margin:14px 0 6px;font-weight:700}
+.dc-p{font-size:13.5px;line-height:1.65;margin:6px 0;color:var(--ink)}
+.dc-ul{margin:6px 0;padding-left:20px}
+.dc-ul li{font-size:13.5px;line-height:1.6;margin-bottom:7px}
+.dc-box{background:rgba(139,92,246,.10);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 16px}
+.dc-box-t{font-weight:700;font-size:14px;color:#c4b5fd;margin-bottom:6px}
+.dc-box .dc-p{font-size:13px}
+.dc-box .cite{margin-left:0;margin-right:0}
+
 @media (max-width:720px){
   .input-grid,.input-grid.two{grid-template-columns:1fr}
   .raw-list{grid-template-columns:1fr}
@@ -466,6 +490,7 @@ body.locked .site-back{display:none}
       <b>Nguyên tắc:</b> ưu tiên bảo hộ nhóm [4] & [7] hoặc tổ hợp có xử lý sáng tạo / phối giai điệu.
       Không chấp nhận đơn lẻ [1][2][3][5][6] nếu thiếu yếu tố sáng tạo. Nếu không có tính phân biệt
       cố hữu → phải chứng minh “ý nghĩa thứ hai” qua sử dụng (điểm b,c,d,đ,e Khoản 2 Điều 74 Luật SHTT).
+      <br>📚 Cơ sở & kiểm chứng án lệ: xem <b>Nội dung đề án → Chương 3</b> bên dưới.
     </p>
   </section>
 
@@ -515,8 +540,16 @@ body.locked .site-back{display:none}
     </div>
   </section>
 
+  <!-- NỘI DUNG ĐỀ ÁN (3 chương) -->
+  <section class="panel decuong">
+    <h2 class="sec-title">📚 Nội dung đề án <span class="muted">(theo đề cương 3 chương)</span></h2>
+    <p class="assess-intro">Toàn văn tóm lược đề án thạc sĩ — bấm từng chương để mở rộng.</p>
+    <div id="decuongBody" class="dc-body"></div>
+  </section>
+
   <footer class="foot">
     Công cụ hỗ trợ nghiên cứu — <b>Đề án Thạc sĩ Luật Kinh tế · 2026 · Nguyễn Phú Thành · TDMU CH25LKT01</b><br>
+    GVHD: TS. Nguyễn Thị Thu Thủy · PGS.TS. Lê Thị Minh — Trường Đại học Thủ Dầu Một<br>
     Chạy trên trình duyệt · mô hình <b>Google YAMNet</b> (AudioSet, 521 lớp) qua MediaPipe · âm thanh không gửi đi đâu.
   </footer>
 </div>
@@ -830,6 +863,200 @@ window.AudioEngine = (function () {
     classifyArrayBuffer: classifyArrayBuffer,
   };
 })();
+
+</script>
+<script>
+// decuong.js — Nội dung đề án thạc sĩ (3 chương) gắn vào app.
+// Nguồn: Đề cương + Luận văn "Pháp luật về bảo hộ nhãn hiệu âm thanh và thực tiễn
+// áp dụng của doanh nghiệp trên địa bàn TP.HCM" — Nguyễn Phú Thành, TDMU 2026.
+(function (w) {
+  "use strict";
+
+  var META = {
+    title: "Pháp luật về bảo hộ nhãn hiệu âm thanh và thực tiễn áp dụng của doanh nghiệp trên địa bàn Thành phố Hồ Chí Minh",
+    author: "Nguyễn Phú Thành",
+    advisors: "GVHD: TS. Nguyễn Thị Thu Thủy · PGS.TS. Lê Thị Minh",
+    major: "Chuyên ngành: Luật Kinh tế — Mã số 8380107",
+    school: "Trường Đại học Thủ Dầu Một (TDMU) · 2026",
+  };
+
+  // item types: ["h", text] tiểu mục | ["p", html] đoạn | ["ul", [..]] danh sách
+  // | ["c", citation] căn cứ pháp lý | ["box", title, [..items]] khung nhấn mạnh
+  var SECTIONS = [
+    {
+      t: "Phần mở đầu", ic: "📌", open: true,
+      body: [
+        ["h", "Lý do chọn đề tài"],
+        ["p", "Nhãn hiệu không chỉ là dấu hiệu phân biệt hàng hóa/dịch vụ mà còn là tài sản vô hình phản ánh uy tín, giá trị thương hiệu; sức mạnh của nhãn hiệu nằm ở <b>tính phân biệt</b> và bản sắc riêng trong tâm trí người tiêu dùng (Schechter, 1927; Strasser, 1999)."],
+        ["p", "Việt Nam chính thức bảo hộ nhãn hiệu âm thanh từ <b>14/01/2022</b> (Luật 07/2022/QH15 sửa đổi Luật SHTT) để thực thi cam kết <b>CPTPP (Điều 18.18)</b>. Tuy nhiên số doanh nghiệp đăng ký còn ít, thiếu hướng dẫn chi tiết, chưa có hệ thống phân loại âm thanh và chưa có tiền lệ cấp văn bằng được công bố rộng rãi."],
+        ["p", "TP.HCM là đầu tàu kinh tế — khoảng <b>273.100 doanh nghiệp</b> đang hoạt động (31/12/2023, ~29,6% cả nước), tập trung công nghệ, thương mại điện tử, truyền thông, F&B — nhóm có nhu cầu cao về jingle quảng cáo, âm báo ứng dụng. Khoảng cách giữa “sử dụng thực tế” và “đăng ký thành công” còn rất lớn."],
+        ["h", "Mục tiêu — Phạm vi — Phương pháp"],
+        ["ul", [
+          "<b>Mục tiêu:</b> làm rõ lý luận & pháp lý; đánh giá thực trạng tại TP.HCM; so sánh EU – Hoa Kỳ; đề xuất <b>hệ thống phân loại âm thanh 7 nhóm</b> và kiến nghị tháo gỡ khó khăn cho doanh nghiệp.",
+          "<b>Phạm vi thời gian:</b> từ 14/01/2022 đến Thông tư <b>10/2026/TT-BKHCN</b> (hiệu lực 01/4/2026).",
+          "<b>Phương pháp:</b> phân tích–tổng hợp; điều tra xã hội học (khảo sát doanh nghiệp + phỏng vấn sâu luật sư, đại diện SHCN tại TP.HCM); so sánh pháp luật (EUIPO/USPTO); lịch sử–logic.",
+        ]],
+      ],
+    },
+
+    {
+      t: "Chương 1 — Những vấn đề lý luận về bảo hộ nhãn hiệu âm thanh", ic: "📘",
+      body: [
+        ["h", "1.1 Khái niệm & đặc điểm"],
+        ["p", "Nhãn hiệu âm thanh là dạng nhãn hiệu <b>phi truyền thống</b>: dùng tín hiệu âm thanh đã được định hình dưới dạng đồ họa và tệp dữ liệu để nhận diện nguồn gốc thương mại — được nhận biết bằng <b>thính giác</b> thay vì thị giác."],
+        ["c", "Khoản 16 Điều 4 & Khoản 1 Điều 72 Luật SHTT 2005 (sđ 2022); Khoản 3 Điều 3 Nghị định 17/2023/NĐ-CP (định hình)"],
+        ["p", "Ví dụ: âm báo tin nhắn Zalo (VNG), jingle nhận diện của Tiki, Shopee. Ba đặc điểm pháp lý nổi bật:"],
+        ["ul", [
+          "<b>Tính phân biệt cao</b> — tác động trực tiếp tới thính giác, tạo “ý nghĩa thứ cấp” (Zhang, 2020) và “danh tiếng nội tại” (Strasser, 1999). Âm chung chung (chuông reo, đóng/mở cửa) khó được bảo hộ.",
+          "<b>Yêu cầu thể hiện đồ họa</b> — phải nộp khuông nhạc 5 dòng kẻ + tệp .mp3 ≤ 5MB; là rào cản lớn cho doanh nghiệp vừa và nhỏ (phải thuê chuyên gia ký âm).",
+          "<b>Tính phi chức năng & không mô tả trực tiếp</b> — âm chỉ mô tả đặc tính kỹ thuật bắt buộc thì không bảo hộ (vd tiếng động cơ xe máy).",
+        ]],
+        ["h", "Vai trò của nhãn hiệu âm thanh"],
+        ["ul", [
+          "Tăng nhận diện đa giác quan, tạo kết nối cảm xúc, ghi nhớ thương hiệu.",
+          "Hỗ trợ quảng cáo & môi trường số (vd giai điệu Hisamitsu — 4 nốt E–A–E–F#).",
+          "Bảo vệ pháp lý: chống sao chép, chống “suy yếu nhãn hiệu” – dilution (Schechter, 1927).",
+        ]],
+        ["h", "1.3 Pháp luật: điều kiện bảo hộ"],
+        ["ul", [
+          "<b>(a) Thể hiện đồ họa</b> — khuông nhạc 5 dòng + .mp3 ≤5MB. <c>Khoản 1 Điều 72; Khoản 2 Điều 105 Luật SHTT; Thông tư 10/2026/TT-BKHCN</c>",
+          "<b>(b) Khả năng phân biệt</b> — cố hữu (Inherent, vd jingle Tiki) HOẶC đạt được qua sử dụng / “ý nghĩa thứ hai”. <c>Điểm b,c,d,đ,e Khoản 2 Điều 74</c>",
+          "<b>(c) Không thuộc loại trừ</b> — không trùng Quốc ca (Khoản 1 Điều 73); không trái trật tự công cộng/đạo đức (Điều 8); không là đặc tính kỹ thuật bắt buộc (Khoản 6 Điều 73).",
+        ]],
+        ["h", "Trình tự, thủ tục đăng ký (tóm tắt)"],
+        ["ul", [
+          "Hồ sơ (Điều 68 TT 10/2026, Mẫu 04): tờ khai mô tả âm thanh (nhạc cụ, âm sắc, cảm xúc) + .mp3 ≤5MB + khuông nhạc 5 dòng + danh mục Nice.",
+          "Nộp: trực tiếp (VP phía Nam: tầng 8, số 1196 đường 3 Tháng 2, TP.HCM) hoặc trực tuyến dichvucong.ipvietnam.gov.vn (cần chữ ký số/USB Token).",
+          "Các bước: tiếp nhận → thẩm định hình thức ≤1 tháng → công bố ≤2 tháng → thẩm định nội dung → cấp văn bằng. Hiệu lực <b>10 năm</b>, gia hạn nhiều lần (Điều 93).",
+        ]],
+        ["h", "1.4 Kinh nghiệm quốc tế & bài học cho Việt Nam"],
+        ["ul", [
+          "<b>WIPO/TRIPS:</b> TRIPS Khoản 1 Điều 15 — “bất kỳ dấu hiệu nào” có khả năng phân biệt; TLT Điều 2(1)(a); hệ thống Madrid cho đăng ký quốc tế.",
+          "<b>Hoa Kỳ (USPTO):</b> Đạo luật Lanham §1127, §2(f) secondary meaning; TMEP §1202.15; mã <b>Category 30</b> riêng cho âm thanh; án In re General Electric (1978). VD: NBC, MGM, Intel Bong, Nokia Tune (2451345), Hisamitsu (6315710).",
+          "<b>EU (EUIPO):</b> bãi bỏ yêu cầu đồ họa từ <b>01/10/2017</b> (Quy định 2017/1001) — chỉ cần tệp .mp3/.wav ≤2MB; án Shield Mark C-283/01 (sonogram hợp lệ), BVG T-288/24 (jingle 2 giây/4 nốt vẫn phân biệt); CSDL eSearch plus nghe trực tiếp; >500 nhãn hiệu âm thanh (2026).",
+          "<b>Bài học cho VN:</b> công nhận Spectrogram/Waveform bên cạnh khuông nhạc; lập bộ phận thẩm định chuyên trách; xây mã phân loại âm thanh riêng; CSDL cho nghe trực tiếp; hướng dẫn định lượng “ý nghĩa thứ hai”.",
+        ]],
+      ],
+    },
+
+    {
+      t: "Chương 2 — Thực trạng pháp luật & thực tiễn tại TP.HCM", ic: "📙",
+      body: [
+        ["h", "2.1 Tình hình đăng ký & khai thác"],
+        ["p", "<b>Giai đoạn 2022–2023:</b> trầm lắng, nhãn hiệu âm thanh chưa xuất hiện như một danh mục thống kê độc lập; đơn rất ít, gần như chưa có văn bằng công bố rộng rãi."],
+        ["p", "<b>Giai đoạn 2024–2026:</b> bứt phá nhưng tập trung ở doanh nghiệp FDI / tập đoàn công nghệ tại TP.HCM. Một số đơn tiêu biểu:"],
+        ["ul", [
+          "<b>Shopee</b> — VN-4-2023-00001, giai điệu “Shopee” — <b>đã cấp bằng</b> (nộp ngay ngày đầu luật hiệu lực).",
+          "<b>Tiki</b> — VN-4-2023-00216, jingle nhận diện — đang thẩm định nội dung (Cục yêu cầu bổ sung khảo sát người tiêu dùng).",
+          "<b>Samsung</b> — VN-4-2023-01814, âm khởi động thiết bị.",
+        ]],
+        ["h", "2.2–2.3 Rào cản & đánh giá"],
+        ["ul", [
+          "<b>Khuông nhạc 5 dòng kẻ</b> phù hợp âm có giai điệu, nhưng “ép” giọng nói, tiếng động vật, hiệu ứng số vào khuông nhạc gần như bất khả thi → dễ bị coi trùng lặp trên giấy. Luật chưa công nhận <b>Spectrogram / Waveform</b> như EU/Mỹ (án Shield Mark C-283/01 đã thừa nhận sonogram).",
+          "<b>Chứng minh “ý nghĩa thứ hai”</b> là gánh nặng lớn: phải có số liệu nhận biết, doanh số, thời gian, chi phí quảng cáo… nhưng thiếu hướng dẫn định lượng → thẩm định cảm tính.",
+          "<b>Ranh giới “âm thanh chức năng”</b> còn mơ hồ (Khoản 6 Điều 73) — vd tiếng động cơ.",
+          "<b>Năng lực thẩm định:</b> thiếu phần mềm phân tích sóng âm & CSDL tra cứu chéo; thiếu bảng phân loại âm thanh chuyên biệt (mới chỉ có Nice cho hàng hóa/dịch vụ); thời gian xử lý kéo dài.",
+        ]],
+        ["box", "Kết luận Chương 2", [
+          ["p", "Thực tiễn “<b>có luật nhưng khó thi hành</b>”: rào cản kỹ thuật đồ họa + chi phí chứng minh + năng lực số hóa chưa theo kịp khiến nhãn hiệu âm thanh thành “sân chơi” của tập đoàn công nghệ/FDI, còn SMEs nội địa tại TP.HCM bị bỏ lại — thậm chí có nguy cơ mất quyền với chính âm thanh quảng cáo quen thuộc của mình."],
+        ]],
+      ],
+    },
+
+    {
+      t: "Chương 3 — Kiến nghị hoàn thiện pháp luật & giải pháp", ic: "📗",
+      body: [
+        ["h", "3.1 Định hướng"],
+        ["p", "Bám sát chủ trương phát triển tài sản trí tuệ trong hội nhập & kinh tế số; nâng cao quản lý nhà nước và năng lực cạnh tranh; phù hợp định hướng đưa TP.HCM thành trung tâm đổi mới sáng tạo, khoa học công nghệ."],
+        ["h", "3.2 Kiến nghị hoàn thiện pháp luật"],
+        ["ul", [
+          "Công nhận <b>Spectrogram / Waveform</b> làm bằng chứng đồ họa hợp pháp cho âm thanh phi nhạc cụ; làm rõ tiêu chí “âm thanh chức năng”.",
+          "Lập bộ phận thẩm định chuyên trách; xây <b>mã phân loại âm thanh riêng</b> (như Category 30 của USPTO); CSDL tra cứu cho nghe trực tiếp; hướng dẫn định lượng cho “ý nghĩa thứ hai”.",
+        ]],
+        ["box", "⭐ Đóng góp cốt lõi: Hệ thống phân loại 7 nhóm âm thanh", [
+          ["p", "Kế thừa cách phân loại theo <b>nguồn âm học</b> của EUIPO (4 nhóm: âm nhạc / âm thực tế đời sống / giọng nói–thanh nhạc / âm khác) và cách phân loại theo <b>chức năng pháp lý</b> của USPTO–TTAB (2 loại: có / không có tính phân biệt cố hữu), tác giả phát triển thành <b>2 nhóm lớn & 7 nhóm chi tiết</b> — đặc biệt <b>tách nhóm [7]</b> (âm tổng hợp AI/kỹ thuật số) thành danh mục độc lập."],
+          ["p", "👉 Đây chính là cơ sở của bộ phân loại mà app này thực hiện. Xem <b>Bảng 4.1</b> và dùng phần <b>“Tự đánh giá khả năng bảo hộ”</b> ở trên."],
+          ["p", "<b>Nguyên tắc áp dụng:</b> ưu tiên bảo hộ nhóm <b>[4]</b> (con người) & <b>[7]</b> (tổng hợp toàn phần), hoặc tổ hợp có xử lý sáng tạo/phối giai điệu; <b>không</b> chấp nhận đơn lẻ [1][2][3][5][6] nếu thiếu yếu tố sáng tạo; <b>khuyến khích mô phỏng sáng tạo</b> (số hóa, phối giai điệu → chuyển thành nhóm [7])."],
+        ]],
+        ["h", "Kiểm chứng qua án lệ quốc tế"],
+        ["ul", [
+          "<b>Hasbro</b> – tiếng chuột kêu thật (nhóm [2]) dùng đơn lẻ cho đồ chơi thú cưng → <b>bị từ chối</b> (mang tính chức năng).",
+          "<b>MGM</b> – tiếng sư tử gầm (nhóm [2]) nhưng phối giai điệu + hình ảnh → <b>được chấp nhận</b>.",
+          "<b>Harley-Davidson</b> – tiếng động cơ V-Twin (nhóm [6]) → bị phản đối, rút đơn năm 2000.",
+          "<b>General Electric</b> – âm báo động tàu thủy (nhóm [6]) → phải chứng minh “ý nghĩa thứ hai” (In re General Electric).",
+        ]],
+        ["h", "3.3 Giải pháp tại TP.HCM"],
+        ["ul", [
+          "<b>Tiền thẩm định phân loại</b> tại Văn phòng đại diện phía Nam: dùng Bảng 7 nhóm để tư vấn/sàng lọc; lập “Bàn tư vấn tài sản số” hỗ trợ nhóm [7].",
+          "Biên soạn & số hóa <b>“Cẩm nang Đăng ký Nhãn hiệu Đa giác quan”</b> (E-book) kèm án lệ Harley/Hasbro.",
+          "Hỗ trợ trọng điểm hệ sinh thái <b>Startup & Tech-company</b>: hướng dẫn phân loại âm giao diện (UI/UX) vào nhóm [7] để đăng ký.",
+          "Khuyến khích số hóa / mô phỏng sáng tạo: chuyển âm tự nhiên/chức năng [1][2][3][5][6] thành [7] để tăng khả năng bảo hộ — đồng thời kích cầu ngành sáng tạo, âm nhạc.",
+        ]],
+      ],
+    },
+
+    {
+      t: "Kết luận chung", ic: "🏁",
+      body: [
+        ["ul", [
+          "Khung pháp lý đã định hình (Luật SHTT sđ 2022 + Thông tư 10/2026) nhưng thực tiễn thẩm định còn nhiều điểm nghẽn về kỹ thuật, chi phí và phân loại.",
+          "Nguyên nhân sâu xa: lệch pha tư duy — dùng “thước đo hữu hình” của nhãn hiệu truyền thống cho một đối tượng “vô hình”. Cần chuyển sang <b>quản trị tài sản số</b>.",
+          "Đóng góp quan trọng nhất: lần đầu đề xuất <b>hệ thống phân loại 7 nhóm</b> làm bộ tiêu chí minh bạch giúp phân định “âm chức năng” và “âm có tính phân biệt”.",
+          "Giải pháp mang tính ứng dụng cao cho TP.HCM: cẩm nang số, tiền thẩm định tại VP phía Nam, hỗ trợ startup/tech — giúp SMEs nội địa tự tin xác lập quyền.",
+        ]],
+      ],
+    },
+  ];
+
+  function el(tag, cls, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  // chuyen marker <c>..</c> trong text thanh span.cite
+  function fmt(s) { return s.replace(/<c>(.*?)<\/c>/g, '<span class="cite">$1</span>'); }
+
+  function renderBody(items) {
+    var frag = document.createDocumentFragment();
+    items.forEach(function (it) {
+      var type = it[0];
+      if (type === "h") frag.appendChild(el("h4", "dc-h", it[1]));
+      else if (type === "p") frag.appendChild(el("p", "dc-p", fmt(it[1])));
+      else if (type === "c") frag.appendChild(el("div", "cite", it[1]));
+      else if (type === "ul") {
+        var ul = el("ul", "dc-ul");
+        it[1].forEach(function (li) { ul.appendChild(el("li", null, fmt(li))); });
+        frag.appendChild(ul);
+      } else if (type === "box") {
+        var b = el("div", "dc-box");
+        b.appendChild(el("div", "dc-box-t", it[1]));
+        b.appendChild(renderBody(it[2]));
+        frag.appendChild(b);
+      }
+    });
+    return frag;
+  }
+
+  function build() {
+    var host = document.getElementById("decuongBody");
+    if (!host) return;
+    var meta = el("div", "dc-meta",
+      "<b>" + META.title + "</b><br>" + META.author + " · " + META.advisors +
+      "<br>" + META.major + " · " + META.school);
+    host.appendChild(meta);
+    SECTIONS.forEach(function (sec) {
+      var d = el("details", "dc-sec");
+      if (sec.open) d.open = true;
+      var sm = el("summary", "dc-sum", '<span class="dc-ic">' + sec.ic + "</span> " + sec.t);
+      d.appendChild(sm);
+      d.appendChild(renderBody(sec.body));
+      host.appendChild(d);
+    });
+  }
+
+  w.DECUONG = { build: build, META: META, SECTIONS: SECTIONS };
+})(window);
 
 </script>
 <script>
@@ -1190,6 +1417,9 @@ window.AudioEngine = (function () {
     buildNiceSelect();
     $("btnAssess").addEventListener("click", assess);
 
+    // noi dung de an (3 chuong)
+    if (window.DECUONG) window.DECUONG.build();
+
     // warm-up model (khong chan UI)
     E.onStatus(setStatus);
     setTimeout(function () { E.ready().catch(function(){}); }, 400);
@@ -1226,3 +1456,4 @@ window.AudioEngine = (function () {
 </script>
 </body>
 </html>
+
