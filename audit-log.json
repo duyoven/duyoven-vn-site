@@ -1,6 +1,12 @@
 {
   "entries": [
     {
+      "ts": "2026-06-22T01:51:13.914Z",
+      "who": "laser:Web",
+      "action": "Kich hoat app laser",
+      "detail": "DOV-WYL8-LABV"
+    },
+    {
       "ts": "2026-06-22T01:50:26.845Z",
       "who": "chu@duyoven",
       "action": "Đổi hình SP",
