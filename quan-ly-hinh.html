@@ -13,7 +13,9 @@
   a.back{color:var(--muted);text-decoration:none;font-size:14px}
   .wrap{max-width:1100px;margin:0 auto;padding:16px}
   .note{background:#1b2230;border:1px solid #2a3a52;border-radius:10px;padding:10px 12px;color:#bcd;font-size:13px;margin-bottom:14px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+  .sec{font-size:14px;font-weight:700;color:var(--ember);margin:18px 2px 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .sec small{color:var(--muted);font-weight:400;font-size:12px}
   .pc{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
   .pc .thumb{aspect-ratio:1;background:#1a1817 center/contain no-repeat;display:block}
   .pc .meta{padding:8px 10px}
@@ -50,7 +52,7 @@
 </header>
 <div class="wrap">
   <div class="note">Chọn sản phẩm → <b>Đổi hình</b> → tải ảnh lên. Hệ thống tự đưa về <b>nền đen vuông</b> (có thể xoá nền trắng / tách nền AI). Lưu xong web cập nhật sau <b>2–3 phút</b>. Đổi 1 ảnh sẽ cập nhật cả trang sản phẩm, menu và trang chi tiết.</div>
-  <div id="grid" class="grid"><div style="color:var(--muted)">Đang tải danh sách…</div></div>
+  <div id="grid"><div style="color:var(--muted)">Đang tải danh sách…</div></div>
 </div>
 
 <div class="ov" id="ov">
@@ -75,28 +77,45 @@
 </div>
 
 <script>
-var ITEMS=[], CUR=null, srcImg=null, aiBlobUrl=null;
+var EDITS=[], CUR=null, srcImg=null, aiBlobUrl=null;
 var $=function(s){return document.querySelector(s)};
 function bust(u){return '/'+u+'?t='+Date.now()}
 function loadList(){
   fetch('/product-images.json?t='+Date.now()).then(function(r){return r.json()}).then(function(d){
-    ITEMS=(d&&d.items)||[];
-    var g=$('#grid'); g.innerHTML='';
-    ITEMS.forEach(function(it,i){
-      var c=document.createElement('div'); c.className='pc';
-      c.innerHTML='<div class="thumb" style="background-image:url(\''+bust(it.img)+'\')"></div>'+
-        '<div class="meta"><div class="nm">'+esc(it.name)+'</div></div>'+
-        (it.shared?'<div class="shared">⚠️ dùng chung ảnh với SP khác</div>':'')+
-        '<button data-i="'+i+'">Đổi hình</button>';
-      c.querySelector('button').onclick=function(){openEditor(i)};
-      g.appendChild(c);
+    var items=(d&&d.items)||[]; EDITS=[];
+    items.forEach(function(it){
+      EDITS.push({label:it.name,img:it.img,group:'main',shared:it.shared});
+      (it.details||[]).forEach(function(dt){ EDITS.push({label:it.name+' · '+dt.label,img:dt.img,group:'detail'}); });
     });
+    renderGrid();
   }).catch(function(e){$('#grid').innerHTML='<div style="color:#f1736b">Lỗi tải danh sách. Thử lại.</div>'});
+}
+function renderGrid(){
+  var g=$('#grid'); g.innerHTML='';
+  addSection(g,'Ảnh chính <small>— hiện ở danh sách Sản phẩm + menu + đầu trang chi tiết</small>',EDITS.filter(function(e){return e.group==='main'}));
+  var det=EDITS.filter(function(e){return e.group==='detail'});
+  if(det.length) addSection(g,'Ảnh trong trang chi tiết <small>— ảnh phụ ở các trang giới thiệu riêng (Pantina, Hybrid 65L, Offset 10050)</small>',det);
+}
+function addSection(g,title,arr){
+  if(!arr.length) return;
+  var sec=document.createElement('div'); sec.className='sec'; sec.innerHTML=title; g.appendChild(sec);
+  var grid=document.createElement('div'); grid.className='grid';
+  arr.forEach(function(e){
+    var idx=EDITS.indexOf(e);
+    var c=document.createElement('div'); c.className='pc';
+    c.innerHTML='<div class="thumb" style="background-image:url(\''+bust(e.img)+'\')"></div>'+
+      '<div class="meta"><div class="nm">'+esc(e.label)+'</div></div>'+
+      (e.shared?'<div class="shared">⚠️ dùng chung ảnh với SP khác</div>':'')+
+      '<button>Đổi hình</button>';
+    c.querySelector('button').onclick=function(){openEditor(idx)};
+    grid.appendChild(c);
+  });
+  g.appendChild(grid);
 }
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function openEditor(i){
-  CUR=ITEMS[i]; srcImg=null; aiBlobUrl=null;
-  $('#mTitle').textContent='Đổi hình: '+CUR.name;
+  CUR=EDITS[i]; srcImg=null; aiBlobUrl=null;
+  $('#mTitle').textContent='Đổi hình: '+CUR.label;
   $('#mSub').textContent=CUR.img + (CUR.shared?' · (đổi sẽ ảnh hưởng SP dùng chung)':'');
   $('#file').value=''; $('#rmWhite').checked=false; $('#msg').textContent=''; $('#msg').className='msg';
   $('#save').disabled=true;

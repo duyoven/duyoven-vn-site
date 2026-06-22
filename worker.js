@@ -1239,7 +1239,8 @@ export default {
       // Chỉ cho ghi vào đúng đường dẫn ảnh có trong product-images.json (chống ghi bậy)
       let allow; try { allow = await ghGetJson(env, "product-images.json", "main"); } catch (e) { return jsonResp({ error: "Không đọc được danh sách ảnh." }, 502); }
       const items = (allow.obj && Array.isArray(allow.obj.items)) ? allow.obj.items : [];
-      if (!items.some((it) => it && it.img === imgPath)) return jsonResp({ error: "Đường dẫn ảnh không hợp lệ." }, 400);
+      const okPath = (it) => it && (it.img === imgPath || (Array.isArray(it.details) && it.details.some((d) => d && d.img === imgPath)));
+      if (!items.some(okPath)) return jsonResp({ error: "Đường dẫn ảnh không hợp lệ." }, 400);
       const repo2 = env.GH_REPO || "duyoven/duyoven-vn-site";
       const api2 = "https://api.github.com/repos/" + repo2 + "/contents/" + imgPath;
       const hd2 = { "Authorization": "Bearer " + env.GH_TOKEN, "Accept": "application/vnd.github+json", "User-Agent": "duyoven-cms" };

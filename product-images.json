@@ -4,7 +4,25 @@
     {
       "name": "Pantina",
       "img": "img/sp3/pantina-DSCF8315.webp",
-      "page": "sp-pantina.html"
+      "page": "sp-pantina.html",
+      "details": [
+        {
+          "label": "Ảnh hero (đầu trang)",
+          "img": "shot-hero.png"
+        },
+        {
+          "label": "Ảnh lò (nắp đóng)",
+          "img": "shot-product.png"
+        },
+        {
+          "label": "Than hồng qua cửa kính",
+          "img": "shot-glass.png"
+        },
+        {
+          "label": "Thịt nướng trên vỉ",
+          "img": "shot-meat.png"
+        }
+      ]
     },
     {
       "name": "Tách khói 65L",
@@ -39,7 +57,33 @@
     {
       "name": "Hybrid 65L",
       "img": "img/sp3/HB-65L-800x800.webp",
-      "page": "sp-hybrid-65l.html"
+      "page": "sp-hybrid-65l.html",
+      "details": [
+        {
+          "label": "Bản vẽ kích thước (VN)",
+          "img": "assets/dimensions.png"
+        },
+        {
+          "label": "Bản vẽ kích thước (EN)",
+          "img": "assets/dimensions-en.png"
+        },
+        {
+          "label": "Lắp đặt: sân thượng",
+          "img": "assets/g-rooftop.jpg"
+        },
+        {
+          "label": "Lắp đặt: sân vườn",
+          "img": "assets/g-garden2.jpg"
+        },
+        {
+          "label": "Lắp đặt: nhà hàng",
+          "img": "assets/g-restaurant.jpg"
+        },
+        {
+          "label": "Lắp đặt: xưởng sản xuất",
+          "img": "assets/g-factory2.jpg"
+        }
+      ]
     },
     {
       "name": "Hybrid 80L",
@@ -64,7 +108,13 @@
     {
       "name": "Offset Smoker 10050",
       "img": "img/sp3/hinh-web-big-size-copy-800x800.webp",
-      "page": "sp-offset-10050.html"
+      "page": "sp-offset-10050.html",
+      "details": [
+        {
+          "label": "Ảnh brisket xông khói",
+          "img": "smk-brisket.png"
+        }
+      ]
     },
     {
       "name": "Offset Smoker 9045",
