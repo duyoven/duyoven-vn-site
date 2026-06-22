@@ -328,6 +328,7 @@ body{
 .be-input{flex:1;min-width:220px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#0c1330;color:#eef2ff;font-size:13px;outline:none}
 .be-input:focus{border-color:#8b5cf6}
 .btn-be{padding:9px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+.btn-be.alt{background:#0c1330;border:1px solid var(--line);color:#c4b5fd}
 .be-status{font-size:12.5px;font-weight:700}
 .be-status.on{color:#34d399}.be-status.off{color:#fca5a5}.be-status.probing{color:var(--gold)}
 .be-url{color:var(--muted);font-weight:500}
@@ -521,6 +522,7 @@ body.locked .site-back{display:none}
         <div class="be-row">
           <input id="beUrl" class="be-input" type="text" placeholder="https://…trycloudflare.com" />
           <button id="beConnect" class="btn btn-be" data-en="Connect">Kết nối</button>
+          <button id="beBrowser" class="btn btn-be alt" data-en="🧠 In-browser AI">🧠 AI trong trình duyệt</button>
           <span id="beStatus" class="be-status">—</span>
         </div>
         <div class="field-hint" data-en="Leave blank to auto-detect the backend. When off, the app uses in-browser YAMNet + DSP.">Để trống sẽ tự dò backend. Khi backend tắt, app tự dùng YAMNet + DSP ngay trong trình duyệt.</div>
@@ -1841,6 +1843,121 @@ window.AudioEngine = (function () {
 
 </script>
 <script>
+// browserai.js — fallback "đồ xịn" CHẠY TRONG TRÌNH DUYỆT khi backend (Mac) tắt.
+// AST (Audio Spectrogram Transformer, SOTA AudioSet) + CLAP (zero-shot) qua transformers.js (WebGPU/WASM).
+// Trả kết quả CÙNG ĐỊNH DẠNG với backend để app hiển thị y hệt (engine = "AST + CLAP (trình duyệt)").
+(function (w) {
+  "use strict";
+  var TJS_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.1";
+  var AST_ID = "Xenova/ast-finetuned-audioset-10-10-0.4593";
+  var CLAP_ID = "Xenova/clap-htsat-unfused";
+  var ast = null, clap = null, loading = null;
+
+  // AudioSet display-name -> 7 nhóm (rút gọn từ backend/groups.py)
+  var RULES = [
+    [4, ["speech","conversation","narration","male","female","child speech","sing","choir","chant","rap","humming","whistl","yodel","laugh","giggle","chuckle","cry","sob","baby","shout","yell","scream","groan","grunt","sigh","gasp","cough","sneeze","sniff","breath","snor","gargl","throat","hiccup","burp","human","clap","applause","cheer","boo","chatter","crowd","babbl","footstep"]],
+    [2, ["animal","dog","bark","howl","cat","purr","meow","hiss","livestock","horse","neigh","cattle","moo","pig","oink","goat","bleat","sheep","fowl","chicken","cluck","crow","turkey","duck","quack","goose","bird","chirp","tweet","squawk","pigeon","owl","hoot","wing","roar","lion","rodent","mouse","insect","cricket","mosquito","fly","buzz","bee","frog","croak","snake","whale","elephant"]],
+    [1, ["wind","rustl","thunder","rain","raindrop","water","stream","waterfall","ocean","wave","steam","gurgl","fire","crackle","drip","splash","sea","trickle"]],
+    [7, ["music","musical instrument","string","guitar","banjo","sitar","mandolin","ukulele","harp","piano","keyboard (musical)","organ","synthes","percussion","drum","cymbal","hi-hat","snare","tabla","timpani","tambourine","gong","marimba","glockenspiel","vibraphone","orchestra","brass","horn","trumpet","trombone","violin","cello","bass","wind instrument","flute","saxophone","clarinet","oboe","harmonica","accordion","bagpipe","theremin","electronic music","techno","house music","dubstep","electronica","trance","hip hop","beatbox","rock music","pop music","jazz","classical music","reggae","funk","soul music","disco","folk music","ambient music","christmas music","dance music","sound effect","sampler","sine wave","beep","bleep","ringtone","theme music","jingle","chime","reverberation","echo"]],
+    [6, ["vehicle","car","engine","motor","truck","bus","emergency","siren","police","ambulance","train","rail","subway","aircraft","airplane","helicopter","propeller","boat","ship","skateboard","bicycle","door","slam","knock","tap","squeak","drawer","dishes","cutlery","chop","fry","blender","microwave","kettle","tap","sink","toilet","toothbrush","shaver","vacuum","telephone","dial","alarm","buzzer","smoke detector","clock","tick","typ","camera","printer","tool","hammer","saw","sand","drill","explosion","gunshot","machine gun","firework","glass","clink","shatter","pour","spray","pump","mechanism","sewing","fan","cash register","coin","zipper","keys","wood","tear","bell"]],
+  ];
+  function nameToGroup(name) {
+    var n = (name || "").toLowerCase();
+    for (var i = 0; i < RULES.length; i++)
+      for (var j = 0; j < RULES[i][1].length; j++)
+        if (n.indexOf(RULES[i][1][j]) >= 0) return RULES[i][0];
+    return 6;
+  }
+
+  var GROUP_PROMPTS = {
+    1: "the sound of wind, water, rain or thunder",
+    2: "the sound of an animal, bird or insect",
+    3: "a natural mixture of many environmental sounds",
+    4: "a human voice speaking, singing or laughing",
+    5: "a natural sound simulated by software",
+    6: "a sound from a machine, vehicle, tool or object",
+    7: "synthesized electronic music, a melody or a digital sound effect",
+  };
+  var DESC_BANK = ["a catchy electronic jingle","a piano melody","a guitar riff","a synthesizer pad","a drum beat",
+    "ambient background music","a digital notification sound","a sine-wave beep","a sound effect","a bell chiming",
+    "human speech","a person singing","laughter","applause","birdsong","a dog barking","rain falling","ocean waves",
+    "wind blowing","thunder","a car engine","a door closing","a telephone ringing","an alarm beeping","footsteps"];
+  var DPOS = ["a distinctive and memorable melody","a unique creative musical signature","an original catchy jingle"];
+  var DNEG = ["a generic everyday sound","a common ordinary background noise","a plain functional sound"];
+
+  function resample(f32, from, to) {
+    if (from === to) return f32;
+    var ratio = to / from, n = Math.round(f32.length * ratio), out = new Float32Array(n);
+    for (var i = 0; i < n; i++) {
+      var x = i / ratio, i0 = Math.floor(x), i1 = Math.min(i0 + 1, f32.length - 1), t = x - i0;
+      out[i] = f32[i0] * (1 - t) + f32[i1] * t;
+    }
+    return out;
+  }
+  function softmax(v, T) { T = T || 1; var m = Math.max.apply(null, v); var e = v.map(function (x) { return Math.exp((x - m) / T); }); var s = e.reduce(function (a, b) { return a + b; }, 0) || 1; return e.map(function (x) { return x / s; }); }
+
+  async function ensure(onProgress) {
+    if (ast && clap) return;
+    if (loading) return loading;
+    loading = (async function () {
+      var mod = await import(/* @vite-ignore */ TJS_URL);
+      var pipeline = mod.pipeline, env = mod.env;
+      try { env.allowLocalModels = false; env.useBrowserCache = true; } catch (e) {}
+      if (onProgress) onProgress("AST");
+      ast = await pipeline("audio-classification", AST_ID);
+      if (onProgress) onProgress("CLAP");
+      clap = await pipeline("zero-shot-audio-classification", CLAP_ID);
+    })();
+    return loading;
+  }
+
+  // f32_16k = mono 16kHz Float32Array
+  async function analyze(f32_16k, onProgress) {
+    await ensure(onProgress);
+    if (onProgress) onProgress("run");
+    // AST -> nhóm
+    var astOut = await ast(f32_16k, { topk: 12 });
+    var grp = {1:0,2:0,3:0,4:0,5:0,6:0,7:0};
+    astOut.forEach(function (o) { var g = nameToGroup(o.label); grp[g] += o.score; });
+    var top = astOut.slice(0, 8).map(function (o) { return { label: o.label, group: nameToGroup(o.label), score: o.score }; });
+
+    // CLAP -> groups + description + uniqueness + sub-labels (48k)
+    var f48 = resample(f32_16k, 16000, 48000);
+    var gp = await clap(f48, [GROUP_PROMPTS[1],GROUP_PROMPTS[2],GROUP_PROMPTS[3],GROUP_PROMPTS[4],GROUP_PROMPTS[5],GROUP_PROMPTS[6],GROUP_PROMPTS[7]]);
+    var clapGroup = {1:0,2:0,3:0,4:0,5:0,6:0,7:0};
+    gp.forEach(function (o, i) {});
+    // map by matching prompt text -> group
+    gp.forEach(function (o) { for (var k=1;k<=7;k++){ if (o.label===GROUP_PROMPTS[k]) clapGroup[k]=o.score; } });
+    var dp = await clap(f48, DESC_BANK);
+    dp.sort(function (a,b){return b.score-a.score;});
+    var description = dp[0] ? dp[0].label : "";
+    var subLabels = dp.slice(0,4).map(function (o){return o.label;});
+    var du = await clap(f48, DPOS.concat(DNEG));
+    var pos=0,neg=0; du.forEach(function(o){ if(DPOS.indexOf(o.label)>=0) pos+=o.score; else neg+=o.score; });
+    var uniq = softmax([pos,neg],0.3)[0];
+
+    // meta: AST 0.6 + CLAP 0.4
+    function norm(d){ var s=0; for(var k=1;k<=7;k++) s+=d[k]; s=s||1; var o={}; for(var k=1;k<=7;k++) o[k]=d[k]/s; return o; }
+    var aN=norm(grp), cN=norm(clapGroup), meta={};
+    for (var k=1;k<=7;k++) meta[k]=0.6*aN[k]+0.4*cN[k];
+    var sm=0; for(var k=1;k<=7;k++) sm+=meta[k]; sm=sm||1;
+    var groups={}; for(var k=1;k<=7;k++) groups[String(k)]=meta[k]/sm;
+    var dom=1,bv=-1; for(var k=1;k<=7;k++) if(meta[k]>bv){bv=meta[k];dom=k;}
+
+    return {
+      engine: (w.APP_LANG==="en") ? "AST + CLAP (browser)" : "AST + CLAP (trình duyệt)",
+      groups: groups, dominant: dom,
+      beats: { groups: aN, top: top },     // dùng chung khung hiển thị (nhãn AST)
+      clap: { groups: cN, description: description, descTop: dp.slice(0,5),
+              subLabels: subLabels, uniqueness: Math.round(uniq*1000)/10 },
+    };
+  }
+
+  w.BROWSERAI = { analyze: analyze, ensure: ensure, ready: function(){ return !!(ast&&clap); } };
+})(window);
+
+</script>
+<script>
 // app.js — dieu khien giao dien: ghi am / tai file / demo -> phan loai -> hien ket qua.
 (function () {
   "use strict";
@@ -2625,6 +2742,23 @@ window.AudioEngine = (function () {
     }
   }
 
+  // chạy AI nâng cao NGAY TRONG TRÌNH DUYỆT (AST + CLAP) khi backend tắt
+  async function runBrowserAI() {
+    if (!window.BROWSERAI) return;
+    if (!state.lastSamples) { setStatus(L("Hãy phân tích một âm thanh trước.", "Analyze a sound first.")); return; }
+    var samples = state.lastSamples;
+    try {
+      setStatus("🧠 " + L("Đang tải mô hình AI trong trình duyệt (lần đầu ~1–2 phút)…", "Loading in-browser AI models (first time ~1–2 min)…"));
+      var res = await window.BROWSERAI.analyze(samples, function (stage) {
+        setStatus("🧠 " + L("AI trình duyệt", "Browser AI") + ": " + stage + "…");
+      });
+      if (state.lastSamples !== samples) return;
+      state.lastBackend = res; setStatus(""); render();
+    } catch (e) {
+      setStatus("⚠ " + L("Không tải được AI trình duyệt: ", "Browser AI failed: ") + (e && e.message ? e.message : e));
+    }
+  }
+
   // ---------- Đổi ngôn ngữ (VI / EN = tiếng Mỹ) ----------
   function setLang(lang) {
     window.APP_LANG = (lang === "en") ? "en" : "vi";
@@ -2708,6 +2842,7 @@ window.AudioEngine = (function () {
     var bIn = $("beUrl"), bBtn = $("beConnect");
     if (bIn && AB) { bIn.value = AB.saved() || ""; bIn.setAttribute("placeholder", AB.DEFAULT); }
     if (bBtn) bBtn.addEventListener("click", function () { if (bIn && AB) AB.setURL(bIn.value.trim()); detectBackend(); });
+    var bBr = $("beBrowser"); if (bBr) bBr.addEventListener("click", runBrowserAI);
     detectBackend();
 
     // ap dung ngon ngu da chon (neu la EN thi dich toan bo tinh + dong)
