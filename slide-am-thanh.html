@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Slide bảo vệ đề án — Nhãn hiệu âm thanh · Nguyễn Phú Thành</title>
+<style>
+:root{--navy:#1E2761;--ink:#22293F;--ice:#CADCFC;--violet:#8B5CF6;--pink:#EC4899;
+  --light:#F4F6FB;--green:#169C5B;--red:#C03A2B;--gold:#D9A406;--muted:#6B7280;--line:#dbe2f0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0b1020;font-family:'Segoe UI',system-ui,Arial,sans-serif;overflow:hidden}
+.deckwrap{position:fixed;inset:0}
+.stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;
+  border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.slide{position:absolute;inset:0;padding:52px 60px;background:var(--light);color:var(--ink);
+  opacity:0;transition:opacity .28s ease;display:flex;flex-direction:column}
+.slide.active{opacity:1;z-index:2}
+.slide.dark{background:var(--navy);color:#fff}
+.deco{position:absolute;color:#354082;font-family:Cambria,Georgia,serif;pointer-events:none}
+.kick{font-size:15px;font-weight:800;letter-spacing:.06em;color:var(--violet);text-transform:uppercase;margin-bottom:4px}
+.slide.dark .kick{color:var(--ice)}
+.s-title{font-family:Cambria,Georgia,serif;font-size:38px;font-weight:700;color:var(--navy);margin:2px 0 14px;line-height:1.12}
+.slide.dark .s-title{color:#fff}
+.s-sub{font-size:16px;color:var(--ink);margin:-6px 0 16px}
+.slide.dark .s-sub{color:var(--ice)}
+/* title slide */
+.tw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}
+.tw .logo{height:96px;margin-bottom:6px}
+.t-kick{font-size:16px;font-weight:800;letter-spacing:.05em;color:var(--ice)}
+.t-main{font-family:Cambria,Georgia,serif;font-size:34px;font-weight:700;color:#fff;line-height:1.22;margin:8px 0}
+.t-main span{color:#C9B6FD}
+.t-code{display:inline-block;background:var(--violet);color:#fff;font-weight:700;font-size:14px;padding:7px 20px;border-radius:99px;margin:6px 0}
+.t-meta{font-size:15px;color:var(--ice);line-height:1.6}
+.t-meta b{color:#fff}
+/* cards 2x2 */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;flex:1;align-content:center}
+.card{background:#fff;border-radius:16px;padding:18px 22px;box-shadow:0 12px 30px rgba(30,39,97,.12);display:flex;gap:14px}
+.card .ic{width:52px;height:52px;flex:none;border-radius:12px;background:var(--ice);display:flex;align-items:center;justify-content:center;font-size:24px}
+.card h3{font-family:Cambria,Georgia,serif;color:var(--navy);font-size:19px;margin:2px 0 5px}
+.card p{font-size:14.5px;line-height:1.45;margin:0;color:var(--ink)}
+/* columns 3 */
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;flex:1;align-content:center}
+.col{background:#fff;border-radius:16px;padding:22px 18px;box-shadow:0 12px 30px rgba(30,39,97,.1);text-align:center}
+.col .num{width:60px;height:60px;border-radius:14px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;
+  font-family:Cambria;font-size:28px;font-weight:700;color:#fff}
+.col .ct{font-size:12px;font-weight:800;letter-spacing:.05em}
+.col h3{font-family:Cambria;color:var(--navy);font-size:17px;margin:3px 0 9px}
+.col p{font-size:13.5px;line-height:1.45;color:var(--ink);margin:0}
+/* feats 3 + band */
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:4px}
+.feat{background:#fff;border-radius:16px;padding:18px;box-shadow:0 12px 28px rgba(30,39,97,.1)}
+.feat .ic{font-size:26px}
+.feat h4{font-family:Cambria;color:var(--navy);font-size:16px;margin:8px 0 6px}
+.feat p{font-size:13px;line-height:1.45;margin:0;color:var(--ink)}
+.band{margin-top:auto;background:var(--navy);border-radius:14px;padding:16px 22px;font-size:15px;color:#fff;line-height:1.5}
+.band b{color:var(--ice)}
+/* two boxes */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;flex:1;align-content:start;margin-top:4px}
+.panel{border-radius:16px;padding:20px 22px;box-shadow:0 12px 30px rgba(30,39,97,.1)}
+.panel.lite{background:#fff}
+.panel.nv{background:var(--navy);color:#fff}
+.panel h3{font-family:Cambria;font-size:19px;margin:0 0 12px}
+.panel.lite h3{color:var(--navy)}
+.b{list-style:none;margin:0;padding:0}
+.b li{position:relative;padding-left:20px;margin-bottom:11px;font-size:14px;line-height:1.45}
+.b li:before{content:"•";position:absolute;left:0;font-weight:800;color:var(--violet)}
+.panel.nv .b li:before{color:#C9B6FD}
+.b li b{font-weight:700}
+.panel.lite .b li b{color:var(--navy)}
+/* 7 groups */
+.g7{display:flex;flex-direction:column;gap:6px;width:62%}
+.g7row{display:flex;align-items:center;gap:12px;background:var(--light);border-radius:10px;padding:7px 12px}
+.g7row.ok{background:#EAF7EF}
+.g7row .num{width:26px;height:26px;flex:none;border-radius:7px;background:var(--muted);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.g7row.ok .num{background:var(--green)}
+.g7row .d{flex:1;font-size:14px}
+.g7row .v{font-weight:700;font-size:14px}
+.g7row.ok .v{color:var(--green)}.g7row.no .v{color:var(--red)}
+.princ{position:absolute;right:60px;top:150px;width:300px;background:var(--navy);border-radius:16px;padding:20px;color:#fff}
+.princ h3{font-family:Cambria;color:var(--ice);font-size:17px;margin:0 0 12px}
+/* tools 2x2 */
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+.tool{background:var(--light);border-radius:14px;padding:16px 18px;display:flex;gap:14px}
+.tool .ic{width:50px;height:50px;flex:none;border-radius:12px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px}
+.tool h4{font-family:Cambria;color:var(--navy);font-size:16px;margin:2px 0 5px}
+.tool p{font-size:13px;line-height:1.4;margin:0;color:var(--ink)}
+/* conclusion */
+.concl{margin-top:6px}
+.concl .b li{font-size:16px;margin-bottom:15px}
+.thank{margin-top:auto;background:#161C42;border-radius:14px;padding:15px;text-align:center;font-size:15px;color:var(--ice)}
+.thank b{color:#fff}
+.cases .v{font-weight:700;color:var(--navy)}
+/* chrome */
+.bar{position:fixed;z-index:30;display:flex;gap:6px;align-items:center}
+.bar.tl{top:14px;left:14px}.bar.tr{top:14px;right:14px}
+.bar a,.bar button{background:rgba(22,31,61,.9);border:1px solid #2a3866;color:#c4b5fd;font-size:13px;font-weight:700;
+  padding:7px 13px;border-radius:99px;cursor:pointer;text-decoration:none}
+.bar button.on{background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff;border-color:transparent}
+.nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:14px}
+.nav button{width:42px;height:42px;border-radius:50%;border:1px solid #2a3866;background:rgba(22,31,61,.9);color:#fff;font-size:18px;cursor:pointer}
+.nav button:active{transform:scale(.94)}
+.dots{display:flex;gap:7px}
+.dot{width:9px;height:9px;border-radius:50%;background:#39456f;cursor:pointer}
+.dot.on{background:#ec4899;transform:scale(1.25)}
+.count{color:#9aa6c8;font-size:13px;min-width:46px;text-align:center}
+.hint{position:fixed;bottom:16px;right:16px;color:#5b6890;font-size:12px;z-index:30}
+@media (max-width:900px){.hint{display:none}}
+/* gate */
+body.locked{overflow:hidden}
+body.locked .deckwrap,body.locked .bar,body.locked .nav,body.locked .hint{display:none}
+#gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(1000px 600px at 70% -10%, rgba(139,92,246,.25), transparent), #0b1020}
+body:not(.locked) #gate{display:none}
+.gate-card{width:100%;max-width:380px;background:linear-gradient(180deg,#161f3d,#111935);
+  border:1px solid #2a3866;border-radius:20px;padding:34px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.gate-ic{font-size:44px}.gate-title{font-size:22px;margin:8px 0 4px;color:#eef2ff}
+.gate-sub{color:#9aa6c8;font-size:14px;margin:0 0 20px}
+.gate-input{width:100%;padding:13px 15px;border-radius:12px;border:1px solid #2a3866;background:#0c1330;
+  color:#eef2ff;font-size:16px;outline:none;text-align:center;letter-spacing:.12em}
+.gate-input:focus{border-color:#8b5cf6}
+.gate-btn{width:100%;margin-top:14px;padding:13px;border:none;border-radius:12px;cursor:pointer;
+  font-size:15px;font-weight:700;color:#fff;background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+.gate-err{color:#fca5a5;font-size:13.5px;min-height:20px;margin-top:12px}
+.gate-card.shake{animation:shk .4s}@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.gate-back{display:inline-block;margin-top:8px;color:#9aa6c8;font-size:13px;text-decoration:none}
+</style>
+</head>
+<body class="locked">
+
+<div id="gate" role="dialog" aria-modal="true">
+  <form class="gate-card" id="gateForm" autocomplete="off">
+    <div class="gate-ic">🔒</div>
+    <h1 class="gate-title">Khu vực có mật khẩu</h1>
+    <p class="gate-sub">Nhập mật khẩu để xem slide bảo vệ đề án.</p>
+    <input id="gatePw" type="password" class="gate-input" placeholder="Mật khẩu" autocomplete="off" />
+    <button type="submit" class="gate-btn">Xem slide →</button>
+    <div id="gateErr" class="gate-err"></div>
+    <a class="gate-back" href="https://duyoven.vn">← Về duyoven.vn</a>
+  </form>
+</div>
+
+<div class="bar tl">
+  <a href="am-thanh" title="Mở ứng dụng phân loại âm thanh">← <span data-en="App">Ứng dụng</span></a>
+</div>
+<div class="bar tr">
+  <button id="lvi" data-lang="vi" class="on">VI</button>
+  <button id="len" data-lang="en">EN</button>
+  <button id="fs" title="Toàn màn hình">⛶</button>
+</div>
+
+<div class="deckwrap"><div class="stage" id="stage"><div class="slide" id="slide"></div></div></div>
+
+<div class="nav">
+  <button id="prev" aria-label="Trước">‹</button>
+  <div class="dots" id="dots"></div>
+  <button id="next" aria-label="Sau">›</button>
+  <span class="count" id="count">1 / 10</span>
+</div>
+<div class="hint" data-en="← → arrows · F fullscreen">← → chuyển slide · F toàn màn hình</div>
+
+<script>
+(function(){
+  // ---------- gate ----------
+  var HASH="8ca66aacbc85bae5ec4c12f0998d55d156ade64c221c3ce6e214b68d4f8baac7", KEY="amthanh_unlocked";
+  function unlock(){ document.body.classList.remove('locked'); fit(); }
+  try{ if(sessionStorage.getItem(KEY)===HASH) document.body.classList.remove('locked'); }catch(e){}
+  async function sha256(s){ var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join(''); }
+  document.getElementById('gateForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var h=await sha256(document.getElementById('gatePw').value);
+    if(h===HASH){ try{sessionStorage.setItem(KEY,HASH)}catch(e){} unlock(); }
+    else{ document.getElementById('gateErr').textContent='Sai mật khẩu, thử lại.';
+      var c=document.querySelector('.gate-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
+      document.getElementById('gatePw').select(); }
+  });
+  setTimeout(function(){ var i=document.getElementById('gatePw'); if(i&&document.body.classList.contains('locked')) i.focus(); },150);
+
+  // ---------- slides (bilingual) ----------
+  var LOGO="data:image/webp;base64,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";
+  var deco='<div class="deco" style="right:40px;top:34px;font-size:54px">♪</div><div class="deco" style="left:40px;bottom:40px;font-size:48px">♬</div>';
+  var S=[
+  {dark:true, vi:
+    '<div class="tw"><img class="logo" src="'+LOGO+'" alt="TDMU">'+
+    '<div class="t-kick">ĐỀ ÁN NGHIÊN CỨU THẠC SĨ · LUẬT KINH TẾ</div>'+
+    '<div class="t-main">Pháp luật về bảo hộ nhãn hiệu âm thanh<br>và thực tiễn áp dụng của doanh nghiệp<br><span>trên địa bàn Thành phố Hồ Chí Minh</span></div>'+
+    '<div class="t-code">Mã số: 8380107</div>'+
+    '<div class="t-meta">Học viên: <b>Nguyễn Phú Thành</b><br>GVHD: TS. Nguyễn Thị Thu Thủy · PGS.TS. Lê Thị Minh<br>Trường Đại học Thủ Dầu Một (TDMU) · 2026</div></div>'+deco,
+   en:
+    '<div class="tw"><img class="logo" src="'+LOGO+'" alt="TDMU">'+
+    '<div class="t-kick">MASTER’S RESEARCH PROJECT · ECONOMIC LAW</div>'+
+    '<div class="t-main">Law on the Protection of Sound Trademarks<br>and the Application Practice of Enterprises<br><span>in Ho Chi Minh City</span></div>'+
+    '<div class="t-code">Code: 8380107</div>'+
+    '<div class="t-meta">Candidate: <b>Nguyen Phu Thanh</b><br>Advisors: Dr. Nguyen Thi Thu Thuy · Assoc. Prof. Dr. Le Thi Minh<br>Thu Dau Mot University (TDMU) · 2026</div></div>'+deco},
+
+  {vi:
+    '<div class="kick">PHẦN MỞ ĐẦU</div><div class="s-title">Tính cấp thiết & định hướng nghiên cứu</div>'+
+    '<div class="cards">'+
+    card("🎯","Lý do","Việt Nam bảo hộ nhãn hiệu âm thanh từ 14/01/2022 (CPTPP Đ.18.18) nhưng thiếu hướng dẫn, chưa có hệ thống phân loại; doanh nghiệp đăng ký còn rất ít.")+
+    card("🏙️","Bối cảnh TP.HCM","~273.100 doanh nghiệp (29,6% cả nước) — công nghệ, TMĐT, F&B; nhu cầu jingle/âm báo cao nhưng khó đăng ký thành công.")+
+    card("🧭","Mục tiêu","Làm rõ lý luận & pháp lý; đánh giá thực trạng; so sánh Hoa Kỳ – EU; đề xuất hệ thống phân loại 7 nhóm + kiến nghị.")+
+    card("🔬","Phương pháp","Phân tích–tổng hợp; điều tra xã hội học (khảo sát + phỏng vấn sâu); so sánh pháp luật; lịch sử–logic.")+'</div>',
+   en:
+    '<div class="kick">INTRODUCTION</div><div class="s-title">Significance & research orientation</div>'+
+    '<div class="cards">'+
+    card("🎯","Rationale","Vietnam has protected sound marks since 14 Jan 2022 (CPTPP Art. 18.18), yet guidance is scarce, there is no classification system, and few enterprises register.")+
+    card("🏙️","Context: HCMC","~273,100 active enterprises (29.6% of the country) — tech, e-commerce, F&B; high demand for jingles/alert sounds but low registration success.")+
+    card("🧭","Objectives","Clarify theory & law; assess the situation; compare the US & EU; propose a 7-group classification system + recommendations.")+
+    card("🔬","Methods","Analysis–synthesis; sociological survey (questionnaire + in-depth interviews); comparative law; historical–logical.")+'</div>'},
+
+  {vi:
+    '<div class="kick">KẾT CẤU ĐỀ ÁN</div><div class="s-title">Ba chương — từ lý luận đến giải pháp</div>'+
+    '<div class="cols">'+
+    col("1","CHƯƠNG 1","CƠ SỞ LÝ LUẬN","Khái niệm, đặc điểm, vai trò; điều kiện bảo hộ; kinh nghiệm quốc tế (WIPO/TRIPS, USPTO, EUIPO, Nhật).","#8B5CF6")+
+    col("2","CHƯƠNG 2","THỰC TRẠNG TP.HCM","Tình hình đăng ký & khai thác; rào cản kỹ thuật–pháp lý; năng lực thẩm định; đánh giá.","#EC4899")+
+    col("3","CHƯƠNG 3","KIẾN NGHỊ & GIẢI PHÁP","Hoàn thiện pháp luật; ⭐ hệ thống phân loại 7 nhóm; giải pháp thực thi cho TP.HCM.","#1E2761")+'</div>',
+   en:
+    '<div class="kick">PROJECT STRUCTURE</div><div class="s-title">Three chapters — from theory to solutions</div>'+
+    '<div class="cols">'+
+    col("1","CHAPTER 1","THEORETICAL BASIS","Concept, characteristics, role; conditions for protection; international experience (WIPO/TRIPS, USPTO, EUIPO, Japan).","#8B5CF6")+
+    col("2","CHAPTER 2","STATUS IN HCMC","Registration & exploitation; technical–legal barriers; examination capacity; assessment.","#EC4899")+
+    col("3","CHAPTER 3","RECOMMENDATIONS & SOLUTIONS","Improving the law; ⭐ the 7-group classification system; enforcement solutions for HCMC.","#1E2761")+'</div>'},
+
+  {vi:
+    '<div class="kick">CHƯƠNG 1 · CƠ SỞ LÝ LUẬN</div><div class="s-title">Nhãn hiệu âm thanh — bản chất & đặc điểm</div>'+
+    '<div class="s-sub">Dạng nhãn hiệu <b>phi truyền thống</b> — nhận biết bằng thính giác (Khoản 16 Đ.4 & Khoản 1 Đ.72 Luật SHTT 2022).</div>'+
+    '<div class="feats">'+
+    feat("🔊","Tính phân biệt cao","Tác động thính giác, tạo “ý nghĩa thứ cấp”; âm chung chung (chuông, đóng cửa) khó bảo hộ.")+
+    feat("🎼","Thể hiện đồ họa","Bắt buộc khuông nhạc 5 dòng + tệp .mp3 ≤5MB — rào cản với DN nhỏ.")+
+    feat("⚙️","Phi chức năng","Không mô tả đặc tính kỹ thuật bắt buộc (vd tiếng động cơ xe).")+'</div>'+
+    '<div class="band"><b>Vai trò:</b> nhận diện đa giác quan & kết nối cảm xúc · công cụ marketing số (vd Hisamitsu E–A–E–F#) · bảo vệ pháp lý chống sao chép & “suy yếu nhãn hiệu” (Schechter, 1927).</div>',
+   en:
+    '<div class="kick">CHAPTER 1 · THEORETICAL BASIS</div><div class="s-title">Sound marks — nature & characteristics</div>'+
+    '<div class="s-sub">A <b>non-traditional</b> mark — perceived by hearing (Art. 4(16) & Art. 72(1) IP Law 2022).</div>'+
+    '<div class="feats">'+
+    feat("🔊","High distinctiveness","Acts on hearing, builds “secondary meaning”; generic sounds (a bell, a closing door) are hard to protect.")+
+    feat("🎼","Graphic representation","Must submit a 5-line staff + an .mp3 ≤5MB — a barrier for SMEs.")+
+    feat("⚙️","Non-functional","Does not describe a mandatory technical feature (e.g., an engine sound).")+'</div>'+
+    '<div class="band"><b>Role:</b> multi-sensory recognition & emotional connection · a digital-marketing tool (e.g., Hisamitsu E–A–E–F#) · legal protection against copying & “trademark dilution” (Schechter, 1927).</div>'},
+
+  {vi:
+    '<div class="kick">CHƯƠNG 1 · ĐIỀU KIỆN & QUỐC TẾ</div><div class="s-title">Điều kiện bảo hộ & kinh nghiệm quốc tế</div>'+
+    '<div class="two">'+
+    '<div class="panel lite"><h3>✅ 3 điều kiện bảo hộ</h3><ul class="b">'+
+      '<li><b>Thể hiện đồ họa</b> — khuông nhạc 5 dòng + .mp3 ≤5MB (Đ.72, Đ.105)</li>'+
+      '<li><b>Khả năng phân biệt</b> — cố hữu HOẶC “ý nghĩa thứ hai” (Đ.74.2 b–e)</li>'+
+      '<li><b>Không loại trừ</b> — Quốc ca (Đ.73.1), trật tự/đạo đức (Đ.8), đặc tính kỹ thuật bắt buộc (Đ.73.6)</li></ul></div>'+
+    '<div class="panel nv"><h3>🌍 Kinh nghiệm quốc tế</h3><ul class="b">'+
+      '<li><b>Hoa Kỳ (USPTO):</b> Lanham §2(f) secondary meaning; mã Category 30; NBC, MGM, Intel, Nokia.</li>'+
+      '<li><b>EU (EUIPO):</b> bỏ yêu cầu đồ họa từ 01/10/2017 — chỉ cần .mp3; >500 nhãn hiệu.</li>'+
+      '<li><b>WIPO/TRIPS:</b> Đ.15 “bất kỳ dấu hiệu nào”; Nhật: Hisamitsu.</li>'+
+      '<li><b>Bài học VN:</b> công nhận Spectrogram/Waveform; bộ phận chuyên trách; mã phân loại riêng.</li></ul></div></div>',
+   en:
+    '<div class="kick">CHAPTER 1 · CONDITIONS & INTERNATIONAL</div><div class="s-title">Conditions for protection & global experience</div>'+
+    '<div class="two">'+
+    '<div class="panel lite"><h3>✅ Three conditions</h3><ul class="b">'+
+      '<li><b>Graphic representation</b> — 5-line staff + .mp3 ≤5MB (Art. 72, Art. 105)</li>'+
+      '<li><b>Distinctiveness</b> — inherent OR “secondary meaning” (Art. 74(2) b–e)</li>'+
+      '<li><b>Not excluded</b> — national anthem (Art. 73(1)), public order/morality (Art. 8), mandatory technical feature (Art. 73(6))</li></ul></div>'+
+    '<div class="panel nv"><h3>🌍 International experience</h3><ul class="b">'+
+      '<li><b>US (USPTO):</b> Lanham §2(f) secondary meaning; Category 30; NBC, MGM, Intel, Nokia.</li>'+
+      '<li><b>EU (EUIPO):</b> graphic requirement dropped since 1 Oct 2017 — only an .mp3; >500 marks.</li>'+
+      '<li><b>WIPO/TRIPS:</b> Art. 15 “any sign”; Japan: Hisamitsu.</li>'+
+      '<li><b>Lessons for VN:</b> accept Spectrogram/Waveform; a dedicated unit; a dedicated code.</li></ul></div></div>'},
+
+  {vi:
+    '<div class="kick">CHƯƠNG 2 · THỰC TRẠNG TP.HCM</div><div class="s-title">“Có luật nhưng khó thi hành”</div>'+
+    '<div class="two">'+
+    '<div class="panel lite"><h3>📄 Đơn tiêu biểu tại TP.HCM</h3><ul class="b cases">'+
+      '<li><b>Shopee</b> — VN-4-2023-00001 · <span class="v" style="color:#169C5B">đã cấp bằng</span></li>'+
+      '<li><b>Tiki</b> — VN-4-2023-00216 · <span class="v" style="color:#D9A406">đang thẩm định</span></li>'+
+      '<li><b>Samsung</b> — VN-4-2023-01814 · âm khởi động</li>'+
+      '<li style="color:#6B7280">FDI/tập đoàn công nghệ thống trị · SMEs nội địa vắng bóng.</li></ul></div>'+
+    '<div class="panel lite"><h3 style="color:#C03A2B">⛔ Rào cản chính</h3><ul class="b" style="--m:#C03A2B">'+
+      '<li>Khuông nhạc 5 dòng không ký âm được âm phi nhạc cụ → chưa công nhận Spectrogram/Waveform</li>'+
+      '<li>Chứng minh “ý nghĩa thứ hai” tốn kém, thiếu hướng dẫn định lượng</li>'+
+      '<li>Thiếu phần mềm phân tích sóng âm & bảng phân loại âm thanh chuyên biệt</li></ul></div></div>'+
+    '<div class="band"><b>Hệ quả:</b> nhãn hiệu âm thanh thành “sân chơi” của tập đoàn công nghệ/FDI; SMEs TP.HCM bị bỏ lại, có nguy cơ mất quyền với chính âm thanh quảng cáo quen thuộc của mình.</div>',
+   en:
+    '<div class="kick">CHAPTER 2 · STATUS IN HCMC</div><div class="s-title">“Law on the books, hard to enforce”</div>'+
+    '<div class="two">'+
+    '<div class="panel lite"><h3>📄 Notable applications in HCMC</h3><ul class="b cases">'+
+      '<li><b>Shopee</b> — VN-4-2023-00001 · <span class="v" style="color:#169C5B">granted</span></li>'+
+      '<li><b>Tiki</b> — VN-4-2023-00216 · <span class="v" style="color:#D9A406">under examination</span></li>'+
+      '<li><b>Samsung</b> — VN-4-2023-01814 · startup sound</li>'+
+      '<li style="color:#6B7280">FDI/tech corporations dominate · domestic SMEs absent.</li></ul></div>'+
+    '<div class="panel lite"><h3 style="color:#C03A2B">⛔ Key barriers</h3><ul class="b" style="--m:#C03A2B">'+
+      '<li>The 5-line staff cannot notate non-musical sounds → Spectrogram/Waveform not yet recognized</li>'+
+      '<li>Proving “secondary meaning” is costly, with no quantitative guidance</li>'+
+      '<li>No sound-analysis software & no dedicated sound classification</li></ul></div></div>'+
+    '<div class="band"><b>Consequence:</b> sound marks become a “playground” for tech corporations/FDI; HCMC’s SMEs are left behind, even at risk of losing rights over their own familiar advertising sounds.</div>'},
+
+  {vi:
+    '<div class="kick">CHƯƠNG 3 · ĐÓNG GÓP CỐT LÕI</div><div class="s-title">⭐ Hệ thống phân loại 7 nhóm âm thanh</div>'+
+    '<div class="g7">'+g7([["1","Phi sinh học (gió, nước, sấm)",0],["2","Sinh vật sống (chim, thú, côn trùng)",0],["3","Môi trường tổng hợp",0],["4","Con người (nói, hát, cười)",1],["5","Mô phỏng tự nhiên",0],["6","Vật dụng / sản phẩm",0],["7","Tổng hợp toàn phần (AI/số, giai điệu)",1]])+'</div>'+
+    '<div class="princ"><h3>Nguyên tắc áp dụng</h3><ul class="b">'+
+      '<li>Ưu tiên nhóm [4] & [7]</li><li>Tổ hợp có giai điệu/sáng tạo → chấp nhận</li>'+
+      '<li>Không chấp nhận đơn lẻ [1][2][3][5][6] nếu thiếu sáng tạo</li><li>Khuyến khích mô phỏng sáng tạo → chuyển thành [7]</li></ul></div>',
+   en:
+    '<div class="kick">CHAPTER 3 · CORE CONTRIBUTION</div><div class="s-title">⭐ The 7-group sound classification system</div>'+
+    '<div class="g7">'+g7([["1","Abiotic (wind, water, thunder)",0],["2","Living organisms (birds, animals, insects)",0],["3","Composite environment",0],["4","Human (speech, singing, laughter)",1],["5","Nature simulation",0],["6","Objects / products",0],["7","Fully synthesized (AI/digital, melody)",1]])+'</div>'+
+    '<div class="princ"><h3>Application principle</h3><ul class="b">'+
+      '<li>Favor groups [4] & [7]</li><li>Creative/melodic combinations → accepted</li>'+
+      '<li>Reject [1][2][3][5][6] alone if lacking creativity</li><li>Encourage creative simulation → convert to [7]</li></ul></div>'},
+
+  {vi:
+    '<div class="kick">CHƯƠNG 3 · KIỂM CHỨNG & GIẢI PHÁP</div><div class="s-title">Kiểm chứng án lệ & giải pháp cho TP.HCM</div>'+
+    '<div class="two">'+
+    '<div class="panel lite"><h3>⚖️ Kiểm chứng qua án lệ</h3><ul class="b">'+
+      '<li><b>Hasbro</b> – tiếng chuột [2] đơn lẻ → bị từ chối (chức năng)</li>'+
+      '<li><b>MGM</b> – sư tử [2] + giai điệu/hình ảnh → được chấp nhận</li>'+
+      '<li><b>Harley-Davidson</b> – động cơ [6] → rút đơn 2000</li>'+
+      '<li><b>General Electric</b> – báo động [6] → cần “ý nghĩa thứ hai”</li></ul></div>'+
+    '<div class="panel lite"><h3 style="color:#EC4899">🏙️ Giải pháp tại TP.HCM</h3><ul class="b" style="--m:#EC4899">'+
+      '<li>Tiền thẩm định phân loại tại VP đại diện phía Nam (dùng Bảng 7 nhóm)</li>'+
+      '<li>“Cẩm nang Đăng ký Nhãn hiệu Đa giác quan” (E-book, kèm án lệ)</li>'+
+      '<li>Hỗ trợ startup/tech: phân loại âm UI/UX vào nhóm [7]</li>'+
+      '<li>Khuyến khích số hóa/mô phỏng sáng tạo → kích cầu ngành sáng tạo</li></ul></div></div>',
+   en:
+    '<div class="kick">CHAPTER 3 · VERIFICATION & SOLUTIONS</div><div class="s-title">Case-law verification & solutions for HCMC</div>'+
+    '<div class="two">'+
+    '<div class="panel lite"><h3>⚖️ Verification via case law</h3><ul class="b">'+
+      '<li><b>Hasbro</b> – mouse squeak [2] alone → refused (functional)</li>'+
+      '<li><b>MGM</b> – lion roar [2] + melody/imagery → accepted</li>'+
+      '<li><b>Harley-Davidson</b> – engine [6] → application withdrawn (2000)</li>'+
+      '<li><b>General Electric</b> – alarm [6] → needs “secondary meaning”</li></ul></div>'+
+    '<div class="panel lite"><h3 style="color:#EC4899">🏙️ Solutions for HCMC</h3><ul class="b" style="--m:#EC4899">'+
+      '<li>Pre-classification screening at the Southern office (using the 7-group table)</li>'+
+      '<li>A digital “Multi-sensory Trademark Registration Handbook” (with case law)</li>'+
+      '<li>Support startups/tech: classify UI/UX sounds into group [7]</li>'+
+      '<li>Encourage digitization/creative simulation → boost the creative industry</li></ul></div></div>'},
+
+  {vi:
+    '<div class="kick">SẢN PHẨM ỨNG DỤNG</div><div class="s-title">Công cụ phân loại & đánh giá trực tuyến</div>'+
+    '<div class="s-sub"><b style="color:#8B5CF6">duyoven.vn/am-thanh</b> — hiện thực hóa hệ thống 7 nhóm thành công cụ chạy thật trên trình duyệt.</div>'+
+    '<div class="tools">'+
+    tool("🤖","Nhận dạng đa nguồn","YAMNet (AI, 521 lớp) + DSP âm học + trích giai điệu → ensemble 3 nguồn, có độ tin cậy.")+
+    tool("🎼","Tự sinh ký âm","Tự tạo khuông nhạc 5 dòng từ cao độ — đúng “bản thể hiện đồ họa” (Đ.105).")+
+    tool("📊","Phổ đồ & chỉ số","Spectrogram + waveform + 14 chỉ số DSP + điểm độ phân biệt âm học.")+
+    tool("📄","Xuất báo cáo","Báo cáo A4 (PDF) đầy đủ kết quả + căn cứ pháp lý để đính kèm hồ sơ.")+'</div>',
+   en:
+    '<div class="kick">APPLIED PRODUCT</div><div class="s-title">Online classification & assessment tool</div>'+
+    '<div class="s-sub"><b style="color:#8B5CF6">duyoven.vn/am-thanh</b> — turns the 7-group system into a tool that runs live in the browser.</div>'+
+    '<div class="tools">'+
+    tool("🤖","Multi-source recognition","YAMNet (AI, 521 classes) + DSP acoustics + melody extraction → 3-source ensemble with confidence.")+
+    tool("🎼","Auto notation","Generates a 5-line staff from pitch — the required “graphic representation” (Art. 105).")+
+    tool("📊","Spectrum & metrics","Spectrogram + waveform + 14 DSP metrics + an acoustic distinctiveness score.")+
+    tool("📄","Report export","An A4 report (PDF) with full results + legal basis to attach to a filing.")+'</div>'},
+
+  {dark:true, vi:
+    '<div class="kick">KẾT LUẬN CHUNG</div><div class="s-title">Đóng góp & kết luận</div>'+
+    '<div class="concl"><ul class="b">'+
+      '<li><b>Khung pháp lý đã định hình</b> (Luật SHTT 2022 + Thông tư 10/2026) nhưng còn điểm nghẽn về kỹ thuật, chi phí, phân loại.</li>'+
+      '<li><b>Cần chuyển tư duy</b> từ “hữu hình hóa” sang quản trị tài sản số.</li>'+
+      '<li><b>Đóng góp cốt lõi:</b> lần đầu đề xuất hệ thống phân loại 7 nhóm + công cụ ứng dụng chạy thật.</li>'+
+      '<li><b>Giải pháp địa phương:</b> cẩm nang số, tiền thẩm định, hỗ trợ startup — giúp SMEs TP.HCM xác lập quyền.</li></ul></div>'+
+    '<div class="thank">Trân trọng cảm ơn Quý Thầy/Cô Hội đồng · <b>Nguyễn Phú Thành — TDMU 2026</b></div>'+deco,
+   en:
+    '<div class="kick">GENERAL CONCLUSION</div><div class="s-title">Contributions & conclusion</div>'+
+    '<div class="concl"><ul class="b">'+
+      '<li><b>The legal framework is in place</b> (IP Law 2022 + Circular 10/2026) but bottlenecks remain in technique, cost and classification.</li>'+
+      '<li><b>A mindset shift is needed</b> from “making tangible” to digital asset management.</li>'+
+      '<li><b>Core contribution:</b> the first proposal of a 7-group classification system + a working applied tool.</li>'+
+      '<li><b>Local solutions:</b> a digital handbook, pre-screening, startup support — helping HCMC’s SMEs establish their rights.</li></ul></div>'+
+    '<div class="thank">Thank you to the Committee · <b>Nguyen Phu Thanh — TDMU 2026</b></div>'+deco}
+  ];
+
+  function card(ic,h,b){ return '<div class="card"><div class="ic">'+ic+'</div><div><h3>'+h+'</h3><p>'+b+'</p></div></div>'; }
+  function col(n,ct,h,b,c){ return '<div class="col"><div class="num" style="background:'+c+'">'+n+'</div><div class="ct" style="color:'+c+'">'+ct+'</div><h3>'+h+'</h3><p>'+b+'</p></div>'; }
+  function feat(ic,h,b){ return '<div class="feat"><div class="ic">'+ic+'</div><h4>'+h+'</h4><p>'+b+'</p></div>'; }
+  function tool(ic,h,b){ return '<div class="tool"><div class="ic">'+ic+'</div><div><h4>'+h+'</h4><p>'+b+'</p></div></div>'; }
+  function g7(rows){ return rows.map(function(r){ var ok=r[2]===1; return '<div class="g7row '+(ok?'ok':'no')+'"><div class="num">'+r[0]+'</div><div class="d">'+r[1]+'</div><div class="v">'+(ok?'✅':'❌')+'</div></div>'; }).join(''); }
+
+  // ---------- state & render ----------
+  var idx=0, lang='vi';
+  try{ var sv=localStorage.getItem('amthanh_lang'); if(sv) lang=sv; }catch(e){}
+  var slide=document.getElementById('slide'), dotsEl=document.getElementById('dots');
+  for(var i=0;i<S.length;i++){ var d=document.createElement('span'); d.className='dot'; d.setAttribute('data-i',i); dotsEl.appendChild(d); }
+  var dots=dotsEl.querySelectorAll('.dot');
+
+  function render(){
+    var s=S[idx];
+    slide.className='slide active'+(s.dark?' dark':'');
+    slide.innerHTML=s[lang];
+    document.getElementById('count').textContent=(idx+1)+' / '+S.length;
+    for(var i=0;i<dots.length;i++) dots[i].classList.toggle('on',i===idx);
+    // static chrome (data-en)
+    Array.prototype.forEach.call(document.querySelectorAll('[data-en]'),function(el){
+      if(el.__vi==null) el.__vi=el.innerHTML;
+      el.innerHTML=(lang==='en')?el.getAttribute('data-en'):el.__vi;
+    });
+    document.documentElement.setAttribute('lang',lang);
+    document.getElementById('lvi').classList.toggle('on',lang==='vi');
+    document.getElementById('len').classList.toggle('on',lang==='en');
+  }
+  function go(n){ idx=Math.max(0,Math.min(S.length-1,n)); render(); }
+
+  document.getElementById('next').onclick=function(){go(idx+1)};
+  document.getElementById('prev').onclick=function(){go(idx-1)};
+  dotsEl.onclick=function(e){ var d=e.target.closest('.dot'); if(d) go(+d.getAttribute('data-i')); };
+  document.querySelector('.bar.tr').addEventListener('click',function(e){
+    var b=e.target.closest('[data-lang]'); if(b){ lang=b.getAttribute('data-lang'); try{localStorage.setItem('amthanh_lang',lang)}catch(e){} render(); }
+  });
+  document.getElementById('fs').onclick=function(){ if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){})(); } else { document.exitFullscreen(); } setTimeout(fit,120); };
+  document.addEventListener('keydown',function(e){
+    if(document.body.classList.contains('locked')) return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); go(idx+1); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(idx-1); }
+    else if(e.key==='Home'){ go(0); } else if(e.key==='End'){ go(S.length-1); }
+    else if(e.key==='f'||e.key==='F'){ document.getElementById('fs').click(); }
+  });
+  var tx=0; window.addEventListener('touchstart',function(e){ tx=e.changedTouches[0].clientX; },{passive:true});
+  window.addEventListener('touchend',function(e){ var dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>50){ go(idx+(dx<0?1:-1)); } },{passive:true});
+
+  // ---------- fit 1280x720 to viewport ----------
+  function fit(){
+    var vw=window.innerWidth||document.documentElement.clientWidth||1280;
+    var vh=window.innerHeight||document.documentElement.clientHeight||720;
+    var k=Math.min(vw/1280, vh/720)*0.96; if(!(k>0)) k=1;
+    document.getElementById('stage').style.transform='translate(-50%,-50%) scale('+k+')'; }
+  window.addEventListener('resize',fit);
+  fit(); render();
+})();
+</script>
+</body>
+</html>
