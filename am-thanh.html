@@ -257,6 +257,34 @@ body{
 .dc-box .dc-p{font-size:13px}
 .dc-box .cite{margin-left:0;margin-right:0}
 
+/* ===== phân tích âm học (DSP) ===== */
+.source-breakdown{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.src-row{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:5px 0;border-bottom:1px solid rgba(42,56,102,.5)}
+.src-row.total{border-bottom:none;font-weight:700;color:#fff;border-top:1px dashed var(--line);margin-top:2px;padding-top:8px}
+.src-k{color:var(--muted)} .src-row.total .src-k{color:#c4b5fd}
+.src-conf{font-size:12.5px;color:var(--muted);margin-top:8px}
+.src-conf .ok{color:#34d399;font-weight:700} .src-conf .warn{color:#fbbf24;font-weight:700}
+.ac-viz{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+.ac-canvas-wrap{background:#070b18;border:1px solid var(--line);border-radius:10px;padding:8px}
+.ac-cap{font-size:12px;color:var(--muted);margin-bottom:6px}
+.ac-canvas-wrap canvas{width:100%;height:auto;display:block;border-radius:6px}
+.ac-type{font-size:15px;margin:4px 0 12px}
+.ac-distinct{margin-bottom:14px}
+.ad-lb{font-size:13px;color:var(--muted);margin-bottom:5px;display:flex;justify-content:space-between}
+.ad-val{font-weight:800} .ad-val.hi{color:#34d399}.ad-val.mid{color:#f59e0b}.ad-val.lo{color:#fca5a5}
+.ad-track{height:12px;background:#0c1330;border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.ad-fill{height:100%;border-radius:99px;transition:width .5s}
+.ad-fill.hi{background:linear-gradient(90deg,#22c55e,#10b981)}
+.ad-fill.mid{background:linear-gradient(90deg,#f59e0b,#eab308)}
+.ad-fill.lo{background:linear-gradient(90deg,#ef4444,#f43f5e)}
+.ad-hint{font-size:12px;color:var(--muted);margin-top:5px}
+.ac-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 14px}
+.ac-m{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px solid rgba(42,56,102,.4)}
+.ac-mk{color:var(--muted)} .ac-mv{font-weight:700;font-variant-numeric:tabular-nums}
+.ac-note{font-size:11.5px;color:var(--muted);line-height:1.6;margin:12px 0 0;border-top:1px dashed var(--line);padding-top:9px}
+.report-bar{text-align:center;margin:18px 0 4px}
+.btn-report{background:linear-gradient(90deg,#475569,#334155);display:inline-block;width:auto;padding:12px 22px}
+
 @media (max-width:720px){
   .input-grid,.input-grid.two{grid-template-columns:1fr}
   .raw-list{grid-template-columns:1fr}
@@ -264,6 +292,20 @@ body{
   .form-grid{grid-template-columns:1fr}
   .subgrid{grid-template-columns:1fr}
   .legal-cols{grid-template-columns:1fr}
+  .ac-metrics{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ===== in / xuất báo cáo PDF ===== */
+@media print{
+  .bg-deco,.site-back,#gate,.input-panel,.report-bar,.btn,.options{display:none!important}
+  body{background:#fff!important;color:#111!important}
+  .wrap{max-width:100%}
+  .panel,.verdict,.legal-box,.source-breakdown,.dc-sec,.dc-meta,.ac-canvas-wrap{
+    background:#fff!important;border:1px solid #ccc!important;box-shadow:none!important;break-inside:avoid}
+  .hero h1,.hero h1 span,.sec-title,.v-title,.dc-h,.field-lb b,.dc-box-t{color:#111!important;-webkit-text-fill-color:#111!important}
+  .hero-sub,.muted,.dc-p,.dc-ul li,.ac-mk,.src-k,.cite,.ref-note{color:#333!important}
+  .dc-sec details,.dc-sec{break-inside:avoid}
+  a[href]:after{content:""}
 }
 
 </style>
@@ -391,6 +433,32 @@ body.locked .site-back{display:none}
     <div class="panel">
       <h2 class="sec-title">Âm thanh mô hình nhận diện <span class="muted">(nhãn YAMNet → nhóm)</span></h2>
       <div id="rawList" class="raw-list"></div>
+    </div>
+
+    <!-- PHÂN TÍCH ÂM HỌC CHUYÊN SÂU (DSP) -->
+    <div id="acousticPanel" class="panel" style="display:none">
+      <h2 class="sec-title">🔬 Phân tích âm học chuyên sâu <span class="muted">(DSP — nguồn độc lập #2)</span></h2>
+      <div id="sourceBreakdown" class="source-breakdown"></div>
+      <div class="ac-viz">
+        <div class="ac-canvas-wrap">
+          <div class="ac-cap">Spectrogram (phổ tần số – thời gian, 0–8 kHz)</div>
+          <canvas id="specCanvas" width="660" height="220"></canvas>
+        </div>
+        <div class="ac-canvas-wrap">
+          <div class="ac-cap">Waveform (biểu đồ dạng sóng)</div>
+          <canvas id="waveCanvas" width="660" height="90"></canvas>
+        </div>
+      </div>
+      <div id="acType" class="ac-type"></div>
+      <div id="acDistinct" class="ac-distinct"></div>
+      <div id="acMetrics" class="ac-metrics"></div>
+      <p class="ac-note">Phương pháp: FFT 1024 (Hann), tự tương quan ước lượng cao độ (70–1000 Hz),
+        đặc trưng phổ (tâm phổ, lăn phổ, độ phẳng, HNR), phát hiện onset bằng spectral-flux.
+        Kết quả là <b>số đo khách quan</b>, kết hợp với YAMNet theo tỉ lệ 70/30.</p>
+    </div>
+
+    <div class="report-bar">
+      <button id="btnReport" class="btn btn-report">🖨️ Xuất báo cáo phân tích (PDF / In)</button>
     </div>
   </section>
 
@@ -746,10 +814,28 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
     }
   }
 
+  // --- Ensemble: tron diem YAMNet (nguon AI) voi vote am hoc (nguon DSP) ---
+  // chuan hoa ca hai ve tong=1 roi tron: (1-w)*YAMNet + w*acoustic
+  function ensemble(agg, vote, w) {
+    var gs = agg.groupScores, k, ta = 0, tv = 0;
+    for (k = 1; k <= 7; k++) { ta += gs[k]; tv += vote[k] || 0; }
+    if (ta <= 0 && tv <= 0) return agg;
+    for (k = 1; k <= 7; k++) {
+      var A = ta > 0 ? gs[k] / ta : 0;
+      var B = tv > 0 ? (vote[k] || 0) / tv : 0;
+      gs[k] = (tv > 0) ? ((1 - w) * A + w * B) : A;
+    }
+    agg.total = 1; agg.ensembled = (tv > 0);
+    return agg;
+  }
+
   // --- Pipeline tien loi: tu categories -> ket qua day du ---
+  // opt.acousticVote {1..7} (tu DSP); opt.acoustic {features,type,distinctiveness}
   function analyze(categories, opt) {
     opt = opt || {};
     var agg = aggregate(categories);
+    if (opt.acousticVote) ensemble(agg, opt.acousticVote, opt.acousticWeight != null ? opt.acousticWeight : 0.3);
+    if (opt.acoustic) agg.acoustic = opt.acoustic;
     if (opt.simulated) applySimulated(agg);
     else deriveComposite(agg, opt);
     summarize(agg, opt);
@@ -768,6 +854,262 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
     analyze: analyze,
   };
 })(window);
+
+</script>
+<script>
+// acoustics.js — Phân tích âm học chuyên sâu (DSP) chạy song song với YAMNet.
+// Nguồn độc lập #2: FFT thật → cao độ/giai điệu, formant giọng nói, độ ồn (flatness/HNR),
+// nhịp/onset, spectrogram + waveform, vote 7 nhóm + điểm độ phân biệt âm học.
+window.ACOUSTICS = (function () {
+  "use strict";
+
+  // ---------- FFT radix-2 iterative (in-place) ----------
+  function fft(re, im) {
+    var n = re.length, i, j = 0, m, tr, ti;
+    for (i = 0; i < n - 1; i++) {
+      if (i < j) { tr = re[i]; re[i] = re[j]; re[j] = tr; ti = im[i]; im[i] = im[j]; im[j] = ti; }
+      m = n >> 1;
+      while (m >= 1 && j >= m) { j -= m; m >>= 1; }
+      j += m;
+    }
+    for (var len = 2; len <= n; len <<= 1) {
+      var ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+      for (var s = 0; s < n; s += len) {
+        var cr = 1, ci = 0;
+        for (var k = 0; k < (len >> 1); k++) {
+          var ar = re[s + k], ai = im[s + k];
+          var br = re[s + k + (len >> 1)], bi = im[s + k + (len >> 1)];
+          var xr = br * cr - bi * ci, xi = br * ci + bi * cr;
+          re[s + k] = ar + xr; im[s + k] = ai + xi;
+          re[s + k + (len >> 1)] = ar - xr; im[s + k + (len >> 1)] = ai - xi;
+          var ncr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = ncr;
+        }
+      }
+    }
+  }
+
+  function hann(N) { var w = new Float32Array(N); for (var i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (N - 1)); return w; }
+
+  // ---------- Pitch (autocorrelation) cho 1 khung thời gian ----------
+  function pitch(frame, sr) {
+    var n = frame.length, minLag = Math.floor(sr / 1000), maxLag = Math.floor(sr / 70); // 70–1000 Hz
+    var e0 = 0, i; for (i = 0; i < n; i++) e0 += frame[i] * frame[i];
+    if (e0 < 1e-6) return { f0: 0, clarity: 0 };
+    var best = 0, bestLag = -1;
+    for (var lag = minLag; lag <= maxLag; lag++) {
+      var ac = 0; for (i = 0; i < n - lag; i++) ac += frame[i] * frame[i + lag];
+      ac /= (n - lag);
+      if (ac > best) { best = ac; bestLag = lag; }
+    }
+    var clarity = best / (e0 / n);
+    if (bestLag < 0 || clarity < 0.30) return { f0: 0, clarity: clarity };
+    return { f0: sr / bestLag, clarity: clarity };
+  }
+
+  // ---------- Phân tích chính ----------
+  function analyze(buf, sr) {
+    var n = buf.length, i, k;
+    var duration = n / sr;
+    // RMS / peak / dB
+    var sum2 = 0, peak = 0;
+    for (i = 0; i < n; i++) { var a = buf[i]; sum2 += a * a; var aa = Math.abs(a); if (aa > peak) peak = aa; }
+    var rms = Math.sqrt(sum2 / n);
+    var dbRms = 20 * Math.log10(rms + 1e-9);
+    var crest = peak / (rms + 1e-9);
+    // ZCR
+    var zc = 0; for (i = 1; i < n; i++) if ((buf[i - 1] < 0) !== (buf[i] < 0)) zc++;
+    var zcr = zc / n * sr; // Hz cross-rate
+
+    // STFT
+    var FFT = 1024, half = FFT >> 1;
+    var hop = Math.max(256, Math.floor(n / 1100)); // giới hạn ~1100 khung
+    var win = hann(FFT);
+    var frames = Math.max(1, Math.floor((n - FFT) / hop) + 1);
+    if (frames > 1400) frames = 1400;
+    var spec = [];                 // [frame] -> Float32(half) magnitude dB
+    var centroidArr = [], rolloffArr = [], flatArr = [], energyArr = [], f0Arr = [], clarityArr = [];
+    var re = new Float32Array(FFT), im = new Float32Array(FFT);
+    var tdFrame = new Float32Array(FFT);
+    for (var fr = 0; fr < frames; fr++) {
+      var off = fr * hop;
+      for (i = 0; i < FFT; i++) { var s = off + i < n ? buf[off + i] : 0; tdFrame[i] = s; re[i] = s * win[i]; im[i] = 0; }
+      fft(re, im);
+      var mags = new Float32Array(half), magDb = new Float32Array(half);
+      var sm = 0, sfm = 0, slog = 0, scent = 0, e = 0;
+      for (k = 0; k < half; k++) {
+        var mg = Math.sqrt(re[k] * re[k] + im[k] * im[k]);
+        mags[k] = mg; magDb[k] = 20 * Math.log10(mg + 1e-6);
+        var f = k * sr / FFT;
+        sm += mg; scent += f * mg; e += mg * mg;
+        slog += Math.log(mg + 1e-9);
+      }
+      // centroid
+      var centroid = sm > 0 ? scent / sm : 0;
+      // rolloff 85%
+      var cum = 0, thr = 0.85 * sm, roll = 0;
+      for (k = 0; k < half; k++) { cum += mags[k]; if (cum >= thr) { roll = k * sr / FFT; break; } }
+      // flatness = geomean/mean
+      var gm = Math.exp(slog / half), am = sm / half;
+      var flat = am > 0 ? gm / am : 0;
+      spec.push(magDb);
+      centroidArr.push(centroid); rolloffArr.push(roll); flatArr.push(flat); energyArr.push(e);
+      var p = pitch(tdFrame, sr);
+      f0Arr.push(p.f0); clarityArr.push(p.clarity);
+    }
+
+    // năng lượng trung bình để chọn khung "có tiếng"
+    var emax = 0; for (i = 0; i < energyArr.length; i++) if (energyArr[i] > emax) emax = energyArr[i];
+    var voicedIdx = [];
+    for (i = 0; i < f0Arr.length; i++) if (f0Arr[i] > 0 && energyArr[i] > 0.08 * emax) voicedIdx.push(i);
+    var voicedRatio = f0Arr.length ? voicedIdx.length / f0Arr.length : 0;
+
+    // f0 trung vị + dải cao độ + giai điệu (số bậc cao độ khác nhau)
+    var f0s = voicedIdx.map(function (x) { return f0Arr[x]; }).sort(function (a, b) { return a - b; });
+    var medF0 = f0s.length ? f0s[Math.floor(f0s.length / 2)] : 0;
+    var semis = {}, minSemi = 999, maxSemi = -999;
+    voicedIdx.forEach(function (x) {
+      var st = Math.round(12 * Math.log2(f0Arr[x] / 55)); // bậc nửa cung từ A1
+      semis[st] = (semis[st] || 0) + 1;
+      if (st < minSemi) minSemi = st; if (st > maxSemi) maxSemi = st;
+    });
+    var distinctPitches = 0; Object.keys(semis).forEach(function (s) { if (semis[s] >= 2) distinctPitches++; });
+    var pitchRange = (maxSemi >= minSemi) ? (maxSemi - minSemi) : 0;
+    var melodic = distinctPitches >= 3 && pitchRange >= 2;
+
+    var avg = function (arr) { var t = 0; for (var x = 0; x < arr.length; x++) t += arr[x]; return arr.length ? t / arr.length : 0; };
+    var centroidHz = avg(centroidArr), rolloffHz = avg(rolloffArr), flatness = avg(flatArr);
+
+    // onset / nhịp: spectral flux
+    var flux = [];
+    for (fr = 1; fr < spec.length; fr++) {
+      var d = 0; for (k = 0; k < half; k++) { var diff = spec[fr][k] - spec[fr - 1][k]; if (diff > 0) d += diff; }
+      flux.push(d);
+    }
+    var fmean = avg(flux), fstd = Math.sqrt(avg(flux.map(function (v) { return (v - fmean) * (v - fmean); })));
+    var onsets = 0, lastOn = -10;
+    for (i = 0; i < flux.length; i++) if (flux[i] > fmean + 1.4 * fstd && i - lastOn > (sr / hop * 0.12)) { onsets++; lastOn = i; }
+    var tempo = duration > 0 ? Math.round(onsets / duration * 60) : 0; // nhịp/phút (xấp xỉ)
+
+    // HNR xấp xỉ từ clarity trung bình của khung voiced
+    var hnr = voicedIdx.length ? avg(voicedIdx.map(function (x) { return clarityArr[x]; })) : 0;
+
+    // ---------- Phân loại loại tín hiệu ----------
+    var type, typeIcon;
+    var voiceLike = voicedRatio > 0.35 && medF0 >= 80 && medF0 <= 400 && zcr < 4000 && centroidHz < 3500;
+    var pureTone = flatness < 0.06 && voicedRatio > 0.5 && distinctPitches <= 1 && onsets <= 2;
+    var noiseLike = flatness > 0.35 && voicedRatio < 0.2;
+    var impulsive = crest > 6 && onsets >= 3 && voicedRatio < 0.4;
+    if (melodic) { type = "Có giai điệu (nhiều cao độ)"; typeIcon = "🎼"; }
+    else if (pureTone) { type = "Thuần âm / tông đơn (pure tone)"; typeIcon = "〰️"; }
+    else if (voiceLike) { type = "Giống giọng người (có formant)"; typeIcon = "🗣️"; }
+    else if (noiseLike) { type = "Nhiễu băng rộng (gió/nước/ồn)"; typeIcon = "🌫️"; }
+    else if (impulsive) { type = "Xung / va đập (gõ, máy móc)"; typeIcon = "💥"; }
+    else { type = "Hỗn hợp / phức tạp"; typeIcon = "🔀"; }
+
+    // ---------- Vote 7 nhóm từ đặc trưng âm học (nguồn độc lập) ----------
+    var vote = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
+    if (voiceLike) vote[4] += 0.8;
+    if (melodic) vote[7] += 0.9;                         // giai điệu → tổng hợp/sáng tạo
+    if (pureTone) { vote[7] += 0.35; vote[6] += 0.45; }  // tông đơn: điện tử/thiết bị
+    if (noiseLike) { vote[1] += 0.6; vote[3] += 0.15; }  // nhiễu rộng: phi sinh học
+    if (impulsive) vote[6] += 0.6;                        // va đập: vật dụng
+    if (hnr > 0.6 && !melodic && !voiceLike) vote[7] += 0.2; // hài âm cao, ổn định → nhân tạo
+    if (centroidHz > 5000 && flatness > 0.25) vote[6] += 0.2;
+
+    // ---------- Điểm độ phân biệt âm học (0–100) ----------
+    // cấu trúc rõ + cao độ biến thiên + hài âm + nhịp → dễ phân biệt; tông đơn/nhiễu phẳng → thấp
+    var dScore = 0;
+    dScore += Math.min(30, distinctPitches * 6);             // đa dạng cao độ
+    dScore += Math.min(20, pitchRange * 2);                  // dải cao độ
+    dScore += Math.min(20, hnr * 25);                        // tính hài âm
+    dScore += Math.min(15, onsets * 1.5);                    // cấu trúc nhịp
+    dScore += Math.min(15, (1 - Math.min(1, flatness * 2.5)) * 15); // tính tông (không quá phẳng)
+    if (pureTone) dScore *= 0.5;                             // tông đơn kém phân biệt
+    if (noiseLike) dScore *= 0.55;
+    var distinctiveness = Math.max(0, Math.min(100, Math.round(dScore)));
+
+    // ---------- Bảng số liệu hiển thị ----------
+    var metrics = [
+      { k: "Thời lượng", v: duration.toFixed(2) + " s" },
+      { k: "Cường độ (RMS)", v: dbRms.toFixed(1) + " dB" },
+      { k: "Hệ số đỉnh", v: crest.toFixed(1) },
+      { k: "Cao độ cơ bản (f0)", v: medF0 ? Math.round(medF0) + " Hz" : "—" },
+      { k: "Dải cao độ", v: pitchRange ? pitchRange + " nửa cung" : "—" },
+      { k: "Số bậc cao độ", v: String(distinctPitches) },
+      { k: "Tỷ lệ có cao độ", v: Math.round(voicedRatio * 100) + "%" },
+      { k: "Tâm phổ (độ sáng)", v: Math.round(centroidHz) + " Hz" },
+      { k: "Lăn phổ 85%", v: Math.round(rolloffHz) + " Hz" },
+      { k: "Độ phẳng phổ", v: flatness.toFixed(3) },
+      { k: "Tỷ lệ hài/nhiễu", v: hnr.toFixed(2) },
+      { k: "Tốc độ qua-0 (ZCR)", v: Math.round(zcr) + " Hz" },
+      { k: "Số onset", v: String(onsets) },
+      { k: "Nhịp ước lượng", v: tempo ? tempo + " /phút" : "—" },
+    ];
+
+    return {
+      duration: duration, features: { medF0: medF0, pitchRange: pitchRange, distinctPitches: distinctPitches,
+        voicedRatio: voicedRatio, centroidHz: centroidHz, flatness: flatness, hnr: hnr, zcr: zcr,
+        onsets: onsets, tempo: tempo, melodic: melodic, pureTone: pureTone, voiceLike: voiceLike,
+        noiseLike: noiseLike, impulsive: impulsive },
+      vote: vote, type: type, typeIcon: typeIcon, distinctiveness: distinctiveness, metrics: metrics,
+      spectro: { data: spec, frames: spec.length, bins: half, sr: sr, fft: FFT, hop: hop },
+    };
+  }
+
+  // ---------- Vẽ spectrogram ----------
+  function drawSpectrogram(spectro, canvas) {
+    if (!canvas || !spectro || !spectro.data.length) return;
+    var ctx = canvas.getContext("2d");
+    var W = canvas.width, H = canvas.height;
+    var frames = spectro.data.length, sr = spectro.sr, fft = spectro.fft;
+    // chỉ hiển thị tới ~8kHz cho rõ
+    var maxBin = Math.min(spectro.bins, Math.floor(8000 / (sr / fft)));
+    var img = ctx.createImageData(W, H);
+    // tìm dB min/max để chuẩn hóa
+    var dmin = 1e9, dmax = -1e9, f, b;
+    for (f = 0; f < frames; f++) for (b = 0; b < maxBin; b++) { var v = spectro.data[f][b]; if (v < dmin) dmin = v; if (v > dmax) dmax = v; }
+    var rng = (dmax - dmin) || 1;
+    for (var x = 0; x < W; x++) {
+      var fi = Math.min(frames - 1, Math.floor(x / W * frames));
+      for (var y = 0; y < H; y++) {
+        var bi = Math.floor((1 - y / H) * (maxBin - 1)); // tần số cao ở trên
+        var val = (spectro.data[fi][bi] - dmin) / rng;   // 0..1
+        var c = colormap(val);
+        var idx = (y * W + x) * 4;
+        img.data[idx] = c[0]; img.data[idx + 1] = c[1]; img.data[idx + 2] = c[2]; img.data[idx + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  // magma-ish colormap
+  function colormap(t) {
+    t = Math.max(0, Math.min(1, t));
+    var r = Math.round(255 * Math.min(1, Math.max(0, 1.7 * t - 0.2)));
+    var g = Math.round(255 * Math.min(1, Math.max(0, 1.7 * t - 0.7)));
+    var b = Math.round(255 * (0.3 + 0.6 * Math.sin(Math.PI * t)));
+    return [Math.max(r, Math.round(40 * (1 - t))), g, Math.max(b, Math.round(60 * (1 - t)))];
+  }
+
+  // ---------- Vẽ waveform ----------
+  function drawWaveform(buf, canvas) {
+    if (!canvas || !buf) return;
+    var ctx = canvas.getContext("2d"), W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(139,92,246,0.10)"; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "#8b5cf6"; ctx.lineWidth = 1;
+    var step = Math.floor(buf.length / W) || 1, mid = H / 2;
+    ctx.beginPath();
+    for (var x = 0; x < W; x++) {
+      var lo = 1, hi = -1, st = x * step;
+      for (var i = 0; i < step; i++) { var v = buf[st + i] || 0; if (v < lo) lo = v; if (v > hi) hi = v; }
+      ctx.moveTo(x + 0.5, mid - hi * mid); ctx.lineTo(x + 0.5, mid - lo * mid);
+    }
+    ctx.stroke();
+  }
+
+  return { analyze: analyze, drawSpectrogram: drawSpectrogram, drawWaveform: drawWaveform };
+})();
 
 </script>
 <script>
@@ -827,23 +1169,24 @@ window.AudioEngine = (function () {
     return rendered.getChannelData(0);
   }
 
-  // Phan loai 1 buffer mono 16k -> [{index, score}] (gop diem MAX qua cac khung).
+  // Phan loai 1 buffer mono 16k -> [{index, score}].
+  // Gop diem qua cac khung bang blend 0.6*MAX + 0.4*MEAN (giam nhieu dot bien 1 khung).
   async function classifyBuffer(float32mono16k) {
     var clf = await ready();
     var results = clf.classify(float32mono16k, 16000);
-    var maxByIdx = {};
+    var maxByIdx = {}, sumByIdx = {}, nWin = results.length || 1;
     for (var i = 0; i < results.length; i++) {
       var cats = results[i].classifications[0].categories;
       for (var j = 0; j < cats.length; j++) {
         var c = cats[j];
-        if (maxByIdx[c.index] == null || c.score > maxByIdx[c.index]) {
-          maxByIdx[c.index] = c.score;
-        }
+        if (maxByIdx[c.index] == null || c.score > maxByIdx[c.index]) maxByIdx[c.index] = c.score;
+        sumByIdx[c.index] = (sumByIdx[c.index] || 0) + c.score;
       }
     }
     var out = [];
     Object.keys(maxByIdx).forEach(function (k) {
-      out.push({ index: +k, score: maxByIdx[k] });
+      var mx = maxByIdx[k], mn = (sumByIdx[k] || 0) / nWin;
+      out.push({ index: +k, score: 0.6 * mx + 0.4 * mn });
     });
     out.sort(function (a, b) { return b.score - a.score; });
     return out;
@@ -1066,9 +1409,12 @@ window.AudioEngine = (function () {
   var T = window.TAXONOMY, E = window.AudioEngine;
   var $ = function (id) { return document.getElementById(id); };
 
+  var A = window.ACOUSTICS;
   var state = {
     lastCategories: null,   // ket qua YAMNet tho (truoc khi suy luan)
     lastAgg: null,          // ket qua phan tich gan nhat (de tu danh gia dung)
+    lastSamples: null,      // buffer mono 16k de phan tich DSP
+    lastAcoustics: null,    // ket qua phan tich am hoc (DSP)
     simulated: false,       // che do mo phong (nhom 5)
     filters: { 1:true,2:true,3:true,4:true,5:true,6:true,7:true },
   };
@@ -1100,8 +1446,11 @@ window.AudioEngine = (function () {
   }
 
   // ---------- Phan tich ----------
-  function runAnalysis(categories) {
+  function runAnalysis(categories, samples) {
     state.lastCategories = categories;
+    state.lastSamples = samples || null;
+    // nguon #2: phan tich am hoc DSP
+    state.lastAcoustics = (A && samples) ? A.analyze(samples, 16000) : null;
     render();
     $("results").scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -1115,7 +1464,12 @@ window.AudioEngine = (function () {
       // nhom 5 chi xuat hien khi bat che do mo phong; nhung loc o muc nhom -> de analyze xu ly
       return true;
     });
-    var agg = T.analyze(cats, { simulated: state.simulated });
+    var ac = state.lastAcoustics;
+    var agg = T.analyze(cats, {
+      simulated: state.simulated,
+      acousticVote: ac ? ac.vote : null,
+      acoustic: ac ? { type: ac.type, distinctiveness: ac.distinctiveness, features: ac.features } : null,
+    });
 
     // ap dung bo loc nguon: zero hoa cac nhom bi tat, tinh lai present/dominant/verdict
     var anyOff = Object.keys(state.filters).some(function (k){return !state.filters[k];});
@@ -1128,8 +1482,65 @@ window.AudioEngine = (function () {
     renderVerdict(agg);
     renderBars(agg);
     renderRaw(agg);
+    renderAcoustics(agg);
     $("results").classList.add("show");
     state.lastAgg = agg;
+  }
+
+  // ---------- Phan tich am hoc chuyen sau (nguon DSP) ----------
+  function renderAcoustics(agg) {
+    var ac = state.lastAcoustics, host = $("acousticPanel");
+    if (!host) return;
+    if (!ac) { host.style.display = "none"; return; }
+    host.style.display = "block";
+
+    // ve spectrogram + waveform
+    try { A.drawSpectrogram(ac.spectro, $("specCanvas")); } catch (e) {}
+    try { A.drawWaveform(state.lastSamples, $("waveCanvas")); } catch (e) {}
+
+    // loai tin hieu + do phan biet
+    $("acType").innerHTML = ac.typeIcon + " <b>" + ac.type + "</b>";
+    var d = ac.distinctiveness;
+    var dCls = d >= 66 ? "hi" : d >= 40 ? "mid" : "lo";
+    $("acDistinct").innerHTML =
+      '<div class="ad-lb">Độ phân biệt âm học <span class="ad-val ' + dCls + '">' + d + '/100</span></div>' +
+      '<div class="ad-track"><div class="ad-fill ' + dCls + '" style="width:' + d + '%"></div></div>' +
+      '<div class="ad-hint">' + (d >= 66 ? "Cấu trúc rõ, dễ tạo tính phân biệt cố hữu." :
+        d >= 40 ? "Trung bình — nên phối thêm giai điệu/sáng tạo." :
+        "Thấp — âm đơn giản/chức năng, cần xử lý sáng tạo hoặc chứng minh ý nghĩa thứ hai.") + '</div>';
+
+    // bang so lieu
+    $("acMetrics").innerHTML = ac.metrics.map(function (m) {
+      return '<div class="ac-m"><span class="ac-mk">' + m.k + '</span><span class="ac-mv">' + m.v + '</span></div>';
+    }).join("");
+
+    // so sanh dong gop 2 nguon (YAMNet vs DSP)
+    renderSources(agg, ac);
+  }
+
+  function renderSources(agg, ac) {
+    var host = $("sourceBreakdown"); if (!host) return;
+    // YAMNet nhom troi
+    var ya = T.aggregate(state.lastCategories.filter(function(c){var g=window.YAMNET_GROUP[c.index];return g>=1&&g<=7;}));
+    T.summarize(ya, {});
+    var yTop = ya.dominant, dTop = topVote(ac.vote);
+    var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.GROUPS[g].name) : "—"; };
+    var agree = (yTop === agg.dominant);
+    var conf = confidence(agg);
+    host.innerHTML =
+      '<div class="src-row"><span class="src-k">🤖 YAMNet (AI nhận dạng)</span><span class="src-v">' + gName(yTop) + '</span></div>' +
+      '<div class="src-row"><span class="src-k">🔬 DSP (phân tích âm học)</span><span class="src-v">' + gName(dTop) + '</span></div>' +
+      '<div class="src-row total"><span class="src-k">⚖️ Kết hợp (ensemble 70/30)</span><span class="src-v">' + gName(agg.dominant) + '</span></div>' +
+      '<div class="src-conf">Độ tin cậy: <b>' + conf.label + '</b> (' + conf.pct + '%) · 2 nguồn ' +
+        (agree ? '<span class="ok">đồng thuận</span>' : '<span class="warn">khác biệt → cần xem kỹ</span>') + '</div>';
+  }
+
+  function topVote(v) { var b = 0, bk = 0; for (var k = 1; k <= 7; k++) if ((v[k] || 0) > b) { b = v[k]; bk = k; } return b > 0 ? bk : 0; }
+  function confidence(agg) {
+    // do tin cay = ti le diem nhom troi / tong, co thuong khi 2 nguon dong thuan
+    var pct = Math.round((agg.pct[agg.dominant] || 0) * 100);
+    var label = pct >= 60 ? "Cao" : pct >= 35 ? "Trung bình" : "Thấp";
+    return { pct: pct, label: label };
   }
 
   function renderVerdict(agg) {
@@ -1218,7 +1629,7 @@ window.AudioEngine = (function () {
       var res = await E.classifyArrayBuffer(arrayBuffer);
       setStatus("");
       if (!res.categories.length) { setStatus("Không nhận được âm thanh nào."); return; }
-      runAnalysis(res.categories);
+      runAnalysis(res.categories, res.samples);
     } catch (err) {
       console.error(err);
       setStatus("❌ Lỗi: " + (err && err.message ? err.message : err));
@@ -1419,6 +1830,14 @@ window.AudioEngine = (function () {
 
     // noi dung de an (3 chuong)
     if (window.DECUONG) window.DECUONG.build();
+
+    // xuat bao cao (in / PDF) — mo het accordion roi in
+    var rb = $("btnReport");
+    if (rb) rb.addEventListener("click", function () {
+      try { document.querySelectorAll("#decuongBody details").forEach(function (d) { d.open = true; }); } catch (e) {}
+      document.body.classList.add("printing");
+      setTimeout(function () { window.print(); setTimeout(function(){document.body.classList.remove("printing");}, 500); }, 200);
+    });
 
     // warm-up model (khong chan UI)
     E.onStatus(setStatus);
