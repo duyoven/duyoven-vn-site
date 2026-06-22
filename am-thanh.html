@@ -1406,6 +1406,13 @@ window.AudioEngine = (function () {
     major: "Chuyên ngành: Luật Kinh tế — Mã số 8380107",
     school: "Trường Đại học Thủ Dầu Một (TDMU) · 2026",
   };
+  var META_EN = {
+    title: "Law on the protection of sound trademarks and enterprises’ application practice in Ho Chi Minh City",
+    author: "Nguyen Phu Thanh",
+    advisors: "Advisors: Dr. Nguyen Thi Thu Thuy · Assoc. Prof. Dr. Le Thi Minh",
+    major: "Major: Economic Law — Code 8380107",
+    school: "Thu Dau Mot University (TDMU) · 2026",
+  };
 
   // item types: ["h", text] tiểu mục | ["p", html] đoạn | ["ul", [..]] danh sách
   // | ["c", citation] căn cứ pháp lý | ["box", title, [..items]] khung nhấn mạnh
@@ -1535,6 +1542,128 @@ window.AudioEngine = (function () {
     },
   ];
 
+  var SECTIONS_EN = [
+    {
+      t: "Introduction", ic: "📌", open: true,
+      body: [
+        ["h", "Rationale"],
+        ["p", "A trademark is not merely a sign distinguishing goods/services but also an intangible asset reflecting reputation and brand value; a mark’s strength lies in its <b>distinctiveness</b> and unique identity in the consumer’s mind (Schechter, 1927; Strasser, 1999)."],
+        ["p", "Vietnam formally protected sound marks from <b>14 Jan 2022</b> (Law 07/2022/QH15 amending the IP Law) to implement its <b>CPTPP commitment (Art. 18.18)</b>. However, few enterprises have registered, detailed guidance is lacking, there is no sound-classification system, and no widely published grant precedent yet."],
+        ["p", "HCMC is the economic locomotive — about <b>273,100 active enterprises</b> (31 Dec 2023, ~29.6% of the country), concentrated in technology, e-commerce, media and F&B — sectors with high demand for ad jingles and app alert sounds. The gap between “actual use” and “successful registration” remains very large."],
+        ["h", "Objectives — Scope — Methods"],
+        ["ul", [
+          "<b>Objectives:</b> clarify theory & law; assess the situation in HCMC; compare the EU and the US; propose a <b>7-group sound classification system</b> and recommendations to ease difficulties for enterprises.",
+          "<b>Temporal scope:</b> from 14 Jan 2022 to Circular <b>10/2026/TT-BKHCN</b> (effective 1 Apr 2026).",
+          "<b>Methods:</b> analysis–synthesis; sociological survey (enterprise survey + in-depth interviews with lawyers and IP agents in HCMC); comparative law (EUIPO/USPTO); historical–logical.",
+        ]],
+      ],
+    },
+    {
+      t: "Chapter 1 — Theoretical issues on sound-trademark protection", ic: "📘",
+      body: [
+        ["h", "1.1 Concept & characteristics"],
+        ["p", "A sound mark is a <b>non-traditional</b> trademark: it uses a sound signal fixed in graphic form and a data file to identify commercial origin — perceived by <b>hearing</b> rather than sight."],
+        ["c", "Art. 4(16) & Art. 72(1) IP Law 2005 (amended 2022); Art. 3(3) Decree 17/2023/ND-CP (fixation)"],
+        ["p", "Examples: the Zalo message alert (VNG), brand jingles of Tiki and Shopee. Three salient legal characteristics:"],
+        ["ul", [
+          "<b>High distinctiveness</b> — directly affects hearing, creating “secondary meaning” (Zhang, 2020) and “inherent reputation” (Strasser, 1999). Generic sounds (a ringing bell, opening/closing a door) are hard to protect.",
+          "<b>Graphic-representation requirement</b> — must submit a 5-line staff + an .mp3 ≤ 5MB file; a major barrier for SMEs (who must hire a notation expert).",
+          "<b>Non-functionality & non-descriptiveness</b> — a sound that only describes a mandatory technical feature is not protectable (e.g., a motorbike engine sound).",
+        ]],
+        ["h", "Role of sound marks"],
+        ["ul", [
+          "Boosts multi-sensory recognition, builds emotional connection and brand recall.",
+          "Supports advertising & the digital environment (e.g., the Hisamitsu melody — 4 notes E–A–E–F#).",
+          "Legal protection: against copying and against “trademark dilution” (Schechter, 1927).",
+        ]],
+        ["h", "1.3 Law: conditions for protection"],
+        ["ul", [
+          "<b>(a) Graphic representation</b> — a 5-line staff + .mp3 ≤5MB. <c>Art. 72(1); Art. 105(2) IP Law; Circular 10/2026/TT-BKHCN</c>",
+          "<b>(b) Distinctiveness</b> — inherent (e.g., the Tiki jingle) OR acquired through use / “secondary meaning”. <c>Points b,c,d,đ,e of Art. 74(2)</c>",
+          "<b>(c) Not excluded</b> — not identical to the national anthem (Art. 73(1)); not contrary to public order/morality (Art. 8); not a mandatory technical feature (Art. 73(6)).",
+        ]],
+        ["h", "Registration sequence & procedure (summary)"],
+        ["ul", [
+          "Dossier (Art. 68 Circular 10/2026, Form 04): a declaration describing the sound (instruments, timbre, emotion) + .mp3 ≤5MB + 5-line staff + Nice list.",
+          "Filing: in person (Southern office: 8th floor, 1196 Đường 3 Tháng 2, HCMC) or online at dichvucong.ipvietnam.gov.vn (a digital signature/USB Token is required).",
+          "Steps: receipt → formality exam ≤1 month → publication ≤2 months → substantive exam → grant. Term <b>10 years</b>, renewable multiple times (Art. 93).",
+        ]],
+        ["h", "1.4 International experience & lessons for Vietnam"],
+        ["ul", [
+          "<b>WIPO/TRIPS:</b> TRIPS Art. 15(1) — “any sign” capable of distinguishing; TLT Art. 2(1)(a); the Madrid system for international registration.",
+          "<b>United States (USPTO):</b> Lanham Act §1127, §2(f) secondary meaning; TMEP §1202.15; a dedicated <b>Category 30</b> code for sounds; In re General Electric (1978). Examples: NBC, MGM, Intel Bong, Nokia Tune (2451345), Hisamitsu (6315710).",
+          "<b>EU (EUIPO):</b> abolished the graphic-representation requirement from <b>1 Oct 2017</b> (Regulation 2017/1001) — only an .mp3/.wav ≤2MB is needed; Shield Mark C-283/01 (sonogram valid), BVG T-288/24 (a 2-second/4-note jingle still distinctive); the eSearch plus database plays sounds directly; >500 sound marks (2026).",
+          "<b>Lessons for Vietnam:</b> recognize Spectrogram/Waveform alongside the staff; set up a dedicated examination unit; build a sound-specific classification code; a database for direct listening; quantitative guidance on “secondary meaning”.",
+        ]],
+      ],
+    },
+    {
+      t: "Chapter 2 — Legal status & practice in HCMC", ic: "📙",
+      body: [
+        ["h", "2.1 Registration & exploitation status"],
+        ["p", "<b>2022–2023:</b> subdued; sound marks did not appear as an independent statistical category; very few applications and almost no widely published grant."],
+        ["p", "<b>2024–2026:</b> a breakthrough, but concentrated among FDI / technology corporations in HCMC. Some notable applications:"],
+        ["ul", [
+          "<b>Shopee</b> — VN-4-2023-00001, the “Shopee” melody — <b>granted</b> (filed on the very first day the law took effect).",
+          "<b>Tiki</b> — VN-4-2023-00216, brand jingle — under substantive examination (the Office requested an additional consumer survey).",
+          "<b>Samsung</b> — VN-4-2023-01814, device startup sound.",
+        ]],
+        ["h", "2.2–2.3 Barriers & assessment"],
+        ["ul", [
+          "The <b>5-line staff</b> suits melodic sounds, but “forcing” speech, animal sounds or digital effects onto a staff is nearly impossible → easily deemed duplicative on paper. The law does not yet recognize <b>Spectrogram / Waveform</b> as the EU/US do (Shield Mark C-283/01 accepted the sonogram).",
+          "<b>Proving “secondary meaning”</b> is a heavy burden: it requires recognition data, sales, duration, advertising spend… but lacks quantitative guidance → subjective examination.",
+          "The <b>“functional sound” boundary</b> remains vague (Art. 73(6)) — e.g., an engine sound.",
+          "<b>Examination capacity:</b> lacks sound-analysis software & cross-search databases; lacks a dedicated sound classification (only Nice for goods/services exists); long processing times.",
+        ]],
+        ["box", "Chapter 2 conclusion", [
+          ["p", "Practice shows “<b>law on the books but hard to enforce</b>”: the graphic technical barrier + the cost of proof + lagging digitization capacity have turned sound marks into a “playground” for tech corporations/FDI, while domestic SMEs in HCMC are left behind — even at risk of losing rights over their own familiar advertising sounds."],
+        ]],
+      ],
+    },
+    {
+      t: "Chapter 3 — Recommendations to improve the law & solutions", ic: "📗",
+      body: [
+        ["h", "3.1 Orientation"],
+        ["p", "Align with the policy of developing intellectual property amid integration & the digital economy; strengthen state management and competitiveness; consistent with the orientation of making HCMC a center of innovation, science and technology."],
+        ["h", "3.2 Recommendations to improve the law"],
+        ["ul", [
+          "Recognize <b>Spectrogram / Waveform</b> as lawful graphic evidence for non-instrumental sounds; clarify the criteria for “functional sound”.",
+          "Set up a dedicated examination unit; build a <b>dedicated sound classification code</b> (like the USPTO’s Category 30); a search database for direct listening; quantitative guidance for “secondary meaning”.",
+        ]],
+        ["box", "⭐ Core contribution: a 7-group sound classification system", [
+          ["p", "Building on EUIPO’s classification by <b>acoustic source</b> (4 groups: music / real-life sounds / speech–vocals / other sounds) and the USPTO–TTAB classification by <b>legal function</b> (2 types: with / without inherent distinctiveness), the author develops <b>2 broad groups & 7 detailed groups</b> — notably <b>separating group [7]</b> (AI/digital synthesized sound) into an independent category."],
+          ["p", "👉 This is exactly the basis of the classification this app implements. See <b>Table 4.1</b> and use the <b>“Self-assess protectability”</b> section above."],
+          ["p", "<b>Application principle:</b> favor protecting group <b>[4]</b> (human) & <b>[7]</b> (fully synthesized), or combinations with creative processing/melody; do <b>not</b> accept [1][2][3][5][6] alone if they lack a creative element; <b>encourage creative simulation</b> (digitization, melody arrangement → converting into group [7])."],
+        ]],
+        ["h", "Verification through international case law"],
+        ["ul", [
+          "<b>Hasbro</b> – a real mouse squeak (group [2]) used alone for pet toys → <b>refused</b> (functional).",
+          "<b>MGM</b> – the lion’s roar (group [2]) but arranged with melody + imagery → <b>accepted</b>.",
+          "<b>Harley-Davidson</b> – the V-Twin engine sound (group [6]) → opposed, application withdrawn in 2000.",
+          "<b>General Electric</b> – a ship’s alarm sound (group [6]) → had to prove “secondary meaning” (In re General Electric).",
+        ]],
+        ["h", "3.3 Solutions for HCMC"],
+        ["ul", [
+          "<b>Pre-classification screening</b> at the Southern representative office: use the 7-group table to advise/screen; set up a “Digital asset advisory desk” supporting group [7].",
+          "Compile & digitize a <b>“Multi-sensory Trademark Registration Handbook”</b> (e-book) with the Harley/Hasbro case law.",
+          "Targeted support for the <b>Startup & tech-company</b> ecosystem: guidance on classifying interface (UI/UX) sounds into group [7] for registration.",
+          "Encourage digitization / creative simulation: convert natural/functional sounds [1][2][3][5][6] into [7] to raise protectability — while stimulating the creative and music industries.",
+        ]],
+      ],
+    },
+    {
+      t: "General conclusion", ic: "🏁",
+      body: [
+        ["ul", [
+          "The legal framework is in place (IP Law amended 2022 + Circular 10/2026) but examination practice still has many bottlenecks in technique, cost and classification.",
+          "The deeper cause: a mindset mismatch — applying the “tangible yardstick” of traditional marks to an “intangible” object. A shift to <b>digital asset management</b> is needed.",
+          "The most important contribution: the first proposal of a <b>7-group classification system</b> as a transparent set of criteria to separate “functional sound” from “distinctive sound”.",
+          "Highly applicable solutions for HCMC: a digital handbook, pre-screening at the Southern office, and startup/tech support — helping domestic SMEs confidently establish their rights.",
+        ]],
+      ],
+    },
+  ];
+
   function el(tag, cls, html) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -1568,11 +1697,14 @@ window.AudioEngine = (function () {
   function build() {
     var host = document.getElementById("decuongBody");
     if (!host) return;
+    host.innerHTML = "";   // tranh nhan doi khi doi ngon ngu
+    var en = (window.APP_LANG === "en");
+    var M = en ? META_EN : META, SECS = en ? SECTIONS_EN : SECTIONS;
     var meta = el("div", "dc-meta",
-      "<b>" + META.title + "</b><br>" + META.author + " · " + META.advisors +
-      "<br>" + META.major + " · " + META.school);
+      "<b>" + M.title + "</b><br>" + M.author + " · " + M.advisors +
+      "<br>" + M.major + " · " + M.school);
     host.appendChild(meta);
-    SECTIONS.forEach(function (sec) {
+    SECS.forEach(function (sec) {
       var d = el("details", "dc-sec");
       if (sec.open) d.open = true;
       var sm = el("summary", "dc-sum", '<span class="dc-ic">' + sec.ic + "</span> " + sec.t);
@@ -1582,7 +1714,7 @@ window.AudioEngine = (function () {
     });
   }
 
-  w.DECUONG = { build: build, META: META, SECTIONS: SECTIONS };
+  w.DECUONG = { build: build, META: META, META_EN: META_EN, SECTIONS: SECTIONS, SECTIONS_EN: SECTIONS_EN };
 })(window);
 
 </script>
@@ -2142,12 +2274,15 @@ window.AudioEngine = (function () {
   }
 
   function composeReportHTML() {
-    var M = (window.DECUONG && DECUONG.META) || { title: "Pháp luật về bảo hộ nhãn hiệu âm thanh…", author: "Nguyễn Phú Thành", advisors: "", major: "", school: "Trường Đại học Thủ Dầu Một (TDMU)" };
+    var en = (window.APP_LANG === "en");
+    var DEF = en ? { title: "Sound trademark protection law…", author: "Nguyen Phu Thanh", advisors: "", major: "", school: "Thu Dau Mot University (TDMU)" }
+                 : { title: "Pháp luật về bảo hộ nhãn hiệu âm thanh…", author: "Nguyễn Phú Thành", advisors: "", major: "", school: "Trường Đại học Thủ Dầu Một (TDMU)" };
+    var M = (window.DECUONG && (en ? DECUONG.META_EN : DECUONG.META)) || DEF;
     var agg = state.lastAgg, ac = state.lastAcoustics, sa = state.lastSaResult, src = state.lastSources || {};
     var d = new Date();
     var z = function (x) { return (x < 10 ? "0" : "") + x; };
     var ts = z(d.getDate()) + "/" + z(d.getMonth() + 1) + "/" + d.getFullYear() + " " + z(d.getHours()) + ":" + z(d.getMinutes());
-    var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.GROUPS[g].name) : "—"; };
+    var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.gname(T.GROUPS[g])) : "—"; };
     var v = agg.verdict;
     var lvlColor = { high: "#15803d", ok: "#15803d", conditional: "#b45309", low: "#b91c1c" }[v.level] || "#334155";
 
@@ -2158,7 +2293,8 @@ window.AudioEngine = (function () {
     var staff = (ac && ac.notes && ac.notes.length) ? A.buildStaffSVG(ac.notes) : "";
 
     // bảng 7 nhóm
-    var vLabel = { high: "✅ Rất nên chấp nhận", ok: "✅ Có thể chấp nhận", low: "❌ Không nên đơn lẻ" };
+    var vLabel = en ? { high: "✅ Strongly recommended", ok: "✅ Acceptable", low: "❌ Not on its own" }
+                    : { high: "✅ Rất nên chấp nhận", ok: "✅ Có thể chấp nhận", low: "❌ Không nên đơn lẻ" };
     var rowsG = "";
     for (var g = 1; g <= 7; g++) {
       var pct = ((agg.pct[g] || 0) * 100).toFixed(1);
@@ -2168,22 +2304,27 @@ window.AudioEngine = (function () {
     // top nhãn YAMNet
     var rawTop = (agg.raw || []).filter(function (r) { return r.score >= 0.05; }).slice(0, 10);
     if (!rawTop.length) rawTop = (agg.raw || []).slice(0, 8);
-    var rowsR = rawTop.map(function (r) { return '<tr><td>' + esc(r.labelVi) + '</td><td style="text-align:center">' + (r.group || "–") + '</td><td style="text-align:right">' + Math.round(r.score * 100) + '%</td></tr>'; }).join("");
+    var rowsR = rawTop.map(function (r) { return '<tr><td>' + esc(en ? r.label : r.labelVi) + '</td><td style="text-align:center">' + (r.group || "–") + '</td><td style="text-align:right">' + Math.round(r.score * 100) + '%</td></tr>'; }).join("");
     // chỉ số DSP
     var rowsM = ac ? ac.metrics.map(function (m) { return '<tr><td>' + m.k + '</td><td style="text-align:right">' + m.v + '</td></tr>'; }).join("") : "";
     // tự đánh giá
     var saHTML = sa ? ('<div class="vb" style="border-color:' + ({ ok: "#15803d", conditional: "#b45309", low: "#b91c1c" }[sa.level] || "#334155") + '"><b>' + sa.badge + " " + esc(sa.title) + '</b>' +
-      (sa.name ? ' — “' + esc(sa.name) + '”' : '') + (sa.nice ? ' · nhóm Nice ' + esc(sa.nice) : '') +
+      (sa.name ? ' — “' + esc(sa.name) + '”' : '') + (sa.nice ? L(' · nhóm Nice ', ' · Nice class ') + esc(sa.nice) : '') +
       '<ul>' + sa.notes.map(function (x) { return '<li>' + x + '</li>'; }).join("") + '</ul></div>')
-      : '<p class="muted">(Chưa thực hiện phần “Tự đánh giá khả năng bảo hộ”.)</p>';
+      : '<p class="muted">' + L("(Chưa thực hiện phần “Tự đánh giá khả năng bảo hộ”.)", "(The “Self-assess protectability” section has not been completed.)") + '</p>';
 
     // kết luận & khuyến nghị
-    var rec = {
+    var rec = (en ? {
+      high: "The sound is highly distinctive — registration is STRONGLY recommended. Prepare an .mp3 ≤5MB + a staff/notation and a suitable Nice classification.",
+      ok: "The sound is likely protectable — complete the dossier (notation, timbre description) and register. Consider adding usage evidence if needed.",
+      conditional: "Add a creative element/melody OR evidence of “secondary meaning” (usage duration, recognition, sales) before filing.",
+      low: "Hard to protect on its own — add melody/creative processing (shift toward group 7) or accumulate & prove “secondary meaning”.",
+    } : {
       high: "Âm thanh có tính phân biệt cao — RẤT NÊN tiến hành đăng ký. Chuẩn bị tệp .mp3 ≤5MB + bản khuông nhạc/ký âm và phân loại Nice phù hợp.",
       ok: "Âm thanh có khả năng được bảo hộ — nên hoàn thiện hồ sơ (ký âm, mô tả âm sắc) và đăng ký. Cân nhắc bổ sung bằng chứng sử dụng nếu cần.",
       conditional: "Cần bổ sung yếu tố sáng tạo/giai điệu HOẶC bằng chứng “ý nghĩa thứ hai” (thời gian sử dụng, nhận diện, doanh số) trước khi nộp đơn.",
       low: "Khó được bảo hộ nếu để đơn lẻ — nên phối giai điệu/xử lý sáng tạo (chuyển hướng nhóm 7) hoặc tích lũy & chứng minh “ý nghĩa thứ hai”.",
-    }[v.level] || "";
+    })[v.level] || "";
 
     var css = "@page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;color:#111;line-height:1.5;font-size:12.5px;margin:0}" +
       ".rp-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1d4ed8;padding-bottom:8px}" +
@@ -2197,45 +2338,48 @@ window.AudioEngine = (function () {
       ".kv{font-size:11.5px;color:#333}.foot{margin-top:22px;border-top:1px solid #cbd5e1;padding-top:8px;font-size:11px;color:#555;display:flex;justify-content:space-between}" +
       ".sign{margin-top:26px;text-align:right;font-size:11.5px}.sign i{color:#777}";
 
-    var H = "<!DOCTYPE html><html lang=vi><head><meta charset=UTF-8><title>Báo cáo phân tích nhãn hiệu âm thanh</title><style>" + css + "</style></head><body>";
-    H += '<div class="rp-head"><div><div class="u">Ủy ban nhân dân TP. Hồ Chí Minh</div><div class="u t">' + esc(M.school) + '</div></div>' +
-      '<div style="text-align:right" class="kv">Đề án Thạc sĩ Luật Kinh tế<br>' + esc(M.author) + '<br>' + esc(M.advisors || "") + '</div></div>';
-    H += '<h1>BÁO CÁO PHÂN TÍCH NHÃN HIỆU ÂM THANH</h1>';
-    H += '<div class="sub">Công cụ phân loại 7 nhóm âm thanh theo nguồn gốc (AI YAMNet + DSP) · Lập lúc ' + ts + '</div>';
+    var H = "<!DOCTYPE html><html lang=" + (en ? "en" : "vi") + "><head><meta charset=UTF-8><title>" + L("Báo cáo phân tích nhãn hiệu âm thanh", "Sound Trademark Analysis Report") + "</title><style>" + css + "</style></head><body>";
+    H += '<div class="rp-head"><div><div class="u">' + L("Ủy ban nhân dân TP. Hồ Chí Minh", "People’s Committee of Ho Chi Minh City") + '</div><div class="u t">' + esc(M.school) + '</div></div>' +
+      '<div style="text-align:right" class="kv">' + L("Đề án Thạc sĩ Luật Kinh tế", "Master’s Project in Economic Law") + '<br>' + esc(M.author) + '<br>' + esc(M.advisors || "") + '</div></div>';
+    H += '<h1>' + L("BÁO CÁO PHÂN TÍCH NHÃN HIỆU ÂM THANH", "SOUND TRADEMARK ANALYSIS REPORT") + '</h1>';
+    H += '<div class="sub">' + L("Công cụ phân loại 7 nhóm âm thanh theo nguồn gốc (AI YAMNet + DSP) · Lập lúc ", "7-group sound origin classification tool (AI YAMNet + DSP) · Generated ") + ts + '</div>';
 
-    H += '<h2>I. Thông tin mẫu phân tích</h2><table>' +
-      '<tr><th style="width:32%">Tên / mô tả</th><td>' + esc(state.lastName || (sa && sa.name) || "(không đặt tên)") + '</td></tr>' +
-      '<tr><th>Nhóm hàng hóa/dịch vụ (Nice)</th><td>' + (sa && sa.nice ? "Nhóm " + esc(sa.nice) : "(chưa chọn)") + '</td></tr>' +
-      '<tr><th>Thời lượng</th><td>' + (ac ? ac.duration.toFixed(2) + " giây" : "—") + '</td></tr></table>';
+    H += '<h2>' + L("I. Thông tin mẫu phân tích", "I. Sample information") + '</h2><table>' +
+      '<tr><th style="width:32%">' + L("Tên / mô tả", "Name / description") + '</th><td>' + esc(state.lastName || (sa && sa.name) || L("(không đặt tên)", "(untitled)")) + '</td></tr>' +
+      '<tr><th>' + L("Nhóm hàng hóa/dịch vụ (Nice)", "Goods/services class (Nice)") + '</th><td>' + (sa && sa.nice ? L("Nhóm ", "Class ") + esc(sa.nice) : L("(chưa chọn)", "(not selected)")) + '</td></tr>' +
+      '<tr><th>' + L("Thời lượng", "Duration") + '</th><td>' + (ac ? ac.duration.toFixed(2) + L(" giây", " s") : "—") + '</td></tr></table>';
 
-    H += '<h2>II. Kết quả phân loại nguồn gốc</h2>' +
+    H += '<h2>' + L("II. Kết quả phân loại nguồn gốc", "II. Origin classification result") + '</h2>' +
       '<div class="vb" style="border-color:' + lvlColor + '"><b style="color:' + lvlColor + '">' + v.badge + " " + esc(v.title) + '</b>' +
-      ' — nhóm trội: <b>' + gName(agg.dominant) + '</b><br>' + v.reason + '<br><i>⚖️ ' + v.legal + '</i></div>' +
-      '<table><thead><tr><th>Nhóm nguồn gốc</th><th style="text-align:right">Tỉ lệ</th><th>Khả năng chấp nhận</th></tr></thead><tbody>' + rowsG + '</tbody></table>';
+      ' — ' + L("nhóm trội", "top group") + ': <b>' + gName(agg.dominant) + '</b><br>' + v.reason + '<br><i>⚖️ ' + v.legal + '</i></div>' +
+      '<table><thead><tr><th>' + L("Nhóm nguồn gốc", "Origin group") + '</th><th style="text-align:right">' + L("Tỉ lệ", "Share") + '</th><th>' + L("Khả năng chấp nhận", "Acceptability") + '</th></tr></thead><tbody>' + rowsG + '</tbody></table>';
 
-    H += '<h2>III. Phân tích đa nguồn (ensemble)</h2><table>' +
-      '<tr><th style="width:55%">🤖 Nguồn 1 — YAMNet (AI nhận dạng)</th><td>' + gName(src.yTop) + '</td></tr>' +
-      '<tr><th>🔬 Nguồn 2 — DSP (âm sắc/phổ)</th><td>' + gName(src.dTop) + '</td></tr>' +
-      (src.mTop ? '<tr><th>🎼 Nguồn 3 — Trích giai điệu/nốt</th><td>' + gName(src.mTop) + '</td></tr>' : '') +
-      '<tr style="font-weight:700"><th>⚖️ Kết hợp (ensemble)</th><td>' + gName(agg.dominant) + '</td></tr></table>' +
-      '<p class="kv">Độ tin cậy: <b>' + (src.conf ? src.conf.label + " (" + src.conf.pct + "%)" : "—") + '</b> · ' + (src.agreeN || 0) + '/' + (src.total || 0) + ' nguồn đồng thuận.</p>';
+    H += '<h2>' + L("III. Phân tích đa nguồn (ensemble)", "III. Multi-source analysis (ensemble)") + '</h2><table>' +
+      '<tr><th style="width:55%">🤖 ' + L("Nguồn 1 — YAMNet (AI nhận dạng)", "Source 1 — YAMNet (AI recognition)") + '</th><td>' + gName(src.yTop) + '</td></tr>' +
+      '<tr><th>🔬 ' + L("Nguồn 2 — DSP (âm sắc/phổ)", "Source 2 — DSP (timbre/spectrum)") + '</th><td>' + gName(src.dTop) + '</td></tr>' +
+      (src.mTop ? '<tr><th>🎼 ' + L("Nguồn 3 — Trích giai điệu/nốt", "Source 3 — Melody/note extraction") + '</th><td>' + gName(src.mTop) + '</td></tr>' : '') +
+      '<tr style="font-weight:700"><th>⚖️ ' + L("Kết hợp (ensemble)", "Combined (ensemble)") + '</th><td>' + gName(agg.dominant) + '</td></tr></table>' +
+      '<p class="kv">' + L("Độ tin cậy", "Confidence") + ': <b>' + (src.conf ? src.conf.label + " (" + src.conf.pct + "%)" : "—") + '</b> · ' + (src.agreeN || 0) + '/' + (src.total || 0) + ' ' + L("nguồn đồng thuận.", "sources in agreement.") + '</p>';
 
     if (ac) {
-      H += '<h2>IV. Phân tích âm học chuyên sâu (DSP)</h2>' +
-        '<p class="kv">Loại tín hiệu: <b>' + esc(ac.type) + '</b> · Độ phân biệt âm học: <b>' + ac.distinctiveness + '/100</b></p>';
-      if (specImg) H += '<div class="kv" style="margin:6px 0 2px">Spectrogram (phổ tần số – thời gian):</div><img src="' + specImg + '">';
-      if (waveImg) H += '<div class="kv" style="margin:6px 0 2px">Waveform (dạng sóng):</div><img src="' + waveImg + '">';
-      if (staff) H += '<div class="kv" style="margin:8px 0 2px">🎼 Ký âm tự động (khuông nhạc 5 dòng – tham khảo cho bản thể hiện đồ họa):</div>' + staff;
-      H += '<div class="grid2" style="margin-top:8px"><div><table><thead><tr><th>Chỉ số</th><th style="text-align:right">Giá trị</th></tr></thead><tbody>' + rowsM + '</tbody></table></div>' +
-        '<div><div class="kv" style="margin-bottom:3px">Âm thanh mô hình nhận diện (YAMNet):</div><table><thead><tr><th>Nhãn</th><th>Nhóm</th><th style="text-align:right">%</th></tr></thead><tbody>' + rowsR + '</tbody></table></div></div>';
+      H += '<h2>' + L("IV. Phân tích âm học chuyên sâu (DSP)", "IV. In-depth acoustic analysis (DSP)") + '</h2>' +
+        '<p class="kv">' + L("Loại tín hiệu", "Signal type") + ': <b>' + esc(ac.type) + '</b> · ' + L("Độ phân biệt âm học", "Acoustic distinctiveness") + ': <b>' + ac.distinctiveness + '/100</b></p>';
+      if (specImg) H += '<div class="kv" style="margin:6px 0 2px">' + L("Spectrogram (phổ tần số – thời gian):", "Spectrogram (frequency–time):") + '</div><img src="' + specImg + '">';
+      if (waveImg) H += '<div class="kv" style="margin:6px 0 2px">' + L("Waveform (dạng sóng):", "Waveform:") + '</div><img src="' + waveImg + '">';
+      if (staff) H += '<div class="kv" style="margin:8px 0 2px">🎼 ' + L("Ký âm tự động (khuông nhạc 5 dòng – tham khảo cho bản thể hiện đồ họa):", "Auto notation (5-line staff — reference for the graphic representation):") + '</div>' + staff;
+      H += '<div class="grid2" style="margin-top:8px"><div><table><thead><tr><th>' + L("Chỉ số", "Metric") + '</th><th style="text-align:right">' + L("Giá trị", "Value") + '</th></tr></thead><tbody>' + rowsM + '</tbody></table></div>' +
+        '<div><div class="kv" style="margin-bottom:3px">' + L("Âm thanh mô hình nhận diện (YAMNet):", "Sounds recognized by the model (YAMNet):") + '</div><table><thead><tr><th>' + L("Nhãn", "Label") + '</th><th>' + L("Nhóm", "Group") + '</th><th style="text-align:right">%</th></tr></thead><tbody>' + rowsR + '</tbody></table></div></div>';
     }
 
-    H += '<h2>V. Tự đánh giá khả năng bảo hộ nhãn hiệu</h2>' + saHTML;
-    H += '<h2>VI. Kết luận & khuyến nghị</h2><div class="vb" style="border-color:' + lvlColor + '">' + rec + '</div>';
-    H += '<h2>VII. Căn cứ pháp lý</h2><p class="kv">Luật Sở hữu trí tuệ 2005 (sửa đổi, bổ sung 2022): Điều 72 (dấu hiệu), Điều 73 (loại trừ), Điều 74 (khả năng phân biệt), Điều 105 (thể hiện đồ họa). Thông tư 10/2026/TT-BKHCN. Bảng phân loại Nice. Đề xuất hệ thống phân loại 7 nhóm — Nguyễn Phú Thành (2026).</p>';
+    H += '<h2>' + L("V. Tự đánh giá khả năng bảo hộ nhãn hiệu", "V. Self-assessment of protectability") + '</h2>' + saHTML;
+    H += '<h2>' + L("VI. Kết luận & khuyến nghị", "VI. Conclusion & recommendation") + '</h2><div class="vb" style="border-color:' + lvlColor + '">' + rec + '</div>';
+    H += '<h2>' + L("VII. Căn cứ pháp lý", "VII. Legal basis") + '</h2><p class="kv">' +
+      L("Luật Sở hữu trí tuệ 2005 (sửa đổi, bổ sung 2022): Điều 72 (dấu hiệu), Điều 73 (loại trừ), Điều 74 (khả năng phân biệt), Điều 105 (thể hiện đồ họa). Thông tư 10/2026/TT-BKHCN. Bảng phân loại Nice. Đề xuất hệ thống phân loại 7 nhóm — Nguyễn Phú Thành (2026).",
+        "IP Law 2005 (amended 2022): Art. 72 (signs), Art. 73 (exclusions), Art. 74 (distinctiveness), Art. 105 (graphic representation). Circular 10/2026/TT-BKHCN. Nice classification. Proposed 7-group classification system — Nguyen Phu Thanh (2026).") + '</p>';
 
-    H += '<div class="sign">Người phân tích / xác nhận<br><br>……………………………………<br><i>(Ký, ghi rõ họ tên)</i></div>';
-    H += '<div class="foot"><span>Báo cáo tạo tự động bằng công cụ nghiên cứu đề án — chỉ mang tính tham khảo học thuật, không thay thế kết luận của Cục SHTT.</span><span>' + ts + '</span></div>';
+    H += '<div class="sign">' + L("Người phân tích / xác nhận", "Analyst / confirmed by") + '<br><br>……………………………………<br><i>' + L("(Ký, ghi rõ họ tên)", "(Signature, full name)") + '</i></div>';
+    H += '<div class="foot"><span>' + L("Báo cáo tạo tự động bằng công cụ nghiên cứu đề án — chỉ mang tính tham khảo học thuật, không thay thế kết luận của Cục SHTT.",
+      "Auto-generated by the research tool — academic reference only, not a substitute for the IP Office’s decision.") + '</span><span>' + ts + '</span></div>';
     H += '</body></html>';
     return H;
   }
