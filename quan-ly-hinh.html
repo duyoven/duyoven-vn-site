@@ -51,7 +51,8 @@
   <h1>🖼️ Hình sản phẩm</h1>
 </header>
 <div class="wrap">
-  <div class="note">Chọn sản phẩm → <b>Đổi hình</b> → tải ảnh lên. Hệ thống tự đưa về <b>nền đen vuông</b> (có thể xoá nền trắng / tách nền AI). Lưu xong web cập nhật sau <b>2–3 phút</b>. Đổi 1 ảnh sẽ cập nhật cả trang sản phẩm, menu và trang chi tiết.</div>
+  <div class="note">Mỗi sản phẩm gồm <b>⭐ Ảnh đại diện</b> (hiện ở danh sách + menu + đầu trang) và các <b>hình trong bài viết</b> — tất cả ở chung 1 chỗ. Bấm <b>Đổi hình</b> → tải ảnh → (xoá nền / nền đen / giữ tỉ lệ) → Lưu. Web cập nhật sau <b>2–3 phút</b>.</div>
+  <input id="search" type="search" placeholder="🔍 Gõ tên sản phẩm để tìm nhanh…" style="width:100%;max-width:360px;padding:10px 12px;margin-bottom:14px;border:1px solid var(--line);border-radius:9px;background:#16181c;color:var(--ink);font-size:14px;-webkit-appearance:none">
   <div id="grid"><div style="color:var(--muted)">Đang tải danh sách…</div></div>
 </div>
 
@@ -80,44 +81,43 @@
 </div>
 
 <script>
-var EDITS=[], CUR=null, srcImg=null, aiBlobUrl=null;
+var PRODUCTS=[], CUR=null, srcImg=null, aiBlobUrl=null;
 var $=function(s){return document.querySelector(s)};
 function bust(u){return '/'+u+'?t='+Date.now()}
 function loadList(){
   fetch('/product-images.json?t='+Date.now()).then(function(r){return r.json()}).then(function(d){
-    var items=(d&&d.items)||[]; EDITS=[];
-    items.forEach(function(it){
-      EDITS.push({label:it.name,img:it.img,group:'main',shared:it.shared});
-      (it.details||[]).forEach(function(dt){ EDITS.push({label:it.name+' · '+dt.label,img:dt.img,group:'detail'}); });
-    });
-    renderGrid();
+    PRODUCTS=(d&&d.items)||[];
+    renderList('');
   }).catch(function(e){$('#grid').innerHTML='<div style="color:#f1736b">Lỗi tải danh sách. Thử lại.</div>'});
 }
-function renderGrid(){
-  var g=$('#grid'); g.innerHTML='';
-  addSection(g,'Ảnh chính <small>— hiện ở danh sách Sản phẩm + menu + đầu trang chi tiết</small>',EDITS.filter(function(e){return e.group==='main'}));
-  var det=EDITS.filter(function(e){return e.group==='detail'});
-  if(det.length) addSection(g,'Ảnh trong trang chi tiết <small>— ảnh phụ ở các trang giới thiệu riêng (Pantina, Hybrid 65L, Offset 10050)</small>',det);
-}
-function addSection(g,title,arr){
-  if(!arr.length) return;
-  var sec=document.createElement('div'); sec.className='sec'; sec.innerHTML=title; g.appendChild(sec);
-  var grid=document.createElement('div'); grid.className='grid';
-  arr.forEach(function(e){
-    var idx=EDITS.indexOf(e);
-    var c=document.createElement('div'); c.className='pc';
-    c.innerHTML='<div class="thumb" style="background-image:url(\''+bust(e.img)+'\')"></div>'+
-      '<div class="meta"><div class="nm">'+esc(e.label)+'</div></div>'+
-      (e.shared?'<div class="shared">⚠️ dùng chung ảnh với SP khác</div>':'')+
-      '<button>Đổi hình</button>';
-    c.querySelector('button').onclick=function(){openEditor(idx)};
-    grid.appendChild(c);
+function renderList(filter){
+  var g=$('#grid'); g.innerHTML=''; var f=(filter||'').toLowerCase().trim(); var shown=0;
+  PRODUCTS.forEach(function(p){
+    if(f && p.name.toLowerCase().indexOf(f)<0) return;
+    shown++;
+    var dets=p.details||[];
+    var sec=document.createElement('div'); sec.className='sec';
+    sec.innerHTML=esc(p.name)+' <small>'+(dets.length?('· '+(dets.length+1)+' ảnh (1 đại diện + '+dets.length+' trong bài)'):'· 1 ảnh đại diện')+(p.shared?' · ⚠️ đại diện dùng chung':'')+'</small>';
+    g.appendChild(sec);
+    var grid=document.createElement('div'); grid.className='grid';
+    grid.appendChild(makeCard({label:'⭐ Ảnh đại diện · '+p.name,img:p.img,group:'main',shared:p.shared},'⭐ Ảnh đại diện'));
+    dets.forEach(function(dt){ grid.appendChild(makeCard({label:p.name+' · '+dt.label,img:dt.img,group:'detail'},dt.label)); });
+    g.appendChild(grid);
   });
-  g.appendChild(grid);
+  if(!shown) g.innerHTML='<div style="color:var(--muted);padding:20px">Không tìm thấy sản phẩm "'+esc(filter)+'".</div>';
+}
+function makeCard(e,caption){
+  var c=document.createElement('div'); c.className='pc';
+  c.innerHTML='<div class="thumb" style="background-image:url(\''+bust(e.img)+'\')"></div>'+
+    '<div class="meta"><div class="nm">'+esc(caption||e.label)+'</div></div>'+
+    (e.shared?'<div class="shared">⚠️ dùng chung ảnh với SP khác</div>':'')+
+    '<button>Đổi hình</button>';
+  c.querySelector('button').onclick=function(){openEditor(e)};
+  return c;
 }
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-function openEditor(i){
-  CUR=EDITS[i]; srcImg=null; aiBlobUrl=null;
+function openEditor(e){
+  CUR=e; srcImg=null; aiBlobUrl=null;
   $('#mTitle').textContent='Đổi hình: '+CUR.label;
   $('#mSub').textContent=CUR.img + (CUR.shared?' · (đổi sẽ ảnh hưởng SP dùng chung)':'');
   $('#file').value=''; $('#rmWhite').checked=false; $('#keepRatio').checked=(CUR.group==='detail'); $('#msg').textContent=''; $('#msg').className='msg';
@@ -207,6 +207,7 @@ $('#save').onclick=function(){
     fr.readAsDataURL(blob);
   },'image/webp',0.86);
 };
+$('#search').oninput=function(){renderList(this.value)};
 loadList();
 </script>
 </body>
