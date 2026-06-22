@@ -66,6 +66,9 @@
       <input type="range" id="tol" min="0" max="80" value="36" title="Độ nhạy xoá trắng">
     </div>
     <div class="row">
+      <label class="switch"><input type="checkbox" id="keepRatio"> 📐 Giữ tỉ lệ gốc (ảnh ngang/dọc — không ép vuông)</label>
+    </div>
+    <div class="row">
       <button class="btn ghost" id="aiBtn" type="button">✨ Tách nền AI (tải nặng lần đầu)</button>
     </div>
     <div class="msg" id="msg"></div>
@@ -117,7 +120,7 @@ function openEditor(i){
   CUR=EDITS[i]; srcImg=null; aiBlobUrl=null;
   $('#mTitle').textContent='Đổi hình: '+CUR.label;
   $('#mSub').textContent=CUR.img + (CUR.shared?' · (đổi sẽ ảnh hưởng SP dùng chung)':'');
-  $('#file').value=''; $('#rmWhite').checked=false; $('#msg').textContent=''; $('#msg').className='msg';
+  $('#file').value=''; $('#rmWhite').checked=false; $('#keepRatio').checked=(CUR.group==='detail'); $('#msg').textContent=''; $('#msg').className='msg';
   $('#save').disabled=true;
   var cv=$('#cv'),x=cv.getContext('2d'); x.fillStyle='#1a1817';x.fillRect(0,0,760,760);
   // hiện ảnh hiện tại làm nền tham khảo
@@ -147,10 +150,19 @@ function render(){
   var t=tmp.getContext('2d'); t.drawImage(srcImg,0,0);
   if($('#rmWhite').checked) floodWhite(t,tmp.width,tmp.height,parseInt($('#tol').value,10));
   var bb=$('#rmWhite').checked?bbox(t,tmp.width,tmp.height):null;
-  var cv=$('#cv'),x=cv.getContext('2d'); x.clearRect(0,0,760,760); x.fillStyle='#1a1817'; x.fillRect(0,0,760,760);
   var sx=0,sy=0,sw=tmp.width,sh=tmp.height; if(bb){sx=bb.x;sy=bb.y;sw=bb.w;sh=bb.h}
-  var s=760*0.86/Math.max(sw,sh),dw=sw*s,dh=sh*s;
-  x.drawImage(tmp,sx,sy,sw,sh,(760-dw)/2,(760-dh)/2,dw,dh);
+  var cv=$('#cv'),x=cv.getContext('2d');
+  if($('#keepRatio').checked){
+    var s=Math.min(1,1000/Math.max(sw,sh)),W=Math.max(1,Math.round(sw*s)),H=Math.max(1,Math.round(sh*s));
+    cv.width=W; cv.height=H; cv.style.aspectRatio=W+'/'+H;
+    x.fillStyle='#1a1817'; x.fillRect(0,0,W,H);
+    x.drawImage(tmp,sx,sy,sw,sh,0,0,W,H);
+  }else{
+    cv.width=760; cv.height=760; cv.style.aspectRatio='1';
+    x.fillStyle='#1a1817'; x.fillRect(0,0,760,760);
+    var sc=760*0.86/Math.max(sw,sh),dw=sw*sc,dh=sh*sc;
+    x.drawImage(tmp,sx,sy,sw,sh,(760-dw)/2,(760-dh)/2,dw,dh);
+  }
   $('#save').disabled=false;
 }
 $('#file').onchange=function(e){
@@ -158,6 +170,7 @@ $('#file').onchange=function(e){
   aiBlobUrl=null; var im=new Image(); im.onload=function(){srcImg=im; render()}; im.src=URL.createObjectURL(f);
 };
 $('#rmWhite').onchange=render;
+$('#keepRatio').onchange=render;
 $('#tol').oninput=function(){ if($('#rmWhite').checked) render() };
 $('#aiBtn').onclick=function(){
   var f=$('#file').files[0]; if(!f){msg('Chọn ảnh trước đã.','err');return}
