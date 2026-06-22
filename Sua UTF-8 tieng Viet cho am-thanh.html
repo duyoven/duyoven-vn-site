@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="robots" content="noindex,nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ph√¢n lo·∫°i 7 nh√≥m √¢m thanh theo ngu·ªìn g·ªëc</title>
-<meta name="description" content="App ph√¢n lo·∫°i √¢m thanh theo ngu·ªìn g·ªëc (7 nh√≥m) & ƒë√°nh gi√° kh·∫£ nƒÉng b·∫£o h·ªô nh√£n hi·ªáu √¢m thanh." />
+<title>Phân loại 7 nhóm âm thanh theo nguồn gốc</title>
+<meta name="description" content="App phân loại âm thanh theo nguồn gốc (7 nhóm) & đánh giá khả năng bảo hộ nhãn hiệu âm thanh." />
 <style>
 :root{
   --bg:#0b1020; --bg2:#111935; --card:#161f3d; --card2:#1d294e;
@@ -134,7 +134,7 @@ body{
 .bar-head{display:flex;align-items:center;gap:9px;font-size:14px;margin-bottom:6px}
 .bar-ic{font-size:16px}
 .bar-name{font-weight:600;color:var(--muted);flex:1}
-.bar-row.present .bar-name::after{content:" ‚óè";color:#34d399;font-size:10px}
+.bar-row.present .bar-name::after{content:" ●";color:#34d399;font-size:10px}
 .bar-pct{font-variant-numeric:tabular-nums;font-weight:700}
 .bar-track{height:12px;background:#0c1330;border-radius:99px;overflow:hidden;border:1px solid var(--line)}
 .bar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
@@ -196,26 +196,26 @@ body.locked .site-back{display:none}
 </style>
 </head>
 <body class="locked">
-<a class="site-back" href="https://duyoven.vn">‚Üê duyoven.vn</a>
+<a class="site-back" href="https://duyoven.vn">← duyoven.vn</a>
 <div id="gate" role="dialog" aria-modal="true">
   <form class="gate-card" id="gateForm" autocomplete="off">
-    <div class="gate-ic">üîí</div>
-    <h1 class="gate-title">Khu v·ª±c c√≥ m·∫≠t kh·∫©u</h1>
-    <p class="gate-sub">Nh·∫≠p m·∫≠t kh·∫©u ƒë·ªÉ v√†o ·ª©ng d·ª•ng ph√¢n lo·∫°i √¢m thanh.</p>
-    <input id="gatePw" type="password" class="gate-input" placeholder="M·∫≠t kh·∫©u" autocomplete="off" />
-    <button type="submit" class="gate-btn">V√†o ·ª©ng d·ª•ng ‚Üí</button>
+    <div class="gate-ic">🔒</div>
+    <h1 class="gate-title">Khu vực có mật khẩu</h1>
+    <p class="gate-sub">Nhập mật khẩu để vào ứng dụng phân loại âm thanh.</p>
+    <input id="gatePw" type="password" class="gate-input" placeholder="Mật khẩu" autocomplete="off" />
+    <button type="submit" class="gate-btn">Vào ứng dụng →</button>
     <div id="gateErr" class="gate-err"></div>
-    <a class="gate-back" href="https://duyoven.vn">‚Üê V·ªÅ duyoven.vn</a>
+    <a class="gate-back" href="https://duyoven.vn">← Về duyoven.vn</a>
   </form>
 </div>
 <div class="wrap">
 
   <header class="hero">
-    <div class="hero-tag">ƒê·ªÄ √ÅN ¬∑ NH√ÉN HI·ªÜU √ÇM THANH</div>
-    <h1>H·ªá th·ªëng ph√¢n lo·∫°i <span>7 nh√≥m √¢m thanh</span> theo ngu·ªìn g·ªëc</h1>
+    <div class="hero-tag">ĐỀ ÁN · NHÃN HIỆU ÂM THANH</div>
+    <h1>Hệ thống phân loại <span>7 nhóm âm thanh</span> theo nguồn gốc</h1>
     <p class="hero-sub">
-      Nghe b·∫±ng micro ho·∫∑c t·∫£i file √¢m thanh ‚Üí m√¥ h√¨nh AI <b>YAMNet</b> t·ª± th·∫©m ƒë·ªãnh &
-      ph√¢n lo·∫°i ngu·ªìn g·ªëc ‚Üí ƒë√°nh gi√° <b>kh·∫£ nƒÉng b·∫£o h·ªô nh√£n hi·ªáu √¢m thanh</b> (B·∫£ng 4.1).
+      Nghe bằng micro hoặc tải file âm thanh → mô hình AI <b>YAMNet</b> tự thẩm định &
+      phân loại nguồn gốc → đánh giá <b>khả năng bảo hộ nhãn hiệu âm thanh</b> (Bảng 4.1).
     </p>
   </header>
 
@@ -224,33 +224,33 @@ body.locked .site-back{display:none}
     <div class="input-grid">
       <!-- mic -->
       <div class="input-card">
-        <div class="ic-title">üéôÔ∏è Ghi √¢m tr·ª±c ti·∫øp</div>
-        <button id="btnRecord" class="btn btn-rec">‚óè B·∫Øt ƒë·∫ßu ghi √¢m</button>
-        <button id="btnStop" class="btn btn-stop hidden">‚ñ† D·ª´ng & ph√¢n t√≠ch</button>
+        <div class="ic-title">🎙️ Ghi âm trực tiếp</div>
+        <button id="btnRecord" class="btn btn-rec">● Bắt đầu ghi âm</button>
+        <button id="btnStop" class="btn btn-stop hidden">■ Dừng & phân tích</button>
         <div id="recMeter" class="rec-meter hidden">
           <div class="level-track"><div id="level" class="level-fill"></div></div>
           <span id="recTimer" class="rec-timer">0.0s</span>
         </div>
-        <div class="ic-hint">N√≥i, v·ªó tay, m·ªü 1 ƒëo·∫°n nh·∫°c/clip ƒë·ªÉ app nghe.</div>
+        <div class="ic-hint">Nói, vỗ tay, mở 1 đoạn nhạc/clip để app nghe.</div>
       </div>
 
       <!-- file -->
       <div class="input-card">
-        <div class="ic-title">üìÇ T·∫£i file √¢m thanh</div>
+        <div class="ic-title">📂 Tải file âm thanh</div>
         <label id="dropZone" class="dropzone">
           <input id="fileInput" type="file" accept="audio/*" hidden />
-          <span class="dz-ic">‚¨ÜÔ∏è</span>
-          <span>K√©o‚Äìth·∫£ ho·∫∑c <b>b·∫•m ch·ªçn file</b></span>
-          <span class="dz-sub">mp3 ¬∑ wav ¬∑ m4a ¬∑ ogg ¬∑ webm</span>
+          <span class="dz-ic">⬆️</span>
+          <span>Kéo–thả hoặc <b>bấm chọn file</b></span>
+          <span class="dz-sub">mp3 · wav · m4a · ogg · webm</span>
         </label>
       </div>
 
       <!-- demo -->
       <div class="input-card">
-        <div class="ic-title">‚ö° Th·ª≠ nhanh (demo)</div>
-        <button id="btnDemo" class="btn btn-demo">üéπ Giai ƒëi·ªáu t·ªïng h·ª£p (nh√≥m 7)</button>
-        <div id="sampleBtns" class="sample-btns"><!-- n√∫t m·∫´u th·∫≠t ch√®n ·ªü ƒë√¢y n·∫øu c√≥ --></div>
-        <div class="ic-hint">D√πng ƒë·ªÉ tr√¨nh di·ªÖn nhanh khi kh√¥ng c√≥ micro.</div>
+        <div class="ic-title">⚡ Thử nhanh (demo)</div>
+        <button id="btnDemo" class="btn btn-demo">🎹 Giai điệu tổng hợp (nhóm 7)</button>
+        <div id="sampleBtns" class="sample-btns"><!-- nút mẫu thật chèn ở đây nếu có --></div>
+        <div class="ic-hint">Dùng để trình diễn nhanh khi không có micro.</div>
       </div>
     </div>
 
@@ -261,10 +261,10 @@ body.locked .site-back{display:none}
     <div class="options">
       <label class="opt">
         <input id="simToggle" type="checkbox" />
-        <span>üéöÔ∏è √Çm thanh n√†y do con ng∆∞·ªùi <b>m√¥ ph·ªèng/t·∫°o l·∫°i</b> (chuy·ªÉn sang nh√≥m 5)</span>
+        <span>🎚️ Âm thanh này do con người <b>mô phỏng/tạo lại</b> (chuyển sang nhóm 5)</span>
       </label>
       <div class="opt-block">
-        <div class="opt-label">Ch·ªçn nhi·ªÅu ngu·ªìn g·ªëc quan t√¢m (c√πng l√∫c):</div>
+        <div class="opt-label">Chọn nhiều nguồn gốc quan tâm (cùng lúc):</div>
         <div id="sourceFilters" class="chips"></div>
       </div>
     </div>
@@ -275,41 +275,41 @@ body.locked .site-back{display:none}
     <div id="verdict" class="verdict"></div>
 
     <div class="panel">
-      <h2 class="sec-title">M·ª©c ƒë·ªô theo 7 nh√≥m ngu·ªìn g·ªëc</h2>
+      <h2 class="sec-title">Mức độ theo 7 nhóm nguồn gốc</h2>
       <div id="groupBars" class="group-bars"></div>
     </div>
 
     <div class="panel">
-      <h2 class="sec-title">√Çm thanh m√¥ h√¨nh nh·∫≠n di·ªán <span class="muted">(nh√£n YAMNet ‚Üí nh√≥m)</span></h2>
+      <h2 class="sec-title">Âm thanh mô hình nhận diện <span class="muted">(nhãn YAMNet → nhóm)</span></h2>
       <div id="rawList" class="raw-list"></div>
     </div>
   </section>
 
   <!-- REFERENCE TABLE -->
   <section class="panel ref">
-    <h2 class="sec-title">B·∫£ng 4.1 ‚Äî Quy t·∫Øc b·∫£o h·ªô nh√£n hi·ªáu √¢m thanh</h2>
+    <h2 class="sec-title">Bảng 4.1 — Quy tắc bảo hộ nhãn hiệu âm thanh</h2>
     <table class="ref-table">
-      <thead><tr><th>Nh√≥m</th><th>M√¥ t·∫£</th><th>Kh·∫£ nƒÉng ƒë∆∞·ª£c ch·∫•p nh·∫≠n</th></tr></thead>
+      <thead><tr><th>Nhóm</th><th>Mô tả</th><th>Khả năng được chấp nhận</th></tr></thead>
       <tbody>
-        <tr><td>1 ¬∑ Phi sinh h·ªçc</td><td>Gi√≥, n∆∞·ªõc, s·∫•m, s√≥ng‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
-        <tr><td>2 ¬∑ Sinh v·∫≠t s·ªëng</td><td>Chim, th√∫, c√¥n tr√πng‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
-        <tr><td>3 ¬∑ M√¥i tr∆∞·ªùng t·ªïng h·ª£p</td><td>R·ª´ng, bi·ªÉn, ƒë·ªìng qu√™‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
-        <tr><td>4 ¬∑ Con ng∆∞·ªùi</td><td>N√≥i, h√°t, c∆∞·ªùi‚Ä¶</td><td class="ok">‚úÖ C√≥ th·ªÉ ch·∫•p nh·∫≠n</td></tr>
-        <tr><td>5 ¬∑ M√¥ ph·ªèng t·ª± nhi√™n</td><td>M∆∞a/gi√≥/chim gi·∫£ l·∫≠p‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
-        <tr><td>6 ¬∑ V·∫≠t d·ª•ng/s·∫£n ph·∫©m</td><td>C·ª≠a, ph√≠m, ƒë·ªông c∆°‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
-        <tr><td>7 ¬∑ T·ªïng h·ª£p to√†n ph·∫ßn</td><td>Nh·∫°c/AI/ƒëi·ªán t·ª≠, c√≥ giai ƒëi·ªáu</td><td class="best">‚úÖ R·∫•t n√™n ch·∫•p nh·∫≠n</td></tr>
+        <tr><td>1 · Phi sinh học</td><td>Gió, nước, sấm, sóng…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
+        <tr><td>2 · Sinh vật sống</td><td>Chim, thú, côn trùng…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
+        <tr><td>3 · Môi trường tổng hợp</td><td>Rừng, biển, đồng quê…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
+        <tr><td>4 · Con người</td><td>Nói, hát, cười…</td><td class="ok">✅ Có thể chấp nhận</td></tr>
+        <tr><td>5 · Mô phỏng tự nhiên</td><td>Mưa/gió/chim giả lập…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
+        <tr><td>6 · Vật dụng/sản phẩm</td><td>Cửa, phím, động cơ…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
+        <tr><td>7 · Tổng hợp toàn phần</td><td>Nhạc/AI/điện tử, có giai điệu</td><td class="best">✅ Rất nên chấp nhận</td></tr>
       </tbody>
     </table>
     <p class="ref-note">
-      <b>Nguy√™n t·∫Øc:</b> ∆∞u ti√™n b·∫£o h·ªô nh√≥m [4] & [7] ho·∫∑c t·ªï h·ª£p c√≥ x·ª≠ l√Ω s√°ng t·∫°o / ph·ªëi giai ƒëi·ªáu.
-      Kh√¥ng ch·∫•p nh·∫≠n ƒë∆°n l·∫ª [1][2][3][5][6] n·∫øu thi·∫øu y·∫øu t·ªë s√°ng t·∫°o. N·∫øu kh√¥ng c√≥ t√≠nh ph√¢n bi·ªát
-      c·ªë h·ªØu ‚Üí ph·∫£i ch·ª©ng minh ‚Äú√Ω nghƒ©a th·ª© hai‚Äù qua s·ª≠ d·ª•ng (ƒëi·ªÉm b,c,d,ƒë,e Kho·∫£n 2 ƒêi·ªÅu 74 Lu·∫≠t SHTT).
+      <b>Nguyên tắc:</b> ưu tiên bảo hộ nhóm [4] & [7] hoặc tổ hợp có xử lý sáng tạo / phối giai điệu.
+      Không chấp nhận đơn lẻ [1][2][3][5][6] nếu thiếu yếu tố sáng tạo. Nếu không có tính phân biệt
+      cố hữu → phải chứng minh “ý nghĩa thứ hai” qua sử dụng (điểm b,c,d,đ,e Khoản 2 Điều 74 Luật SHTT).
     </p>
   </section>
 
   <footer class="foot">
-    Ch·∫°y ho√†n to√†n tr√™n tr√¨nh duy·ªát ¬∑ m√¥ h√¨nh <b>Google YAMNet</b> (AudioSet, 521 l·ªõp) qua MediaPipe ¬∑
-    √¢m thanh <b>kh√¥ng</b> ƒë∆∞·ª£c g·ª≠i ƒëi ƒë√¢u.
+    Chạy hoàn toàn trên trình duyệt · mô hình <b>Google YAMNet</b> (AudioSet, 521 lớp) qua MediaPipe ·
+    âm thanh <b>không</b> được gửi đi đâu.
   </footer>
 </div>
 
@@ -318,54 +318,54 @@ body.locked .site-back{display:none}
 // GROUP value: 1..7 = nhom nguon goc; 0 = bo qua (im lang / kenh / nen).
 window.YAMNET_LABELS = ["Speech","Child speech, kid speaking","Conversation","Narration, monologue","Babbling","Speech synthesizer","Shout","Bellow","Whoop","Yell","Children shouting","Screaming","Whispering","Laughter","Baby laughter","Giggle","Snicker","Belly laugh","Chuckle, chortle","Crying, sobbing","Baby cry, infant cry","Whimper","Wail, moan","Sigh","Singing","Choir","Yodeling","Chant","Mantra","Child singing","Synthetic singing","Rapping","Humming","Groan","Grunt","Whistling","Breathing","Wheeze","Snoring","Gasp","Pant","Snort","Cough","Throat clearing","Sneeze","Sniff","Run","Shuffle","Walk, footsteps","Chewing, mastication","Biting","Gargling","Stomach rumble","Burping, eructation","Hiccup","Fart","Hands","Finger snapping","Clapping","Heart sounds, heartbeat","Heart murmur","Cheering","Applause","Chatter","Crowd","Hubbub, speech noise, speech babble","Children playing","Animal","Domestic animals, pets","Dog","Bark","Yip","Howl","Bow-wow","Growling","Whimper (dog)","Cat","Purr","Meow","Hiss","Caterwaul","Livestock, farm animals, working animals","Horse","Clip-clop","Neigh, whinny","Cattle, bovinae","Moo","Cowbell","Pig","Oink","Goat","Bleat","Sheep","Fowl","Chicken, rooster","Cluck","Crowing, cock-a-doodle-doo","Turkey","Gobble","Duck","Quack","Goose","Honk","Wild animals","Roaring cats (lions, tigers)","Roar","Bird","Bird vocalization, bird call, bird song","Chirp, tweet","Squawk","Pigeon, dove","Coo","Crow","Caw","Owl","Hoot","Bird flight, flapping wings","Canidae, dogs, wolves","Rodents, rats, mice","Mouse","Patter","Insect","Cricket","Mosquito","Fly, housefly","Buzz","Bee, wasp, etc.","Frog","Croak","Snake","Rattle","Whale vocalization","Music","Musical instrument","Plucked string instrument","Guitar","Electric guitar","Bass guitar","Acoustic guitar","Steel guitar, slide guitar","Tapping (guitar technique)","Strum","Banjo","Sitar","Mandolin","Zither","Ukulele","Keyboard (musical)","Piano","Electric piano","Organ","Electronic organ","Hammond organ","Synthesizer","Sampler","Harpsichord","Percussion","Drum kit","Drum machine","Drum","Snare drum","Rimshot","Drum roll","Bass drum","Timpani","Tabla","Cymbal","Hi-hat","Wood block","Tambourine","Rattle (instrument)","Maraca","Gong","Tubular bells","Mallet percussion","Marimba, xylophone","Glockenspiel","Vibraphone","Steelpan","Orchestra","Brass instrument","French horn","Trumpet","Trombone","Bowed string instrument","String section","Violin, fiddle","Pizzicato","Cello","Double bass","Wind instrument, woodwind instrument","Flute","Saxophone","Clarinet","Harp","Bell","Church bell","Jingle bell","Bicycle bell","Tuning fork","Chime","Wind chime","Change ringing (campanology)","Harmonica","Accordion","Bagpipes","Didgeridoo","Shofar","Theremin","Singing bowl","Scratching (performance technique)","Pop music","Hip hop music","Beatboxing","Rock music","Heavy metal","Punk rock","Grunge","Progressive rock","Rock and roll","Psychedelic rock","Rhythm and blues","Soul music","Reggae","Country","Swing music","Bluegrass","Funk","Folk music","Middle Eastern music","Jazz","Disco","Classical music","Opera","Electronic music","House music","Techno","Dubstep","Drum and bass","Electronica","Electronic dance music","Ambient music","Trance music","Music of Latin America","Salsa music","Flamenco","Blues","Music for children","New-age music","Vocal music","A capella","Music of Africa","Afrobeat","Christian music","Gospel music","Music of Asia","Carnatic music","Music of Bollywood","Ska","Traditional music","Independent music","Song","Background music","Theme music","Jingle (music)","Soundtrack music","Lullaby","Video game music","Christmas music","Dance music","Wedding music","Happy music","Sad music","Tender music","Exciting music","Angry music","Scary music","Wind","Rustling leaves","Wind noise (microphone)","Thunderstorm","Thunder","Water","Rain","Raindrop","Rain on surface","Stream","Waterfall","Ocean","Waves, surf","Steam","Gurgling","Fire","Crackle","Vehicle","Boat, Water vehicle","Sailboat, sailing ship","Rowboat, canoe, kayak","Motorboat, speedboat","Ship","Motor vehicle (road)","Car","Vehicle horn, car horn, honking","Toot","Car alarm","Power windows, electric windows","Skidding","Tire squeal","Car passing by","Race car, auto racing","Truck","Air brake","Air horn, truck horn","Reversing beeps","Ice cream truck, ice cream van","Bus","Emergency vehicle","Police car (siren)","Ambulance (siren)","Fire engine, fire truck (siren)","Motorcycle","Traffic noise, roadway noise","Rail transport","Train","Train whistle","Train horn","Railroad car, train wagon","Train wheels squealing","Subway, metro, underground","Aircraft","Aircraft engine","Jet engine","Propeller, airscrew","Helicopter","Fixed-wing aircraft, airplane","Bicycle","Skateboard","Engine","Light engine (high frequency)","Dental drill, dentist's drill","Lawn mower","Chainsaw","Medium engine (mid frequency)","Heavy engine (low frequency)","Engine knocking","Engine starting","Idling","Accelerating, revving, vroom","Door","Doorbell","Ding-dong","Sliding door","Slam","Knock","Tap","Squeak","Cupboard open or close","Drawer open or close","Dishes, pots, and pans","Cutlery, silverware","Chopping (food)","Frying (food)","Microwave oven","Blender","Water tap, faucet","Sink (filling or washing)","Bathtub (filling or washing)","Hair dryer","Toilet flush","Toothbrush","Electric toothbrush","Vacuum cleaner","Zipper (clothing)","Keys jangling","Coin (dropping)","Scissors","Electric shaver, electric razor","Shuffling cards","Typing","Typewriter","Computer keyboard","Writing","Alarm","Telephone","Telephone bell ringing","Ringtone","Telephone dialing, DTMF","Dial tone","Busy signal","Alarm clock","Siren","Civil defense siren","Buzzer","Smoke detector, smoke alarm","Fire alarm","Foghorn","Whistle","Steam whistle","Mechanisms","Ratchet, pawl","Clock","Tick","Tick-tock","Gears","Pulleys","Sewing machine","Mechanical fan","Air conditioning","Cash register","Printer","Camera","Single-lens reflex camera","Tools","Hammer","Jackhammer","Sawing","Filing (rasp)","Sanding","Power tool","Drill","Explosion","Gunshot, gunfire","Machine gun","Fusillade","Artillery fire","Cap gun","Fireworks","Firecracker","Burst, pop","Eruption","Boom","Wood","Chop","Splinter","Crack","Glass","Chink, clink","Shatter","Liquid","Splash, splatter","Slosh","Squish","Drip","Pour","Trickle, dribble","Gush","Fill (with liquid)","Spray","Pump (liquid)","Stir","Boiling","Sonar","Arrow","Whoosh, swoosh, swish","Thump, thud","Thunk","Electronic tuner","Effects unit","Chorus effect","Basketball bounce","Bang","Slap, smack","Whack, thwack","Smash, crash","Breaking","Bouncing","Whip","Flap","Scratch","Scrape","Rub","Roll","Crushing","Crumpling, crinkling","Tearing","Beep, bleep","Ping","Ding","Clang","Squeal","Creak","Rustle","Whir","Clatter","Sizzle","Clicking","Clickety-clack","Rumble","Plop","Jingle, tinkle","Hum","Zing","Boing","Crunch","Silence","Sine wave","Harmonic","Chirp tone","Sound effect","Pulse","Inside, small room","Inside, large room or hall","Inside, public space","Outside, urban or manmade","Outside, rural or natural","Reverberation","Echo","Noise","Environmental noise","Static","Mains hum","Distortion","Sidetone","Cacophony","White noise","Pink noise","Throbbing","Vibration","Television","Radio","Field recording"];
 
-window.YAMNET_LABELS_VI = ["Ti·∫øng n√≥i","Tr·∫ª em n√≥i","Tr√≤ chuy·ªán","Thuy·∫øt minh, ƒë·ªôc tho·∫°i","B·∫≠p b·∫π","Gi·ªçng n√≥i t·ªïng h·ª£p","H√¥ h√©t","Bellow","Whoop","La h√©t","Children shouting","Th√©t","Th√¨ th·∫ßm","Ti·∫øng c∆∞·ªùi","Tr·∫ª c∆∞·ªùi","C∆∞·ªùi kh√∫c kh√≠ch","Snicker","Belly laugh","Chuckle, chortle","Kh√≥c, n·ª©c n·ªü","Tr·∫ª kh√≥c","Whimper","Wail, moan","Th·ªü d√†i","H√°t","H·ª£p x∆∞·ªõng","H√°t luy·∫øn","T·ª•ng","Mantra","Tr·∫ª h√°t","Gi·ªçng h√°t t·ªïng h·ª£p","Rap","Ng√¢n nga","Groan","Grunt","Hu√Ωt s√°o","H∆°i th·ªü","Wheeze","Ng√°y","Gasp","Pant","Snort","Ho","Throat clearing","H·∫Øt h∆°i","Sniff","Ch·∫°y","Shuffle","B∆∞·ªõc ch√¢n","Nhai","Biting","Gargling","Stomach rumble","Burping, eructation","Hiccup","Fart","Hands","B√∫ng tay","V·ªó tay","Nh·ªãp tim","Heart murmur","C·ªï v≈©","V·ªó tay t√°n th∆∞·ªüng","X√¨ x√†o","ƒê√°m ƒë√¥ng","Hubbub, speech noise, speech babble","Tr·∫ª ch∆°i ƒë√πa","ƒê·ªông v·∫≠t","Th√∫ nu√¥i","Ch√≥","Ch√≥ s·ªßa","Yip","H√∫","Bow-wow","G·∫ßm g·ª´","Whimper (dog)","M√®o","M√®o r·ª´ r·ª´","M√®o k√™u","R√≠t (m√®o/r·∫Øn)","Caterwaul","Gia s√∫c","Ng·ª±a","Clip-clop","Ng·ª±a h√≠","B√≤","B√≤ r·ªëng","Cowbell","L·ª£n","Oink","D√™","Bleat","C·ª´u","Gia c·∫ßm","G√†","Cluck","G√† g√°y","G√† t√¢y","Gobble","V·ªãt","V·ªãt k√™u","Ng·ªóng","Honk","Th√∫ hoang","H·ªï/s∆∞ t·ª≠ g·∫ßm","G·∫ßm","Chim","Chim h√≥t","Chim r√≠u r√≠t","Squawk","B·ªì c√¢u","Coo","Qu·∫°","Caw","C√∫","Hoot","V·ªó c√°nh bay","Ch√≥ s√≥i","Lo√†i g·∫∑m nh·∫•m","Mouse","Patter","C√¥n tr√πng","D·∫ø","Mu·ªói","Ru·ªìi","Vo ve","Ong","·∫æch","Croak","R·∫Øn","Rattle","C√° voi","√Çm nh·∫°c","Nh·∫°c c·ª•","ƒê√†n d√¢y g·∫£y","Guitar","Guitar ƒëi·ªán","Bass guitar","Guitar th√πng","Steel guitar, slide guitar","Tapping (guitar technique)","Strum","Banjo","Sitar","Mandolin","Zither","Ukulele","ƒê√†n ph√≠m","Piano","Piano ƒëi·ªán","Organ","Electronic organ","Hammond organ","Synthesizer (ƒë√†n t·ªïng h·ª£p)","Sampler","Harpsichord","B·ªô g√µ","D√†n tr·ªëng","Tr·ªëng m√°y","Tr·ªëng","Snare drum","Rimshot","Drum roll","Bass drum","Timpani","Tabla","Ch≈©m ch·ªçe","Hi-hat","Wood block","Tambourine","Rattle (instrument)","Maraca","C·ªìng/chi√™ng","Tubular bells","Mallet percussion","ƒê√†n phi·∫øn g·ªó","Glockenspiel","Vibraphone","Steelpan","D√†n nh·∫°c","K√®n ƒë·ªìng","French horn","K√®n trumpet","Trombone","Bowed string instrument","String section","Violin","Pizzicato","Cello","Double bass","Nh·∫°c c·ª• h∆°i","S√°o","Saxophone","Clarinet","ƒê√†n h·∫°c","Chu√¥ng","Chu√¥ng nh√† th·ªù","Jingle bell","Bicycle bell","Tuning fork","Chu√¥ng gi√≥/chime","Chu√¥ng gi√≥","Change ringing (campanology)","Harmonica","Accordion","Bagpipes","Didgeridoo","Shofar","Theremin","Singing bowl","Scratching (performance technique)","Nh·∫°c pop","Hip hop","Beatbox","Nh·∫°c rock","Heavy metal","Punk rock","Grunge","Progressive rock","Rock and roll","Psychedelic rock","Rhythm and blues","Soul music","Reggae","Country","Swing music","Bluegrass","Funk","Folk music","Middle Eastern music","Jazz","Disco","Nh·∫°c c·ªï ƒëi·ªÉn","Opera","Nh·∫°c ƒëi·ªán t·ª≠","House music","Techno","Dubstep","Drum and bass","Electronica","Nh·∫°c EDM","Ambient music","Trance music","Music of Latin America","Salsa music","Flamenco","Blues","Music for children","New-age music","Nh·∫°c c√≥ l·ªùi","A cappella","Music of Africa","Afrobeat","Christian music","Gospel music","Music of Asia","Carnatic music","Music of Bollywood","Ska","Traditional music","Independent music","B√†i h√°t","Nh·∫°c n·ªÅn","Nh·∫°c ch·ªß ƒë·ªÅ","Nh·∫°c hi·ªáu (jingle)","Nh·∫°c phim","H√°t ru","Nh·∫°c game","Nh·∫°c Gi√°ng sinh","Nh·∫°c khi√™u v≈©","Wedding music","Nh·∫°c vui","Sad music","Tender music","Exciting music","Angry music","Scary music","Gi√≥","L√° x√†o x·∫°c","Ti·∫øng gi√≥ (micro)","Gi√¥ng b√£o","S·∫•m","N∆∞·ªõc","M∆∞a","Gi·ªçt m∆∞a","M∆∞a r∆°i tr√™n b·ªÅ m·∫∑t","Su·ªëi ch·∫£y","Th√°c n∆∞·ªõc","ƒê·∫°i d∆∞∆°ng","S√≥ng bi·ªÉn","H∆°i n∆∞·ªõc","N∆∞·ªõc r√≥c r√°ch","L·ª≠a","L·ª≠a l√©p b√©p","Ph∆∞∆°ng ti·ªán","Thuy·ªÅn/t√†u n∆∞·ªõc","Sailboat, sailing ship","Rowboat, canoe, kayak","Ca n√¥","T√†u th·ªßy","Xe c·ªô (ƒë∆∞·ªùng b·ªô)","√î t√¥","C√≤i xe","Toot","C√≤i b√°o ƒë·ªông xe","Power windows, electric windows","Skidding","Tire squeal","Xe ch·∫°y ngang","Race car, auto racing","Xe t·∫£i","Air brake","Air horn, truck horn","Reversing beeps","Ice cream truck, ice cream van","Xe bu√Ωt","Xe ∆∞u ti√™n","C√≤i xe c·∫£nh s√°t","C√≤i xe c·ª©u th∆∞∆°ng","C√≤i xe c·ª©u h·ªèa","Xe m√°y","Ti·∫øng giao th√¥ng","ƒê∆∞·ªùng s·∫Øt","T√†u h·ªèa","C√≤i t√†u","Train horn","Railroad car, train wagon","Train wheels squealing","T√†u ƒëi·ªán ng·∫ßm","M√°y bay","ƒê·ªông c∆° m√°y bay","ƒê·ªông c∆° ph·∫£n l·ª±c","Propeller, airscrew","Tr·ª±c thƒÉng","Fixed-wing aircraft, airplane","Xe ƒë·∫°p","V√°n tr∆∞·ª£t","ƒê·ªông c∆°","Light engine (high frequency)","Dental drill, dentist's drill","M√°y c·∫Øt c·ªè","C∆∞a m√°y","Medium engine (mid frequency)","Heavy engine (low frequency)","Engine knocking","Kh·ªüi ƒë·ªông m√°y","Idling","R·ªì ga","C·ª≠a","Chu√¥ng c·ª≠a","ƒêing-ƒëoong","C·ª≠a tr∆∞·ª£t","ƒê√≥ng s·∫ßm","G√µ c·ª≠a","G√µ nh·∫π","C·ªçt k·∫πt","ƒê√≥ng/m·ªü t·ªß","ƒê√≥ng/m·ªü ngƒÉn k√©o","B√°t ƒëƒ©a, xoong n·ªìi","Dao nƒ©a","BƒÉm/ch·∫∑t (th·ª©c ƒÉn)","Chi√™n r√°n","L√≤ vi s√≥ng","M√°y xay","V√≤i n∆∞·ªõc","B·ªìn r·ª≠a","Bathtub (filling or washing)","M√°y s·∫•y t√≥c","X·∫£ b·ªìn c·∫ßu","Toothbrush","Electric toothbrush","M√°y h√∫t b·ª•i","K√©o kh√≥a","L·∫°ch c·∫°ch ch√¨a kh√≥a","Ti·ªÅn xu r∆°i","K√©o c·∫Øt","Electric shaver, electric razor","Shuffling cards","G√µ ph√≠m","M√°y ƒë√°nh ch·ªØ","B√†n ph√≠m m√°y t√≠nh","Vi·∫øt","B√°o ƒë·ªông","ƒêi·ªán tho·∫°i","Chu√¥ng ƒëi·ªán tho·∫°i","Nh·∫°c chu√¥ng","B·∫•m s·ªë ƒëi·ªán tho·∫°i","Dial tone","Busy signal","ƒê·ªìng h·ªì b√°o th·ª©c","C√≤i h√∫","Civil defense siren","Chu√¥ng b√°o (buzzer)","B√°o kh√≥i","B√°o ch√°y","Foghorn","C√≤i/hu√Ωt","Steam whistle","C∆° c·∫•u m√°y m√≥c","Ratchet, pawl","ƒê·ªìng h·ªì","T√≠ch t·∫Øc","T√≠ch-t·∫Øc","Gears","Pulleys","M√°y may","Qu·∫°t m√°y","M√°y l·∫°nh","M√°y t√≠nh ti·ªÅn","M√°y in","M√°y ·∫£nh","Single-lens reflex camera","D·ª•ng c·ª•","B√∫a","B√∫a khoan","C∆∞a","Filing (rasp)","Sanding","D·ª•ng c·ª• ƒëi·ªán","Khoan","N·ªï","S√∫ng","S√∫ng m√°y","Fusillade","Artillery fire","Cap gun","Ph√°o hoa","Ph√°o","B·ª•p, n·ªï b·ªëp","Eruption","·∫¶m","G·ªó","Chop","Splinter","Crack","Th·ªßy tinh","Chink, clink","V·ª° tan","Ch·∫•t l·ªèng","B·∫Øn t√≥e","Slosh","Squish","Nh·ªè gi·ªçt","R√≥t","Trickle, dribble","Gush","ƒê·ªï ƒë·∫ßy","Spray","Pump (liquid)","Stir","S√¥i","Sonar","Arrow","V√∫t (whoosh)","Th·ªãch","Thunk","B·ªô ch·ªânh √¢m ƒëi·ªán t·ª≠","B·ªô hi·ªáu ·ª©ng √¢m","Hi·ªáu ·ª©ng chorus","Basketball bounce","ƒêo√†ng","Slap, smack","Whack, thwack","ƒê·ªï v·ª°","V·ª°","Bouncing","Whip","Flap","C√†o/g√£i","C·ªç x√°t","Rub","LƒÉn","Crushing","V√≤ gi·∫•y","X√©","B√≠p, b√≠p","Ping","ƒêing","Keng","Squeal","C·ªçt k·∫πt","S·ªôt so·∫°t","Whir","L·∫°ch c·∫°ch","X√®o x√®o","T√°ch t√°ch","Clickety-clack","·∫¶m √¨","Plop","Leng keng","√ô √π","Zing","Boing","R√¥m r·ªëp","Im l·∫∑ng","S√≥ng sin","H√†i √¢m","√Çm chirp (t·ªïng h·ª£p)","Hi·ªáu ·ª©ng √¢m thanh","Xung","Inside, small room","Inside, large room or hall","Inside, public space","Outside, urban or manmade","Ngo√†i tr·ªùi (thi√™n nhi√™n)","V·ªçng √¢m","Ti·∫øng vang","T·∫°p √¢m","Environmental noise","Static","√ô ƒëi·ªán","M√©o ti·∫øng","Sidetone","Cacophony","Nhi·ªÖu tr·∫Øng","Pink noise","Rung ƒë·ªông","Rung","Tivi","Radio","B·∫£n thu hi·ªán tr∆∞·ªùng"];
+window.YAMNET_LABELS_VI = ["Tiếng nói","Trẻ em nói","Trò chuyện","Thuyết minh, độc thoại","Bập bẹ","Giọng nói tổng hợp","Hô hét","Bellow","Whoop","La hét","Children shouting","Thét","Thì thầm","Tiếng cười","Trẻ cười","Cười khúc khích","Snicker","Belly laugh","Chuckle, chortle","Khóc, nức nở","Trẻ khóc","Whimper","Wail, moan","Thở dài","Hát","Hợp xướng","Hát luyến","Tụng","Mantra","Trẻ hát","Giọng hát tổng hợp","Rap","Ngân nga","Groan","Grunt","Huýt sáo","Hơi thở","Wheeze","Ngáy","Gasp","Pant","Snort","Ho","Throat clearing","Hắt hơi","Sniff","Chạy","Shuffle","Bước chân","Nhai","Biting","Gargling","Stomach rumble","Burping, eructation","Hiccup","Fart","Hands","Búng tay","Vỗ tay","Nhịp tim","Heart murmur","Cổ vũ","Vỗ tay tán thưởng","Xì xào","Đám đông","Hubbub, speech noise, speech babble","Trẻ chơi đùa","Động vật","Thú nuôi","Chó","Chó sủa","Yip","Hú","Bow-wow","Gầm gừ","Whimper (dog)","Mèo","Mèo rừ rừ","Mèo kêu","Rít (mèo/rắn)","Caterwaul","Gia súc","Ngựa","Clip-clop","Ngựa hí","Bò","Bò rống","Cowbell","Lợn","Oink","Dê","Bleat","Cừu","Gia cầm","Gà","Cluck","Gà gáy","Gà tây","Gobble","Vịt","Vịt kêu","Ngỗng","Honk","Thú hoang","Hổ/sư tử gầm","Gầm","Chim","Chim hót","Chim ríu rít","Squawk","Bồ câu","Coo","Quạ","Caw","Cú","Hoot","Vỗ cánh bay","Chó sói","Loài gặm nhấm","Mouse","Patter","Côn trùng","Dế","Muỗi","Ruồi","Vo ve","Ong","Ếch","Croak","Rắn","Rattle","Cá voi","Âm nhạc","Nhạc cụ","Đàn dây gảy","Guitar","Guitar điện","Bass guitar","Guitar thùng","Steel guitar, slide guitar","Tapping (guitar technique)","Strum","Banjo","Sitar","Mandolin","Zither","Ukulele","Đàn phím","Piano","Piano điện","Organ","Electronic organ","Hammond organ","Synthesizer (đàn tổng hợp)","Sampler","Harpsichord","Bộ gõ","Dàn trống","Trống máy","Trống","Snare drum","Rimshot","Drum roll","Bass drum","Timpani","Tabla","Chũm chọe","Hi-hat","Wood block","Tambourine","Rattle (instrument)","Maraca","Cồng/chiêng","Tubular bells","Mallet percussion","Đàn phiến gỗ","Glockenspiel","Vibraphone","Steelpan","Dàn nhạc","Kèn đồng","French horn","Kèn trumpet","Trombone","Bowed string instrument","String section","Violin","Pizzicato","Cello","Double bass","Nhạc cụ hơi","Sáo","Saxophone","Clarinet","Đàn hạc","Chuông","Chuông nhà thờ","Jingle bell","Bicycle bell","Tuning fork","Chuông gió/chime","Chuông gió","Change ringing (campanology)","Harmonica","Accordion","Bagpipes","Didgeridoo","Shofar","Theremin","Singing bowl","Scratching (performance technique)","Nhạc pop","Hip hop","Beatbox","Nhạc rock","Heavy metal","Punk rock","Grunge","Progressive rock","Rock and roll","Psychedelic rock","Rhythm and blues","Soul music","Reggae","Country","Swing music","Bluegrass","Funk","Folk music","Middle Eastern music","Jazz","Disco","Nhạc cổ điển","Opera","Nhạc điện tử","House music","Techno","Dubstep","Drum and bass","Electronica","Nhạc EDM","Ambient music","Trance music","Music of Latin America","Salsa music","Flamenco","Blues","Music for children","New-age music","Nhạc có lời","A cappella","Music of Africa","Afrobeat","Christian music","Gospel music","Music of Asia","Carnatic music","Music of Bollywood","Ska","Traditional music","Independent music","Bài hát","Nhạc nền","Nhạc chủ đề","Nhạc hiệu (jingle)","Nhạc phim","Hát ru","Nhạc game","Nhạc Giáng sinh","Nhạc khiêu vũ","Wedding music","Nhạc vui","Sad music","Tender music","Exciting music","Angry music","Scary music","Gió","Lá xào xạc","Tiếng gió (micro)","Giông bão","Sấm","Nước","Mưa","Giọt mưa","Mưa rơi trên bề mặt","Suối chảy","Thác nước","Đại dương","Sóng biển","Hơi nước","Nước róc rách","Lửa","Lửa lép bép","Phương tiện","Thuyền/tàu nước","Sailboat, sailing ship","Rowboat, canoe, kayak","Ca nô","Tàu thủy","Xe cộ (đường bộ)","Ô tô","Còi xe","Toot","Còi báo động xe","Power windows, electric windows","Skidding","Tire squeal","Xe chạy ngang","Race car, auto racing","Xe tải","Air brake","Air horn, truck horn","Reversing beeps","Ice cream truck, ice cream van","Xe buýt","Xe ưu tiên","Còi xe cảnh sát","Còi xe cứu thương","Còi xe cứu hỏa","Xe máy","Tiếng giao thông","Đường sắt","Tàu hỏa","Còi tàu","Train horn","Railroad car, train wagon","Train wheels squealing","Tàu điện ngầm","Máy bay","Động cơ máy bay","Động cơ phản lực","Propeller, airscrew","Trực thăng","Fixed-wing aircraft, airplane","Xe đạp","Ván trượt","Động cơ","Light engine (high frequency)","Dental drill, dentist's drill","Máy cắt cỏ","Cưa máy","Medium engine (mid frequency)","Heavy engine (low frequency)","Engine knocking","Khởi động máy","Idling","Rồ ga","Cửa","Chuông cửa","Đing-đoong","Cửa trượt","Đóng sầm","Gõ cửa","Gõ nhẹ","Cọt kẹt","Đóng/mở tủ","Đóng/mở ngăn kéo","Bát đĩa, xoong nồi","Dao nĩa","Băm/chặt (thức ăn)","Chiên rán","Lò vi sóng","Máy xay","Vòi nước","Bồn rửa","Bathtub (filling or washing)","Máy sấy tóc","Xả bồn cầu","Toothbrush","Electric toothbrush","Máy hút bụi","Kéo khóa","Lạch cạch chìa khóa","Tiền xu rơi","Kéo cắt","Electric shaver, electric razor","Shuffling cards","Gõ phím","Máy đánh chữ","Bàn phím máy tính","Viết","Báo động","Điện thoại","Chuông điện thoại","Nhạc chuông","Bấm số điện thoại","Dial tone","Busy signal","Đồng hồ báo thức","Còi hú","Civil defense siren","Chuông báo (buzzer)","Báo khói","Báo cháy","Foghorn","Còi/huýt","Steam whistle","Cơ cấu máy móc","Ratchet, pawl","Đồng hồ","Tích tắc","Tích-tắc","Gears","Pulleys","Máy may","Quạt máy","Máy lạnh","Máy tính tiền","Máy in","Máy ảnh","Single-lens reflex camera","Dụng cụ","Búa","Búa khoan","Cưa","Filing (rasp)","Sanding","Dụng cụ điện","Khoan","Nổ","Súng","Súng máy","Fusillade","Artillery fire","Cap gun","Pháo hoa","Pháo","Bụp, nổ bốp","Eruption","Ầm","Gỗ","Chop","Splinter","Crack","Thủy tinh","Chink, clink","Vỡ tan","Chất lỏng","Bắn tóe","Slosh","Squish","Nhỏ giọt","Rót","Trickle, dribble","Gush","Đổ đầy","Spray","Pump (liquid)","Stir","Sôi","Sonar","Arrow","Vút (whoosh)","Thịch","Thunk","Bộ chỉnh âm điện tử","Bộ hiệu ứng âm","Hiệu ứng chorus","Basketball bounce","Đoàng","Slap, smack","Whack, thwack","Đổ vỡ","Vỡ","Bouncing","Whip","Flap","Cào/gãi","Cọ xát","Rub","Lăn","Crushing","Vò giấy","Xé","Bíp, bíp","Ping","Đing","Keng","Squeal","Cọt kẹt","Sột soạt","Whir","Lạch cạch","Xèo xèo","Tách tách","Clickety-clack","Ầm ì","Plop","Leng keng","Ù ù","Zing","Boing","Rôm rốp","Im lặng","Sóng sin","Hài âm","Âm chirp (tổng hợp)","Hiệu ứng âm thanh","Xung","Inside, small room","Inside, large room or hall","Inside, public space","Outside, urban or manmade","Ngoài trời (thiên nhiên)","Vọng âm","Tiếng vang","Tạp âm","Environmental noise","Static","Ù điện","Méo tiếng","Sidetone","Cacophony","Nhiễu trắng","Pink noise","Rung động","Rung","Tivi","Radio","Bản thu hiện trường"];
 
 window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,6,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,1,1,1,6,1,6,1,1,6,6,6,6,6,6,6,6,6,6,7,7,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,0,7,7,7,7,7,0,0,0,0,3,0,0,0,0,0,6,7,0,0,0,0,6,6,6,6,0];
 
 </script>
 <script>
-// taxonomy.js ‚Äî 7 nhom am thanh + logic phan loai & verdict bao ho nhan hieu.
+// taxonomy.js — 7 nhom am thanh + logic phan loai & verdict bao ho nhan hieu.
 // Phu thuoc: js/yamnet_map.js (window.YAMNET_GROUP / _LABELS / _LABELS_VI)
 (function (w) {
   "use strict";
 
   // --- Dinh nghia 7 nhom (theo YEU CAU APP AM THANH, Bang 4.1) ---
   var GROUPS = {
-    1: { id: 1, parent: "natural", code: "TN1", name: "Phi sinh h·ªçc",
-         full: "√Çm thanh t·ª´ thi√™n nhi√™n v√¥ sinh ‚Äì phi sinh h·ªçc",
-         desc: "√Çm thanh t·ª± nhi√™n t·ª´ y·∫øu t·ªë kh√¥ng s·ªëng: gi√≥, n∆∞·ªõc, ƒë·∫•t ƒë√°, s·∫•m s√©t, th·ªùi ti·∫øt.",
-         eg: "gi√≥ r√¨ r√†o, su·ªëi ch·∫£y, s·∫•m n·ªï, s√≥ng bi·ªÉn",
-         verdict: "low",  color: "#3b82f6", icon: "üå¨Ô∏è" },
-    2: { id: 2, parent: "natural", code: "TN2", name: "Sinh v·∫≠t s·ªëng",
-         full: "√Çm thanh t·ª´ sinh v·∫≠t s·ªëng ‚Äì sinh h·ªçc",
-         desc: "√Çm thanh do c∆° th·ªÉ s·ªëng t·∫°o ra (kh√¥ng g·ªìm con ng∆∞·ªùi): ƒë·ªông v·∫≠t, c√¥n tr√πng, th·ª±c v·∫≠t.",
-         eg: "chim h√≥t, ch√≥ s·ªßa, ve k√™u, ·∫øch k√™u",
-         verdict: "low",  color: "#22c55e", icon: "üê¶" },
-    3: { id: 3, parent: "natural", code: "TN3", name: "M√¥i tr∆∞·ªùng t·ªïng h·ª£p",
-         full: "√Çm thanh m√¥i tr∆∞·ªùng t·ªïng h·ª£p",
-         desc: "K·∫øt h·ª£p t·ª± nhi√™n c·ªßa nhi·ªÅu √¢m thanh trong m·ªôt kh√¥ng gian s·ªëng.",
-         eg: "r·ª´ng (chim+gi√≥+l√°), bi·ªÉn (s√≥ng+gi√≥+chim)",
-         verdict: "low",  color: "#14b8a6", icon: "üèûÔ∏è" },
-    4: { id: 4, parent: "artificial", code: "NT4", name: "Con ng∆∞·ªùi",
-         full: "√Çm thanh c·ªßa con ng∆∞·ªùi",
-         desc: "√Çm ph√°t ra trong sinh ho·∫°t c·ªßa con ng∆∞·ªùi: ti·∫øng n√≥i, h√°t, c∆∞·ªùi, nh·ªãp th·ªü.",
-         eg: "ti·∫øng n√≥i, ti·∫øng h√°t, ti·∫øng c∆∞·ªùi",
-         verdict: "ok",   color: "#f59e0b", icon: "üó£Ô∏è" },
-    5: { id: 5, parent: "artificial", code: "NT5", name: "M√¥ ph·ªèng t·ª± nhi√™n",
-         full: "√Çm thanh m√¥ ph·ªèng t·ª± nhi√™n",
-         desc: "Con ng∆∞·ªùi t√°i hi·ªán √¢m t·ª± nhi√™n b·∫±ng c√¥ng c·ª•/ph·∫ßn m·ªÅm (kh√¥ng ph√°t sinh tr·ª±c ti·∫øp t·ª´ t·ª± nhi√™n).",
-         eg: "ti·∫øng m∆∞a/gi√≥/chim gi·∫£ l·∫≠p b·∫±ng m√°y",
-         verdict: "low",  color: "#a78bfa", icon: "üéöÔ∏è" },
-    6: { id: 6, parent: "artificial", code: "NT6", name: "V·∫≠t d·ª•ng / s·∫£n ph·∫©m",
-         full: "√Çm thanh t·ª´ v·∫≠t d·ª•ng, s·∫£n ph·∫©m nh√¢n t·∫°o",
-         desc: "√Çm ph√°t sinh khi d√πng thi·∫øt b·ªã, c√¥ng c·ª•, s·∫£n ph·∫©m do con ng∆∞·ªùi ch·∫ø t·∫°o.",
-         eg: "ƒë√≥ng c·ª≠a, g√µ ph√≠m, ƒë·ªông c∆° xe, chu√¥ng ƒëi·ªán tho·∫°i",
-         verdict: "low",  color: "#64748b", icon: "‚öôÔ∏è" },
-    7: { id: 7, parent: "artificial", code: "NT7", name: "T·ªïng h·ª£p to√†n ph·∫ßn",
-         full: "√Çm thanh nh√¢n t·∫°o m√¥ ph·ªèng to√†n ph·∫ßn",
-         desc: "T·∫°o ho√†n to√†n b·∫±ng k·ªπ thu·∫≠t s·ªë / AI, ho·∫∑c ph·ªëi giai ƒëi·ªáu, t·∫ßn s·ªë kh√°c bi·ªát v·ªõi th·ª±c t·∫ø.",
-         eg: "nh·∫°c, jingle, gi·ªçng AI, hi·ªáu ·ª©ng ƒëi·ªán t·ª≠, √¢m game",
-         verdict: "high", color: "#ec4899", icon: "üéπ" },
+    1: { id: 1, parent: "natural", code: "TN1", name: "Phi sinh học",
+         full: "Âm thanh từ thiên nhiên vô sinh – phi sinh học",
+         desc: "Âm thanh tự nhiên từ yếu tố không sống: gió, nước, đất đá, sấm sét, thời tiết.",
+         eg: "gió rì rào, suối chảy, sấm nổ, sóng biển",
+         verdict: "low",  color: "#3b82f6", icon: "🌬️" },
+    2: { id: 2, parent: "natural", code: "TN2", name: "Sinh vật sống",
+         full: "Âm thanh từ sinh vật sống – sinh học",
+         desc: "Âm thanh do cơ thể sống tạo ra (không gồm con người): động vật, côn trùng, thực vật.",
+         eg: "chim hót, chó sủa, ve kêu, ếch kêu",
+         verdict: "low",  color: "#22c55e", icon: "🐦" },
+    3: { id: 3, parent: "natural", code: "TN3", name: "Môi trường tổng hợp",
+         full: "Âm thanh môi trường tổng hợp",
+         desc: "Kết hợp tự nhiên của nhiều âm thanh trong một không gian sống.",
+         eg: "rừng (chim+gió+lá), biển (sóng+gió+chim)",
+         verdict: "low",  color: "#14b8a6", icon: "🏞️" },
+    4: { id: 4, parent: "artificial", code: "NT4", name: "Con người",
+         full: "Âm thanh của con người",
+         desc: "Âm phát ra trong sinh hoạt của con người: tiếng nói, hát, cười, nhịp thở.",
+         eg: "tiếng nói, tiếng hát, tiếng cười",
+         verdict: "ok",   color: "#f59e0b", icon: "🗣️" },
+    5: { id: 5, parent: "artificial", code: "NT5", name: "Mô phỏng tự nhiên",
+         full: "Âm thanh mô phỏng tự nhiên",
+         desc: "Con người tái hiện âm tự nhiên bằng công cụ/phần mềm (không phát sinh trực tiếp từ tự nhiên).",
+         eg: "tiếng mưa/gió/chim giả lập bằng máy",
+         verdict: "low",  color: "#a78bfa", icon: "🎚️" },
+    6: { id: 6, parent: "artificial", code: "NT6", name: "Vật dụng / sản phẩm",
+         full: "Âm thanh từ vật dụng, sản phẩm nhân tạo",
+         desc: "Âm phát sinh khi dùng thiết bị, công cụ, sản phẩm do con người chế tạo.",
+         eg: "đóng cửa, gõ phím, động cơ xe, chuông điện thoại",
+         verdict: "low",  color: "#64748b", icon: "⚙️" },
+    7: { id: 7, parent: "artificial", code: "NT7", name: "Tổng hợp toàn phần",
+         full: "Âm thanh nhân tạo mô phỏng toàn phần",
+         desc: "Tạo hoàn toàn bằng kỹ thuật số / AI, hoặc phối giai điệu, tần số khác biệt với thực tế.",
+         eg: "nhạc, jingle, giọng AI, hiệu ứng điện tử, âm game",
+         verdict: "high", color: "#ec4899", icon: "🎹" },
   };
 
   // Cac nhom "tu nhien" dung de suy ra nhom 3 (moi truong tong hop)
@@ -467,40 +467,40 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
     // 1) Nhom 7 troi -> rat nen chap nhan
     if (dom === 7) {
       return mk("high",
-        "R·∫•t n√™n ch·∫•p nh·∫≠n",
-        "√Çm thanh t·ªïng h·ª£p to√†n ph·∫ßn (nh√≥m 7) ‚Äì c√≥ giai ƒëi·ªáu / y·∫øu t·ªë s√°ng t·∫°o, t√≠nh ph√¢n bi·ªát cao.",
-        "Kho·∫£n 1 ƒêi·ªÅu 74 Lu·∫≠t SHTT: c√≥ kh·∫£ nƒÉng t·ª± ph√¢n bi·ªát.");
+        "Rất nên chấp nhận",
+        "Âm thanh tổng hợp toàn phần (nhóm 7) – có giai điệu / yếu tố sáng tạo, tính phân biệt cao.",
+        "Khoản 1 Điều 74 Luật SHTT: có khả năng tự phân biệt.");
     }
     // 2) Nhom 4 troi -> co the chap nhan
     if (dom === 4) {
       return mk("ok",
-        "C√≥ th·ªÉ ch·∫•p nh·∫≠n",
-        "√Çm thanh c·ªßa con ng∆∞·ªùi (nh√≥m 4) ‚Äì c√≥ th·ªÉ mang d·∫•u ·∫•n ri√™ng ƒë·ªÉ ph√¢n bi·ªát.",
-        "Xem x√©t theo Kho·∫£n 1 ƒêi·ªÅu 74 Lu·∫≠t SHTT (t√≠nh ph√¢n bi·ªát c·ªë h·ªØu).");
+        "Có thể chấp nhận",
+        "Âm thanh của con người (nhóm 4) – có thể mang dấu ấn riêng để phân biệt.",
+        "Xem xét theo Khoản 1 Điều 74 Luật SHTT (tính phân biệt cố hữu).");
     }
     // 3) Nhom 1/2/3/5/6 NHUNG co phoi giai dieu (nhom 7 cung xuat hien) -> co dieu kien
     if (naturalOrFunctional.length && creativeMelody) {
       return mk("conditional",
-        "C√≥ th·ªÉ xem x√©t (c√≥ y·∫øu t·ªë s√°ng t·∫°o)",
-        "√Çm t·ª± nhi√™n/ch·ª©c nƒÉng ƒë∆∞·ª£c ph·ªëi v·ªõi giai ƒëi·ªáu ho·∫∑c x·ª≠ l√Ω s√°ng t·∫°o (m√¥ ph·ªèng s√°ng t·∫°o) ‚Äì l√†m tƒÉng t√≠nh ph√¢n bi·ªát.",
-        "Khuy·∫øn kh√≠ch m√¥ ph·ªèng s√°ng t·∫°o; v·∫´n c·∫ßn th·∫©m ƒë·ªãnh t√≠nh ph√¢n bi·ªát t·ªïng th·ªÉ.");
+        "Có thể xem xét (có yếu tố sáng tạo)",
+        "Âm tự nhiên/chức năng được phối với giai điệu hoặc xử lý sáng tạo (mô phỏng sáng tạo) – làm tăng tính phân biệt.",
+        "Khuyến khích mô phỏng sáng tạo; vẫn cần thẩm định tính phân biệt tổng thể.");
     }
     // 4) Chi nhom 4 + 7 vang mat nhung con nguoi co mat manh -> ok
     if (has(4)) {
       return mk("ok",
-        "C√≥ th·ªÉ ch·∫•p nh·∫≠n",
-        "C√≥ th√†nh ph·∫ßn √¢m thanh con ng∆∞·ªùi (nh√≥m 4) ƒë·ªß r√µ.",
-        "Xem x√©t theo Kho·∫£n 1 ƒêi·ªÅu 74 Lu·∫≠t SHTT.");
+        "Có thể chấp nhận",
+        "Có thành phần âm thanh con người (nhóm 4) đủ rõ.",
+        "Xem xét theo Khoản 1 Điều 74 Luật SHTT.");
     }
     // 5) Chi co nhom 1/2/3/5/6 don le -> khong nen chap nhan don le
     return mk("low",
-      "Kh√¥ng n√™n ch·∫•p nh·∫≠n ƒë∆°n l·∫ª",
-      "Ch·ªâ g·ªìm √¢m t·ª± nhi√™n / ch·ª©c nƒÉng (nh√≥m " + naturalOrFunctional.join(", ") +
-      ") thi·∫øu y·∫øu t·ªë s√°ng t·∫°o ‚Äì kh√¥ng c√≥ t√≠nh ph√¢n bi·ªát c·ªë h·ªØu r√µ r√†ng.",
-      "C·∫ßn ch·ª©ng minh ‚Äú√Ω nghƒ©a th·ª© hai‚Äù (secondary meaning) qua s·ª≠ d·ª•ng l√¢u d√†i ‚Äì ƒëi·ªÉm b, c, d, ƒë, e Kho·∫£n 2 ƒêi·ªÅu 74 Lu·∫≠t SHTT.");
+      "Không nên chấp nhận đơn lẻ",
+      "Chỉ gồm âm tự nhiên / chức năng (nhóm " + naturalOrFunctional.join(", ") +
+      ") thiếu yếu tố sáng tạo – không có tính phân biệt cố hữu rõ ràng.",
+      "Cần chứng minh “ý nghĩa thứ hai” (secondary meaning) qua sử dụng lâu dài – điểm b, c, d, đ, e Khoản 2 Điều 74 Luật SHTT.");
 
     function mk(level, title, reason, legal) {
-      var badge = { high:"‚úÖ", ok:"‚úÖ", conditional:"üü°", low:"‚ùå" }[level];
+      var badge = { high:"✅", ok:"✅", conditional:"🟡", low:"❌" }[level];
       return { level: level, title: title, badge: badge, reason: reason, legal: legal };
     }
   }
@@ -530,7 +530,7 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
 
 </script>
 <script>
-// classifier.js ‚Äî boc model YAMNet (Google AudioSet) qua MediaPipe Tasks Audio.
+// classifier.js — boc model YAMNet (Google AudioSet) qua MediaPipe Tasks Audio.
 // Chay hoan toan trong trinh duyet (client-side). Khong gui am thanh len server.
 window.AudioEngine = (function () {
   "use strict";
@@ -553,13 +553,13 @@ window.AudioEngine = (function () {
   }
 
   async function load() {
-    say("ƒêang t·∫£i th∆∞ vi·ªán AI‚Ä¶");
+    say("Đang tải thư viện AI…");
     var mod = await import(/* @vite-ignore */ MP_URL);
     var AudioClassifier = mod.AudioClassifier;
     var FilesetResolver = mod.FilesetResolver;
-    say("ƒêang t·∫£i b·ªô gi·∫£i m√£ (WASM)‚Ä¶");
+    say("Đang tải bộ giải mã (WASM)…");
     var fileset = await FilesetResolver.forAudioTasks(WASM_URL);
-    say("ƒêang t·∫£i m√¥ h√¨nh YAMNet (~4MB)‚Ä¶");
+    say("Đang tải mô hình YAMNet (~4MB)…");
     var clf = await AudioClassifier.createFromOptions(fileset, {
       baseOptions: { modelAssetPath: MODEL_URL },
       maxResults: 521,
@@ -625,7 +625,7 @@ window.AudioEngine = (function () {
 
 </script>
 <script>
-// app.js ‚Äî dieu khien giao dien: ghi am / tai file / demo -> phan loai -> hien ket qua.
+// app.js — dieu khien giao dien: ghi am / tai file / demo -> phan loai -> hien ket qua.
 (function () {
   "use strict";
   var T = window.TAXONOMY, E = window.AudioEngine;
@@ -702,8 +702,8 @@ window.AudioEngine = (function () {
              T.GROUPS[g].icon + " [" + g + "] " + T.GROUPS[g].name + "</span>";
     }).join("");
     var multi = agg.present.length > 1
-      ? '<div class="multi-note">üîé Ph√°t hi·ªán <b>' + agg.present.length +
-        " ngu·ªìn √¢m c√πng l√∫c</b> (ƒëa ngu·ªìn)</div>"
+      ? '<div class="multi-note">🔎 Phát hiện <b>' + agg.present.length +
+        " nguồn âm cùng lúc</b> (đa nguồn)</div>"
       : "";
     el.className = "verdict v-" + v.level;
     el.innerHTML =
@@ -712,7 +712,7 @@ window.AudioEngine = (function () {
         '<div class="v-title">' + v.title + "</div>" +
         '<div class="v-srcs">' + present + "</div>" + multi +
         '<div class="v-reason">' + v.reason + "</div>" +
-        '<div class="v-legal">‚öñÔ∏è ' + v.legal + "</div>" +
+        '<div class="v-legal">⚖️ ' + v.legal + "</div>" +
       "</div>";
   }
 
@@ -734,7 +734,7 @@ window.AudioEngine = (function () {
         '<div class="bar-head">' +
           '<span class="bar-ic">' + g.icon + "</span>" +
           '<span class="bar-name">[' + g.id + "] " + g.name + "</span>" +
-          '<span class="bar-pct">' + (on ? pctTxt : "‚Äî") + "</span>" +
+          '<span class="bar-pct">' + (on ? pctTxt : "—") + "</span>" +
         "</div>" +
         '<div class="bar-track"><div class="bar-fill" style="width:' +
           (on ? w : 0) + "%;background:" + g.color + '"></div></div>' +
@@ -753,7 +753,7 @@ window.AudioEngine = (function () {
       return '<div class="raw-item">' +
         '<span class="raw-dot" style="background:' + c + '"></span>' +
         '<span class="raw-label">' + r.labelVi + "</span>" +
-        '<span class="raw-grp" style="--c:' + c + '">' + (r.group || "‚Äì") + "</span>" +
+        '<span class="raw-grp" style="--c:' + c + '">' + (r.group || "–") + "</span>" +
         '<span class="raw-score">' + (r.score * 100).toFixed(0) + "%</span>" +
         "</div>";
     }).join("");
@@ -762,14 +762,14 @@ window.AudioEngine = (function () {
   // ---------- Tai file ----------
   function handleFile(file) {
     if (!file) return;
-    setStatus("ƒêang ƒë·ªçc file: " + file.name + " ‚Ä¶");
+    setStatus("Đang đọc file: " + file.name + " …");
     var url = URL.createObjectURL(file);
     $("player").src = url; $("player").style.display = "block";
     var reader = new FileReader();
     reader.onload = function () {
       analyzeArrayBuffer(reader.result, file.name);
     };
-    reader.onerror = function () { setStatus("‚ùå Kh√¥ng ƒë·ªçc ƒë∆∞·ª£c file."); };
+    reader.onerror = function () { setStatus("❌ Không đọc được file."); };
     reader.readAsArrayBuffer(file);
   }
 
@@ -777,14 +777,14 @@ window.AudioEngine = (function () {
     try {
       E.onStatus(setStatus);
       await E.ready();
-      setStatus("ƒêang ph√¢n t√≠ch √¢m thanh‚Ä¶");
+      setStatus("Đang phân tích âm thanh…");
       var res = await E.classifyArrayBuffer(arrayBuffer);
       setStatus("");
-      if (!res.categories.length) { setStatus("Kh√¥ng nh·∫≠n ƒë∆∞·ª£c √¢m thanh n√†o."); return; }
+      if (!res.categories.length) { setStatus("Không nhận được âm thanh nào."); return; }
       runAnalysis(res.categories);
     } catch (err) {
       console.error(err);
-      setStatus("‚ùå L·ªói: " + (err && err.message ? err.message : err));
+      setStatus("❌ Lỗi: " + (err && err.message ? err.message : err));
     }
   }
 
@@ -796,7 +796,7 @@ window.AudioEngine = (function () {
     try {
       rec.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (e) {
-      setStatus("‚ùå Kh√¥ng truy c·∫≠p ƒë∆∞·ª£c micro. H√£y c·∫•p quy·ªÅn micro cho trang.");
+      setStatus("❌ Không truy cập được micro. Hãy cấp quyền micro cho trang.");
       return;
     }
     rec.chunks = [];
@@ -827,7 +827,7 @@ window.AudioEngine = (function () {
     $("btnRecord").classList.add("hidden");
     $("btnStop").classList.remove("hidden");
     $("recMeter").classList.remove("hidden");
-    setStatus("üî¥ ƒêang ghi √¢m‚Ä¶ (t·ªëi ƒëa " + MAX_SEC + "s)");
+    setStatus("🔴 Đang ghi âm… (tối đa " + MAX_SEC + "s)");
   }
 
   function stopRecording() {
@@ -851,7 +851,7 @@ window.AudioEngine = (function () {
 
   // ---------- Demo: giai dieu tong hop (nhom 7) ----------
   async function demoSynthMelody() {
-    setStatus("ƒêang t·∫°o giai ƒëi·ªáu t·ªïng h·ª£p m·∫´u‚Ä¶");
+    setStatus("Đang tạo giai điệu tổng hợp mẫu…");
     var sr = 16000, dur = 4.5, n = Math.floor(sr * dur);
     var buf = new Float32Array(n);
     var notes = [440, 554, 659, 880, 659, 554, 494, 587]; // arpeggio
@@ -863,8 +863,8 @@ window.AudioEngine = (function () {
         var env = Math.exp(-3.2 * t / (per / sr));          // pluck decay
         var vib = 1 + 0.006 * Math.sin(2 * Math.PI * 5.5 * t); // vibrato
         var s = 0;
-        for (var h = 1; h <= 7; h++) s += (1 / h) * Math.sin(2 * Math.PI * f0 * h * vib * t); // timbre gi√†u h√†i √¢m
-        s += 0.5 * Math.sin(2 * Math.PI * (f0 / 2) * t);    // b√® tr·∫ßm
+        for (var h = 1; h <= 7; h++) s += (1 / h) * Math.sin(2 * Math.PI * f0 * h * vib * t); // timbre giàu hài âm
+        s += 0.5 * Math.sin(2 * Math.PI * (f0 / 2) * t);    // bè trầm
         buf[start + i] = 0.32 * env * s;
       }
     }
@@ -872,11 +872,11 @@ window.AudioEngine = (function () {
     playFloat(buf, sr);
     try {
       E.onStatus(setStatus); await E.ready();
-      setStatus("ƒêang ph√¢n t√≠ch‚Ä¶");
+      setStatus("Đang phân tích…");
       var cats = await E.classifyBuffer(buf);
       setStatus("");
       runAnalysis(cats);
-    } catch (err) { setStatus("‚ùå " + err.message); }
+    } catch (err) { setStatus("❌ " + err.message); }
   }
 
   function playFloat(float32, sr) {
@@ -890,13 +890,13 @@ window.AudioEngine = (function () {
   // tai file mau dong goi san (neu co)
   async function demoSample(url) {
     try {
-      setStatus("ƒêang t·∫£i m·∫´u‚Ä¶");
+      setStatus("Đang tải mẫu…");
       var resp = await fetch(url);
       var ab = await resp.arrayBuffer();
       var blob = new Blob([ab]);
       $("player").src = URL.createObjectURL(blob); $("player").style.display = "block";
       analyzeArrayBuffer(ab, url);
-    } catch (e) { setStatus("‚ùå Kh√¥ng t·∫£i ƒë∆∞·ª£c m·∫´u: " + e.message); }
+    } catch (e) { setStatus("❌ Không tải được mẫu: " + e.message); }
   }
 
   // ---------- Wire ----------
@@ -954,7 +954,7 @@ window.AudioEngine = (function () {
     var h=await sha256(document.getElementById('gatePw').value);
     if(h===HASH){ try{sessionStorage.setItem(KEY,HASH)}catch(e){}; unlock(); }
     else{
-      document.getElementById('gateErr').textContent='Sai m·∫≠t kh·∫©u, th·ª≠ l·∫°i.';
+      document.getElementById('gateErr').textContent='Sai mật khẩu, thử lại.';
       var c=document.querySelector('.gate-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
       var i=document.getElementById('gatePw'); i.select();
     }
