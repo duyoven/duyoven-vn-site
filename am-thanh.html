@@ -473,8 +473,8 @@ body.locked .site-back{display:none}
     <div class="hero-tag" data-en="SOUND TRADEMARK CLASSIFICATION PROJECT">ĐỀ ÁN PHÂN LOẠI NHÃN HIỆU ÂM THANH</div>
     <div class="hero-author" data-en="MASTER’S RESEARCH PROJECT · NGUYEN PHU THANH">ĐỀ ÁN NGHIÊN CỨU THẠC SĨ · NGUYỄN PHÚ THÀNH</div>
     <h1 data-en="A &lt;span&gt;7-group sound&lt;/span&gt; classification system by origin">Hệ thống phân loại <span>7 nhóm âm thanh</span> theo nguồn gốc</h1>
-    <p class="hero-sub" data-en="Listen via microphone or upload an audio file → the &lt;b&gt;YAMNet&lt;/b&gt; AI model classifies the origin → &lt;b&gt;self-assess sound-trademark protectability&lt;/b&gt; (Table 4.1).">
-      Nghe bằng micro hoặc tải file âm thanh → mô hình AI <b>YAMNet</b> tự thẩm định &
+    <p class="hero-sub" data-en="Listen via microphone or upload an audio file → the system automatically classifies the origin → &lt;b&gt;self-assess sound-trademark protectability&lt;/b&gt; (Table 4.1).">
+      Nghe bằng micro hoặc tải file âm thanh → hệ thống tự động thẩm định &
       phân loại nguồn gốc → <b>tự đánh giá khả năng bảo hộ nhãn hiệu âm thanh</b> (Bảng 4.1).
     </p>
     <a class="hero-slides" href="slide-am-thanh" data-en="📊 View defense slides">📊 Xem slide bảo vệ đề án</a>
@@ -533,14 +533,14 @@ body.locked .site-back{display:none}
         </div>
       </div>
       <div class="opt-block be-block">
-        <div class="opt-label">⚙️ <span data-en="AI Backend — BEATs Large + CLAP (advanced)">Backend AI — BEATs Large + CLAP (nâng cao)</span></div>
+        <div class="opt-label">⚙️ <span data-en="Analysis server (advanced)">Máy chủ phân tích (nâng cao)</span></div>
         <div class="be-row">
           <input id="beUrl" class="be-input" type="text" placeholder="https://…trycloudflare.com" />
           <button id="beConnect" class="btn btn-be" data-en="Connect">Kết nối</button>
-          <button id="beBrowser" class="btn btn-be alt" data-en="🧠 In-browser AI">🧠 AI trong trình duyệt</button>
+          <button id="beBrowser" class="btn btn-be alt" data-en="🧠 Local analysis">🧠 Phân tích tại chỗ</button>
           <span id="beStatus" class="be-status">—</span>
         </div>
-        <div class="field-hint" data-en="Leave blank to auto-detect the backend. When off, the app uses in-browser YAMNet + DSP.">Để trống sẽ tự dò backend. Khi backend tắt, app tự dùng YAMNet + DSP ngay trong trình duyệt.</div>
+        <div class="field-hint" data-en="Leave blank to auto-detect. When off, the app switches to local analysis mode.">Để trống sẽ tự dò. Khi máy chủ tắt, app tự chuyển sang chế độ phân tích tại chỗ.</div>
       </div>
     </div>
   </section>
@@ -558,13 +558,13 @@ body.locked .site-back{display:none}
     <div id="aiPanel" class="panel" style="display:none"></div>
 
     <div class="panel">
-      <h2 class="sec-title" data-en="Sounds recognized by the model <span class=&quot;muted&quot;>(YAMNet labels → group)</span>">Âm thanh mô hình nhận diện <span class="muted">(nhãn YAMNet → nhóm)</span></h2>
+      <h2 class="sec-title" data-en="Recognized sounds">Âm thanh nhận diện được</h2>
       <div id="rawList" class="raw-list"></div>
     </div>
 
     <!-- PHÂN TÍCH ÂM HỌC CHUYÊN SÂU (DSP) -->
     <div id="acousticPanel" class="panel" style="display:none">
-      <h2 class="sec-title" data-en="🔬 In-depth acoustic analysis <span class=&quot;muted&quot;>(DSP — independent source #2)</span>">🔬 Phân tích âm học chuyên sâu <span class="muted">(DSP — nguồn độc lập #2)</span></h2>
+      <h2 class="sec-title" data-en="🔬 In-depth acoustic analysis">🔬 Phân tích âm học chuyên sâu</h2>
       <div id="sourceBreakdown" class="source-breakdown"></div>
       <div class="ac-viz">
         <div class="ac-canvas-wrap">
@@ -580,9 +580,9 @@ body.locked .site-back{display:none}
       <div id="acDistinct" class="ac-distinct"></div>
       <div id="staffBox" class="staff-box" style="display:none"></div>
       <div id="acMetrics" class="ac-metrics"></div>
-      <p class="ac-note" data-en="Method: FFT 1024 (Hann), autocorrelation pitch estimation (70–1000 Hz), spectral features (centroid, rolloff, flatness, HNR), spectral-flux onset detection. Results are <b>objective measurements</b>, combined with YAMNet at a 70/30 ratio.">Phương pháp: FFT 1024 (Hann), tự tương quan ước lượng cao độ (70–1000 Hz),
+      <p class="ac-note" data-en="Method: FFT 1024 (Hann), autocorrelation pitch estimation (70–1000 Hz), spectral features (centroid, rolloff, flatness, HNR), spectral-flux onset detection. Results are <b>objective measurements</b>, complementing the classification.">Phương pháp: FFT 1024 (Hann), tự tương quan ước lượng cao độ (70–1000 Hz),
         đặc trưng phổ (tâm phổ, lăn phổ, độ phẳng, HNR), phát hiện onset bằng spectral-flux.
-        Kết quả là <b>số đo khách quan</b>, kết hợp với YAMNet theo tỉ lệ 70/30.</p>
+        Kết quả là <b>số đo khách quan</b>, bổ trợ cho việc phân loại.</p>
     </div>
 
     <!-- LỊCH SỬ / SO SÁNH -->
@@ -749,10 +749,10 @@ body.locked .site-back{display:none}
     <div id="decuongBody" class="dc-body"></div>
   </section>
 
-  <footer class="foot" data-en="Research support tool — <b>Master’s Project in Economic Law · 2026 · Nguyen Phu Thanh · TDMU CH25LKT01</b><br> Advisors: Dr. Nguyen Thi Thu Thuy · Assoc. Prof. Dr. Le Thi Minh — Thu Dau Mot University<br> Runs in the browser · <b>Google YAMNet</b> model (AudioSet, 521 classes) via MediaPipe · audio is never sent anywhere.">
+  <footer class="foot" data-en="Research support tool — <b>Master’s Project in Economic Law · 2026 · Nguyen Phu Thanh · TDMU CH25LKT01</b><br> Advisors: Dr. Nguyen Thi Thu Thuy · Assoc. Prof. Dr. Le Thi Minh — Thu Dau Mot University<br> Runs in the browser · audio processed on your device.">
     Công cụ hỗ trợ nghiên cứu — <b>Đề án Thạc sĩ Luật Kinh tế · 2026 · Nguyễn Phú Thành · TDMU CH25LKT01</b><br>
     GVHD: TS. Nguyễn Thị Thu Thủy · PGS.TS. Lê Thị Minh — Trường Đại học Thủ Dầu Một<br>
-    Chạy trên trình duyệt · mô hình <b>Google YAMNet</b> (AudioSet, 521 lớp) qua MediaPipe · âm thanh không gửi đi đâu.
+    Chạy trên trình duyệt · xử lý âm thanh ngay trên thiết bị.
   </footer>
 </div>
 
@@ -2050,7 +2050,7 @@ window.AudioEngine = (function () {
     if (!state.backendInfo || !AB || !state.lastSamples) return;
     var mySamples = state.lastSamples;
     try {
-      setStatus("⚡ " + L("Đang phân tích bằng BEATs Large + CLAP…", "Analyzing with BEATs Large + CLAP…"));
+      setStatus(L("Đang phân tích…", "Analyzing…"));
       var res = await AB.analyze(mySamples, 16000, dspVoteVector(state.lastAcoustics));
       if (state.lastSamples !== mySamples) return;   // da co am moi -> bo qua
       state.lastBackend = res;
@@ -2172,24 +2172,23 @@ window.AudioEngine = (function () {
     var subs = (cl.subLabels || []).map(function (s) { return '<span class="ai-chip">' + esc(s) + '</span>'; }).join("");
     var uq = (cl.uniqueness != null) ? cl.uniqueness : null;
     var capHtml = state.captionText
-      ? '<div class="ai-cap"><div class="ai-k">🗣️ ' + L("Mô tả & nhận định (AI ngôn ngữ)", "Description & assessment (LLM)") + '</div>' +
+      ? '<div class="ai-cap"><div class="ai-k">🗣️ ' + L("Mô tả & nhận định", "Description & assessment") + '</div>' +
         '<div class="ai-captxt">' + esc(state.captionText) + '</div></div>'
       : "";
     host.innerHTML =
-      '<h2 class="sec-title">⚡ ' + L("Phân tích nâng cao — BEATs Large + CLAP", "Advanced analysis — BEATs Large + CLAP") +
-        ' <span class="muted">(' + L("mô hình transformer SOTA", "SOTA transformer models") + ')</span></h2>' +
+      '<h2 class="sec-title">🔬 ' + L("Phân tích chuyên sâu", "In-depth analysis") + '</h2>' +
       capHtml +
       '<div class="ai-grid">' +
-        '<div class="ai-box"><div class="ai-k">🔎 ' + L("Mô tả ngữ nghĩa (CLAP)", "Semantic description (CLAP)") + '</div>' +
+        '<div class="ai-box"><div class="ai-k">🔎 ' + L("Mô tả ngữ nghĩa", "Semantic description") + '</div>' +
           '<div class="ai-desc">' + esc(cl.description || "—") + '</div>' +
           (subs ? '<div class="ai-subs">' + L("Nhãn phụ", "Sub-labels") + ': ' + subs + '</div>' : '') + '</div>' +
-        '<div class="ai-box"><div class="ai-k">✨ ' + L("Độ độc đáo (CLAP)", "Uniqueness (CLAP)") + '</div>' +
+        '<div class="ai-box"><div class="ai-k">✨ ' + L("Độ độc đáo", "Uniqueness") + '</div>' +
           (uq != null ? '<div class="ai-uq"><div class="ai-uqbar"><div class="ai-uqfill" style="width:' + uq + '%"></div></div><b>' + uq + '/100</b></div>' : '—') +
           '<div class="ai-hint">' + (uq >= 60 ? L("Có dấu ấn riêng, dễ phân biệt.", "Distinctive, memorable.") :
             uq >= 40 ? L("Tương đối — nên tăng yếu tố sáng tạo.", "Moderate — add creative elements.") :
             L("Phổ biến/chức năng — khó phân biệt.", "Common/functional — low distinctiveness.")) + '</div></div>' +
       '</div>' +
-      '<div class="ai-k" style="margin-top:12px">🤖 ' + L("Nhãn BEATs Large (AudioSet)", "BEATs Large labels (AudioSet)") + '</div>' +
+      '<div class="ai-k" style="margin-top:12px">🤖 ' + L("Nhãn nhận diện chi tiết", "Detailed recognized labels") + '</div>' +
       '<div class="raw-list">' + topHtml + '</div>';
 
     // tra cứu tương tự (đối chiếu nhầm lẫn, Đ.74)
@@ -2207,8 +2206,8 @@ window.AudioEngine = (function () {
             '<span class="sim-name">' + esc(s.name) + (s.owner && s.owner !== "—" ? ' · <i>' + esc(s.owner) + '</i>' : "") + '</span>' +
             '<span class="raw-grp">[' + s.group + ']</span></div>';
         }).join("") + '</div>' +
-        '<div class="ai-hint">' + L("Độ tương đồng embedding CLAP — tham khảo khả năng gây nhầm lẫn (điểm h khoản 2 Điều 74). Thư viện tham chiếu hiện là mẫu minh hoạ; có thể nạp nhãn đã đăng ký thật.",
-          "CLAP-embedding similarity — reference for likelihood of confusion (Art. 74(2)(h)). The reference library is currently illustrative; real registered marks can be loaded.") + '</div>';
+        '<div class="ai-hint">' + L("Độ tương đồng đặc trưng âm thanh — tham khảo khả năng gây nhầm lẫn (điểm h khoản 2 Điều 74). Thư viện tham chiếu hiện là mẫu minh hoạ; có thể nạp nhãn đã đăng ký thật.",
+          "Audio-feature similarity — reference for likelihood of confusion (Art. 74(2)(h)). The reference library is currently illustrative; real registered marks can be loaded.") + '</div>';
     }
   }
 
@@ -2292,11 +2291,11 @@ window.AudioEngine = (function () {
     var conf = confidence(agg, agreeN, tops.length);
     state.lastSources = { yTop: yTop, dTop: dTop, mTop: ac.melodyConf > 0 ? mTop : null, conf: conf, agreeN: agreeN, total: tops.length };
     host.innerHTML =
-      '<div class="src-row"><span class="src-k">🤖 ' + L("Nguồn 1 — YAMNet (AI nhận dạng)", "Source 1 — YAMNet (AI recognition)") + '</span><span class="src-v">' + gName(yTop) + '</span></div>' +
-      '<div class="src-row"><span class="src-k">🔬 ' + L("Nguồn 2 — DSP (âm sắc/phổ)", "Source 2 — DSP (timbre/spectrum)") + '</span><span class="src-v">' + gName(dTop) + '</span></div>' +
-      (ac.melodyConf > 0 ? '<div class="src-row"><span class="src-k">🎼 ' + L("Nguồn 3 — Trích giai điệu/nốt", "Source 3 — Melody/note extraction") + '</span><span class="src-v">' + gName(mTop) + '</span></div>' : '') +
-      '<div class="src-row total"><span class="src-k">⚖️ ' + L("Kết hợp (ensemble đa nguồn)", "Combined (multi-source ensemble)") + '</span><span class="src-v">' + gName(agg.dominant) + '</span></div>' +
-      '<div class="src-conf">' + L("Độ tin cậy", "Confidence") + ': <b>' + conf.label + '</b> (' + conf.pct + '%) · ' + agreeN + '/' + tops.length + ' ' + L("nguồn", "sources") + ' ' +
+      '<div class="src-row"><span class="src-k">🤖 ' + L("Phân tích tổng thể", "Overall analysis") + '</span><span class="src-v">' + gName(yTop) + '</span></div>' +
+      '<div class="src-row"><span class="src-k">🔬 ' + L("Phân tích âm sắc", "Timbre analysis") + '</span><span class="src-v">' + gName(dTop) + '</span></div>' +
+      (ac.melodyConf > 0 ? '<div class="src-row"><span class="src-k">🎼 ' + L("Phân tích giai điệu", "Melody analysis") + '</span><span class="src-v">' + gName(mTop) + '</span></div>' : '') +
+      '<div class="src-row total"><span class="src-k">⚖️ ' + L("Kết quả tổng hợp", "Combined result") + '</span><span class="src-v">' + gName(agg.dominant) + '</span></div>' +
+      '<div class="src-conf">' + L("Độ tin cậy", "Confidence") + ': <b>' + conf.label + '</b> (' + conf.pct + '%) · ' + agreeN + '/' + tops.length + ' ' + L("phép phân tích", "analyses") + ' ' +
         (agreeN >= tops.length ? '<span class="ok">' + L("đồng thuận hoàn toàn", "full agreement") + '</span>' : agreeN >= 2 ? '<span class="ok">' + L("đa số đồng thuận", "majority agreement") + '</span>' : '<span class="warn">' + L("phân tán → cần xem kỹ", "divergent → review carefully") + '</span>') + '</div>';
   }
 
@@ -2318,11 +2317,9 @@ window.AudioEngine = (function () {
     }).join("");
     var multi = agg.present.length > 1
       ? '<div class="multi-note">🔎 ' + L("Phát hiện", "Detected") + " <b>" + agg.present.length +
-        " " + L("nguồn âm cùng lúc</b> (đa nguồn)", "sound sources at once</b> (multi-source)") + "</div>"
+        " " + L("nhóm âm cùng lúc</b>", "sound groups at once</b>") + "</div>"
       : "";
-    var eng = agg.engine || "YAMNet + DSP";
-    var engCls = agg.backend ? "eng-pro" : "eng-base";
-    var engBadge = '<span class="v-engine ' + engCls + '">' + (agg.backend ? "⚡ " : "") + esc(eng) + "</span>";
+    var engBadge = "";
     el.className = "verdict v-" + v.level;
     el.innerHTML =
       '<div class="v-badge">' + v.badge + "</div>" +
@@ -2340,9 +2337,9 @@ window.AudioEngine = (function () {
     var ac = state.lastAcoustics, parts = [];
     var labels = ((agg && agg.raw) || []).filter(function (r) { return r.group === k && r.score >= 0.02; })
       .slice(0, 3).map(function (r) { return esc(window.APP_LANG === "en" ? r.label : r.labelVi) + " " + Math.round(r.score * 100) + "%"; });
-    if (labels.length) parts.push('<b>AI:</b> ' + labels.join(", "));
+    if (labels.length) parts.push(labels.join(", "));
     if (ac) {
-      if ((ac.vote[k] || 0) > 0.01) parts.push('<b>DSP:</b> ' + esc(ac.type));
+      if ((ac.vote[k] || 0) > 0.01) parts.push(esc(ac.type));
       if (ac.melodyVote && (ac.melodyVote[k] || 0) > 0.01)
         parts.push('<b>' + L("Giai điệu", "Melody") + ':</b> ' + (ac.notes ? ac.notes.length + L(" nốt", " notes") : L("có", "yes")));
     }
@@ -2722,7 +2719,7 @@ window.AudioEngine = (function () {
     H += '<div class="rp-head"><div><div class="u">' + L("Ủy ban nhân dân TP. Hồ Chí Minh", "People’s Committee of Ho Chi Minh City") + '</div><div class="u t">' + esc(M.school) + '</div></div>' +
       '<div style="text-align:right" class="kv">' + L("Đề án Thạc sĩ Luật Kinh tế", "Master’s Project in Economic Law") + '<br>' + esc(M.author) + '<br>' + esc(M.advisors || "") + '</div></div>';
     H += '<h1>' + L("BÁO CÁO PHÂN TÍCH NHÃN HIỆU ÂM THANH", "SOUND TRADEMARK ANALYSIS REPORT") + '</h1>';
-    H += '<div class="sub">' + L("Công cụ phân loại 7 nhóm âm thanh theo nguồn gốc (AI YAMNet + DSP) · Lập lúc ", "7-group sound origin classification tool (AI YAMNet + DSP) · Generated ") + ts + '</div>';
+    H += '<div class="sub">' + L("Công cụ phân loại 7 nhóm âm thanh theo nguồn gốc · Lập lúc ", "7-group sound origin classification tool · Generated ") + ts + '</div>';
 
     H += '<h2>' + L("I. Thông tin mẫu phân tích", "I. Sample information") + '</h2><table>' +
       '<tr><th style="width:32%">' + L("Tên / mô tả", "Name / description") + '</th><td>' + esc(state.lastName || (sa && sa.name) || L("(không đặt tên)", "(untitled)")) + '</td></tr>' +
@@ -2734,21 +2731,21 @@ window.AudioEngine = (function () {
       ' — ' + L("nhóm trội", "top group") + ': <b>' + gName(agg.dominant) + '</b><br>' + v.reason + '<br><i>⚖️ ' + v.legal + '</i></div>' +
       '<table><thead><tr><th>' + L("Nhóm nguồn gốc", "Origin group") + '</th><th style="text-align:right">' + L("Tỉ lệ", "Share") + '</th><th>' + L("Khả năng chấp nhận", "Acceptability") + '</th></tr></thead><tbody>' + rowsG + '</tbody></table>';
 
-    H += '<h2>' + L("III. Phân tích đa nguồn (ensemble)", "III. Multi-source analysis (ensemble)") + '</h2><table>' +
-      '<tr><th style="width:55%">🤖 ' + L("Nguồn 1 — YAMNet (AI nhận dạng)", "Source 1 — YAMNet (AI recognition)") + '</th><td>' + gName(src.yTop) + '</td></tr>' +
-      '<tr><th>🔬 ' + L("Nguồn 2 — DSP (âm sắc/phổ)", "Source 2 — DSP (timbre/spectrum)") + '</th><td>' + gName(src.dTop) + '</td></tr>' +
-      (src.mTop ? '<tr><th>🎼 ' + L("Nguồn 3 — Trích giai điệu/nốt", "Source 3 — Melody/note extraction") + '</th><td>' + gName(src.mTop) + '</td></tr>' : '') +
-      '<tr style="font-weight:700"><th>⚖️ ' + L("Kết hợp (ensemble)", "Combined (ensemble)") + '</th><td>' + gName(agg.dominant) + '</td></tr></table>' +
-      '<p class="kv">' + L("Độ tin cậy", "Confidence") + ': <b>' + (src.conf ? src.conf.label + " (" + src.conf.pct + "%)" : "—") + '</b> · ' + (src.agreeN || 0) + '/' + (src.total || 0) + ' ' + L("nguồn đồng thuận.", "sources in agreement.") + '</p>';
+    H += '<h2>' + L("III. Phân tích tổng hợp", "III. Combined analysis") + '</h2><table>' +
+      '<tr><th style="width:55%">🤖 ' + L("Phân tích tổng thể", "Overall analysis") + '</th><td>' + gName(src.yTop) + '</td></tr>' +
+      '<tr><th>🔬 ' + L("Phân tích âm sắc", "Timbre analysis") + '</th><td>' + gName(src.dTop) + '</td></tr>' +
+      (src.mTop ? '<tr><th>🎼 ' + L("Phân tích giai điệu", "Melody analysis") + '</th><td>' + gName(src.mTop) + '</td></tr>' : '') +
+      '<tr style="font-weight:700"><th>⚖️ ' + L("Kết quả tổng hợp", "Combined result") + '</th><td>' + gName(agg.dominant) + '</td></tr></table>' +
+      '<p class="kv">' + L("Độ tin cậy", "Confidence") + ': <b>' + (src.conf ? src.conf.label + " (" + src.conf.pct + "%)" : "—") + '</b> · ' + (src.agreeN || 0) + '/' + (src.total || 0) + ' ' + L("phép phân tích đồng thuận.", "analyses in agreement.") + '</p>';
 
     if (ac) {
-      H += '<h2>' + L("IV. Phân tích âm học chuyên sâu (DSP)", "IV. In-depth acoustic analysis (DSP)") + '</h2>' +
+      H += '<h2>' + L("IV. Phân tích âm học chuyên sâu", "IV. In-depth acoustic analysis") + '</h2>' +
         '<p class="kv">' + L("Loại tín hiệu", "Signal type") + ': <b>' + esc(ac.type) + '</b> · ' + L("Độ phân biệt âm học", "Acoustic distinctiveness") + ': <b>' + ac.distinctiveness + '/100</b></p>';
       if (specImg) H += '<div class="kv" style="margin:6px 0 2px">' + L("Spectrogram (phổ tần số – thời gian):", "Spectrogram (frequency–time):") + '</div><img src="' + specImg + '">';
       if (waveImg) H += '<div class="kv" style="margin:6px 0 2px">' + L("Waveform (dạng sóng):", "Waveform:") + '</div><img src="' + waveImg + '">';
       if (staff) H += '<div class="kv" style="margin:8px 0 2px">🎼 ' + L("Ký âm tự động (khuông nhạc 5 dòng – tham khảo cho bản thể hiện đồ họa):", "Auto notation (5-line staff — reference for the graphic representation):") + '</div>' + staff;
       H += '<div class="grid2" style="margin-top:8px"><div><table><thead><tr><th>' + L("Chỉ số", "Metric") + '</th><th style="text-align:right">' + L("Giá trị", "Value") + '</th></tr></thead><tbody>' + rowsM + '</tbody></table></div>' +
-        '<div><div class="kv" style="margin-bottom:3px">' + L("Âm thanh mô hình nhận diện (YAMNet):", "Sounds recognized by the model (YAMNet):") + '</div><table><thead><tr><th>' + L("Nhãn", "Label") + '</th><th>' + L("Nhóm", "Group") + '</th><th style="text-align:right">%</th></tr></thead><tbody>' + rowsR + '</tbody></table></div></div>';
+        '<div><div class="kv" style="margin-bottom:3px">' + L("Âm thanh nhận diện được:", "Recognized sounds:") + '</div><table><thead><tr><th>' + L("Nhãn", "Label") + '</th><th>' + L("Nhóm", "Group") + '</th><th style="text-align:right">%</th></tr></thead><tbody>' + rowsR + '</tbody></table></div></div>';
     }
 
     H += '<h2>' + L("V. Tự đánh giá khả năng bảo hộ nhãn hiệu", "V. Self-assessment of protectability") + '</h2>' + saHTML;
@@ -2802,10 +2799,10 @@ window.AudioEngine = (function () {
     var r = await AB.autodetect();
     state.backendInfo = r ? r.info : null;
     if (r) {
-      setBeStatus("on", "⚡ BEATs Large + CLAP", r.url);
+      setBeStatus("on", L("● Đã kết nối máy chủ", "● Server connected"), r.url);
       if (state.lastSamples && !state.lastBackend) maybeBackend();   // bổ sung cho âm đang xem
     } else {
-      setBeStatus("off", L("✕ Chưa kết nối — dùng YAMNet+DSP", "✕ Not connected — using YAMNet+DSP"));
+      setBeStatus("off", L("✕ Chưa kết nối (chế độ tại chỗ)", "✕ Not connected (local mode)"));
     }
   }
 
@@ -2815,14 +2812,14 @@ window.AudioEngine = (function () {
     if (!state.lastSamples) { setStatus(L("Hãy phân tích một âm thanh trước.", "Analyze a sound first.")); return; }
     var samples = state.lastSamples;
     try {
-      setStatus("🧠 " + L("Đang tải mô hình AI trong trình duyệt (lần đầu ~1–2 phút)…", "Loading in-browser AI models (first time ~1–2 min)…"));
+      setStatus(L("Đang tải mô hình phân tích (lần đầu ~1–2 phút)…", "Loading analysis models (first time ~1–2 min)…"));
       var res = await window.BROWSERAI.analyze(samples, function (stage) {
-        setStatus("🧠 " + L("AI trình duyệt", "Browser AI") + ": " + stage + "…");
+        setStatus("🧠 " + L("Phân tích tại chỗ", "Local analysis") + ": " + stage + "…");
       });
       if (state.lastSamples !== samples) return;
       state.lastBackend = res; state.captionText = null; setStatus(""); render(); genCaption();
     } catch (e) {
-      setStatus("⚠ " + L("Không tải được AI trình duyệt: ", "Browser AI failed: ") + (e && e.message ? e.message : e));
+      setStatus("⚠ " + L("Không tải được mô hình tại chỗ: ", "Local model failed: ") + (e && e.message ? e.message : e));
     }
   }
 
