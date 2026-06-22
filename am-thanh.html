@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="robots" content="noindex,nofollow" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ph√¢n lo·∫°i 7 nh√≥m √¢m thanh theo ngu·ªìn g·ªëc</title>
+<meta name="description" content="App ph√¢n lo·∫°i √¢m thanh theo ngu·ªìn g·ªëc (7 nh√≥m) & ƒë√°nh gi√° kh·∫£ nƒÉng b·∫£o h·ªô nh√£n hi·ªáu √¢m thanh." />
+<style>
+:root{
+  --bg:#0b1020; --bg2:#111935; --card:#161f3d; --card2:#1d294e;
+  --ink:#eef2ff; --muted:#9aa6c8; --line:#2a3866;
+  --accent:#8b5cf6; --accent2:#ec4899;
+  --ok:#22c55e; --no:#ef4444; --cond:#f59e0b;
+  --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.35);
+  font-synthesis:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(139,92,246,.18), transparent),
+    radial-gradient(1000px 500px at 0% 0%, rgba(236,72,153,.12), transparent),
+    var(--bg);
+  color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:28px 18px 60px}
+
+/* hero */
+.hero{text-align:center;padding:18px 0 26px}
+.hero-tag{
+  display:inline-block;font-size:12px;letter-spacing:.18em;font-weight:700;
+  color:#c4b5fd;background:rgba(139,92,246,.14);border:1px solid var(--line);
+  padding:6px 14px;border-radius:999px;margin-bottom:14px;
+}
+.hero h1{font-size:clamp(26px,4.5vw,40px);line-height:1.15;margin:.2em 0}
+.hero h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{color:var(--muted);max-width:680px;margin:12px auto 0;font-size:15.5px}
+.hero-sub b{color:var(--ink)}
+
+/* panels */
+.panel{
+  background:linear-gradient(180deg,var(--card),var(--bg2));
+  border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin:16px 0;box-shadow:var(--shadow);
+}
+.sec-title{font-size:17px;margin:0 0 14px;display:flex;gap:8px;align-items:baseline}
+.sec-title .muted,.muted{color:var(--muted);font-weight:400;font-size:13px}
+
+/* input */
+.input-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.input-card{
+  background:var(--card2);border:1px solid var(--line);border-radius:14px;
+  padding:16px;display:flex;flex-direction:column;gap:10px;min-height:150px;
+}
+.ic-title{font-weight:700;font-size:15px}
+.ic-hint{color:var(--muted);font-size:12.5px;margin-top:auto}
+.btn{
+  border:none;border-radius:11px;padding:12px 14px;font-size:14.5px;font-weight:700;
+  cursor:pointer;color:#fff;transition:transform .08s,filter .15s;
+}
+.btn:hover{filter:brightness(1.08)} .btn:active{transform:scale(.98)}
+.btn-rec{background:linear-gradient(90deg,#ef4444,#f97316)}
+.btn-stop{background:linear-gradient(90deg,#475569,#1e293b)}
+.btn-demo{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.hidden{display:none!important}
+
+.rec-meter{display:flex;align-items:center;gap:10px}
+.level-track{flex:1;height:10px;background:#0c1330;border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.level-fill{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#eab308,#ef4444);transition:width .05s}
+.rec-timer{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;min-width:40px}
+
+.dropzone{
+  flex:1;border:2px dashed var(--line);border-radius:12px;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  text-align:center;padding:14px;cursor:pointer;color:var(--muted);transition:.15s;
+}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent);background:rgba(139,92,246,.08);color:var(--ink)}
+.dz-ic{font-size:26px} .dz-sub{font-size:11.5px;color:var(--muted)}
+.sample-btns{display:flex;flex-wrap:wrap;gap:6px}
+.sample-btns .btn{padding:8px 10px;font-size:12.5px;background:var(--card)}
+
+.player{width:100%;margin-top:14px}
+.status{
+  margin-top:12px;padding:10px 14px;border-radius:10px;background:rgba(139,92,246,.12);
+  border:1px solid var(--line);color:#c4b5fd;font-size:14px;
+}
+
+/* options */
+.options{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:12px}
+.opt{display:flex;gap:9px;align-items:center;font-size:14px;color:var(--muted);cursor:pointer}
+.opt b{color:var(--ink)}
+.opt input,.chip input{width:17px;height:17px;accent-color:var(--accent)}
+.opt-label{font-size:13px;color:var(--muted);margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;background:var(--card2);
+  border:1px solid var(--line);border-radius:99px;padding:7px 12px;font-size:13px;cursor:pointer;
+}
+.chip-ic{font-size:14px}
+
+/* results */
+.results{display:none}
+.results.show{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.verdict{
+  display:flex;gap:18px;align-items:flex-start;border-radius:var(--radius);
+  padding:22px;margin:16px 0;border:1px solid var(--line);box-shadow:var(--shadow);
+}
+.v-high{background:linear-gradient(120deg,rgba(34,197,94,.20),rgba(16,185,129,.08));border-color:rgba(34,197,94,.5)}
+.v-ok{background:linear-gradient(120deg,rgba(34,197,94,.14),rgba(20,184,166,.06));border-color:rgba(34,197,94,.35)}
+.v-conditional{background:linear-gradient(120deg,rgba(245,158,11,.18),rgba(234,179,8,.06));border-color:rgba(245,158,11,.5)}
+.v-low{background:linear-gradient(120deg,rgba(239,68,68,.18),rgba(244,63,94,.06));border-color:rgba(239,68,68,.5)}
+.v-badge{font-size:42px;line-height:1}
+.v-title{font-size:22px;font-weight:800;margin-bottom:8px}
+.v-srcs{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0}
+.src-pill{
+  font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:99px;
+  color:#fff;background:var(--c);box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;
+}
+.multi-note{font-size:13px;color:#fbbf24;margin:6px 0}
+.v-reason{margin-top:8px;font-size:14.5px}
+.v-legal{margin-top:10px;font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:9px}
+
+/* bars */
+.group-bars{display:flex;flex-direction:column;gap:14px}
+.bar-row{opacity:1;transition:.2s}
+.bar-row.off{opacity:.32}
+.bar-row.present .bar-name{color:#fff}
+.bar-head{display:flex;align-items:center;gap:9px;font-size:14px;margin-bottom:6px}
+.bar-ic{font-size:16px}
+.bar-name{font-weight:600;color:var(--muted);flex:1}
+.bar-row.present .bar-name::after{content:" ‚óè";color:#34d399;font-size:10px}
+.bar-pct{font-variant-numeric:tabular-nums;font-weight:700}
+.bar-track{height:12px;background:#0c1330;border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.bar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.bar-desc{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* raw list */
+.raw-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 18px}
+.raw-item{display:flex;align-items:center;gap:9px;font-size:13.5px;padding:5px 0;border-bottom:1px solid rgba(42,56,102,.5)}
+.raw-dot{width:9px;height:9px;border-radius:99px;flex:none}
+.raw-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.raw-grp{font-size:11px;font-weight:800;color:#fff;background:var(--c);border-radius:6px;padding:1px 7px}
+.raw-score{font-variant-numeric:tabular-nums;color:var(--muted);min-width:34px;text-align:right}
+
+/* reference table */
+.ref-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.ref-table th,.ref-table td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.ref-table th{background:var(--card2);color:var(--muted);font-weight:700}
+.ref-table td.ok{color:#86efac;font-weight:700;white-space:nowrap}
+.ref-table td.best{color:#34d399;font-weight:800;white-space:nowrap}
+.ref-table td.no{color:#fca5a5;white-space:nowrap}
+.ref-note{font-size:12.5px;color:var(--muted);margin:12px 0 0;line-height:1.6}
+
+.foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:26px}
+.foot b{color:var(--ink)}
+
+@media (max-width:720px){
+  .input-grid{grid-template-columns:1fr}
+  .raw-list{grid-template-columns:1fr}
+  .verdict{flex-direction:column;gap:10px}
+}
+
+</style>
+<style>
+body.locked{overflow:hidden}
+body.locked .wrap{display:none}
+#gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(1000px 600px at 70% -10%, rgba(139,92,246,.25), transparent), #0b1020}
+body:not(.locked) #gate{display:none}
+.gate-card{width:100%;max-width:380px;background:linear-gradient(180deg,#161f3d,#111935);
+  border:1px solid #2a3866;border-radius:20px;padding:34px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.gate-ic{font-size:44px}
+.gate-title{font-size:22px;margin:8px 0 4px;color:#eef2ff}
+.gate-sub{color:#9aa6c8;font-size:14px;margin:0 0 20px}
+.gate-input{width:100%;padding:13px 15px;border-radius:12px;border:1px solid #2a3866;background:#0c1330;
+  color:#eef2ff;font-size:16px;outline:none;text-align:center;letter-spacing:.12em}
+.gate-input:focus{border-color:#8b5cf6}
+.gate-btn{width:100%;margin-top:14px;padding:13px;border:none;border-radius:12px;cursor:pointer;
+  font-size:15px;font-weight:700;color:#fff;background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+.gate-btn:active{transform:scale(.98)}
+.gate-err{color:#fca5a5;font-size:13.5px;min-height:20px;margin-top:12px}
+.gate-card.shake{animation:shk .4s}
+@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.gate-back{display:inline-block;margin-top:8px;color:#9aa6c8;font-size:13px;text-decoration:none}
+.gate-back:hover{color:#eef2ff}
+.site-back{position:fixed;top:12px;left:12px;z-index:50;background:rgba(22,31,61,.85);border:1px solid #2a3866;
+  color:#c4b5fd;text-decoration:none;font-size:12.5px;padding:7px 12px;border-radius:99px}
+body.locked .site-back{display:none}
+.site-back:hover{color:#fff}
+</style>
+</head>
+<body class="locked">
+<a class="site-back" href="https://duyoven.vn">‚Üê duyoven.vn</a>
+<div id="gate" role="dialog" aria-modal="true">
+  <form class="gate-card" id="gateForm" autocomplete="off">
+    <div class="gate-ic">üîí</div>
+    <h1 class="gate-title">Khu v·ª±c c√≥ m·∫≠t kh·∫©u</h1>
+    <p class="gate-sub">Nh·∫≠p m·∫≠t kh·∫©u ƒë·ªÉ v√†o ·ª©ng d·ª•ng ph√¢n lo·∫°i √¢m thanh.</p>
+    <input id="gatePw" type="password" class="gate-input" placeholder="M·∫≠t kh·∫©u" autocomplete="off" />
+    <button type="submit" class="gate-btn">V√†o ·ª©ng d·ª•ng ‚Üí</button>
+    <div id="gateErr" class="gate-err"></div>
+    <a class="gate-back" href="https://duyoven.vn">‚Üê V·ªÅ duyoven.vn</a>
+  </form>
+</div>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-tag">ƒê·ªÄ √ÅN ¬∑ NH√ÉN HI·ªÜU √ÇM THANH</div>
+    <h1>H·ªá th·ªëng ph√¢n lo·∫°i <span>7 nh√≥m √¢m thanh</span> theo ngu·ªìn g·ªëc</h1>
+    <p class="hero-sub">
+      Nghe b·∫±ng micro ho·∫∑c t·∫£i file √¢m thanh ‚Üí m√¥ h√¨nh AI <b>YAMNet</b> t·ª± th·∫©m ƒë·ªãnh &
+      ph√¢n lo·∫°i ngu·ªìn g·ªëc ‚Üí ƒë√°nh gi√° <b>kh·∫£ nƒÉng b·∫£o h·ªô nh√£n hi·ªáu √¢m thanh</b> (B·∫£ng 4.1).
+    </p>
+  </header>
+
+  <!-- INPUT -->
+  <section class="panel input-panel">
+    <div class="input-grid">
+      <!-- mic -->
+      <div class="input-card">
+        <div class="ic-title">üéôÔ∏è Ghi √¢m tr·ª±c ti·∫øp</div>
+        <button id="btnRecord" class="btn btn-rec">‚óè B·∫Øt ƒë·∫ßu ghi √¢m</button>
+        <button id="btnStop" class="btn btn-stop hidden">‚ñ† D·ª´ng & ph√¢n t√≠ch</button>
+        <div id="recMeter" class="rec-meter hidden">
+          <div class="level-track"><div id="level" class="level-fill"></div></div>
+          <span id="recTimer" class="rec-timer">0.0s</span>
+        </div>
+        <div class="ic-hint">N√≥i, v·ªó tay, m·ªü 1 ƒëo·∫°n nh·∫°c/clip ƒë·ªÉ app nghe.</div>
+      </div>
+
+      <!-- file -->
+      <div class="input-card">
+        <div class="ic-title">üìÇ T·∫£i file √¢m thanh</div>
+        <label id="dropZone" class="dropzone">
+          <input id="fileInput" type="file" accept="audio/*" hidden />
+          <span class="dz-ic">‚¨ÜÔ∏è</span>
+          <span>K√©o‚Äìth·∫£ ho·∫∑c <b>b·∫•m ch·ªçn file</b></span>
+          <span class="dz-sub">mp3 ¬∑ wav ¬∑ m4a ¬∑ ogg ¬∑ webm</span>
+        </label>
+      </div>
+
+      <!-- demo -->
+      <div class="input-card">
+        <div class="ic-title">‚ö° Th·ª≠ nhanh (demo)</div>
+        <button id="btnDemo" class="btn btn-demo">üéπ Giai ƒëi·ªáu t·ªïng h·ª£p (nh√≥m 7)</button>
+        <div id="sampleBtns" class="sample-btns"><!-- n√∫t m·∫´u th·∫≠t ch√®n ·ªü ƒë√¢y n·∫øu c√≥ --></div>
+        <div class="ic-hint">D√πng ƒë·ªÉ tr√¨nh di·ªÖn nhanh khi kh√¥ng c√≥ micro.</div>
+      </div>
+    </div>
+
+    <audio id="player" class="player" controls style="display:none"></audio>
+    <div id="status" class="status" style="display:none"></div>
+
+    <!-- options -->
+    <div class="options">
+      <label class="opt">
+        <input id="simToggle" type="checkbox" />
+        <span>üéöÔ∏è √Çm thanh n√†y do con ng∆∞·ªùi <b>m√¥ ph·ªèng/t·∫°o l·∫°i</b> (chuy·ªÉn sang nh√≥m 5)</span>
+      </label>
+      <div class="opt-block">
+        <div class="opt-label">Ch·ªçn nhi·ªÅu ngu·ªìn g·ªëc quan t√¢m (c√πng l√∫c):</div>
+        <div id="sourceFilters" class="chips"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="results">
+    <div id="verdict" class="verdict"></div>
+
+    <div class="panel">
+      <h2 class="sec-title">M·ª©c ƒë·ªô theo 7 nh√≥m ngu·ªìn g·ªëc</h2>
+      <div id="groupBars" class="group-bars"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="sec-title">√Çm thanh m√¥ h√¨nh nh·∫≠n di·ªán <span class="muted">(nh√£n YAMNet ‚Üí nh√≥m)</span></h2>
+      <div id="rawList" class="raw-list"></div>
+    </div>
+  </section>
+
+  <!-- REFERENCE TABLE -->
+  <section class="panel ref">
+    <h2 class="sec-title">B·∫£ng 4.1 ‚Äî Quy t·∫Øc b·∫£o h·ªô nh√£n hi·ªáu √¢m thanh</h2>
+    <table class="ref-table">
+      <thead><tr><th>Nh√≥m</th><th>M√¥ t·∫£</th><th>Kh·∫£ nƒÉng ƒë∆∞·ª£c ch·∫•p nh·∫≠n</th></tr></thead>
+      <tbody>
+        <tr><td>1 ¬∑ Phi sinh h·ªçc</td><td>Gi√≥, n∆∞·ªõc, s·∫•m, s√≥ng‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
+        <tr><td>2 ¬∑ Sinh v·∫≠t s·ªëng</td><td>Chim, th√∫, c√¥n tr√πng‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
+        <tr><td>3 ¬∑ M√¥i tr∆∞·ªùng t·ªïng h·ª£p</td><td>R·ª´ng, bi·ªÉn, ƒë·ªìng qu√™‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
+        <tr><td>4 ¬∑ Con ng∆∞·ªùi</td><td>N√≥i, h√°t, c∆∞·ªùi‚Ä¶</td><td class="ok">‚úÖ C√≥ th·ªÉ ch·∫•p nh·∫≠n</td></tr>
+        <tr><td>5 ¬∑ M√¥ ph·ªèng t·ª± nhi√™n</td><td>M∆∞a/gi√≥/chim gi·∫£ l·∫≠p‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
+        <tr><td>6 ¬∑ V·∫≠t d·ª•ng/s·∫£n ph·∫©m</td><td>C·ª≠a, ph√≠m, ƒë·ªông c∆°‚Ä¶</td><td class="no">‚ùå Kh√¥ng n√™n ƒë∆°n l·∫ª</td></tr>
+        <tr><td>7 ¬∑ T·ªïng h·ª£p to√†n ph·∫ßn</td><td>Nh·∫°c/AI/ƒëi·ªán t·ª≠, c√≥ giai ƒëi·ªáu</td><td class="best">‚úÖ R·∫•t n√™n ch·∫•p nh·∫≠n</td></tr>
+      </tbody>
+    </table>
+    <p class="ref-note">
+      <b>Nguy√™n t·∫Øc:</b> ∆∞u ti√™n b·∫£o h·ªô nh√≥m [4] & [7] ho·∫∑c t·ªï h·ª£p c√≥ x·ª≠ l√Ω s√°ng t·∫°o / ph·ªëi giai ƒëi·ªáu.
+      Kh√¥ng ch·∫•p nh·∫≠n ƒë∆°n l·∫ª [1][2][3][5][6] n·∫øu thi·∫øu y·∫øu t·ªë s√°ng t·∫°o. N·∫øu kh√¥ng c√≥ t√≠nh ph√¢n bi·ªát
+      c·ªë h·ªØu ‚Üí ph·∫£i ch·ª©ng minh ‚Äú√Ω nghƒ©a th·ª© hai‚Äù qua s·ª≠ d·ª•ng (ƒëi·ªÉm b,c,d,ƒë,e Kho·∫£n 2 ƒêi·ªÅu 74 Lu·∫≠t SHTT).
+    </p>
+  </section>
+
+  <footer class="foot">
+    Ch·∫°y ho√†n to√†n tr√™n tr√¨nh duy·ªát ¬∑ m√¥ h√¨nh <b>Google YAMNet</b> (AudioSet, 521 l·ªõp) qua MediaPipe ¬∑
+    √¢m thanh <b>kh√¥ng</b> ƒë∆∞·ª£c g·ª≠i ƒëi ƒë√¢u.
+  </footer>
+</div>
+
+<script>
+// AUTO-GENERATED from YAMNet/AudioSet 521-class map. Do not edit by hand.
+// GROUP value: 1..7 = nhom nguon goc; 0 = bo qua (im lang / kenh / nen).
+window.YAMNET_LABELS = ["Speech","Child speech, kid speaking","Conversation","Narration, monologue","Babbling","Speech synthesizer","Shout","Bellow","Whoop","Yell","Children shouting","Screaming","Whispering","Laughter","Baby laughter","Giggle","Snicker","Belly laugh","Chuckle, chortle","Crying, sobbing","Baby cry, infant cry","Whimper","Wail, moan","Sigh","Singing","Choir","Yodeling","Chant","Mantra","Child singing","Synthetic singing","Rapping","Humming","Groan","Grunt","Whistling","Breathing","Wheeze","Snoring","Gasp","Pant","Snort","Cough","Throat clearing","Sneeze","Sniff","Run","Shuffle","Walk, footsteps","Chewing, mastication","Biting","Gargling","Stomach rumble","Burping, eructation","Hiccup","Fart","Hands","Finger snapping","Clapping","Heart sounds, heartbeat","Heart murmur","Cheering","Applause","Chatter","Crowd","Hubbub, speech noise, speech babble","Children playing","Animal","Domestic animals, pets","Dog","Bark","Yip","Howl","Bow-wow","Growling","Whimper (dog)","Cat","Purr","Meow","Hiss","Caterwaul","Livestock, farm animals, working animals","Horse","Clip-clop","Neigh, whinny","Cattle, bovinae","Moo","Cowbell","Pig","Oink","Goat","Bleat","Sheep","Fowl","Chicken, rooster","Cluck","Crowing, cock-a-doodle-doo","Turkey","Gobble","Duck","Quack","Goose","Honk","Wild animals","Roaring cats (lions, tigers)","Roar","Bird","Bird vocalization, bird call, bird song","Chirp, tweet","Squawk","Pigeon, dove","Coo","Crow","Caw","Owl","Hoot","Bird flight, flapping wings","Canidae, dogs, wolves","Rodents, rats, mice","Mouse","Patter","Insect","Cricket","Mosquito","Fly, housefly","Buzz","Bee, wasp, etc.","Frog","Croak","Snake","Rattle","Whale vocalization","Music","Musical instrument","Plucked string instrument","Guitar","Electric guitar","Bass guitar","Acoustic guitar","Steel guitar, slide guitar","Tapping (guitar technique)","Strum","Banjo","Sitar","Mandolin","Zither","Ukulele","Keyboard (musical)","Piano","Electric piano","Organ","Electronic organ","Hammond organ","Synthesizer","Sampler","Harpsichord","Percussion","Drum kit","Drum machine","Drum","Snare drum","Rimshot","Drum roll","Bass drum","Timpani","Tabla","Cymbal","Hi-hat","Wood block","Tambourine","Rattle (instrument)","Maraca","Gong","Tubular bells","Mallet percussion","Marimba, xylophone","Glockenspiel","Vibraphone","Steelpan","Orchestra","Brass instrument","French horn","Trumpet","Trombone","Bowed string instrument","String section","Violin, fiddle","Pizzicato","Cello","Double bass","Wind instrument, woodwind instrument","Flute","Saxophone","Clarinet","Harp","Bell","Church bell","Jingle bell","Bicycle bell","Tuning fork","Chime","Wind chime","Change ringing (campanology)","Harmonica","Accordion","Bagpipes","Didgeridoo","Shofar","Theremin","Singing bowl","Scratching (performance technique)","Pop music","Hip hop music","Beatboxing","Rock music","Heavy metal","Punk rock","Grunge","Progressive rock","Rock and roll","Psychedelic rock","Rhythm and blues","Soul music","Reggae","Country","Swing music","Bluegrass","Funk","Folk music","Middle Eastern music","Jazz","Disco","Classical music","Opera","Electronic music","House music","Techno","Dubstep","Drum and bass","Electronica","Electronic dance music","Ambient music","Trance music","Music of Latin America","Salsa music","Flamenco","Blues","Music for children","New-age music","Vocal music","A capella","Music of Africa","Afrobeat","Christian music","Gospel music","Music of Asia","Carnatic music","Music of Bollywood","Ska","Traditional music","Independent music","Song","Background music","Theme music","Jingle (music)","Soundtrack music","Lullaby","Video game music","Christmas music","Dance music","Wedding music","Happy music","Sad music","Tender music","Exciting music","Angry music","Scary music","Wind","Rustling leaves","Wind noise (microphone)","Thunderstorm","Thunder","Water","Rain","Raindrop","Rain on surface","Stream","Waterfall","Ocean","Waves, surf","Steam","Gurgling","Fire","Crackle","Vehicle","Boat, Water vehicle","Sailboat, sailing ship","Rowboat, canoe, kayak","Motorboat, speedboat","Ship","Motor vehicle (road)","Car","Vehicle horn, car horn, honking","Toot","Car alarm","Power windows, electric windows","Skidding","Tire squeal","Car passing by","Race car, auto racing","Truck","Air brake","Air horn, truck horn","Reversing beeps","Ice cream truck, ice cream van","Bus","Emergency vehicle","Police car (siren)","Ambulance (siren)","Fire engine, fire truck (siren)","Motorcycle","Traffic noise, roadway noise","Rail transport","Train","Train whistle","Train horn","Railroad car, train wagon","Train wheels squealing","Subway, metro, underground","Aircraft","Aircraft engine","Jet engine","Propeller, airscrew","Helicopter","Fixed-wing aircraft, airplane","Bicycle","Skateboard","Engine","Light engine (high frequency)","Dental drill, dentist's drill","Lawn mower","Chainsaw","Medium engine (mid frequency)","Heavy engine (low frequency)","Engine knocking","Engine starting","Idling","Accelerating, revving, vroom","Door","Doorbell","Ding-dong","Sliding door","Slam","Knock","Tap","Squeak","Cupboard open or close","Drawer open or close","Dishes, pots, and pans","Cutlery, silverware","Chopping (food)","Frying (food)","Microwave oven","Blender","Water tap, faucet","Sink (filling or washing)","Bathtub (filling or washing)","Hair dryer","Toilet flush","Toothbrush","Electric toothbrush","Vacuum cleaner","Zipper (clothing)","Keys jangling","Coin (dropping)","Scissors","Electric shaver, electric razor","Shuffling cards","Typing","Typewriter","Computer keyboard","Writing","Alarm","Telephone","Telephone bell ringing","Ringtone","Telephone dialing, DTMF","Dial tone","Busy signal","Alarm clock","Siren","Civil defense siren","Buzzer","Smoke detector, smoke alarm","Fire alarm","Foghorn","Whistle","Steam whistle","Mechanisms","Ratchet, pawl","Clock","Tick","Tick-tock","Gears","Pulleys","Sewing machine","Mechanical fan","Air conditioning","Cash register","Printer","Camera","Single-lens reflex camera","Tools","Hammer","Jackhammer","Sawing","Filing (rasp)","Sanding","Power tool","Drill","Explosion","Gunshot, gunfire","Machine gun","Fusillade","Artillery fire","Cap gun","Fireworks","Firecracker","Burst, pop","Eruption","Boom","Wood","Chop","Splinter","Crack","Glass","Chink, clink","Shatter","Liquid","Splash, splatter","Slosh","Squish","Drip","Pour","Trickle, dribble","Gush","Fill (with liquid)","Spray","Pump (liquid)","Stir","Boiling","Sonar","Arrow","Whoosh, swoosh, swish","Thump, thud","Thunk","Electronic tuner","Effects unit","Chorus effect","Basketball bounce","Bang","Slap, smack","Whack, thwack","Smash, crash","Breaking","Bouncing","Whip","Flap","Scratch","Scrape","Rub","Roll","Crushing","Crumpling, crinkling","Tearing","Beep, bleep","Ping","Ding","Clang","Squeal","Creak","Rustle","Whir","Clatter","Sizzle","Clicking","Clickety-clack","Rumble","Plop","Jingle, tinkle","Hum","Zing","Boing","Crunch","Silence","Sine wave","Harmonic","Chirp tone","Sound effect","Pulse","Inside, small room","Inside, large room or hall","Inside, public space","Outside, urban or manmade","Outside, rural or natural","Reverberation","Echo","Noise","Environmental noise","Static","Mains hum","Distortion","Sidetone","Cacophony","White noise","Pink noise","Throbbing","Vibration","Television","Radio","Field recording"];
+
+window.YAMNET_LABELS_VI = ["Ti·∫øng n√≥i","Tr·∫ª em n√≥i","Tr√≤ chuy·ªán","Thuy·∫øt minh, ƒë·ªôc tho·∫°i","B·∫≠p b·∫π","Gi·ªçng n√≥i t·ªïng h·ª£p","H√¥ h√©t","Bellow","Whoop","La h√©t","Children shouting","Th√©t","Th√¨ th·∫ßm","Ti·∫øng c∆∞·ªùi","Tr·∫ª c∆∞·ªùi","C∆∞·ªùi kh√∫c kh√≠ch","Snicker","Belly laugh","Chuckle, chortle","Kh√≥c, n·ª©c n·ªü","Tr·∫ª kh√≥c","Whimper","Wail, moan","Th·ªü d√†i","H√°t","H·ª£p x∆∞·ªõng","H√°t luy·∫øn","T·ª•ng","Mantra","Tr·∫ª h√°t","Gi·ªçng h√°t t·ªïng h·ª£p","Rap","Ng√¢n nga","Groan","Grunt","Hu√Ωt s√°o","H∆°i th·ªü","Wheeze","Ng√°y","Gasp","Pant","Snort","Ho","Throat clearing","H·∫Øt h∆°i","Sniff","Ch·∫°y","Shuffle","B∆∞·ªõc ch√¢n","Nhai","Biting","Gargling","Stomach rumble","Burping, eructation","Hiccup","Fart","Hands","B√∫ng tay","V·ªó tay","Nh·ªãp tim","Heart murmur","C·ªï v≈©","V·ªó tay t√°n th∆∞·ªüng","X√¨ x√†o","ƒê√°m ƒë√¥ng","Hubbub, speech noise, speech babble","Tr·∫ª ch∆°i ƒë√πa","ƒê·ªông v·∫≠t","Th√∫ nu√¥i","Ch√≥","Ch√≥ s·ªßa","Yip","H√∫","Bow-wow","G·∫ßm g·ª´","Whimper (dog)","M√®o","M√®o r·ª´ r·ª´","M√®o k√™u","R√≠t (m√®o/r·∫Øn)","Caterwaul","Gia s√∫c","Ng·ª±a","Clip-clop","Ng·ª±a h√≠","B√≤","B√≤ r·ªëng","Cowbell","L·ª£n","Oink","D√™","Bleat","C·ª´u","Gia c·∫ßm","G√†","Cluck","G√† g√°y","G√† t√¢y","Gobble","V·ªãt","V·ªãt k√™u","Ng·ªóng","Honk","Th√∫ hoang","H·ªï/s∆∞ t·ª≠ g·∫ßm","G·∫ßm","Chim","Chim h√≥t","Chim r√≠u r√≠t","Squawk","B·ªì c√¢u","Coo","Qu·∫°","Caw","C√∫","Hoot","V·ªó c√°nh bay","Ch√≥ s√≥i","Lo√†i g·∫∑m nh·∫•m","Mouse","Patter","C√¥n tr√πng","D·∫ø","Mu·ªói","Ru·ªìi","Vo ve","Ong","·∫æch","Croak","R·∫Øn","Rattle","C√° voi","√Çm nh·∫°c","Nh·∫°c c·ª•","ƒê√†n d√¢y g·∫£y","Guitar","Guitar ƒëi·ªán","Bass guitar","Guitar th√πng","Steel guitar, slide guitar","Tapping (guitar technique)","Strum","Banjo","Sitar","Mandolin","Zither","Ukulele","ƒê√†n ph√≠m","Piano","Piano ƒëi·ªán","Organ","Electronic organ","Hammond organ","Synthesizer (ƒë√†n t·ªïng h·ª£p)","Sampler","Harpsichord","B·ªô g√µ","D√†n tr·ªëng","Tr·ªëng m√°y","Tr·ªëng","Snare drum","Rimshot","Drum roll","Bass drum","Timpani","Tabla","Ch≈©m ch·ªçe","Hi-hat","Wood block","Tambourine","Rattle (instrument)","Maraca","C·ªìng/chi√™ng","Tubular bells","Mallet percussion","ƒê√†n phi·∫øn g·ªó","Glockenspiel","Vibraphone","Steelpan","D√†n nh·∫°c","K√®n ƒë·ªìng","French horn","K√®n trumpet","Trombone","Bowed string instrument","String section","Violin","Pizzicato","Cello","Double bass","Nh·∫°c c·ª• h∆°i","S√°o","Saxophone","Clarinet","ƒê√†n h·∫°c","Chu√¥ng","Chu√¥ng nh√† th·ªù","Jingle bell","Bicycle bell","Tuning fork","Chu√¥ng gi√≥/chime","Chu√¥ng gi√≥","Change ringing (campanology)","Harmonica","Accordion","Bagpipes","Didgeridoo","Shofar","Theremin","Singing bowl","Scratching (performance technique)","Nh·∫°c pop","Hip hop","Beatbox","Nh·∫°c rock","Heavy metal","Punk rock","Grunge","Progressive rock","Rock and roll","Psychedelic rock","Rhythm and blues","Soul music","Reggae","Country","Swing music","Bluegrass","Funk","Folk music","Middle Eastern music","Jazz","Disco","Nh·∫°c c·ªï ƒëi·ªÉn","Opera","Nh·∫°c ƒëi·ªán t·ª≠","House music","Techno","Dubstep","Drum and bass","Electronica","Nh·∫°c EDM","Ambient music","Trance music","Music of Latin America","Salsa music","Flamenco","Blues","Music for children","New-age music","Nh·∫°c c√≥ l·ªùi","A cappella","Music of Africa","Afrobeat","Christian music","Gospel music","Music of Asia","Carnatic music","Music of Bollywood","Ska","Traditional music","Independent music","B√†i h√°t","Nh·∫°c n·ªÅn","Nh·∫°c ch·ªß ƒë·ªÅ","Nh·∫°c hi·ªáu (jingle)","Nh·∫°c phim","H√°t ru","Nh·∫°c game","Nh·∫°c Gi√°ng sinh","Nh·∫°c khi√™u v≈©","Wedding music","Nh·∫°c vui","Sad music","Tender music","Exciting music","Angry music","Scary music","Gi√≥","L√° x√†o x·∫°c","Ti·∫øng gi√≥ (micro)","Gi√¥ng b√£o","S·∫•m","N∆∞·ªõc","M∆∞a","Gi·ªçt m∆∞a","M∆∞a r∆°i tr√™n b·ªÅ m·∫∑t","Su·ªëi ch·∫£y","Th√°c n∆∞·ªõc","ƒê·∫°i d∆∞∆°ng","S√≥ng bi·ªÉn","H∆°i n∆∞·ªõc","N∆∞·ªõc r√≥c r√°ch","L·ª≠a","L·ª≠a l√©p b√©p","Ph∆∞∆°ng ti·ªán","Thuy·ªÅn/t√†u n∆∞·ªõc","Sailboat, sailing ship","Rowboat, canoe, kayak","Ca n√¥","T√†u th·ªßy","Xe c·ªô (ƒë∆∞·ªùng b·ªô)","√î t√¥","C√≤i xe","Toot","C√≤i b√°o ƒë·ªông xe","Power windows, electric windows","Skidding","Tire squeal","Xe ch·∫°y ngang","Race car, auto racing","Xe t·∫£i","Air brake","Air horn, truck horn","Reversing beeps","Ice cream truck, ice cream van","Xe bu√Ωt","Xe ∆∞u ti√™n","C√≤i xe c·∫£nh s√°t","C√≤i xe c·ª©u th∆∞∆°ng","C√≤i xe c·ª©u h·ªèa","Xe m√°y","Ti·∫øng giao th√¥ng","ƒê∆∞·ªùng s·∫Øt","T√†u h·ªèa","C√≤i t√†u","Train horn","Railroad car, train wagon","Train wheels squealing","T√†u ƒëi·ªán ng·∫ßm","M√°y bay","ƒê·ªông c∆° m√°y bay","ƒê·ªông c∆° ph·∫£n l·ª±c","Propeller, airscrew","Tr·ª±c thƒÉng","Fixed-wing aircraft, airplane","Xe ƒë·∫°p","V√°n tr∆∞·ª£t","ƒê·ªông c∆°","Light engine (high frequency)","Dental drill, dentist's drill","M√°y c·∫Øt c·ªè","C∆∞a m√°y","Medium engine (mid frequency)","Heavy engine (low frequency)","Engine knocking","Kh·ªüi ƒë·ªông m√°y","Idling","R·ªì ga","C·ª≠a","Chu√¥ng c·ª≠a","ƒêing-ƒëoong","C·ª≠a tr∆∞·ª£t","ƒê√≥ng s·∫ßm","G√µ c·ª≠a","G√µ nh·∫π","C·ªçt k·∫πt","ƒê√≥ng/m·ªü t·ªß","ƒê√≥ng/m·ªü ngƒÉn k√©o","B√°t ƒëƒ©a, xoong n·ªìi","Dao nƒ©a","BƒÉm/ch·∫∑t (th·ª©c ƒÉn)","Chi√™n r√°n","L√≤ vi s√≥ng","M√°y xay","V√≤i n∆∞·ªõc","B·ªìn r·ª≠a","Bathtub (filling or washing)","M√°y s·∫•y t√≥c","X·∫£ b·ªìn c·∫ßu","Toothbrush","Electric toothbrush","M√°y h√∫t b·ª•i","K√©o kh√≥a","L·∫°ch c·∫°ch ch√¨a kh√≥a","Ti·ªÅn xu r∆°i","K√©o c·∫Øt","Electric shaver, electric razor","Shuffling cards","G√µ ph√≠m","M√°y ƒë√°nh ch·ªØ","B√†n ph√≠m m√°y t√≠nh","Vi·∫øt","B√°o ƒë·ªông","ƒêi·ªán tho·∫°i","Chu√¥ng ƒëi·ªán tho·∫°i","Nh·∫°c chu√¥ng","B·∫•m s·ªë ƒëi·ªán tho·∫°i","Dial tone","Busy signal","ƒê·ªìng h·ªì b√°o th·ª©c","C√≤i h√∫","Civil defense siren","Chu√¥ng b√°o (buzzer)","B√°o kh√≥i","B√°o ch√°y","Foghorn","C√≤i/hu√Ωt","Steam whistle","C∆° c·∫•u m√°y m√≥c","Ratchet, pawl","ƒê·ªìng h·ªì","T√≠ch t·∫Øc","T√≠ch-t·∫Øc","Gears","Pulleys","M√°y may","Qu·∫°t m√°y","M√°y l·∫°nh","M√°y t√≠nh ti·ªÅn","M√°y in","M√°y ·∫£nh","Single-lens reflex camera","D·ª•ng c·ª•","B√∫a","B√∫a khoan","C∆∞a","Filing (rasp)","Sanding","D·ª•ng c·ª• ƒëi·ªán","Khoan","N·ªï","S√∫ng","S√∫ng m√°y","Fusillade","Artillery fire","Cap gun","Ph√°o hoa","Ph√°o","B·ª•p, n·ªï b·ªëp","Eruption","·∫¶m","G·ªó","Chop","Splinter","Crack","Th·ªßy tinh","Chink, clink","V·ª° tan","Ch·∫•t l·ªèng","B·∫Øn t√≥e","Slosh","Squish","Nh·ªè gi·ªçt","R√≥t","Trickle, dribble","Gush","ƒê·ªï ƒë·∫ßy","Spray","Pump (liquid)","Stir","S√¥i","Sonar","Arrow","V√∫t (whoosh)","Th·ªãch","Thunk","B·ªô ch·ªânh √¢m ƒëi·ªán t·ª≠","B·ªô hi·ªáu ·ª©ng √¢m","Hi·ªáu ·ª©ng chorus","Basketball bounce","ƒêo√†ng","Slap, smack","Whack, thwack","ƒê·ªï v·ª°","V·ª°","Bouncing","Whip","Flap","C√†o/g√£i","C·ªç x√°t","Rub","LƒÉn","Crushing","V√≤ gi·∫•y","X√©","B√≠p, b√≠p","Ping","ƒêing","Keng","Squeal","C·ªçt k·∫πt","S·ªôt so·∫°t","Whir","L·∫°ch c·∫°ch","X√®o x√®o","T√°ch t√°ch","Clickety-clack","·∫¶m √¨","Plop","Leng keng","√ô √π","Zing","Boing","R√¥m r·ªëp","Im l·∫∑ng","S√≥ng sin","H√†i √¢m","√Çm chirp (t·ªïng h·ª£p)","Hi·ªáu ·ª©ng √¢m thanh","Xung","Inside, small room","Inside, large room or hall","Inside, public space","Outside, urban or manmade","Ngo√†i tr·ªùi (thi√™n nhi√™n)","V·ªçng √¢m","Ti·∫øng vang","T·∫°p √¢m","Environmental noise","Static","√ô ƒëi·ªán","M√©o ti·∫øng","Sidetone","Cacophony","Nhi·ªÖu tr·∫Øng","Pink noise","Rung ƒë·ªông","Rung","Tivi","Radio","B·∫£n thu hi·ªán tr∆∞·ªùng"];
+
+window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,6,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,1,1,1,6,1,6,1,1,6,6,6,6,6,6,6,6,6,6,7,7,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,0,7,7,7,7,7,0,0,0,0,3,0,0,0,0,0,6,7,0,0,0,0,6,6,6,6,0];
+
+</script>
+<script>
+// taxonomy.js ‚Äî 7 nhom am thanh + logic phan loai & verdict bao ho nhan hieu.
+// Phu thuoc: js/yamnet_map.js (window.YAMNET_GROUP / _LABELS / _LABELS_VI)
+(function (w) {
+  "use strict";
+
+  // --- Dinh nghia 7 nhom (theo YEU CAU APP AM THANH, Bang 4.1) ---
+  var GROUPS = {
+    1: { id: 1, parent: "natural", code: "TN1", name: "Phi sinh h·ªçc",
+         full: "√Çm thanh t·ª´ thi√™n nhi√™n v√¥ sinh ‚Äì phi sinh h·ªçc",
+         desc: "√Çm thanh t·ª± nhi√™n t·ª´ y·∫øu t·ªë kh√¥ng s·ªëng: gi√≥, n∆∞·ªõc, ƒë·∫•t ƒë√°, s·∫•m s√©t, th·ªùi ti·∫øt.",
+         eg: "gi√≥ r√¨ r√†o, su·ªëi ch·∫£y, s·∫•m n·ªï, s√≥ng bi·ªÉn",
+         verdict: "low",  color: "#3b82f6", icon: "üå¨Ô∏è" },
+    2: { id: 2, parent: "natural", code: "TN2", name: "Sinh v·∫≠t s·ªëng",
+         full: "√Çm thanh t·ª´ sinh v·∫≠t s·ªëng ‚Äì sinh h·ªçc",
+         desc: "√Çm thanh do c∆° th·ªÉ s·ªëng t·∫°o ra (kh√¥ng g·ªìm con ng∆∞·ªùi): ƒë·ªông v·∫≠t, c√¥n tr√πng, th·ª±c v·∫≠t.",
+         eg: "chim h√≥t, ch√≥ s·ªßa, ve k√™u, ·∫øch k√™u",
+         verdict: "low",  color: "#22c55e", icon: "üê¶" },
+    3: { id: 3, parent: "natural", code: "TN3", name: "M√¥i tr∆∞·ªùng t·ªïng h·ª£p",
+         full: "√Çm thanh m√¥i tr∆∞·ªùng t·ªïng h·ª£p",
+         desc: "K·∫øt h·ª£p t·ª± nhi√™n c·ªßa nhi·ªÅu √¢m thanh trong m·ªôt kh√¥ng gian s·ªëng.",
+         eg: "r·ª´ng (chim+gi√≥+l√°), bi·ªÉn (s√≥ng+gi√≥+chim)",
+         verdict: "low",  color: "#14b8a6", icon: "üèûÔ∏è" },
+    4: { id: 4, parent: "artificial", code: "NT4", name: "Con ng∆∞·ªùi",
+         full: "√Çm thanh c·ªßa con ng∆∞·ªùi",
+         desc: "√Çm ph√°t ra trong sinh ho·∫°t c·ªßa con ng∆∞·ªùi: ti·∫øng n√≥i, h√°t, c∆∞·ªùi, nh·ªãp th·ªü.",
+         eg: "ti·∫øng n√≥i, ti·∫øng h√°t, ti·∫øng c∆∞·ªùi",
+         verdict: "ok",   color: "#f59e0b", icon: "üó£Ô∏è" },
+    5: { id: 5, parent: "artificial", code: "NT5", name: "M√¥ ph·ªèng t·ª± nhi√™n",
+         full: "√Çm thanh m√¥ ph·ªèng t·ª± nhi√™n",
+         desc: "Con ng∆∞·ªùi t√°i hi·ªán √¢m t·ª± nhi√™n b·∫±ng c√¥ng c·ª•/ph·∫ßn m·ªÅm (kh√¥ng ph√°t sinh tr·ª±c ti·∫øp t·ª´ t·ª± nhi√™n).",
+         eg: "ti·∫øng m∆∞a/gi√≥/chim gi·∫£ l·∫≠p b·∫±ng m√°y",
+         verdict: "low",  color: "#a78bfa", icon: "üéöÔ∏è" },
+    6: { id: 6, parent: "artificial", code: "NT6", name: "V·∫≠t d·ª•ng / s·∫£n ph·∫©m",
+         full: "√Çm thanh t·ª´ v·∫≠t d·ª•ng, s·∫£n ph·∫©m nh√¢n t·∫°o",
+         desc: "√Çm ph√°t sinh khi d√πng thi·∫øt b·ªã, c√¥ng c·ª•, s·∫£n ph·∫©m do con ng∆∞·ªùi ch·∫ø t·∫°o.",
+         eg: "ƒë√≥ng c·ª≠a, g√µ ph√≠m, ƒë·ªông c∆° xe, chu√¥ng ƒëi·ªán tho·∫°i",
+         verdict: "low",  color: "#64748b", icon: "‚öôÔ∏è" },
+    7: { id: 7, parent: "artificial", code: "NT7", name: "T·ªïng h·ª£p to√†n ph·∫ßn",
+         full: "√Çm thanh nh√¢n t·∫°o m√¥ ph·ªèng to√†n ph·∫ßn",
+         desc: "T·∫°o ho√†n to√†n b·∫±ng k·ªπ thu·∫≠t s·ªë / AI, ho·∫∑c ph·ªëi giai ƒëi·ªáu, t·∫ßn s·ªë kh√°c bi·ªát v·ªõi th·ª±c t·∫ø.",
+         eg: "nh·∫°c, jingle, gi·ªçng AI, hi·ªáu ·ª©ng ƒëi·ªán t·ª≠, √¢m game",
+         verdict: "high", color: "#ec4899", icon: "üéπ" },
+  };
+
+  // Cac nhom "tu nhien" dung de suy ra nhom 3 (moi truong tong hop)
+  var NATURAL_GROUPS = [1, 2];
+
+  // --- Gop diem theo nhom tu ket qua YAMNet ---
+  // input: categories = [{index, score, label, labelVi, group}]  (da gop trung)
+  // output: { groupScores:{1..7:score}, raw:[...categories sorted], total }
+  function aggregate(categories) {
+    var G = window.YAMNET_GROUP, LV = window.YAMNET_LABELS_VI, LE = window.YAMNET_LABELS;
+    var byGroup = {1:0,2:0,3:0,4:0,5:0,6:0,7:0};
+    var raw = [];
+    for (var i = 0; i < categories.length; i++) {
+      var c = categories[i];
+      var grp = (c.group != null) ? c.group : (G ? G[c.index] : 0);
+      var s = c.score || 0;
+      raw.push({
+        index: c.index, score: s, group: grp,
+        label: c.label || (LE ? LE[c.index] : ("#" + c.index)),
+        labelVi: c.labelVi || (LV ? LV[c.index] : ("#" + c.index)),
+      });
+      if (grp >= 1 && grp <= 7) byGroup[grp] += s;
+    }
+    raw.sort(function (a, b) { return b.score - a.score; });
+    var total = 0;
+    for (var k = 1; k <= 7; k++) total += byGroup[k];
+    return { groupScores: byGroup, raw: raw, total: total };
+  }
+
+  // --- Suy ra nhom 3 (moi truong tong hop) tu cac nguon tu nhien dong thoi ---
+  // Neu >=2 nguon tu nhien khac biet (nhom 1 & nhom 2) cung xuat hien manh
+  // => co tinh "moi truong tong hop". Chuyen 1 phan diem sang nhom 3.
+  function deriveComposite(agg, opt) {
+    opt = opt || {};
+    var thr = opt.naturalThreshold || 0.10; // ti le toi thieu de coi 1 nguon la "co mat"
+    var gs = agg.groupScores, total = agg.total || 1;
+    var present = NATURAL_GROUPS.filter(function (gid) {
+      return (gs[gid] / total) >= thr;
+    });
+    agg.compositeFrom = present.slice();
+    if (present.length >= 2) {
+      // moi nguon tu nhien gop 35% diem cua no sang nhom 3
+      var moved = 0;
+      present.forEach(function (gid) {
+        var m = gs[gid] * 0.35;
+        gs[gid] -= m; moved += m;
+      });
+      gs[3] += moved;
+      agg.composite = true;
+    } else {
+      agg.composite = false;
+    }
+    return agg;
+  }
+
+  // --- Che do "mo phong" (nhom 5): nguoi dung khai bao am tu nhien la do tao lai ---
+  // Chuyen toan bo diem nhom 1/2/3 sang nhom 5.
+  function applySimulated(agg) {
+    var gs = agg.groupScores;
+    var moved = gs[1] + gs[2] + gs[3];
+    gs[1] = gs[2] = gs[3] = 0;
+    gs[5] += moved;
+    agg.simulated = true;
+    return agg;
+  }
+
+  // --- Chuan hoa % + xac dinh nhom co mat (da phat hien nhieu nguon) ---
+  function summarize(agg, opt) {
+    opt = opt || {};
+    var presentThr = opt.presentThreshold != null ? opt.presentThreshold : 0.12;
+    var gs = agg.groupScores, total = 0, k;
+    for (k = 1; k <= 7; k++) total += gs[k];
+    total = total || 1;
+    var pct = {}, present = [], dominant = 0, domVal = -1;
+    for (k = 1; k <= 7; k++) {
+      pct[k] = gs[k] / total;
+      if (pct[k] >= presentThr) present.push(k);
+      if (gs[k] > domVal) { domVal = gs[k]; dominant = k; }
+    }
+    present.sort(function (a, b) { return pct[b] - pct[a]; });
+    agg.pct = pct;
+    agg.present = present;        // cac nguon goc cung ton tai (multi-source)
+    agg.dominant = dominant;      // nhom troi nhat
+    return agg;
+  }
+
+  // --- Verdict bao ho nhan hieu am thanh (Bang 4.1 + Nguyen tac ap dung) ---
+  // Tra ve { level, title, badge, reason, legal }
+  // level: high | ok | conditional | low
+  function verdict(agg) {
+    var present = agg.present || [];
+    var dom = agg.dominant;
+    var has = function (g) { return present.indexOf(g) >= 0; };
+    var creativeMelody = has(7);                       // co yeu to giai dieu/tong hop
+    var naturalOrFunctional = present.filter(function (g) {
+      return [1,2,3,5,6].indexOf(g) >= 0;
+    });
+
+    // 1) Nhom 7 troi -> rat nen chap nhan
+    if (dom === 7) {
+      return mk("high",
+        "R·∫•t n√™n ch·∫•p nh·∫≠n",
+        "√Çm thanh t·ªïng h·ª£p to√†n ph·∫ßn (nh√≥m 7) ‚Äì c√≥ giai ƒëi·ªáu / y·∫øu t·ªë s√°ng t·∫°o, t√≠nh ph√¢n bi·ªát cao.",
+        "Kho·∫£n 1 ƒêi·ªÅu 74 Lu·∫≠t SHTT: c√≥ kh·∫£ nƒÉng t·ª± ph√¢n bi·ªát.");
+    }
+    // 2) Nhom 4 troi -> co the chap nhan
+    if (dom === 4) {
+      return mk("ok",
+        "C√≥ th·ªÉ ch·∫•p nh·∫≠n",
+        "√Çm thanh c·ªßa con ng∆∞·ªùi (nh√≥m 4) ‚Äì c√≥ th·ªÉ mang d·∫•u ·∫•n ri√™ng ƒë·ªÉ ph√¢n bi·ªát.",
+        "Xem x√©t theo Kho·∫£n 1 ƒêi·ªÅu 74 Lu·∫≠t SHTT (t√≠nh ph√¢n bi·ªát c·ªë h·ªØu).");
+    }
+    // 3) Nhom 1/2/3/5/6 NHUNG co phoi giai dieu (nhom 7 cung xuat hien) -> co dieu kien
+    if (naturalOrFunctional.length && creativeMelody) {
+      return mk("conditional",
+        "C√≥ th·ªÉ xem x√©t (c√≥ y·∫øu t·ªë s√°ng t·∫°o)",
+        "√Çm t·ª± nhi√™n/ch·ª©c nƒÉng ƒë∆∞·ª£c ph·ªëi v·ªõi giai ƒëi·ªáu ho·∫∑c x·ª≠ l√Ω s√°ng t·∫°o (m√¥ ph·ªèng s√°ng t·∫°o) ‚Äì l√†m tƒÉng t√≠nh ph√¢n bi·ªát.",
+        "Khuy·∫øn kh√≠ch m√¥ ph·ªèng s√°ng t·∫°o; v·∫´n c·∫ßn th·∫©m ƒë·ªãnh t√≠nh ph√¢n bi·ªát t·ªïng th·ªÉ.");
+    }
+    // 4) Chi nhom 4 + 7 vang mat nhung con nguoi co mat manh -> ok
+    if (has(4)) {
+      return mk("ok",
+        "C√≥ th·ªÉ ch·∫•p nh·∫≠n",
+        "C√≥ th√†nh ph·∫ßn √¢m thanh con ng∆∞·ªùi (nh√≥m 4) ƒë·ªß r√µ.",
+        "Xem x√©t theo Kho·∫£n 1 ƒêi·ªÅu 74 Lu·∫≠t SHTT.");
+    }
+    // 5) Chi co nhom 1/2/3/5/6 don le -> khong nen chap nhan don le
+    return mk("low",
+      "Kh√¥ng n√™n ch·∫•p nh·∫≠n ƒë∆°n l·∫ª",
+      "Ch·ªâ g·ªìm √¢m t·ª± nhi√™n / ch·ª©c nƒÉng (nh√≥m " + naturalOrFunctional.join(", ") +
+      ") thi·∫øu y·∫øu t·ªë s√°ng t·∫°o ‚Äì kh√¥ng c√≥ t√≠nh ph√¢n bi·ªát c·ªë h·ªØu r√µ r√†ng.",
+      "C·∫ßn ch·ª©ng minh ‚Äú√Ω nghƒ©a th·ª© hai‚Äù (secondary meaning) qua s·ª≠ d·ª•ng l√¢u d√†i ‚Äì ƒëi·ªÉm b, c, d, ƒë, e Kho·∫£n 2 ƒêi·ªÅu 74 Lu·∫≠t SHTT.");
+
+    function mk(level, title, reason, legal) {
+      var badge = { high:"‚úÖ", ok:"‚úÖ", conditional:"üü°", low:"‚ùå" }[level];
+      return { level: level, title: title, badge: badge, reason: reason, legal: legal };
+    }
+  }
+
+  // --- Pipeline tien loi: tu categories -> ket qua day du ---
+  function analyze(categories, opt) {
+    opt = opt || {};
+    var agg = aggregate(categories);
+    if (opt.simulated) applySimulated(agg);
+    else deriveComposite(agg, opt);
+    summarize(agg, opt);
+    agg.verdict = verdict(agg);
+    return agg;
+  }
+
+  w.TAXONOMY = {
+    GROUPS: GROUPS,
+    NATURAL_GROUPS: NATURAL_GROUPS,
+    aggregate: aggregate,
+    deriveComposite: deriveComposite,
+    applySimulated: applySimulated,
+    summarize: summarize,
+    verdict: verdict,
+    analyze: analyze,
+  };
+})(window);
+
+</script>
+<script>
+// classifier.js ‚Äî boc model YAMNet (Google AudioSet) qua MediaPipe Tasks Audio.
+// Chay hoan toan trong trinh duyet (client-side). Khong gui am thanh len server.
+window.AudioEngine = (function () {
+  "use strict";
+
+  var MP_VER = "0.10.14";
+  var MP_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-audio@" + MP_VER;
+  var WASM_URL = MP_URL + "/wasm";
+  var MODEL_URL =
+    "https://storage.googleapis.com/mediapipe-models/audio_classifier/yamnet/float32/latest/yamnet.tflite";
+
+  var classifierPromise = null;
+  var statusCb = function () {};
+
+  function onStatus(cb) { statusCb = cb || function () {}; }
+  function say(s) { try { statusCb(s); } catch (e) {} }
+
+  function ready() {
+    if (!classifierPromise) classifierPromise = load();
+    return classifierPromise;
+  }
+
+  async function load() {
+    say("ƒêang t·∫£i th∆∞ vi·ªán AI‚Ä¶");
+    var mod = await import(/* @vite-ignore */ MP_URL);
+    var AudioClassifier = mod.AudioClassifier;
+    var FilesetResolver = mod.FilesetResolver;
+    say("ƒêang t·∫£i b·ªô gi·∫£i m√£ (WASM)‚Ä¶");
+    var fileset = await FilesetResolver.forAudioTasks(WASM_URL);
+    say("ƒêang t·∫£i m√¥ h√¨nh YAMNet (~4MB)‚Ä¶");
+    var clf = await AudioClassifier.createFromOptions(fileset, {
+      baseOptions: { modelAssetPath: MODEL_URL },
+      maxResults: 521,
+      scoreThreshold: 0.0,
+    });
+    say("");
+    return clf;
+  }
+
+  // Giai ma file/blob bat ky -> Float32Array mono @ 16kHz (YAMNet yeu cau 16k).
+  async function decodeToMono16k(arrayBuffer) {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    var tmp = new AC();
+    var decoded = await tmp.decodeAudioData(arrayBuffer.slice(0));
+    try { tmp.close(); } catch (e) {}
+    var targetRate = 16000;
+    var frames = Math.max(1, Math.ceil(decoded.duration * targetRate));
+    var offline = new OfflineAudioContext(1, frames, targetRate);
+    var src = offline.createBufferSource();
+    src.buffer = decoded;            // multi-channel tu dong downmix ve mono
+    src.connect(offline.destination);
+    src.start();
+    var rendered = await offline.startRendering();
+    return rendered.getChannelData(0);
+  }
+
+  // Phan loai 1 buffer mono 16k -> [{index, score}] (gop diem MAX qua cac khung).
+  async function classifyBuffer(float32mono16k) {
+    var clf = await ready();
+    var results = clf.classify(float32mono16k, 16000);
+    var maxByIdx = {};
+    for (var i = 0; i < results.length; i++) {
+      var cats = results[i].classifications[0].categories;
+      for (var j = 0; j < cats.length; j++) {
+        var c = cats[j];
+        if (maxByIdx[c.index] == null || c.score > maxByIdx[c.index]) {
+          maxByIdx[c.index] = c.score;
+        }
+      }
+    }
+    var out = [];
+    Object.keys(maxByIdx).forEach(function (k) {
+      out.push({ index: +k, score: maxByIdx[k] });
+    });
+    out.sort(function (a, b) { return b.score - a.score; });
+    return out;
+  }
+
+  // Tien ich: tu ArrayBuffer (file) -> ket qua phan loai
+  async function classifyArrayBuffer(arrayBuffer) {
+    var mono = await decodeToMono16k(arrayBuffer);
+    return { categories: await classifyBuffer(mono), samples: mono };
+  }
+
+  return {
+    ready: ready,
+    onStatus: onStatus,
+    decodeToMono16k: decodeToMono16k,
+    classifyBuffer: classifyBuffer,
+    classifyArrayBuffer: classifyArrayBuffer,
+  };
+})();
+
+</script>
+<script>
+// app.js ‚Äî dieu khien giao dien: ghi am / tai file / demo -> phan loai -> hien ket qua.
+(function () {
+  "use strict";
+  var T = window.TAXONOMY, E = window.AudioEngine;
+  var $ = function (id) { return document.getElementById(id); };
+
+  var state = {
+    lastCategories: null,   // ket qua YAMNet tho (truoc khi suy luan)
+    simulated: false,       // che do mo phong (nhom 5)
+    filters: { 1:true,2:true,3:true,4:true,5:true,6:true,7:true },
+  };
+
+  // ---------- Khoi tao giao dien tinh ----------
+  function buildGroupChecklist() {
+    var wrap = $("sourceFilters");
+    wrap.innerHTML = "";
+    Object.keys(T.GROUPS).forEach(function (gid) {
+      var g = T.GROUPS[gid];
+      var lab = document.createElement("label");
+      lab.className = "chip";
+      lab.innerHTML =
+        '<input type="checkbox" data-g="' + g.id + '" checked> ' +
+        '<span class="chip-ic">' + g.icon + "</span> " +
+        "<span>[" + g.id + "] " + g.name + "</span>";
+      lab.querySelector("input").addEventListener("change", function (e) {
+        state.filters[g.id] = e.target.checked;
+        if (state.lastCategories) render();
+      });
+      wrap.appendChild(lab);
+    });
+  }
+
+  function setStatus(s) {
+    var el = $("status");
+    el.textContent = s || "";
+    el.style.display = s ? "block" : "none";
+  }
+
+  // ---------- Phan tich ----------
+  function runAnalysis(categories) {
+    state.lastCategories = categories;
+    render();
+    $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function render() {
+    if (!state.lastCategories) return;
+    // loc theo nguon nguoi dung quan tam: bo cac lop thuoc nhom da tat
+    var cats = state.lastCategories.filter(function (c) {
+      var grp = window.YAMNET_GROUP[c.index];
+      if (grp < 1 || grp > 7) return false;
+      // nhom 5 chi xuat hien khi bat che do mo phong; nhung loc o muc nhom -> de analyze xu ly
+      return true;
+    });
+    var agg = T.analyze(cats, { simulated: state.simulated });
+
+    // ap dung bo loc nguon: zero hoa cac nhom bi tat, tinh lai present/dominant/verdict
+    var anyOff = Object.keys(state.filters).some(function (k){return !state.filters[k];});
+    if (anyOff) {
+      for (var k = 1; k <= 7; k++) if (!state.filters[k]) agg.groupScores[k] = 0;
+      T.summarize(agg, {});
+      agg.verdict = T.verdict(agg);
+    }
+
+    renderVerdict(agg);
+    renderBars(agg);
+    renderRaw(agg);
+    $("results").classList.add("show");
+  }
+
+  function renderVerdict(agg) {
+    var v = agg.verdict, el = $("verdict");
+    var present = agg.present.map(function (g) {
+      return '<span class="src-pill" style="--c:' + T.GROUPS[g].color + '">' +
+             T.GROUPS[g].icon + " [" + g + "] " + T.GROUPS[g].name + "</span>";
+    }).join("");
+    var multi = agg.present.length > 1
+      ? '<div class="multi-note">üîé Ph√°t hi·ªán <b>' + agg.present.length +
+        " ngu·ªìn √¢m c√πng l√∫c</b> (ƒëa ngu·ªìn)</div>"
+      : "";
+    el.className = "verdict v-" + v.level;
+    el.innerHTML =
+      '<div class="v-badge">' + v.badge + "</div>" +
+      '<div class="v-body">' +
+        '<div class="v-title">' + v.title + "</div>" +
+        '<div class="v-srcs">' + present + "</div>" + multi +
+        '<div class="v-reason">' + v.reason + "</div>" +
+        '<div class="v-legal">‚öñÔ∏è ' + v.legal + "</div>" +
+      "</div>";
+  }
+
+  function renderBars(agg) {
+    var host = $("groupBars");
+    host.innerHTML = "";
+    var maxPct = 0, k;
+    for (k = 1; k <= 7; k++) maxPct = Math.max(maxPct, agg.pct[k] || 0);
+    maxPct = maxPct || 1;
+    for (k = 1; k <= 7; k++) {
+      var g = T.GROUPS[k], pct = agg.pct[k] || 0;
+      var on = state.filters[k];
+      var isPresent = agg.present.indexOf(k) >= 0;
+      var w = Math.round((pct / maxPct) * 100);
+      var pctTxt = (pct * 100).toFixed(1) + "%";
+      var row = document.createElement("div");
+      row.className = "bar-row" + (isPresent ? " present" : "") + (on ? "" : " off");
+      row.innerHTML =
+        '<div class="bar-head">' +
+          '<span class="bar-ic">' + g.icon + "</span>" +
+          '<span class="bar-name">[' + g.id + "] " + g.name + "</span>" +
+          '<span class="bar-pct">' + (on ? pctTxt : "‚Äî") + "</span>" +
+        "</div>" +
+        '<div class="bar-track"><div class="bar-fill" style="width:' +
+          (on ? w : 0) + "%;background:" + g.color + '"></div></div>' +
+        '<div class="bar-desc">' + g.desc + "</div>";
+      host.appendChild(row);
+    }
+  }
+
+  function renderRaw(agg) {
+    var host = $("rawList");
+    var top = agg.raw.filter(function (r){return r.score >= 0.05;}).slice(0, 12);
+    if (!top.length) top = agg.raw.slice(0, 8);
+    host.innerHTML = top.map(function (r) {
+      var g = T.GROUPS[r.group];
+      var c = g ? g.color : "#888";
+      return '<div class="raw-item">' +
+        '<span class="raw-dot" style="background:' + c + '"></span>' +
+        '<span class="raw-label">' + r.labelVi + "</span>" +
+        '<span class="raw-grp" style="--c:' + c + '">' + (r.group || "‚Äì") + "</span>" +
+        '<span class="raw-score">' + (r.score * 100).toFixed(0) + "%</span>" +
+        "</div>";
+    }).join("");
+  }
+
+  // ---------- Tai file ----------
+  function handleFile(file) {
+    if (!file) return;
+    setStatus("ƒêang ƒë·ªçc file: " + file.name + " ‚Ä¶");
+    var url = URL.createObjectURL(file);
+    $("player").src = url; $("player").style.display = "block";
+    var reader = new FileReader();
+    reader.onload = function () {
+      analyzeArrayBuffer(reader.result, file.name);
+    };
+    reader.onerror = function () { setStatus("‚ùå Kh√¥ng ƒë·ªçc ƒë∆∞·ª£c file."); };
+    reader.readAsArrayBuffer(file);
+  }
+
+  async function analyzeArrayBuffer(arrayBuffer, name) {
+    try {
+      E.onStatus(setStatus);
+      await E.ready();
+      setStatus("ƒêang ph√¢n t√≠ch √¢m thanh‚Ä¶");
+      var res = await E.classifyArrayBuffer(arrayBuffer);
+      setStatus("");
+      if (!res.categories.length) { setStatus("Kh√¥ng nh·∫≠n ƒë∆∞·ª£c √¢m thanh n√†o."); return; }
+      runAnalysis(res.categories);
+    } catch (err) {
+      console.error(err);
+      setStatus("‚ùå L·ªói: " + (err && err.message ? err.message : err));
+    }
+  }
+
+  // ---------- Ghi am ----------
+  var rec = { mediaRec: null, chunks: [], stream: null, timer: null, t0: 0, raf: null, ctx: null };
+  var MAX_SEC = 30;
+
+  async function startRecording() {
+    try {
+      rec.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (e) {
+      setStatus("‚ùå Kh√¥ng truy c·∫≠p ƒë∆∞·ª£c micro. H√£y c·∫•p quy·ªÅn micro cho trang.");
+      return;
+    }
+    rec.chunks = [];
+    rec.mediaRec = new MediaRecorder(rec.stream);
+    rec.mediaRec.ondataavailable = function (e) { if (e.data.size) rec.chunks.push(e.data); };
+    rec.mediaRec.onstop = onRecStop;
+    rec.mediaRec.start();
+    rec.t0 = performance.now();
+
+    // do muc am (level meter)
+    var AC = window.AudioContext || window.webkitAudioContext;
+    rec.ctx = new AC();
+    var src = rec.ctx.createMediaStreamSource(rec.stream);
+    var an = rec.ctx.createAnalyser(); an.fftSize = 512;
+    src.connect(an);
+    var buf = new Uint8Array(an.frequencyBinCount);
+    (function loop() {
+      an.getByteTimeDomainData(buf);
+      var peak = 0;
+      for (var i = 0; i < buf.length; i++) peak = Math.max(peak, Math.abs(buf[i] - 128));
+      $("level").style.width = Math.min(100, (peak / 128) * 160) + "%";
+      var sec = (performance.now() - rec.t0) / 1000;
+      $("recTimer").textContent = sec.toFixed(1) + "s";
+      if (sec >= MAX_SEC) { stopRecording(); return; }
+      rec.raf = requestAnimationFrame(loop);
+    })();
+
+    $("btnRecord").classList.add("hidden");
+    $("btnStop").classList.remove("hidden");
+    $("recMeter").classList.remove("hidden");
+    setStatus("üî¥ ƒêang ghi √¢m‚Ä¶ (t·ªëi ƒëa " + MAX_SEC + "s)");
+  }
+
+  function stopRecording() {
+    if (rec.mediaRec && rec.mediaRec.state !== "inactive") rec.mediaRec.stop();
+    if (rec.raf) cancelAnimationFrame(rec.raf);
+    $("btnRecord").classList.remove("hidden");
+    $("btnStop").classList.add("hidden");
+    $("recMeter").classList.add("hidden");
+    $("level").style.width = "0%";
+  }
+
+  async function onRecStop() {
+    if (rec.stream) rec.stream.getTracks().forEach(function (t) { t.stop(); });
+    if (rec.ctx) try { rec.ctx.close(); } catch (e) {}
+    var blob = new Blob(rec.chunks, { type: rec.mediaRec.mimeType || "audio/webm" });
+    var url = URL.createObjectURL(blob);
+    $("player").src = url; $("player").style.display = "block";
+    var ab = await blob.arrayBuffer();
+    analyzeArrayBuffer(ab, "ghi-am");
+  }
+
+  // ---------- Demo: giai dieu tong hop (nhom 7) ----------
+  async function demoSynthMelody() {
+    setStatus("ƒêang t·∫°o giai ƒëi·ªáu t·ªïng h·ª£p m·∫´u‚Ä¶");
+    var sr = 16000, dur = 4.5, n = Math.floor(sr * dur);
+    var buf = new Float32Array(n);
+    var notes = [440, 554, 659, 880, 659, 554, 494, 587]; // arpeggio
+    var per = Math.floor(n / notes.length);
+    for (var k = 0; k < notes.length; k++) {
+      var f0 = notes[k], start = k * per;
+      for (var i = 0; i < per && start + i < n; i++) {
+        var t = i / sr;
+        var env = Math.exp(-3.2 * t / (per / sr));          // pluck decay
+        var vib = 1 + 0.006 * Math.sin(2 * Math.PI * 5.5 * t); // vibrato
+        var s = 0;
+        for (var h = 1; h <= 7; h++) s += (1 / h) * Math.sin(2 * Math.PI * f0 * h * vib * t); // timbre gi√†u h√†i √¢m
+        s += 0.5 * Math.sin(2 * Math.PI * (f0 / 2) * t);    // b√® tr·∫ßm
+        buf[start + i] = 0.32 * env * s;
+      }
+    }
+    // phat lai cho nguoi nghe
+    playFloat(buf, sr);
+    try {
+      E.onStatus(setStatus); await E.ready();
+      setStatus("ƒêang ph√¢n t√≠ch‚Ä¶");
+      var cats = await E.classifyBuffer(buf);
+      setStatus("");
+      runAnalysis(cats);
+    } catch (err) { setStatus("‚ùå " + err.message); }
+  }
+
+  function playFloat(float32, sr) {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    var ctx = new AC();
+    var b = ctx.createBuffer(1, float32.length, sr);
+    b.copyToChannel(float32, 0);
+    var s = ctx.createBufferSource(); s.buffer = b; s.connect(ctx.destination); s.start();
+  }
+
+  // tai file mau dong goi san (neu co)
+  async function demoSample(url) {
+    try {
+      setStatus("ƒêang t·∫£i m·∫´u‚Ä¶");
+      var resp = await fetch(url);
+      var ab = await resp.arrayBuffer();
+      var blob = new Blob([ab]);
+      $("player").src = URL.createObjectURL(blob); $("player").style.display = "block";
+      analyzeArrayBuffer(ab, url);
+    } catch (e) { setStatus("‚ùå Kh√¥ng t·∫£i ƒë∆∞·ª£c m·∫´u: " + e.message); }
+  }
+
+  // ---------- Wire ----------
+  function init() {
+    buildGroupChecklist();
+    $("btnRecord").addEventListener("click", startRecording);
+    $("btnStop").addEventListener("click", stopRecording);
+    $("fileInput").addEventListener("change", function (e) { handleFile(e.target.files[0]); });
+
+    var dz = $("dropZone");
+    ["dragenter","dragover"].forEach(function (ev) {
+      dz.addEventListener(ev, function (e){ e.preventDefault(); dz.classList.add("drag"); });
+    });
+    ["dragleave","drop"].forEach(function (ev) {
+      dz.addEventListener(ev, function (e){ e.preventDefault(); dz.classList.remove("drag"); });
+    });
+    dz.addEventListener("drop", function (e) {
+      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+
+    $("simToggle").addEventListener("change", function (e) {
+      state.simulated = e.target.checked;
+      if (state.lastCategories) render();
+    });
+
+    $("btnDemo").addEventListener("click", demoSynthMelody);
+    // nut mau thuc (neu co file trong /assets)
+    Array.prototype.forEach.call(document.querySelectorAll("[data-sample]"), function (b) {
+      b.addEventListener("click", function () { demoSample(b.getAttribute("data-sample")); });
+    });
+
+    // warm-up model (khong chan UI)
+    E.onStatus(setStatus);
+    setTimeout(function () { E.ready().catch(function(){}); }, 400);
+  }
+
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+<script>
+(function(){
+  var HASH="8ca66aacbc85bae5ec4c12f0998d55d156ade64c221c3ce6e214b68d4f8baac7", KEY="amthanh_unlocked";
+  function unlock(){ document.body.classList.remove('locked'); }
+  try{ if(sessionStorage.getItem(KEY)===HASH) unlock(); }catch(e){}
+  async function sha256(s){
+    var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+  }
+  var form=document.getElementById('gateForm');
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var h=await sha256(document.getElementById('gatePw').value);
+    if(h===HASH){ try{sessionStorage.setItem(KEY,HASH)}catch(e){}; unlock(); }
+    else{
+      document.getElementById('gateErr').textContent='Sai m·∫≠t kh·∫©u, th·ª≠ l·∫°i.';
+      var c=document.querySelector('.gate-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
+      var i=document.getElementById('gatePw'); i.select();
+    }
+  });
+  setTimeout(function(){ var i=document.getElementById('gatePw'); if(i&&document.body.classList.contains('locked')) i.focus(); }, 150);
+})();
+</script>
+</body>
+</html>
