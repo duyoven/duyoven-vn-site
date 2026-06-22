@@ -91,18 +91,7 @@
       "label": "Duy's Oven",
       "maxDevices": 5,
       "active": true,
-      "devices": [
-        {
-          "d": "6424a316782d9f77d36b493a2b9d21e34b275f8a576af36c639bd726d8086ff7",
-          "name": "Android",
-          "ts": "2026-06-22T01:45:58.491Z"
-        },
-        {
-          "d": "5f4d1dea4b6849eab055daaef6dafb92def2de1cdfde0459495c721b7c0cf290",
-          "name": "Web",
-          "ts": "2026-06-22T01:51:13.077Z"
-        }
-      ]
+      "devices": []
     }
   ],
   "rev": 15,
