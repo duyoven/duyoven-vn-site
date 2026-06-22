@@ -302,6 +302,36 @@ body{
 .hist-table tr.h-conditional td{border-left:3px solid #f59e0b}
 .hist-table tr.h-low td{border-left:3px solid #ef4444}
 
+/* engine badge trong verdict */
+.v-engine{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:99px;margin-bottom:6px;letter-spacing:.02em}
+.v-engine.eng-pro{background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff}
+.v-engine.eng-base{background:rgba(148,163,184,.18);color:#9fb0d8;border:1px solid var(--line)}
+
+/* panel BEATs + CLAP */
+#aiPanel .ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+@media(max-width:640px){#aiPanel .ai-grid{grid-template-columns:1fr}}
+.ai-box{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ai-k{font-size:12.5px;font-weight:800;color:#c4b5fd;margin-bottom:6px}
+.ai-desc{font-size:15.5px;color:#eef2ff;font-weight:600;line-height:1.35}
+.ai-subs{margin-top:8px;font-size:12px;color:var(--muted)}
+.ai-chip{display:inline-block;background:#0c1330;border:1px solid var(--line);border-radius:99px;padding:3px 9px;margin:3px 4px 0 0;color:#9fb0d8;font-size:11.5px}
+.ai-uq{display:flex;align-items:center;gap:10px}
+.ai-uqbar{flex:1;height:9px;border-radius:99px;background:#0c1330;border:1px solid var(--line);overflow:hidden}
+.ai-uqfill{height:100%;background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+.ai-uq b{font-variant-numeric:tabular-nums;color:#eef2ff}
+.ai-hint{margin-top:7px;font-size:12px;color:var(--muted)}
+.raw-grp{color:var(--muted);font-size:11.5px;margin:0 6px}
+.raw-score{font-weight:700;font-variant-numeric:tabular-nums;color:#c4b5fd}
+
+/* backend settings */
+.be-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 4px}
+.be-input{flex:1;min-width:220px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#0c1330;color:#eef2ff;font-size:13px;outline:none}
+.be-input:focus{border-color:#8b5cf6}
+.btn-be{padding:9px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+.be-status{font-size:12.5px;font-weight:700}
+.be-status.on{color:#34d399}.be-status.off{color:#fca5a5}.be-status.probing{color:var(--gold)}
+.be-url{color:var(--muted);font-weight:500}
+
 /* link sang slide bảo vệ (web slideshow) */
 .hero-slides{display:inline-block;margin-top:16px;padding:10px 20px;border-radius:99px;
   background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff;font-weight:700;font-size:14.5px;
@@ -486,6 +516,15 @@ body.locked .site-back{display:none}
           <button class="btn btn-sample" data-sample="chirp" data-en="📈 Freq sweep">📈 Quét tần số</button>
         </div>
       </div>
+      <div class="opt-block be-block">
+        <div class="opt-label">⚙️ <span data-en="AI Backend — BEATs Large + CLAP (advanced)">Backend AI — BEATs Large + CLAP (nâng cao)</span></div>
+        <div class="be-row">
+          <input id="beUrl" class="be-input" type="text" placeholder="https://…trycloudflare.com" />
+          <button id="beConnect" class="btn btn-be" data-en="Connect">Kết nối</button>
+          <span id="beStatus" class="be-status">—</span>
+        </div>
+        <div class="field-hint" data-en="Leave blank to auto-detect the backend. When off, the app uses in-browser YAMNet + DSP.">Để trống sẽ tự dò backend. Khi backend tắt, app tự dùng YAMNet + DSP ngay trong trình duyệt.</div>
+      </div>
     </div>
   </section>
 
@@ -497,6 +536,9 @@ body.locked .site-back{display:none}
       <h2 class="sec-title" data-en="Score across the 7 origin groups">Mức độ theo 7 nhóm nguồn gốc</h2>
       <div id="groupBars" class="group-bars"></div>
     </div>
+
+    <!-- PHÂN TÍCH NÂNG CAO: BEATs Large + CLAP -->
+    <div id="aiPanel" class="panel" style="display:none"></div>
 
     <div class="panel">
       <h2 class="sec-title" data-en="Sounds recognized by the model <span class=&quot;muted&quot;>(YAMNet labels → group)</span>">Âm thanh mô hình nhận diện <span class="muted">(nhãn YAMNet → nhóm)</span></h2>
@@ -1726,6 +1768,79 @@ window.AudioEngine = (function () {
 
 </script>
 <script>
+// aiengine.js — client cho backend "đồ xịn": BEATs Large + CLAP (qua Cloudflare Tunnel).
+// Tự dò backend; nếu có -> dùng làm engine chính. Nếu không -> app dùng YAMNet+DSP.
+(function (w) {
+  "use strict";
+  // URL backend mặc định (Cloudflare Tunnel của Mac mini). Có thể đổi trong ⚙️ Backend AI.
+  var DEFAULT = "https://utc-campaign-mercury-explaining.trycloudflare.com";
+  var KEY = "amthanh_backend_url";
+  var ACTIVE = null, INFO = null;
+
+  function trim(u){ return (u||"").replace(/\/+$/,""); }
+  function saved(){ try { return localStorage.getItem(KEY) || ""; } catch(e){ return ""; } }
+  function setURL(u){ try { if(u) localStorage.setItem(KEY,u); else localStorage.removeItem(KEY); } catch(e){} }
+
+  async function probe(url, ms){
+    if(!url) return null;
+    try{
+      var c = new AbortController(), t = setTimeout(function(){c.abort();}, ms||4500);
+      var r = await fetch(trim(url)+"/health", {signal:c.signal, cache:"no-store"});
+      clearTimeout(t);
+      if(r.ok) return await r.json();
+    }catch(e){}
+    return null;
+  }
+
+  // dò lần lượt: URL đã lưu -> mặc định -> localhost
+  async function autodetect(){
+    var cands = [];
+    if(saved()) cands.push(saved());
+    if(DEFAULT && cands.indexOf(DEFAULT)<0) cands.push(DEFAULT);
+    cands.push("http://127.0.0.1:8000");
+    for(var i=0;i<cands.length;i++){
+      var h = await probe(cands[i], 4500);
+      if(h){ ACTIVE = trim(cands[i]); INFO = h; return {url:ACTIVE, info:h}; }
+    }
+    ACTIVE = null; INFO = null; return null;
+  }
+
+  function encodeWAV(f32, sr){
+    var n = f32.length, buf = new ArrayBuffer(44 + n*2), v = new DataView(buf);
+    function ws(o,s){ for(var i=0;i<s.length;i++) v.setUint8(o+i, s.charCodeAt(i)); }
+    ws(0,"RIFF"); v.setUint32(4,36+n*2,true); ws(8,"WAVE"); ws(12,"fmt ");
+    v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+    v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+    ws(36,"data"); v.setUint32(40,n*2,true);
+    var o=44; for(var i=0;i<n;i++){ var s=Math.max(-1,Math.min(1,f32[i])); v.setInt16(o, s<0 ? s*0x8000 : s*0x7FFF, true); o+=2; }
+    return new Blob([buf], {type:"audio/wav"});
+  }
+
+  // f32 = mono 16kHz Float32Array; dspVote = {1..7:score} (tuỳ chọn)
+  async function analyze(f32, sr, dspVote){
+    if(!ACTIVE) throw new Error("no backend");
+    var fd = new FormData();
+    fd.append("file", encodeWAV(f32, sr||16000), "audio.wav");
+    if(dspVote) fd.append("dspVote", JSON.stringify(dspVote));
+    var c = new AbortController(), t = setTimeout(function(){c.abort();}, 45000);
+    var r = await fetch(ACTIVE+"/analyze", {method:"POST", body:fd, signal:c.signal});
+    clearTimeout(t);
+    if(!r.ok) throw new Error("backend "+r.status);
+    var j = await r.json();
+    if(j.error) throw new Error(j.error);
+    return j;
+  }
+
+  w.AIBACKEND = {
+    DEFAULT: DEFAULT,
+    autodetect: autodetect, probe: probe, analyze: analyze, encodeWAV: encodeWAV,
+    saved: saved, setURL: setURL,
+    active: function(){ return ACTIVE; }, info: function(){ return INFO; },
+  };
+})(window);
+
+</script>
+<script>
 // app.js — dieu khien giao dien: ghi am / tai file / demo -> phan loai -> hien ket qua.
 (function () {
   "use strict";
@@ -1741,10 +1856,13 @@ window.AudioEngine = (function () {
     lastAcoustics: null,    // ket qua phan tich am hoc (DSP)
     lastName: null,         // ten mau dang phan tich
     lastSaResult: null,     // ket qua tu danh gia gan nhat
+    lastBackend: null,      // ket qua tu backend BEATs Large + CLAP (neu co)
+    backendInfo: null,      // /health cua backend (null = khong co)
     history: [],            // lich su cac am da phan tich
     simulated: false,       // che do mo phong (nhom 5)
     filters: { 1:true,2:true,3:true,4:true,5:true,6:true,7:true },
   };
+  var AB = window.AIBACKEND;
 
   // ---------- Khoi tao giao dien tinh ----------
   function buildGroupChecklist() {
@@ -1776,10 +1894,36 @@ window.AudioEngine = (function () {
   function runAnalysis(categories, samples) {
     state.lastCategories = categories;
     state.lastSamples = samples || null;
+    state.lastBackend = null;
     // nguon #2: phan tich am hoc DSP
     state.lastAcoustics = (A && samples) ? A.analyze(samples, 16000) : null;
-    render();
+    render();   // hien ngay ket qua YAMNet + DSP
     $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+    maybeBackend();   // bo sung BEATs Large + CLAP (neu backend bat) -> render lai
+  }
+
+  // gop vote DSP + giai dieu thanh 1 vector 1..7 gui cho backend (meta classifier)
+  function dspVoteVector(ac) {
+    if (!ac) return null;
+    var v = {};
+    for (var k = 1; k <= 7; k++)
+      v[k] = (ac.vote[k] || 0) + (ac.melodyVote ? (ac.melodyVote[k] || 0) * (ac.melodyConf || 0) : 0);
+    return v;
+  }
+
+  async function maybeBackend() {
+    if (!state.backendInfo || !AB || !state.lastSamples) return;
+    var mySamples = state.lastSamples;
+    try {
+      setStatus("⚡ " + L("Đang phân tích bằng BEATs Large + CLAP…", "Analyzing with BEATs Large + CLAP…"));
+      var res = await AB.analyze(mySamples, 16000, dspVoteVector(state.lastAcoustics));
+      if (state.lastSamples !== mySamples) return;   // da co am moi -> bo qua
+      state.lastBackend = res;
+      setStatus("");
+      render();
+    } catch (e) {
+      setStatus("");   // backend loi -> giu ket qua YAMNet+DSP
+    }
   }
 
   function render() {
@@ -1807,19 +1951,27 @@ window.AudioEngine = (function () {
       acoustic: ac ? { type: ac.type, distinctiveness: ac.distinctiveness, features: ac.features } : null,
     });
 
+    // BEATs Large + CLAP (backend): nếu có -> dùng nhóm meta làm kết quả chính
+    var bk = state.lastBackend;
+    if (bk && bk.groups) {
+      for (var gk = 1; gk <= 7; gk++) agg.groupScores[gk] = (parseFloat(bk.groups[gk]) || 0);
+      agg.engine = bk.engine || "BEATs Large + CLAP";
+      agg.backend = bk;
+    } else {
+      agg.engine = ac ? "YAMNet + DSP" : "YAMNet";
+    }
+
     // ap dung bo loc nguon: zero hoa cac nhom bi tat, tinh lai present/dominant/verdict
     var anyOff = Object.keys(state.filters).some(function (k){return !state.filters[k];});
-    if (anyOff) {
-      for (var k = 1; k <= 7; k++) if (!state.filters[k]) agg.groupScores[k] = 0;
-      T.summarize(agg, {});
-      agg.verdict = T.verdict(agg);
-    }
+    if (anyOff) for (var k = 1; k <= 7; k++) if (!state.filters[k]) agg.groupScores[k] = 0;
+    if (bk || anyOff) { T.summarize(agg, {}); agg.verdict = T.verdict(agg); }
 
     renderVerdict(agg);
     renderBars(agg);
     renderRaw(agg);
     renderAcoustics(agg);
     renderInputStats();
+    renderAI(agg);
     $("results").classList.add("show");
     state.lastAgg = agg;
     pushHistory(agg);
@@ -1841,6 +1993,39 @@ window.AudioEngine = (function () {
     el.innerHTML = '<span class="is-cap">' + L("Thông số đầu vào:", "Input parameters:") + '</span>' + items.map(function (it) {
       return '<span class="istat"><span class="is-ic">' + it[0] + '</span><span class="is-k">' + it[1] + '</span><span class="is-v">' + it[2] + '</span></span>';
     }).join("");
+  }
+
+  // ---------- Panel nâng cao: BEATs Large + CLAP ----------
+  function renderAI(agg) {
+    var host = $("aiPanel"); if (!host) return;
+    var bk = agg.backend;
+    if (!bk) { host.style.display = "none"; return; }
+    host.style.display = "block";
+    var cl = bk.clap || {}, bt = (bk.beats && bk.beats.top) || [];
+    var topHtml = bt.slice(0, 6).map(function (r) {
+      var g = T.GROUPS[r.group], c = g ? g.color : "#888";
+      return '<div class="raw-item"><span class="raw-dot" style="background:' + c + '"></span>' +
+        '<span class="raw-label">' + esc(r.label) + '</span>' +
+        '<span class="raw-grp">[' + (r.group || "–") + ']</span>' +
+        '<span class="raw-score">' + Math.round(r.score * 100) + '%</span></div>';
+    }).join("");
+    var subs = (cl.subLabels || []).map(function (s) { return '<span class="ai-chip">' + esc(s) + '</span>'; }).join("");
+    var uq = (cl.uniqueness != null) ? cl.uniqueness : null;
+    host.innerHTML =
+      '<h2 class="sec-title">⚡ ' + L("Phân tích nâng cao — BEATs Large + CLAP", "Advanced analysis — BEATs Large + CLAP") +
+        ' <span class="muted">(' + L("mô hình transformer SOTA", "SOTA transformer models") + ')</span></h2>' +
+      '<div class="ai-grid">' +
+        '<div class="ai-box"><div class="ai-k">🔎 ' + L("Mô tả ngữ nghĩa (CLAP)", "Semantic description (CLAP)") + '</div>' +
+          '<div class="ai-desc">' + esc(cl.description || "—") + '</div>' +
+          (subs ? '<div class="ai-subs">' + L("Nhãn phụ", "Sub-labels") + ': ' + subs + '</div>' : '') + '</div>' +
+        '<div class="ai-box"><div class="ai-k">✨ ' + L("Độ độc đáo (CLAP)", "Uniqueness (CLAP)") + '</div>' +
+          (uq != null ? '<div class="ai-uq"><div class="ai-uqbar"><div class="ai-uqfill" style="width:' + uq + '%"></div></div><b>' + uq + '/100</b></div>' : '—') +
+          '<div class="ai-hint">' + (uq >= 60 ? L("Có dấu ấn riêng, dễ phân biệt.", "Distinctive, memorable.") :
+            uq >= 40 ? L("Tương đối — nên tăng yếu tố sáng tạo.", "Moderate — add creative elements.") :
+            L("Phổ biến/chức năng — khó phân biệt.", "Common/functional — low distinctiveness.")) + '</div></div>' +
+      '</div>' +
+      '<div class="ai-k" style="margin-top:12px">🤖 ' + L("Nhãn BEATs Large (AudioSet)", "BEATs Large labels (AudioSet)") + '</div>' +
+      '<div class="raw-list">' + topHtml + '</div>';
   }
 
   // ---------- Lịch sử / so sánh ----------
@@ -1951,10 +2136,14 @@ window.AudioEngine = (function () {
       ? '<div class="multi-note">🔎 ' + L("Phát hiện", "Detected") + " <b>" + agg.present.length +
         " " + L("nguồn âm cùng lúc</b> (đa nguồn)", "sound sources at once</b> (multi-source)") + "</div>"
       : "";
+    var eng = agg.engine || "YAMNet + DSP";
+    var engCls = agg.backend ? "eng-pro" : "eng-base";
+    var engBadge = '<span class="v-engine ' + engCls + '">' + (agg.backend ? "⚡ " : "") + esc(eng) + "</span>";
     el.className = "verdict v-" + v.level;
     el.innerHTML =
       '<div class="v-badge">' + v.badge + "</div>" +
       '<div class="v-body">' +
+        engBadge +
         '<div class="v-title">' + v.title + "</div>" +
         '<div class="v-srcs">' + present + "</div>" + multi +
         '<div class="v-reason">' + v.reason + "</div>" +
@@ -2417,6 +2606,25 @@ window.AudioEngine = (function () {
     } catch (err) { setStatus("❌ " + (err && err.message ? err.message : err)); }
   }
 
+  // ---------- Backend AI (BEATs Large + CLAP) ----------
+  function setBeStatus(cls, txt, url) {
+    var el = $("beStatus"); if (!el) return;
+    el.className = "be-status " + cls;
+    el.innerHTML = txt + (url ? ' <span class="be-url">' + esc(url.replace(/^https?:\/\//, "")) + '</span>' : "");
+  }
+  async function detectBackend() {
+    if (!AB) return;
+    setBeStatus("probing", "⏳ " + L("đang dò…", "probing…"));
+    var r = await AB.autodetect();
+    state.backendInfo = r ? r.info : null;
+    if (r) {
+      setBeStatus("on", "⚡ BEATs Large + CLAP", r.url);
+      if (state.lastSamples && !state.lastBackend) maybeBackend();   // bổ sung cho âm đang xem
+    } else {
+      setBeStatus("off", L("✕ Chưa kết nối — dùng YAMNet+DSP", "✕ Not connected — using YAMNet+DSP"));
+    }
+  }
+
   // ---------- Đổi ngôn ngữ (VI / EN = tiếng Mỹ) ----------
   function setLang(lang) {
     window.APP_LANG = (lang === "en") ? "en" : "vi";
@@ -2495,6 +2703,12 @@ window.AudioEngine = (function () {
       b.addEventListener("click", function () { analyzeSample(b.getAttribute("data-sample")); });
     });
     window.__report = composeReportHTML; // hook kiểm thử
+
+    // Backend AI: input + dò tự động
+    var bIn = $("beUrl"), bBtn = $("beConnect");
+    if (bIn && AB) { bIn.value = AB.saved() || ""; bIn.setAttribute("placeholder", AB.DEFAULT); }
+    if (bBtn) bBtn.addEventListener("click", function () { if (bIn && AB) AB.setURL(bIn.value.trim()); detectBackend(); });
+    detectBackend();
 
     // ap dung ngon ngu da chon (neu la EN thi dich toan bo tinh + dong)
     setLang(window.APP_LANG);
