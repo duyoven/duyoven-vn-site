@@ -323,6 +323,21 @@ body{
 .raw-grp{color:var(--muted);font-size:11.5px;margin:0 6px}
 .raw-score{font-weight:700;font-variant-numeric:tabular-nums;color:#c4b5fd}
 
+/* caption LLM */
+.ai-cap{background:linear-gradient(180deg,rgba(139,92,246,.12),rgba(236,72,153,.08));border:1px solid #3a2d6b;border-radius:12px;padding:12px 14px;margin:6px 0 12px}
+.ai-captxt{font-size:14.5px;line-height:1.5;color:#eef2ff}
+
+/* tra cứu tương tự (đối chiếu nhầm lẫn) */
+.sim-warn{background:rgba(192,58,43,.14);border:1px solid #c03a2b;color:#fca5a5;font-size:12.5px;font-weight:600;border-radius:8px;padding:7px 10px;margin:4px 0 8px}
+.sim-list{display:flex;flex-direction:column;gap:5px}
+.sim-row{display:flex;align-items:center;gap:9px;font-size:13px}
+.sim-bar{position:relative;width:90px;flex:none;height:8px;border-radius:99px;background:#0c1330;border:1px solid var(--line);overflow:hidden}
+.sim-fill{position:absolute;left:0;top:0;height:100%}
+.sim-fill.hi{background:#ec4899}.sim-fill.mid{background:#8b5cf6}.sim-fill.lo{background:#475569}
+.sim-pct{font-weight:700;font-variant-numeric:tabular-nums;min-width:46px}
+.sim-pct.hi{color:#ec4899}.sim-pct.mid{color:#c4b5fd}.sim-pct.lo{color:var(--muted)}
+.sim-name{flex:1;color:#eef2ff}.sim-name i{color:var(--muted);font-style:italic}
+
 /* backend settings */
 .be-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 4px}
 .be-input{flex:1;min-width:220px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#0c1330;color:#eef2ff;font-size:13px;outline:none}
@@ -1866,7 +1881,7 @@ window.AudioEngine = (function () {
     for (var i = 0; i < RULES.length; i++)
       for (var j = 0; j < RULES[i][1].length; j++)
         if (n.indexOf(RULES[i][1][j]) >= 0) return RULES[i][0];
-    return 6;
+    return 0;   // nhãn lạ -> bỏ qua (không ép vào nhóm 6)
   }
 
   var GROUP_PROMPTS = {
@@ -1918,7 +1933,7 @@ window.AudioEngine = (function () {
     // AST -> nhóm
     var astOut = await ast(f32_16k, { topk: 12 });
     var grp = {1:0,2:0,3:0,4:0,5:0,6:0,7:0};
-    astOut.forEach(function (o) { var g = nameToGroup(o.label); grp[g] += o.score; });
+    astOut.forEach(function (o) { var g = nameToGroup(o.label); if (g >= 1 && g <= 7) grp[g] += o.score; });
     var top = astOut.slice(0, 8).map(function (o) { return { label: o.label, group: nameToGroup(o.label), score: o.score }; });
 
     // CLAP -> groups + description + uniqueness + sub-labels (48k)
@@ -2008,10 +2023,13 @@ window.AudioEngine = (function () {
   }
 
   // ---------- Phan tich ----------
+  var CAPTION_URL = "https://duyoven.vn/api/audio-caption";
+
   function runAnalysis(categories, samples) {
     state.lastCategories = categories;
     state.lastSamples = samples || null;
     state.lastBackend = null;
+    state.captionText = null;
     // nguon #2: phan tich am hoc DSP
     state.lastAcoustics = (A && samples) ? A.analyze(samples, 16000) : null;
     render();   // hien ngay ket qua YAMNet + DSP
@@ -2038,9 +2056,34 @@ window.AudioEngine = (function () {
       state.lastBackend = res;
       setStatus("");
       render();
+      genCaption();   // sinh mô tả + nhận định bằng LLM
     } catch (e) {
       setStatus("");   // backend loi -> giu ket qua YAMNet+DSP
     }
+  }
+
+  // Audio captioning: mô tả + nhận định pháp lý bằng LLM (qua Worker Claude của site)
+  async function genCaption() {
+    var bk = state.lastBackend; if (!bk) return;
+    var payload = { lang: window.APP_LANG === "en" ? "en" : "vi", analysis: {
+      dominant: bk.dominant, engine: bk.engine,
+      beatsTop: ((bk.beats && bk.beats.top) || []).slice(0, 6).map(function (r) { return r.label; }),
+      clapDesc: bk.clap && bk.clap.description, subLabels: bk.clap && bk.clap.subLabels,
+      uniqueness: bk.clap && bk.clap.uniqueness,
+      type: state.lastAcoustics ? state.lastAcoustics.type : null,
+      verdict: state.lastAgg ? state.lastAgg.verdict.title : null,
+      similarTop: (bk.similar && bk.similar[0]) ? (bk.similar[0].name + " " + bk.similar[0].similarity + "%") : null,
+    }};
+    var myB = bk;
+    try {
+      var c = new AbortController(), t = setTimeout(function () { c.abort(); }, 30000);
+      var r = await fetch(CAPTION_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: c.signal });
+      clearTimeout(t);
+      if (!r.ok) return;
+      var j = await r.json();
+      if (state.lastBackend !== myB) return;
+      if (j.caption) { state.captionText = j.caption; render(); }
+    } catch (e) {}
   }
 
   function render() {
@@ -2128,9 +2171,14 @@ window.AudioEngine = (function () {
     }).join("");
     var subs = (cl.subLabels || []).map(function (s) { return '<span class="ai-chip">' + esc(s) + '</span>'; }).join("");
     var uq = (cl.uniqueness != null) ? cl.uniqueness : null;
+    var capHtml = state.captionText
+      ? '<div class="ai-cap"><div class="ai-k">🗣️ ' + L("Mô tả & nhận định (AI ngôn ngữ)", "Description & assessment (LLM)") + '</div>' +
+        '<div class="ai-captxt">' + esc(state.captionText) + '</div></div>'
+      : "";
     host.innerHTML =
       '<h2 class="sec-title">⚡ ' + L("Phân tích nâng cao — BEATs Large + CLAP", "Advanced analysis — BEATs Large + CLAP") +
         ' <span class="muted">(' + L("mô hình transformer SOTA", "SOTA transformer models") + ')</span></h2>' +
+      capHtml +
       '<div class="ai-grid">' +
         '<div class="ai-box"><div class="ai-k">🔎 ' + L("Mô tả ngữ nghĩa (CLAP)", "Semantic description (CLAP)") + '</div>' +
           '<div class="ai-desc">' + esc(cl.description || "—") + '</div>' +
@@ -2143,6 +2191,25 @@ window.AudioEngine = (function () {
       '</div>' +
       '<div class="ai-k" style="margin-top:12px">🤖 ' + L("Nhãn BEATs Large (AudioSet)", "BEATs Large labels (AudioSet)") + '</div>' +
       '<div class="raw-list">' + topHtml + '</div>';
+
+    // tra cứu tương tự (đối chiếu nhầm lẫn, Đ.74)
+    var sim = bk.similar || [];
+    if (sim.length) {
+      var warn = sim[0].similarity >= 85
+        ? '<div class="sim-warn">⚠ ' + L("Rất giống một nhãn âm thanh đã có → nguy cơ GÂY NHẦM LẪN (Điều 74). Cần đối chiếu kỹ trước khi nộp đơn.",
+            "Highly similar to an existing sound mark → risk of CONFUSION (Art. 74). Review carefully before filing.") + '</div>' : '';
+      host.innerHTML +=
+        '<div class="ai-k" style="margin-top:14px">🔁 ' + L("Đối chiếu nhầm lẫn — nhãn âm thanh tương tự đã có", "Confusion check — similar existing sound marks") + '</div>' + warn +
+        '<div class="sim-list">' + sim.map(function (s) {
+          var cls = s.similarity >= 85 ? "hi" : s.similarity >= 70 ? "mid" : "lo";
+          return '<div class="sim-row"><span class="sim-bar"><span class="sim-fill ' + cls + '" style="width:' + Math.max(4, s.similarity) + '%"></span></span>' +
+            '<span class="sim-pct ' + cls + '">' + s.similarity + '%</span>' +
+            '<span class="sim-name">' + esc(s.name) + (s.owner && s.owner !== "—" ? ' · <i>' + esc(s.owner) + '</i>' : "") + '</span>' +
+            '<span class="raw-grp">[' + s.group + ']</span></div>';
+        }).join("") + '</div>' +
+        '<div class="ai-hint">' + L("Độ tương đồng embedding CLAP — tham khảo khả năng gây nhầm lẫn (điểm h khoản 2 Điều 74). Thư viện tham chiếu hiện là mẫu minh hoạ; có thể nạp nhãn đã đăng ký thật.",
+          "CLAP-embedding similarity — reference for likelihood of confusion (Art. 74(2)(h)). The reference library is currently illustrative; real registered marks can be loaded.") + '</div>';
+    }
   }
 
   // ---------- Lịch sử / so sánh ----------
@@ -2753,7 +2820,7 @@ window.AudioEngine = (function () {
         setStatus("🧠 " + L("AI trình duyệt", "Browser AI") + ": " + stage + "…");
       });
       if (state.lastSamples !== samples) return;
-      state.lastBackend = res; setStatus(""); render();
+      state.lastBackend = res; state.captionText = null; setStatus(""); render(); genCaption();
     } catch (e) {
       setStatus("⚠ " + L("Không tải được AI trình duyệt: ", "Browser AI failed: ") + (e && e.message ? e.message : e));
     }
