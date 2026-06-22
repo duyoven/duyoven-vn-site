@@ -85,6 +85,13 @@
           "ts": "2026-06-21T07:20:36.447Z"
         }
       ]
+    },
+    {
+      "key": "DOV-WYL8-LABV",
+      "label": "Chu - Duy (Android/test)",
+      "maxDevices": 5,
+      "active": true,
+      "devices": []
     }
   ],
   "rev": 12,
