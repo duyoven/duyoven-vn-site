@@ -1774,8 +1774,8 @@ window.AudioEngine = (function () {
 // Tự dò backend; nếu có -> dùng làm engine chính. Nếu không -> app dùng YAMNet+DSP.
 (function (w) {
   "use strict";
-  // URL backend mặc định (Cloudflare Tunnel của Mac mini). Có thể đổi trong ⚙️ Backend AI.
-  var DEFAULT = "https://utc-campaign-mercury-explaining.trycloudflare.com";
+  // URL backend mặc định — hostname CỐ ĐỊNH (Cloudflare named tunnel của Mac mini).
+  var DEFAULT = "https://ai.duyoven.vn";
   var KEY = "amthanh_backend_url";
   var ACTIVE = null, INFO = null;
 
