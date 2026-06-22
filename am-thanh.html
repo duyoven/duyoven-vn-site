@@ -302,6 +302,23 @@ body{
 .hist-table tr.h-conditional td{border-left:3px solid #f59e0b}
 .hist-table tr.h-low td{border-left:3px solid #ef4444}
 
+/* bằng chứng dưới mỗi thanh nhóm */
+.bar-evi{font-size:11.5px;color:#9fb0d8;margin-top:4px;line-height:1.45;
+  background:rgba(139,92,246,.07);border:1px solid var(--line);border-radius:8px;padding:5px 9px}
+.bar-evi b{color:#c4b5fd;font-weight:700}
+.bar-row.off .bar-evi{display:none}
+
+/* dải thông số đầu vào (khu thu âm) */
+.input-stats{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:12px;
+  background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.is-cap{font-size:12px;color:var(--muted);font-weight:700;margin-right:2px}
+.istat{display:inline-flex;align-items:center;gap:6px;background:#0c1330;border:1px solid var(--line);
+  border-radius:99px;padding:5px 11px;font-size:12.5px}
+.is-ic{font-size:13px}.is-k{color:var(--muted)}.is-v{font-weight:700;font-variant-numeric:tabular-nums}
+
+/* thông số trực tiếp khi ghi âm */
+.rec-live{font-size:12px;font-weight:700;color:#34d399;font-variant-numeric:tabular-nums;min-width:120px}
+
 @media (max-width:720px){
   .input-grid,.input-grid.two{grid-template-columns:1fr}
   .raw-list{grid-template-columns:1fr}
@@ -406,6 +423,7 @@ body.locked .site-back{display:none}
         <div id="recMeter" class="rec-meter hidden">
           <div class="level-track"><div id="level" class="level-fill"></div></div>
           <span id="recTimer" class="rec-timer">0.0s</span>
+          <span id="recLive" class="rec-live"></span>
         </div>
         <div class="ic-hint">Nói, vỗ tay, mở 1 đoạn nhạc/clip để app nghe (tối đa 30s).</div>
       </div>
@@ -423,6 +441,7 @@ body.locked .site-back{display:none}
     </div>
 
     <audio id="player" class="player" controls style="display:none"></audio>
+    <div id="inputStats" class="input-stats" style="display:none"></div>
     <div id="status" class="status" style="display:none"></div>
 
     <!-- options -->
@@ -1609,9 +1628,28 @@ window.AudioEngine = (function () {
     renderBars(agg);
     renderRaw(agg);
     renderAcoustics(agg);
+    renderInputStats();
     $("results").classList.add("show");
     state.lastAgg = agg;
     pushHistory(agg);
+  }
+
+  // dải thông số sơ bộ của ÂM ĐẦU VÀO (ngay khu thu âm)
+  function renderInputStats() {
+    var el = $("inputStats"), ac = state.lastAcoustics; if (!el) return;
+    if (!ac) { el.style.display = "none"; return; }
+    var f = ac.features;
+    var items = [
+      ["⏱", "Thời lượng", ac.duration.toFixed(2) + "s"],
+      ["🔊", "Cường độ", (ac.metrics.find(function(m){return m.k.indexOf("Cường độ")>=0;})||{}).v || "—"],
+      ["🎵", "Cao độ f0", f.medF0 ? Math.round(f.medF0) + " Hz" : "—"],
+      ["✨", "Độ sáng", Math.round(f.centroidHz) + " Hz"],
+      ["📈", "Loại", ac.typeIcon + " " + ac.type.split(" (")[0]],
+    ];
+    el.style.display = "flex";
+    el.innerHTML = '<span class="is-cap">Thông số đầu vào:</span>' + items.map(function (it) {
+      return '<span class="istat"><span class="is-ic">' + it[0] + '</span><span class="is-k">' + it[1] + '</span><span class="is-v">' + it[2] + '</span></span>';
+    }).join("");
   }
 
   // ---------- Lịch sử / so sánh ----------
@@ -1731,6 +1769,19 @@ window.AudioEngine = (function () {
       "</div>";
   }
 
+  // bằng chứng cho 1 nhóm: nhãn YAMNet + tín hiệu DSP/giai điệu đã đóng góp
+  function groupEvidence(k, agg) {
+    var ac = state.lastAcoustics, parts = [];
+    var labels = ((agg && agg.raw) || []).filter(function (r) { return r.group === k && r.score >= 0.02; })
+      .slice(0, 3).map(function (r) { return esc(r.labelVi) + " " + Math.round(r.score * 100) + "%"; });
+    if (labels.length) parts.push('<b>AI:</b> ' + labels.join(", "));
+    if (ac) {
+      if ((ac.vote[k] || 0) > 0.01) parts.push('<b>DSP:</b> ' + esc(ac.type));
+      if (ac.melodyVote && (ac.melodyVote[k] || 0) > 0.01) parts.push('<b>Giai điệu:</b> ' + (ac.notes ? ac.notes.length + " nốt" : "có"));
+    }
+    return parts.length ? parts.join(" · ") : "";
+  }
+
   function renderBars(agg) {
     var host = $("groupBars");
     host.innerHTML = "";
@@ -1743,6 +1794,7 @@ window.AudioEngine = (function () {
       var isPresent = agg.present.indexOf(k) >= 0;
       var w = Math.round((pct / maxPct) * 100);
       var pctTxt = (pct * 100).toFixed(1) + "%";
+      var evi = on ? groupEvidence(k, agg) : "";
       var row = document.createElement("div");
       row.className = "bar-row" + (isPresent ? " present" : "") + (on ? "" : " off");
       row.innerHTML =
@@ -1753,7 +1805,8 @@ window.AudioEngine = (function () {
         "</div>" +
         '<div class="bar-track"><div class="bar-fill" style="width:' +
           (on ? w : 0) + "%;background:" + g.color + '"></div></div>' +
-        '<div class="bar-desc">' + g.desc + "</div>";
+        '<div class="bar-desc">' + g.desc + "</div>" +
+        (evi ? '<div class="bar-evi">🔎 Dấu hiệu: ' + evi + "</div>" : "");
       host.appendChild(row);
     }
   }
@@ -1826,16 +1879,30 @@ window.AudioEngine = (function () {
     var AC = window.AudioContext || window.webkitAudioContext;
     rec.ctx = new AC();
     var src = rec.ctx.createMediaStreamSource(rec.stream);
-    var an = rec.ctx.createAnalyser(); an.fftSize = 512;
+    var an = rec.ctx.createAnalyser(); an.fftSize = 2048;
     src.connect(an);
-    var buf = new Uint8Array(an.frequencyBinCount);
+    var sr = rec.ctx.sampleRate;
+    var buf = new Uint8Array(an.fftSize), freqBuf = new Uint8Array(an.frequencyBinCount);
+    var lastUI = 0;
     (function loop() {
       an.getByteTimeDomainData(buf);
-      var peak = 0;
-      for (var i = 0; i < buf.length; i++) peak = Math.max(peak, Math.abs(buf[i] - 128));
+      var peak = 0, ss = 0;
+      for (var i = 0; i < buf.length; i++) { var d = buf[i] - 128; if (Math.abs(d) > peak) peak = Math.abs(d); ss += d * d; }
       $("level").style.width = Math.min(100, (peak / 128) * 160) + "%";
       var sec = (performance.now() - rec.t0) / 1000;
       $("recTimer").textContent = sec.toFixed(1) + "s";
+      // thông số trực tiếp ~8 lần/giây
+      if (performance.now() - lastUI > 120) {
+        lastUI = performance.now();
+        an.getByteFrequencyData(freqBuf);
+        var maxV = 0, maxI = 0;
+        for (var j = 2; j < freqBuf.length; j++) if (freqBuf[j] > maxV) { maxV = freqBuf[j]; maxI = j; }
+        var domHz = Math.round(maxI * sr / an.fftSize);
+        var rms = Math.sqrt(ss / buf.length) / 128;
+        var db = rms > 0 ? Math.round(20 * Math.log10(rms)) : -99;
+        var live = $("recLive");
+        if (live) live.innerHTML = (maxV > 20 ? "🎵 ~" + domHz + " Hz" : "🤫 yên") + " · " + db + " dB";
+      }
       if (sec >= MAX_SEC) { stopRecording(); return; }
       rec.raf = requestAnimationFrame(loop);
     })();
