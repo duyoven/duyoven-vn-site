@@ -302,6 +302,20 @@ body{
 .hist-table tr.h-conditional td{border-left:3px solid #f59e0b}
 .hist-table tr.h-low td{border-left:3px solid #ef4444}
 
+/* nút đổi ngôn ngữ VI / EN (tiếng Mỹ) */
+.lang-toggle{position:fixed;top:12px;right:12px;z-index:60;display:flex;gap:3px;
+  background:rgba(22,31,61,.9);border:1px solid var(--line);border-radius:99px;padding:3px}
+.lang-toggle button{border:none;background:transparent;color:#9fb0d8;font-weight:800;font-size:12.5px;
+  padding:5px 11px;border-radius:99px;cursor:pointer;letter-spacing:.04em}
+.lang-toggle button.on{background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff}
+body.locked .lang-toggle{display:none}
+
+/* sóng âm đặc trưng dưới mỗi nhóm */
+.bar-wave{margin-top:5px;height:30px;border-radius:8px;background:rgba(12,19,48,.55);
+  border:1px solid var(--line);padding:0 4px;overflow:hidden}
+.bar-wave .gw{display:block;width:100%;height:30px}
+.bar-row.off .bar-wave{opacity:.3}
+
 /* bằng chứng dưới mỗi thanh nhóm */
 .bar-evi{font-size:11.5px;color:#9fb0d8;margin-top:4px;line-height:1.45;
   background:rgba(139,92,246,.07);border:1px solid var(--line);border-radius:8px;padding:5px 9px}
@@ -384,6 +398,7 @@ body.locked .site-back{display:none}
     <a class="gate-back" href="https://duyoven.vn">← Về duyoven.vn</a>
   </form>
 </div>
+<div id="langToggle" class="lang-toggle" aria-label="Language"><button data-lang="vi" class="on">VI</button><button data-lang="en">EN</button></div>
 
 <!-- nền trang trí: logo trường + nốt nhạc + sóng âm -->
 <div class="bg-deco" aria-hidden="true">
@@ -403,10 +418,10 @@ body.locked .site-back{display:none}
 
   <header class="hero">
     <div class="hero-logo"><img src="data:image/webp;base64,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" alt="Logo Trường Đại học Thủ Dầu Một" /></div>
-    <div class="hero-tag">ĐỀ ÁN PHÂN LOẠI NHÃN HIỆU ÂM THANH</div>
-    <div class="hero-author">ĐỀ ÁN NGHIÊN CỨU THẠC SĨ · NGUYỄN PHÚ THÀNH</div>
-    <h1>Hệ thống phân loại <span>7 nhóm âm thanh</span> theo nguồn gốc</h1>
-    <p class="hero-sub">
+    <div class="hero-tag" data-en="SOUND TRADEMARK CLASSIFICATION PROJECT">ĐỀ ÁN PHÂN LOẠI NHÃN HIỆU ÂM THANH</div>
+    <div class="hero-author" data-en="MASTER’S RESEARCH PROJECT · NGUYEN PHU THANH">ĐỀ ÁN NGHIÊN CỨU THẠC SĨ · NGUYỄN PHÚ THÀNH</div>
+    <h1 data-en="A &lt;span&gt;7-group sound&lt;/span&gt; classification system by origin">Hệ thống phân loại <span>7 nhóm âm thanh</span> theo nguồn gốc</h1>
+    <p class="hero-sub" data-en="Listen via microphone or upload an audio file → the &lt;b&gt;YAMNet&lt;/b&gt; AI model classifies the origin → &lt;b&gt;self-assess sound-trademark protectability&lt;/b&gt; (Table 4.1).">
       Nghe bằng micro hoặc tải file âm thanh → mô hình AI <b>YAMNet</b> tự thẩm định &
       phân loại nguồn gốc → <b>tự đánh giá khả năng bảo hộ nhãn hiệu âm thanh</b> (Bảng 4.1).
     </p>
@@ -417,24 +432,24 @@ body.locked .site-back{display:none}
     <div class="input-grid two">
       <!-- mic -->
       <div class="input-card">
-        <div class="ic-title">🎙️ Ghi âm trực tiếp</div>
-        <button id="btnRecord" class="btn btn-rec">● Bắt đầu ghi âm</button>
-        <button id="btnStop" class="btn btn-stop hidden">■ Dừng & phân tích</button>
+        <div class="ic-title" data-en="🎙️ Record directly">🎙️ Ghi âm trực tiếp</div>
+        <button id="btnRecord" class="btn btn-rec" data-en="● Start recording">● Bắt đầu ghi âm</button>
+        <button id="btnStop" class="btn btn-stop hidden" data-en="■ Stop & analyze">■ Dừng & phân tích</button>
         <div id="recMeter" class="rec-meter hidden">
           <div class="level-track"><div id="level" class="level-fill"></div></div>
           <span id="recTimer" class="rec-timer">0.0s</span>
           <span id="recLive" class="rec-live"></span>
         </div>
-        <div class="ic-hint">Nói, vỗ tay, mở 1 đoạn nhạc/clip để app nghe (tối đa 30s).</div>
+        <div class="ic-hint" data-en="Speak, clap, or play a music/clip for the app to listen (max 30s).">Nói, vỗ tay, mở 1 đoạn nhạc/clip để app nghe (tối đa 30s).</div>
       </div>
 
       <!-- file -->
       <div class="input-card">
-        <div class="ic-title">📂 Tải file âm thanh</div>
+        <div class="ic-title" data-en="📂 Upload audio file">📂 Tải file âm thanh</div>
         <label id="dropZone" class="dropzone">
           <input id="fileInput" type="file" accept="audio/*" hidden />
           <span class="dz-ic">⬆️</span>
-          <span>Kéo–thả hoặc <b>bấm chọn file</b></span>
+          <span data-en="Drag–drop or <b>click to choose a file</b>">Kéo–thả hoặc <b>bấm chọn file</b></span>
           <span class="dz-sub">mp3 · wav · m4a · ogg · webm</span>
         </label>
       </div>
@@ -448,20 +463,20 @@ body.locked .site-back{display:none}
     <div class="options">
       <label class="opt">
         <input id="simToggle" type="checkbox" />
-        <span>🎚️ Âm thanh này do con người <b>mô phỏng/tạo lại</b> (chuyển sang nhóm 5)</span>
+        <span data-en="🎚️ This sound is <b>simulated/recreated</b> by humans (move to group 5)">🎚️ Âm thanh này do con người <b>mô phỏng/tạo lại</b> (chuyển sang nhóm 5)</span>
       </label>
       <div class="opt-block">
-        <div class="opt-label">Chọn nhiều nguồn gốc quan tâm (cùng lúc):</div>
+        <div class="opt-label" data-en="Select multiple origins of interest (at once):">Chọn nhiều nguồn gốc quan tâm (cùng lúc):</div>
         <div id="sourceFilters" class="chips"></div>
       </div>
       <div class="opt-block">
-        <div class="opt-label">🧪 Mẫu tổng hợp minh hoạ — thử nhanh & so sánh:</div>
+        <div class="opt-label" data-en="🧪 Illustrative synthetic samples — quick test & compare:">🧪 Mẫu tổng hợp minh hoạ — thử nhanh & so sánh:</div>
         <div id="sampleBar" class="chips">
-          <button class="btn btn-sample" data-sample="melody">🎼 Giai điệu</button>
-          <button class="btn btn-sample" data-sample="beep">〰️ Tông/beep</button>
-          <button class="btn btn-sample" data-sample="noise">🌫️ Nhiễu/gió</button>
-          <button class="btn btn-sample" data-sample="voice">🗣️ Giọng (giả lập)</button>
-          <button class="btn btn-sample" data-sample="chirp">📈 Quét tần số</button>
+          <button class="btn btn-sample" data-sample="melody" data-en="🎼 Melody">🎼 Giai điệu</button>
+          <button class="btn btn-sample" data-sample="beep" data-en="〰️ Tone/beep">〰️ Tông/beep</button>
+          <button class="btn btn-sample" data-sample="noise" data-en="🌫️ Noise/wind">🌫️ Nhiễu/gió</button>
+          <button class="btn btn-sample" data-sample="voice" data-en="🗣️ Voice (synthetic)">🗣️ Giọng (giả lập)</button>
+          <button class="btn btn-sample" data-sample="chirp" data-en="📈 Freq sweep">📈 Quét tần số</button>
         </div>
       </div>
     </div>
@@ -472,26 +487,26 @@ body.locked .site-back{display:none}
     <div id="verdict" class="verdict"></div>
 
     <div class="panel">
-      <h2 class="sec-title">Mức độ theo 7 nhóm nguồn gốc</h2>
+      <h2 class="sec-title" data-en="Score across the 7 origin groups">Mức độ theo 7 nhóm nguồn gốc</h2>
       <div id="groupBars" class="group-bars"></div>
     </div>
 
     <div class="panel">
-      <h2 class="sec-title">Âm thanh mô hình nhận diện <span class="muted">(nhãn YAMNet → nhóm)</span></h2>
+      <h2 class="sec-title" data-en="Sounds recognized by the model <span class=&quot;muted&quot;>(YAMNet labels → group)</span>">Âm thanh mô hình nhận diện <span class="muted">(nhãn YAMNet → nhóm)</span></h2>
       <div id="rawList" class="raw-list"></div>
     </div>
 
     <!-- PHÂN TÍCH ÂM HỌC CHUYÊN SÂU (DSP) -->
     <div id="acousticPanel" class="panel" style="display:none">
-      <h2 class="sec-title">🔬 Phân tích âm học chuyên sâu <span class="muted">(DSP — nguồn độc lập #2)</span></h2>
+      <h2 class="sec-title" data-en="🔬 In-depth acoustic analysis <span class=&quot;muted&quot;>(DSP — independent source #2)</span>">🔬 Phân tích âm học chuyên sâu <span class="muted">(DSP — nguồn độc lập #2)</span></h2>
       <div id="sourceBreakdown" class="source-breakdown"></div>
       <div class="ac-viz">
         <div class="ac-canvas-wrap">
-          <div class="ac-cap">Spectrogram (phổ tần số – thời gian, 0–8 kHz)</div>
+          <div class="ac-cap" data-en="Spectrogram (frequency–time, 0–8 kHz)">Spectrogram (phổ tần số – thời gian, 0–8 kHz)</div>
           <canvas id="specCanvas" width="660" height="220"></canvas>
         </div>
         <div class="ac-canvas-wrap">
-          <div class="ac-cap">Waveform (biểu đồ dạng sóng)</div>
+          <div class="ac-cap" data-en="Waveform">Waveform (biểu đồ dạng sóng)</div>
           <canvas id="waveCanvas" width="660" height="90"></canvas>
         </div>
       </div>
@@ -499,115 +514,115 @@ body.locked .site-back{display:none}
       <div id="acDistinct" class="ac-distinct"></div>
       <div id="staffBox" class="staff-box" style="display:none"></div>
       <div id="acMetrics" class="ac-metrics"></div>
-      <p class="ac-note">Phương pháp: FFT 1024 (Hann), tự tương quan ước lượng cao độ (70–1000 Hz),
+      <p class="ac-note" data-en="Method: FFT 1024 (Hann), autocorrelation pitch estimation (70–1000 Hz), spectral features (centroid, rolloff, flatness, HNR), spectral-flux onset detection. Results are <b>objective measurements</b>, combined with YAMNet at a 70/30 ratio.">Phương pháp: FFT 1024 (Hann), tự tương quan ước lượng cao độ (70–1000 Hz),
         đặc trưng phổ (tâm phổ, lăn phổ, độ phẳng, HNR), phát hiện onset bằng spectral-flux.
         Kết quả là <b>số đo khách quan</b>, kết hợp với YAMNet theo tỉ lệ 70/30.</p>
     </div>
 
     <!-- LỊCH SỬ / SO SÁNH -->
     <div id="historyPanel" class="panel" style="display:none">
-      <h2 class="sec-title">📊 Lịch sử & so sánh <span class="muted">(các âm đã phân tích trong phiên)</span></h2>
+      <h2 class="sec-title" data-en="📊 History & comparison <span class=&quot;muted&quot;>(sounds analyzed this session)</span>">📊 Lịch sử & so sánh <span class="muted">(các âm đã phân tích trong phiên)</span></h2>
       <div id="historyBody"></div>
     </div>
 
     <div class="report-bar">
-      <button id="btnReport" class="btn btn-report">🖨️ Xuất báo cáo phân tích (PDF / In)</button>
+      <button id="btnReport" class="btn btn-report" data-en="🖨️ Export analysis report (PDF / Print)">🖨️ Xuất báo cáo phân tích (PDF / In)</button>
     </div>
   </section>
 
   <!-- TỰ ĐÁNH GIÁ -->
   <section class="panel assess">
-    <h2 class="sec-title">📝 Tự đánh giá khả năng bảo hộ</h2>
-    <p class="assess-intro">Điền thông tin về nhãn hiệu âm thanh để nhận đánh giá sơ bộ (kết hợp với kết quả phân loại ở trên).</p>
+    <h2 class="sec-title" data-en="📝 Self-assess protectability">📝 Tự đánh giá khả năng bảo hộ</h2>
+    <p class="assess-intro" data-en="Fill in details about the sound mark to get a preliminary assessment (combined with the classification above).">Điền thông tin về nhãn hiệu âm thanh để nhận đánh giá sơ bộ (kết hợp với kết quả phân loại ở trên).</p>
 
     <div class="form-grid">
       <label class="field">
-        <span class="field-lb">Tên / mô tả âm thanh</span>
-        <input id="saName" type="text" placeholder="VD: Tiếng cồng 3 nốt mở đầu quảng cáo…" />
-        <span class="field-hint">Mô tả ngắn gọn dấu hiệu âm thanh muốn đăng ký (giai điệu, tiếng đặc trưng, độ dài…).</span>
+        <span class="field-lb" data-en="Sound name / description">Tên / mô tả âm thanh</span>
+        <input id="saName" type="text" placeholder="VD: Tiếng cồng 3 nốt mở đầu quảng cáo…" data-en-ph="e.g., 3-note gong opening an ad…" />
+        <span class="field-hint" data-en="Briefly describe the sound sign to register (melody, signature sound, length…).">Mô tả ngắn gọn dấu hiệu âm thanh muốn đăng ký (giai điệu, tiếng đặc trưng, độ dài…).</span>
       </label>
 
       <label class="field">
-        <span class="field-lb">Nhóm hàng hóa / dịch vụ (Thỏa ước Nice)</span>
+        <span class="field-lb" data-en="Goods / services class (Nice Agreement)">Nhóm hàng hóa / dịch vụ (Thỏa ước Nice)</span>
         <select id="saNice"></select>
-        <span class="field-hint">Bảng phân loại Nice có 45 nhóm: 1–34 là hàng hóa, 35–45 là dịch vụ. Chọn nhóm sản phẩm/dịch vụ gắn với âm thanh.</span>
+        <span class="field-hint" data-en="The Nice classification has 45 classes: 1–34 goods, 35–45 services. Pick the class tied to the sound.">Bảng phân loại Nice có 45 nhóm: 1–34 là hàng hóa, 35–45 là dịch vụ. Chọn nhóm sản phẩm/dịch vụ gắn với âm thanh.</span>
       </label>
 
       <div class="field">
-        <span class="field-lb">Âm thanh có là <b>tính năng / đặc tính kỹ thuật bắt buộc</b> của sản phẩm không?</span>
+        <span class="field-lb" data-en="Is the sound a <b>mandatory technical feature</b> of the product?">Âm thanh có là <b>tính năng / đặc tính kỹ thuật bắt buộc</b> của sản phẩm không?</span>
         <div class="radio-row" id="saFunctional">
-          <label><input type="radio" name="func" value="yes"> Có (âm phát ra do bản chất kỹ thuật)</label>
-          <label><input type="radio" name="func" value="no" checked> Không</label>
+          <label><input type="radio" name="func" value="yes"> <span data-en="Yes (sound arises from technical nature)">Có (âm phát ra do bản chất kỹ thuật)</span></label>
+          <label><input type="radio" name="func" value="no" checked> <span data-en="No">Không</span></label>
         </div>
-        <span class="field-hint">Nếu “Có” (vd tiếng còi báo động bắt buộc, tiếng theo quy chuẩn) → khó bảo hộ (Khoản 6 Điều 73 Luật SHTT).</span>
+        <span class="field-hint" data-en="If “Yes” (e.g., a mandatory alarm, a standardized tone) → hard to protect (Art. 73(6) IP Law).">Nếu “Có” (vd tiếng còi báo động bắt buộc, tiếng theo quy chuẩn) → khó bảo hộ (Khoản 6 Điều 73 Luật SHTT).</span>
       </div>
 
       <div class="field">
-        <span class="field-lb">Âm thanh có <b>tính phân biệt cố hữu</b> (tự thân gây ấn tượng, không mô tả sản phẩm)?</span>
+        <span class="field-lb" data-en="Does the sound have <b>inherent distinctiveness</b> (striking on its own, not descriptive)?">Âm thanh có <b>tính phân biệt cố hữu</b> (tự thân gây ấn tượng, không mô tả sản phẩm)?</span>
         <div class="radio-row" id="saInherent">
-          <label><input type="radio" name="inh" value="yes"> Có</label>
-          <label><input type="radio" name="inh" value="unsure" checked> Chưa rõ</label>
-          <label><input type="radio" name="inh" value="no"> Không</label>
+          <label><input type="radio" name="inh" value="yes"> <span data-en="Yes">Có</span></label>
+          <label><input type="radio" name="inh" value="unsure" checked> <span data-en="Unsure">Chưa rõ</span></label>
+          <label><input type="radio" name="inh" value="no"> <span data-en="No">Không</span></label>
         </div>
-        <span class="field-hint">Giai điệu sáng tạo riêng thường có tính phân biệt cố hữu; âm tự nhiên/chức năng đơn lẻ thì thường không.</span>
+        <span class="field-hint" data-en="An original melody is usually inherently distinctive; a single natural/functional sound usually is not.">Giai điệu sáng tạo riêng thường có tính phân biệt cố hữu; âm tự nhiên/chức năng đơn lẻ thì thường không.</span>
       </div>
 
       <div class="field field-wide">
-        <span class="field-lb">Thực trạng sử dụng</span>
+        <span class="field-lb" data-en="Usage status">Thực trạng sử dụng</span>
         <div class="subgrid">
           <label class="sub">
-            <span>Đã sử dụng thương mại bao lâu?</span>
+            <span data-en="How long used commercially?">Đã sử dụng thương mại bao lâu?</span>
             <select id="saDuration">
-              <option value="0">Chưa sử dụng</option>
-              <option value="1">Dưới 1 năm</option>
-              <option value="2">1 – 3 năm</option>
-              <option value="3">3 – 5 năm</option>
-              <option value="4">Trên 5 năm</option>
+              <option value="0" data-en="Not used yet">Chưa sử dụng</option>
+              <option value="1" data-en="Under 1 year">Dưới 1 năm</option>
+              <option value="2" data-en="1 – 3 years">1 – 3 năm</option>
+              <option value="3" data-en="3 – 5 years">3 – 5 năm</option>
+              <option value="4" data-en="Over 5 years">Trên 5 năm</option>
             </select>
           </label>
           <label class="sub">
-            <span>Mức độ nhận diện của người tiêu dùng</span>
+            <span data-en="Consumer recognition level">Mức độ nhận diện của người tiêu dùng</span>
             <select id="saRecognition">
-              <option value="0">Chưa có / chưa rõ</option>
-              <option value="1">Thấp</option>
-              <option value="2">Trung bình</option>
-              <option value="3">Cao</option>
+              <option value="0" data-en="None / unclear">Chưa có / chưa rõ</option>
+              <option value="1" data-en="Low">Thấp</option>
+              <option value="2" data-en="Medium">Trung bình</option>
+              <option value="3" data-en="High">Cao</option>
             </select>
           </label>
           <label class="sub">
-            <span>Có bằng chứng “ý nghĩa thứ hai”?</span>
+            <span data-en="Evidence of “secondary meaning”?">Có bằng chứng “ý nghĩa thứ hai”?</span>
             <select id="saEvidence">
-              <option value="0">Chưa có</option>
-              <option value="1">Có (một phần)</option>
-              <option value="2">Có (đầy đủ)</option>
+              <option value="0" data-en="None">Chưa có</option>
+              <option value="1" data-en="Yes (partial)">Có (một phần)</option>
+              <option value="2" data-en="Yes (full)">Có (đầy đủ)</option>
             </select>
           </label>
         </div>
-        <input id="saEvidenceDesc" type="text" placeholder="Liệt kê bằng chứng: doanh số, quảng cáo, khảo sát nhận biết, giải thưởng… (tùy chọn)" />
-        <span class="field-hint">“Ý nghĩa thứ hai” = qua sử dụng lâu dài, người tiêu dùng nhận ra âm thanh gắn với 1 doanh nghiệp (điểm b,c,d,đ,e Khoản 2 Điều 74 Luật SHTT).</span>
+        <input id="saEvidenceDesc" type="text" placeholder="Liệt kê bằng chứng: doanh số, quảng cáo, khảo sát nhận biết, giải thưởng… (tùy chọn)" data-en-ph="List evidence: sales, advertising, recognition surveys, awards… (optional)" />
+        <span class="field-hint" data-en="“Secondary meaning” = through long use, consumers associate the sound with one business (points b,c,d,đ,e of Art. 74(2) IP Law).">“Ý nghĩa thứ hai” = qua sử dụng lâu dài, người tiêu dùng nhận ra âm thanh gắn với 1 doanh nghiệp (điểm b,c,d,đ,e Khoản 2 Điều 74 Luật SHTT).</span>
       </div>
     </div>
 
-    <button id="btnAssess" class="btn btn-assess">⚖️ Đánh giá sơ bộ</button>
+    <button id="btnAssess" class="btn btn-assess" data-en="⚖️ Preliminary assessment">⚖️ Đánh giá sơ bộ</button>
     <div id="saResult" class="sa-result"></div>
   </section>
 
   <!-- BẢNG 4.1 -->
   <section class="panel ref">
-    <h2 class="sec-title">Bảng 4.1 — Quy tắc bảo hộ nhãn hiệu âm thanh (theo nhóm nguồn gốc)</h2>
+    <h2 class="sec-title" data-en="Table 4.1 — Sound-trademark protection rules (by origin group)">Bảng 4.1 — Quy tắc bảo hộ nhãn hiệu âm thanh (theo nhóm nguồn gốc)</h2>
     <table class="ref-table">
-      <thead><tr><th>Nhóm</th><th>Mô tả</th><th>Khả năng được chấp nhận</th></tr></thead>
+      <thead><tr><th data-en="Group">Nhóm</th><th data-en="Description">Mô tả</th><th data-en="Acceptability">Khả năng được chấp nhận</th></tr></thead>
       <tbody>
-        <tr><td>1 · Phi sinh học</td><td>Gió, nước, sấm, sóng…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
-        <tr><td>2 · Sinh vật sống</td><td>Chim, thú, côn trùng…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
-        <tr><td>3 · Môi trường tổng hợp</td><td>Rừng, biển, đồng quê…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
-        <tr><td>4 · Con người</td><td>Nói, hát, cười…</td><td class="ok">✅ Có thể chấp nhận</td></tr>
-        <tr><td>5 · Mô phỏng tự nhiên</td><td>Mưa/gió/chim giả lập…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
-        <tr><td>6 · Vật dụng/sản phẩm</td><td>Cửa, phím, động cơ…</td><td class="no">❌ Không nên đơn lẻ</td></tr>
-        <tr><td>7 · Tổng hợp toàn phần</td><td>Nhạc/AI/điện tử, có giai điệu</td><td class="best">✅ Rất nên chấp nhận</td></tr>
+        <tr><td data-en="1 · Abiotic">1 · Phi sinh học</td><td data-en="Wind, water, thunder, waves…">Gió, nước, sấm, sóng…</td><td class="no" data-en="❌ Not on its own">❌ Không nên đơn lẻ</td></tr>
+        <tr><td data-en="2 · Living organisms">2 · Sinh vật sống</td><td data-en="Birds, animals, insects…">Chim, thú, côn trùng…</td><td class="no" data-en="❌ Not on its own">❌ Không nên đơn lẻ</td></tr>
+        <tr><td data-en="3 · Composite environment">3 · Môi trường tổng hợp</td><td data-en="Forest, sea, countryside…">Rừng, biển, đồng quê…</td><td class="no" data-en="❌ Not on its own">❌ Không nên đơn lẻ</td></tr>
+        <tr><td data-en="4 · Human">4 · Con người</td><td data-en="Speech, singing, laughter…">Nói, hát, cười…</td><td class="ok" data-en="✅ Acceptable">✅ Có thể chấp nhận</td></tr>
+        <tr><td data-en="5 · Nature simulation">5 · Mô phỏng tự nhiên</td><td data-en="Simulated rain/wind/birds…">Mưa/gió/chim giả lập…</td><td class="no" data-en="❌ Not on its own">❌ Không nên đơn lẻ</td></tr>
+        <tr><td data-en="6 · Objects/products">6 · Vật dụng/sản phẩm</td><td data-en="Door, keys, engine…">Cửa, phím, động cơ…</td><td class="no" data-en="❌ Not on its own">❌ Không nên đơn lẻ</td></tr>
+        <tr><td data-en="7 · Fully synthesized">7 · Tổng hợp toàn phần</td><td data-en="Music/AI/electronic, melodic">Nhạc/AI/điện tử, có giai điệu</td><td class="best" data-en="✅ Strongly recommended">✅ Rất nên chấp nhận</td></tr>
       </tbody>
     </table>
-    <p class="ref-note">
+    <p class="ref-note" data-en="&lt;b&gt;Principle:&lt;/b&gt; favor protecting groups [4] &amp; [7], or combinations with creative processing / melody. Do not accept [1][2][3][5][6] alone if they lack a creative element. Without inherent distinctiveness → must prove “secondary meaning” through use (points b,c,d,đ,e of Art. 74(2) IP Law).&lt;br&gt;📚 Basis &amp; case-law verification: see &lt;b&gt;Project content → Chapter 3&lt;/b&gt; below.">
       <b>Nguyên tắc:</b> ưu tiên bảo hộ nhóm [4] & [7] hoặc tổ hợp có xử lý sáng tạo / phối giai điệu.
       Không chấp nhận đơn lẻ [1][2][3][5][6] nếu thiếu yếu tố sáng tạo. Nếu không có tính phân biệt
       cố hữu → phải chứng minh “ý nghĩa thứ hai” qua sử dụng (điểm b,c,d,đ,e Khoản 2 Điều 74 Luật SHTT).
@@ -617,58 +632,58 @@ body.locked .site-back{display:none}
 
   <!-- HƯỚNG DẪN PHÁP LÝ -->
   <section class="panel legal">
-    <h2 class="sec-title">⚖️ Điều kiện bảo hộ nhãn hiệu âm thanh tại Việt Nam</h2>
-    <p class="legal-base">Căn cứ pháp lý: <b>Luật SHTT 2005 (sửa đổi, bổ sung 2022)</b> và <b>Thông tư 10/2026/TT-BKHCN</b>.</p>
+    <h2 class="sec-title" data-en="⚖️ Conditions for sound-trademark protection in Vietnam">⚖️ Điều kiện bảo hộ nhãn hiệu âm thanh tại Việt Nam</h2>
+    <p class="legal-base" data-en="Legal basis: <b>IP Law 2005 (amended 2022)</b> and <b>Circular 10/2026/TT-BKHCN</b>.">Căn cứ pháp lý: <b>Luật SHTT 2005 (sửa đổi, bổ sung 2022)</b> và <b>Thông tư 10/2026/TT-BKHCN</b>.</p>
 
     <div class="legal-cols">
       <div class="legal-box ok-box">
-        <h3>✅ Điều kiện ĐƯỢC bảo hộ</h3>
+        <h3 data-en="✅ Conditions that ALLOW protection">✅ Điều kiện ĐƯỢC bảo hộ</h3>
         <ul>
-          <li><b>Là dấu hiệu âm thanh</b> – có thể phân biệt hàng hóa/dịch vụ của chủ thể này với chủ thể khác.
+          <li data-en="<b>A sound sign</b> – capable of distinguishing one entity’s goods/services from another’s. <span class=&quot;cite&quot;>Art. 72(1); Art. 74(2) IP Law 2022</span>"><b>Là dấu hiệu âm thanh</b> – có thể phân biệt hàng hóa/dịch vụ của chủ thể này với chủ thể khác.
             <span class="cite">Khoản 1 Điều 72; Khoản 2 Điều 74 Luật SHTT 2022</span></li>
-          <li><b>Thể hiện được bằng đồ họa</b> – bắt buộc nộp khuông nhạc 5 dòng kẻ kèm tệp âm thanh .mp3 (≤5MB).
+          <li data-en="<b>Graphically representable</b> – must submit a 5-line staff plus an .mp3 audio file (≤5MB). <span class=&quot;cite&quot;>Art. 105(2) IP Law; Circular 10/2026/TT-BKHCN</span> <span class=&quot;warn&quot;>⚠ Limit: non-melodic sounds (engine noise, electronic tones) are hard to notate on a staff.</span>"><b>Thể hiện được bằng đồ họa</b> – bắt buộc nộp khuông nhạc 5 dòng kẻ kèm tệp âm thanh .mp3 (≤5MB).
             <span class="cite">Khoản 2 Điều 105 Luật SHTT; Thông tư 10/2026/TT-BKHCN</span>
             <span class="warn">⚠ Hạn chế: âm thanh phi giai điệu (tiếng động cơ, âm điện tử) khó biểu diễn bằng khuông nhạc.</span></li>
-          <li><b>Có tính phân biệt</b> – cố hữu HOẶC đạt được qua sử dụng (ý nghĩa thứ hai).
+          <li data-en="<b>Distinctive</b> – inherently OR acquired through use (secondary meaning). <span class=&quot;cite&quot;>Points b,c,d,đ,e of Art. 74(2) IP Law 2022</span>"><b>Có tính phân biệt</b> – cố hữu HOẶC đạt được qua sử dụng (ý nghĩa thứ hai).
             <span class="cite">Điểm b,c,d,đ,e Khoản 2 Điều 74 Luật SHTT 2022</span></li>
         </ul>
       </div>
 
       <div class="legal-box no-box">
-        <h3>❌ Điều kiện KHÔNG được bảo hộ</h3>
+        <h3 data-en="❌ Conditions that BAR protection">❌ Điều kiện KHÔNG được bảo hộ</h3>
         <ul>
-          <li><b>Dấu hiệu là đặc tính kỹ thuật bắt buộc.</b>
+          <li data-en="<b>The sign is a mandatory technical feature.</b> <span class=&quot;cite&quot;>Art. 73(6) IP Law</span> <span class=&quot;warn&quot;>E.g., a mandatory alarm siren, a standardized ringtone.</span>"><b>Dấu hiệu là đặc tính kỹ thuật bắt buộc.</b>
             <span class="cite">Khoản 6 Điều 73 Luật SHTT</span>
             <span class="warn">VD: tiếng còi báo động bắt buộc, tiếng chuông theo quy chuẩn kỹ thuật.</span></li>
-          <li><b>Âm thanh mô tả hình thức pháp lý / lĩnh vực kinh doanh.</b>
+          <li data-en="<b>The sound describes the legal form / business field.</b> <span class=&quot;cite&quot;>Point d of Art. 74(2) IP Law</span>"><b>Âm thanh mô tả hình thức pháp lý / lĩnh vực kinh doanh.</b>
             <span class="cite">Điểm d Khoản 2 Điều 74 Luật SHTT</span></li>
-          <li><b>Âm thanh quá phổ biến / mang tính chức năng sử dụng</b> (trừ khi chứng minh được secondary meaning).
+          <li data-en="<b>The sound is too common / functional</b> (unless secondary meaning is proven). <span class=&quot;cite&quot;>Art. 74(2) IP Law 2022</span>"><b>Âm thanh quá phổ biến / mang tính chức năng sử dụng</b> (trừ khi chứng minh được secondary meaning).
             <span class="cite">Khoản 2 Điều 74 Luật SHTT 2022</span></li>
         </ul>
       </div>
     </div>
 
     <div class="legal-steps">
-      <h3>⚙️ Quy trình nộp đơn tại Cục SHTT</h3>
+      <h3 data-en="⚙️ Filing procedure at the IP Office">⚙️ Quy trình nộp đơn tại Cục SHTT</h3>
       <ol>
-        <li>Chuẩn bị: tệp âm thanh <b>.mp3 (≤5MB)</b> + bản <b>khuông nhạc 5 dòng kẻ</b> (JPEG/PDF).</li>
-        <li>Điền Tờ khai đăng ký nhãn hiệu theo <b>Mẫu 04-NH</b> (Thông tư 01/2007/TT-BKHCN).</li>
-        <li>Phân loại hàng hóa/dịch vụ theo <b>Bảng phân loại Nice</b>.</li>
-        <li>Nộp đơn trực tuyến hoặc trực tiếp tại Cục SHTT.</li>
-        <li>Thẩm định hình thức (~1 tháng) → thẩm định nội dung (~9 tháng).</li>
-        <li>Công bố công khai (~2 tháng) → cấp văn bằng (nếu không có phản đối).</li>
+        <li data-en="Prepare: an <b>.mp3 (≤5MB)</b> audio file + a <b>5-line staff</b> (JPEG/PDF).">Chuẩn bị: tệp âm thanh <b>.mp3 (≤5MB)</b> + bản <b>khuông nhạc 5 dòng kẻ</b> (JPEG/PDF).</li>
+        <li data-en="Fill the trademark application using <b>Form 04-NH</b> (Circular 01/2007/TT-BKHCN).">Điền Tờ khai đăng ký nhãn hiệu theo <b>Mẫu 04-NH</b> (Thông tư 01/2007/TT-BKHCN).</li>
+        <li data-en="Classify goods/services per the <b>Nice classification</b>.">Phân loại hàng hóa/dịch vụ theo <b>Bảng phân loại Nice</b>.</li>
+        <li data-en="File online or in person at the IP Office.">Nộp đơn trực tuyến hoặc trực tiếp tại Cục SHTT.</li>
+        <li data-en="Formality exam (~1 month) → substantive exam (~9 months).">Thẩm định hình thức (~1 tháng) → thẩm định nội dung (~9 tháng).</li>
+        <li data-en="Public announcement (~2 months) → grant (if no opposition).">Công bố công khai (~2 tháng) → cấp văn bằng (nếu không có phản đối).</li>
       </ol>
     </div>
   </section>
 
   <!-- NỘI DUNG ĐỀ ÁN (3 chương) -->
   <section class="panel decuong">
-    <h2 class="sec-title">📚 Nội dung đề án <span class="muted">(theo đề cương 3 chương)</span></h2>
-    <p class="assess-intro">Toàn văn tóm lược đề án thạc sĩ — bấm từng chương để mở rộng.</p>
+    <h2 class="sec-title" data-en="📚 Project content <span class=&quot;muted&quot;>(by the 3-chapter outline)</span>">📚 Nội dung đề án <span class="muted">(theo đề cương 3 chương)</span></h2>
+    <p class="assess-intro" data-en="Full summary of the master’s project — click each chapter to expand. (Academic content in Vietnamese.)">Toàn văn tóm lược đề án thạc sĩ — bấm từng chương để mở rộng.</p>
     <div id="decuongBody" class="dc-body"></div>
   </section>
 
-  <footer class="foot">
+  <footer class="foot" data-en="Research support tool — <b>Master’s Project in Economic Law · 2026 · Nguyen Phu Thanh · TDMU CH25LKT01</b><br> Advisors: Dr. Nguyen Thi Thu Thuy · Assoc. Prof. Dr. Le Thi Minh — Thu Dau Mot University<br> Runs in the browser · <b>Google YAMNet</b> model (AudioSet, 521 classes) via MediaPipe · audio is never sent anywhere.">
     Công cụ hỗ trợ nghiên cứu — <b>Đề án Thạc sĩ Luật Kinh tế · 2026 · Nguyễn Phú Thành · TDMU CH25LKT01</b><br>
     GVHD: TS. Nguyễn Thị Thu Thủy · PGS.TS. Lê Thị Minh — Trường Đại học Thủ Dầu Một<br>
     Chạy trên trình duyệt · mô hình <b>Google YAMNet</b> (AudioSet, 521 lớp) qua MediaPipe · âm thanh không gửi đi đâu.
@@ -691,44 +706,66 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
 (function (w) {
   "use strict";
 
+  // --- i18n: helper dung chung cho moi module (VI mac dinh / EN = tieng My) ---
+  if (!w.L) {
+    w.APP_LANG = w.APP_LANG || "vi";
+    w.L = function (vi, en) { return w.APP_LANG === "en" ? en : vi; };
+  }
+
   // --- Dinh nghia 7 nhom (theo YEU CAU APP AM THANH, Bang 4.1) ---
   var GROUPS = {
     1: { id: 1, parent: "natural", code: "TN1", name: "Phi sinh học",
+         name_en: "Abiotic (non-living)",
          full: "Âm thanh từ thiên nhiên vô sinh – phi sinh học",
          desc: "Âm thanh tự nhiên từ yếu tố không sống: gió, nước, đất đá, sấm sét, thời tiết.",
+         desc_en: "Natural sounds from non-living elements: wind, water, rocks, thunder, weather.",
          eg: "gió rì rào, suối chảy, sấm nổ, sóng biển",
          verdict: "low",  color: "#3b82f6", icon: "🌬️" },
     2: { id: 2, parent: "natural", code: "TN2", name: "Sinh vật sống",
+         name_en: "Living organisms",
          full: "Âm thanh từ sinh vật sống – sinh học",
          desc: "Âm thanh do cơ thể sống tạo ra (không gồm con người): động vật, côn trùng, thực vật.",
+         desc_en: "Sounds made by living bodies (excluding humans): animals, insects, plants.",
          eg: "chim hót, chó sủa, ve kêu, ếch kêu",
          verdict: "low",  color: "#22c55e", icon: "🐦" },
     3: { id: 3, parent: "natural", code: "TN3", name: "Môi trường tổng hợp",
+         name_en: "Composite environment",
          full: "Âm thanh môi trường tổng hợp",
          desc: "Kết hợp tự nhiên của nhiều âm thanh trong một không gian sống.",
+         desc_en: "A natural blend of several sounds within one living space.",
          eg: "rừng (chim+gió+lá), biển (sóng+gió+chim)",
          verdict: "low",  color: "#14b8a6", icon: "🏞️" },
     4: { id: 4, parent: "artificial", code: "NT4", name: "Con người",
+         name_en: "Human",
          full: "Âm thanh của con người",
          desc: "Âm phát ra trong sinh hoạt của con người: tiếng nói, hát, cười, nhịp thở.",
+         desc_en: "Sounds from human activity: speech, singing, laughter, breathing.",
          eg: "tiếng nói, tiếng hát, tiếng cười",
          verdict: "ok",   color: "#f59e0b", icon: "🗣️" },
     5: { id: 5, parent: "artificial", code: "NT5", name: "Mô phỏng tự nhiên",
+         name_en: "Nature simulation",
          full: "Âm thanh mô phỏng tự nhiên",
          desc: "Con người tái hiện âm tự nhiên bằng công cụ/phần mềm (không phát sinh trực tiếp từ tự nhiên).",
+         desc_en: "Humans recreate natural sounds with tools/software (not produced directly by nature).",
          eg: "tiếng mưa/gió/chim giả lập bằng máy",
          verdict: "low",  color: "#a78bfa", icon: "🎚️" },
     6: { id: 6, parent: "artificial", code: "NT6", name: "Vật dụng / sản phẩm",
+         name_en: "Objects / products",
          full: "Âm thanh từ vật dụng, sản phẩm nhân tạo",
          desc: "Âm phát sinh khi dùng thiết bị, công cụ, sản phẩm do con người chế tạo.",
+         desc_en: "Sounds produced when using man-made devices, tools or products.",
          eg: "đóng cửa, gõ phím, động cơ xe, chuông điện thoại",
          verdict: "low",  color: "#64748b", icon: "⚙️" },
     7: { id: 7, parent: "artificial", code: "NT7", name: "Tổng hợp toàn phần",
+         name_en: "Fully synthesized",
          full: "Âm thanh nhân tạo mô phỏng toàn phần",
          desc: "Tạo hoàn toàn bằng kỹ thuật số / AI, hoặc phối giai điệu, tần số khác biệt với thực tế.",
+         desc_en: "Created entirely by digital/AI techniques, or an arranged melody/frequency distinct from reality.",
          eg: "nhạc, jingle, giọng AI, hiệu ứng điện tử, âm game",
          verdict: "high", color: "#ec4899", icon: "🎹" },
   };
+  function gname(g) { return w.APP_LANG === "en" && g.name_en ? g.name_en : g.name; }
+  function gdesc(g) { return w.APP_LANG === "en" && g.desc_en ? g.desc_en : g.desc; }
 
   // Cac nhom "tu nhien" dung de suy ra nhom 3 (moi truong tong hop)
   var NATURAL_GROUPS = [1, 2];
@@ -826,40 +863,51 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
       return [1,2,3,5,6].indexOf(g) >= 0;
     });
 
+    var L = w.L;
     // 1) Nhom 7 troi -> rat nen chap nhan
     if (dom === 7) {
       return mk("high",
-        "Rất nên chấp nhận",
-        "Âm thanh tổng hợp toàn phần (nhóm 7) – có giai điệu / yếu tố sáng tạo, tính phân biệt cao.",
-        "Khoản 1 Điều 74 Luật SHTT: có khả năng tự phân biệt.");
+        L("Rất nên chấp nhận", "Strongly recommended"),
+        L("Âm thanh tổng hợp toàn phần (nhóm 7) – có giai điệu / yếu tố sáng tạo, tính phân biệt cao.",
+          "Fully synthesized sound (group 7) — has melody / a creative element and high distinctiveness."),
+        L("Khoản 1 Điều 74 Luật SHTT: có khả năng tự phân biệt.",
+          "Art. 74(1) IP Law: capable of self-distinction."));
     }
     // 2) Nhom 4 troi -> co the chap nhan
     if (dom === 4) {
       return mk("ok",
-        "Có thể chấp nhận",
-        "Âm thanh của con người (nhóm 4) – có thể mang dấu ấn riêng để phân biệt.",
-        "Xem xét theo Khoản 1 Điều 74 Luật SHTT (tính phân biệt cố hữu).");
+        L("Có thể chấp nhận", "Acceptable"),
+        L("Âm thanh của con người (nhóm 4) – có thể mang dấu ấn riêng để phân biệt.",
+          "Human sound (group 4) — may carry a distinctive personal mark."),
+        L("Xem xét theo Khoản 1 Điều 74 Luật SHTT (tính phân biệt cố hữu).",
+          "Assessed under Art. 74(1) IP Law (inherent distinctiveness)."));
     }
     // 3) Nhom 1/2/3/5/6 NHUNG co phoi giai dieu (nhom 7 cung xuat hien) -> co dieu kien
     if (naturalOrFunctional.length && creativeMelody) {
       return mk("conditional",
-        "Có thể xem xét (có yếu tố sáng tạo)",
-        "Âm tự nhiên/chức năng được phối với giai điệu hoặc xử lý sáng tạo (mô phỏng sáng tạo) – làm tăng tính phân biệt.",
-        "Khuyến khích mô phỏng sáng tạo; vẫn cần thẩm định tính phân biệt tổng thể.");
+        L("Có thể xem xét (có yếu tố sáng tạo)", "Worth considering (creative element)"),
+        L("Âm tự nhiên/chức năng được phối với giai điệu hoặc xử lý sáng tạo (mô phỏng sáng tạo) – làm tăng tính phân biệt.",
+          "Natural/functional sound arranged with melody or creatively processed (creative simulation) — raising distinctiveness."),
+        L("Khuyến khích mô phỏng sáng tạo; vẫn cần thẩm định tính phân biệt tổng thể.",
+          "Creative simulation is encouraged; overall distinctiveness still to be examined."));
     }
     // 4) Chi nhom 4 + 7 vang mat nhung con nguoi co mat manh -> ok
     if (has(4)) {
       return mk("ok",
-        "Có thể chấp nhận",
-        "Có thành phần âm thanh con người (nhóm 4) đủ rõ.",
-        "Xem xét theo Khoản 1 Điều 74 Luật SHTT.");
+        L("Có thể chấp nhận", "Acceptable"),
+        L("Có thành phần âm thanh con người (nhóm 4) đủ rõ.",
+          "Contains a sufficiently clear human-sound component (group 4)."),
+        L("Xem xét theo Khoản 1 Điều 74 Luật SHTT.", "Assessed under Art. 74(1) IP Law."));
     }
     // 5) Chi co nhom 1/2/3/5/6 don le -> khong nen chap nhan don le
     return mk("low",
-      "Không nên chấp nhận đơn lẻ",
-      "Chỉ gồm âm tự nhiên / chức năng (nhóm " + naturalOrFunctional.join(", ") +
-      ") thiếu yếu tố sáng tạo – không có tính phân biệt cố hữu rõ ràng.",
-      "Cần chứng minh “ý nghĩa thứ hai” (secondary meaning) qua sử dụng lâu dài – điểm b, c, d, đ, e Khoản 2 Điều 74 Luật SHTT.");
+      L("Không nên chấp nhận đơn lẻ", "Not acceptable on its own"),
+      L("Chỉ gồm âm tự nhiên / chức năng (nhóm " + naturalOrFunctional.join(", ") +
+        ") thiếu yếu tố sáng tạo – không có tính phân biệt cố hữu rõ ràng.",
+        "Only natural/functional sound (group " + naturalOrFunctional.join(", ") +
+        ") lacking a creative element — no clear inherent distinctiveness."),
+      L("Cần chứng minh “ý nghĩa thứ hai” (secondary meaning) qua sử dụng lâu dài – điểm b, c, d, đ, e Khoản 2 Điều 74 Luật SHTT.",
+        "Must prove “secondary meaning” through long-term use — points b, c, d, đ, e of Art. 74(2) IP Law."));
 
     function mk(level, title, reason, legal) {
       var badge = { high:"✅", ok:"✅", conditional:"🟡", low:"❌" }[level];
@@ -899,6 +947,8 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
   w.TAXONOMY = {
     GROUPS: GROUPS,
     NATURAL_GROUPS: NATURAL_GROUPS,
+    gname: gname,
+    gdesc: gdesc,
     aggregate: aggregate,
     deriveComposite: deriveComposite,
     applySimulated: applySimulated,
@@ -1089,12 +1139,13 @@ window.ACOUSTICS = (function () {
     var pureTone = flatness < 0.06 && voicedRatio > 0.5 && distinctPitches <= 1 && onsets <= 2;
     var noiseLike = flatness > 0.35 && voicedRatio < 0.2;
     var impulsive = crest > 6 && onsets >= 3 && voicedRatio < 0.4;
-    if (melodic) { type = "Có giai điệu (nhiều cao độ)"; typeIcon = "🎼"; }
-    else if (pureTone) { type = "Thuần âm / tông đơn (pure tone)"; typeIcon = "〰️"; }
-    else if (voiceLike) { type = "Giống giọng người (có formant)"; typeIcon = "🗣️"; }
-    else if (noiseLike) { type = "Nhiễu băng rộng (gió/nước/ồn)"; typeIcon = "🌫️"; }
-    else if (impulsive) { type = "Xung / va đập (gõ, máy móc)"; typeIcon = "💥"; }
-    else { type = "Hỗn hợp / phức tạp"; typeIcon = "🔀"; }
+    var L = window.L || function (vi) { return vi; };
+    if (melodic) { type = L("Có giai điệu (nhiều cao độ)", "Melodic (multiple pitches)"); typeIcon = "🎼"; }
+    else if (pureTone) { type = L("Thuần âm / tông đơn (pure tone)", "Pure tone / single tone"); typeIcon = "〰️"; }
+    else if (voiceLike) { type = L("Giống giọng người (có formant)", "Voice-like (has formants)"); typeIcon = "🗣️"; }
+    else if (noiseLike) { type = L("Nhiễu băng rộng (gió/nước/ồn)", "Broadband noise (wind/water/ambient)"); typeIcon = "🌫️"; }
+    else if (impulsive) { type = L("Xung / va đập (gõ, máy móc)", "Impulsive / percussive (knock, machinery)"); typeIcon = "💥"; }
+    else { type = L("Hỗn hợp / phức tạp", "Mixed / complex"); typeIcon = "🔀"; }
 
     // ---------- Vote 7 nhóm từ đặc trưng âm học (nguồn độc lập) ----------
     var vote = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
@@ -1120,29 +1171,29 @@ window.ACOUSTICS = (function () {
 
     // ---------- Bảng số liệu hiển thị ----------
     var metrics = [
-      { k: "Thời lượng", v: duration.toFixed(2) + " s" },
-      { k: "Cường độ (RMS)", v: dbRms.toFixed(1) + " dB" },
-      { k: "Hệ số đỉnh", v: crest.toFixed(1) },
-      { k: "Cao độ cơ bản (f0)", v: medF0 ? Math.round(medF0) + " Hz" : "—" },
-      { k: "Dải cao độ", v: pitchRange ? pitchRange + " nửa cung" : "—" },
-      { k: "Số bậc cao độ", v: String(distinctPitches) },
-      { k: "Tỷ lệ có cao độ", v: Math.round(voicedRatio * 100) + "%" },
-      { k: "Tâm phổ (độ sáng)", v: Math.round(centroidHz) + " Hz" },
-      { k: "Lăn phổ 85%", v: Math.round(rolloffHz) + " Hz" },
-      { k: "Độ phẳng phổ", v: flatness.toFixed(3) },
-      { k: "Tỷ lệ hài/nhiễu", v: hnr.toFixed(2) },
-      { k: "Tốc độ qua-0 (ZCR)", v: Math.round(zcr) + " Hz" },
-      { k: "Số onset", v: String(onsets) },
-      { k: "Nhịp ước lượng", v: tempo ? tempo + " /phút" : "—" },
-      { k: "Số nốt trích được", v: String(notes.length) },
-      { k: "Số cao độ khác nhau", v: String(distinctNotes) },
+      { k: L("Thời lượng", "Duration"), v: duration.toFixed(2) + " s" },
+      { k: L("Cường độ (RMS)", "Loudness (RMS)"), v: dbRms.toFixed(1) + " dB" },
+      { k: L("Hệ số đỉnh", "Crest factor"), v: crest.toFixed(1) },
+      { k: L("Cao độ cơ bản (f0)", "Fundamental pitch (f0)"), v: medF0 ? Math.round(medF0) + " Hz" : "—" },
+      { k: L("Dải cao độ", "Pitch range"), v: pitchRange ? pitchRange + L(" nửa cung", " semitones") : "—" },
+      { k: L("Số bậc cao độ", "Pitch steps"), v: String(distinctPitches) },
+      { k: L("Tỷ lệ có cao độ", "Voiced ratio"), v: Math.round(voicedRatio * 100) + "%" },
+      { k: L("Tâm phổ (độ sáng)", "Spectral centroid (brightness)"), v: Math.round(centroidHz) + " Hz" },
+      { k: L("Lăn phổ 85%", "Spectral rolloff 85%"), v: Math.round(rolloffHz) + " Hz" },
+      { k: L("Độ phẳng phổ", "Spectral flatness"), v: flatness.toFixed(3) },
+      { k: L("Tỷ lệ hài/nhiễu", "Harmonic/noise ratio"), v: hnr.toFixed(2) },
+      { k: L("Tốc độ qua-0 (ZCR)", "Zero-crossing rate (ZCR)"), v: Math.round(zcr) + " Hz" },
+      { k: L("Số onset", "Onset count"), v: String(onsets) },
+      { k: L("Nhịp ước lượng", "Estimated tempo"), v: tempo ? tempo + L(" /phút", " /min") : "—" },
+      { k: L("Số nốt trích được", "Notes extracted"), v: String(notes.length) },
+      { k: L("Số cao độ khác nhau", "Distinct pitches"), v: String(distinctNotes) },
     ];
 
     return {
       duration: duration, features: { medF0: medF0, pitchRange: pitchRange, distinctPitches: distinctPitches,
         voicedRatio: voicedRatio, centroidHz: centroidHz, flatness: flatness, hnr: hnr, zcr: zcr,
         onsets: onsets, tempo: tempo, melodic: melodic, pureTone: pureTone, voiceLike: voiceLike,
-        noiseLike: noiseLike, impulsive: impulsive },
+        noiseLike: noiseLike, impulsive: impulsive, dbRms: dbRms },
       vote: vote, type: type, typeIcon: typeIcon, distinctiveness: distinctiveness, metrics: metrics,
       spectro: { data: spec, frames: spec.length, bins: half, sr: sr, fft: FFT, hop: hop },
       notes: notes, distinctNotes: distinctNotes, melodyVote: melodyVote, melodyConf: melodyConf,
@@ -1541,6 +1592,7 @@ window.AudioEngine = (function () {
   "use strict";
   var T = window.TAXONOMY, E = window.AudioEngine;
   var $ = function (id) { return document.getElementById(id); };
+  var L = window.L || function (vi) { return vi; };   // i18n: VI / EN
 
   var A = window.ACOUSTICS;
   var state = {
@@ -1566,7 +1618,7 @@ window.AudioEngine = (function () {
       lab.innerHTML =
         '<input type="checkbox" data-g="' + g.id + '" checked> ' +
         '<span class="chip-ic">' + g.icon + "</span> " +
-        "<span>[" + g.id + "] " + g.name + "</span>";
+        "<span>[" + g.id + "] " + T.gname(g) + "</span>";
       lab.querySelector("input").addEventListener("change", function (e) {
         state.filters[g.id] = e.target.checked;
         if (state.lastCategories) render();
@@ -1640,14 +1692,14 @@ window.AudioEngine = (function () {
     if (!ac) { el.style.display = "none"; return; }
     var f = ac.features;
     var items = [
-      ["⏱", "Thời lượng", ac.duration.toFixed(2) + "s"],
-      ["🔊", "Cường độ", (ac.metrics.find(function(m){return m.k.indexOf("Cường độ")>=0;})||{}).v || "—"],
-      ["🎵", "Cao độ f0", f.medF0 ? Math.round(f.medF0) + " Hz" : "—"],
-      ["✨", "Độ sáng", Math.round(f.centroidHz) + " Hz"],
-      ["📈", "Loại", ac.typeIcon + " " + ac.type.split(" (")[0]],
+      ["⏱", L("Thời lượng", "Duration"), ac.duration.toFixed(2) + "s"],
+      ["🔊", L("Cường độ", "Loudness"), (f.dbRms != null ? f.dbRms.toFixed(1) + " dB" : "—")],
+      ["🎵", L("Cao độ f0", "Pitch f0"), f.medF0 ? Math.round(f.medF0) + " Hz" : "—"],
+      ["✨", L("Độ sáng", "Brightness"), Math.round(f.centroidHz) + " Hz"],
+      ["📈", L("Loại", "Type"), ac.typeIcon + " " + ac.type.split(" (")[0]],
     ];
     el.style.display = "flex";
-    el.innerHTML = '<span class="is-cap">Thông số đầu vào:</span>' + items.map(function (it) {
+    el.innerHTML = '<span class="is-cap">' + L("Thông số đầu vào:", "Input parameters:") + '</span>' + items.map(function (it) {
       return '<span class="istat"><span class="is-ic">' + it[0] + '</span><span class="is-k">' + it[1] + '</span><span class="is-v">' + it[2] + '</span></span>';
     }).join("");
   }
@@ -1669,9 +1721,10 @@ window.AudioEngine = (function () {
     var host = $("historyBody"); if (!host) return;
     if (!state.history.length) { $("historyPanel").style.display = "none"; return; }
     $("historyPanel").style.display = "block";
-    host.innerHTML = '<table class="hist-table"><thead><tr><th>#</th><th>Mẫu</th><th>Nhóm trội</th><th>Loại tín hiệu</th><th>Độ p/biệt</th><th>Kết luận</th></tr></thead><tbody>' +
+    host.innerHTML = '<table class="hist-table"><thead><tr><th>#</th><th>' + L("Mẫu", "Sample") + '</th><th>' + L("Nhóm trội", "Top group") + '</th><th>' + L("Loại tín hiệu", "Signal type") + '</th><th>' + L("Độ p/biệt", "Distinct.") + '</th><th>' + L("Kết luận", "Verdict") + '</th></tr></thead><tbody>' +
       state.history.map(function (h, i) {
-        return '<tr class="h-' + h.level + '"><td>' + (i + 1) + '</td><td>' + esc(h.name) + '</td><td>[' + h.dom + '] ' + h.group +
+        var gn = T.GROUPS[h.dom] ? T.gname(T.GROUPS[h.dom]) : (h.group || "—");
+        return '<tr class="h-' + h.level + '"><td>' + (i + 1) + '</td><td>' + esc(h.name) + '</td><td>[' + h.dom + '] ' + gn +
           '</td><td>' + (h.type || "—") + '</td><td>' + (h.distinct != null ? h.distinct : "—") + '</td><td>' + h.verdict + '</td></tr>';
       }).join("") + '</tbody></table>';
   }
@@ -1692,11 +1745,11 @@ window.AudioEngine = (function () {
     var d = ac.distinctiveness;
     var dCls = d >= 66 ? "hi" : d >= 40 ? "mid" : "lo";
     $("acDistinct").innerHTML =
-      '<div class="ad-lb">Độ phân biệt âm học <span class="ad-val ' + dCls + '">' + d + '/100</span></div>' +
+      '<div class="ad-lb">' + L("Độ phân biệt âm học", "Acoustic distinctiveness") + ' <span class="ad-val ' + dCls + '">' + d + '/100</span></div>' +
       '<div class="ad-track"><div class="ad-fill ' + dCls + '" style="width:' + d + '%"></div></div>' +
-      '<div class="ad-hint">' + (d >= 66 ? "Cấu trúc rõ, dễ tạo tính phân biệt cố hữu." :
-        d >= 40 ? "Trung bình — nên phối thêm giai điệu/sáng tạo." :
-        "Thấp — âm đơn giản/chức năng, cần xử lý sáng tạo hoặc chứng minh ý nghĩa thứ hai.") + '</div>';
+      '<div class="ad-hint">' + (d >= 66 ? L("Cấu trúc rõ, dễ tạo tính phân biệt cố hữu.", "Clear structure — likely inherently distinctive.") :
+        d >= 40 ? L("Trung bình — nên phối thêm giai điệu/sáng tạo.", "Medium — consider adding melody/creative processing.") :
+        L("Thấp — âm đơn giản/chức năng, cần xử lý sáng tạo hoặc chứng minh ý nghĩa thứ hai.", "Low — simple/functional sound; needs creative processing or proof of secondary meaning.")) + '</div>';
 
     // bang so lieu
     $("acMetrics").innerHTML = ac.metrics.map(function (m) {
@@ -1708,10 +1761,11 @@ window.AudioEngine = (function () {
     if (sb) {
       if (ac.notes && ac.notes.length) {
         sb.style.display = "block";
-        sb.innerHTML = '<div class="ac-cap">🎼 Ký âm tự động — khuông nhạc 5 dòng (' + ac.notes.length + ' nốt: ' +
+        sb.innerHTML = '<div class="ac-cap">🎼 ' + L("Ký âm tự động — khuông nhạc 5 dòng", "Auto music notation — 5-line staff") + ' (' + ac.notes.length + ' ' + L("nốt", "notes") + ': ' +
           ac.notes.slice(0, 16).map(function (nn) { return A.noteName(nn.midi); }).join(" ") + (ac.notes.length > 16 ? "…" : "") + ')</div>' +
           A.buildStaffSVG(ac.notes) +
-          '<div class="ac-subnote">Dùng tham khảo cho “bản thể hiện đồ họa (khuông nhạc 5 dòng kẻ)” bắt buộc khi nộp đơn (Điều 105 Luật SHTT; Thông tư 10/2026/TT-BKHCN).</div>';
+          '<div class="ac-subnote">' + L("Dùng tham khảo cho “bản thể hiện đồ họa (khuông nhạc 5 dòng kẻ)” bắt buộc khi nộp đơn (Điều 105 Luật SHTT; Thông tư 10/2026/TT-BKHCN).",
+            "Reference for the mandatory “graphic representation (5-line staff)” required at filing (Art. 105 IP Law; Circular 10/2026/TT-BKHCN).") + '</div>';
       } else { sb.style.display = "none"; }
     }
 
@@ -1724,18 +1778,18 @@ window.AudioEngine = (function () {
     var ya = T.aggregate(state.lastCategories.filter(function(c){var g=window.YAMNET_GROUP[c.index];return g>=1&&g<=7;}));
     T.summarize(ya, {});
     var yTop = ya.dominant, dTop = topVote(ac.vote), mTop = ac.melodyConf > 0 ? topVote(ac.melodyVote) : 0;
-    var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.GROUPS[g].name) : "— (không xác định)"; };
+    var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.gname(T.GROUPS[g])) : L("— (không xác định)", "— (undetermined)"); };
     var tops = [yTop, dTop]; if (ac.melodyConf > 0) tops.push(mTop);
     var agreeN = tops.filter(function (t) { return t === agg.dominant; }).length;
     var conf = confidence(agg, agreeN, tops.length);
     state.lastSources = { yTop: yTop, dTop: dTop, mTop: ac.melodyConf > 0 ? mTop : null, conf: conf, agreeN: agreeN, total: tops.length };
     host.innerHTML =
-      '<div class="src-row"><span class="src-k">🤖 Nguồn 1 — YAMNet (AI nhận dạng)</span><span class="src-v">' + gName(yTop) + '</span></div>' +
-      '<div class="src-row"><span class="src-k">🔬 Nguồn 2 — DSP (âm sắc/phổ)</span><span class="src-v">' + gName(dTop) + '</span></div>' +
-      (ac.melodyConf > 0 ? '<div class="src-row"><span class="src-k">🎼 Nguồn 3 — Trích giai điệu/nốt</span><span class="src-v">' + gName(mTop) + '</span></div>' : '') +
-      '<div class="src-row total"><span class="src-k">⚖️ Kết hợp (ensemble đa nguồn)</span><span class="src-v">' + gName(agg.dominant) + '</span></div>' +
-      '<div class="src-conf">Độ tin cậy: <b>' + conf.label + '</b> (' + conf.pct + '%) · ' + agreeN + '/' + tops.length + ' nguồn ' +
-        (agreeN >= tops.length ? '<span class="ok">đồng thuận hoàn toàn</span>' : agreeN >= 2 ? '<span class="ok">đa số đồng thuận</span>' : '<span class="warn">phân tán → cần xem kỹ</span>') + '</div>';
+      '<div class="src-row"><span class="src-k">🤖 ' + L("Nguồn 1 — YAMNet (AI nhận dạng)", "Source 1 — YAMNet (AI recognition)") + '</span><span class="src-v">' + gName(yTop) + '</span></div>' +
+      '<div class="src-row"><span class="src-k">🔬 ' + L("Nguồn 2 — DSP (âm sắc/phổ)", "Source 2 — DSP (timbre/spectrum)") + '</span><span class="src-v">' + gName(dTop) + '</span></div>' +
+      (ac.melodyConf > 0 ? '<div class="src-row"><span class="src-k">🎼 ' + L("Nguồn 3 — Trích giai điệu/nốt", "Source 3 — Melody/note extraction") + '</span><span class="src-v">' + gName(mTop) + '</span></div>' : '') +
+      '<div class="src-row total"><span class="src-k">⚖️ ' + L("Kết hợp (ensemble đa nguồn)", "Combined (multi-source ensemble)") + '</span><span class="src-v">' + gName(agg.dominant) + '</span></div>' +
+      '<div class="src-conf">' + L("Độ tin cậy", "Confidence") + ': <b>' + conf.label + '</b> (' + conf.pct + '%) · ' + agreeN + '/' + tops.length + ' ' + L("nguồn", "sources") + ' ' +
+        (agreeN >= tops.length ? '<span class="ok">' + L("đồng thuận hoàn toàn", "full agreement") + '</span>' : agreeN >= 2 ? '<span class="ok">' + L("đa số đồng thuận", "majority agreement") + '</span>' : '<span class="warn">' + L("phân tán → cần xem kỹ", "divergent → review carefully") + '</span>') + '</div>';
   }
 
   function topVote(v) { var b = 0, bk = 0; for (var k = 1; k <= 7; k++) if ((v[k] || 0) > b) { b = v[k]; bk = k; } return b > 0 ? bk : 0; }
@@ -1744,7 +1798,7 @@ window.AudioEngine = (function () {
     var base = (agg.pct[agg.dominant] || 0) * 100;
     var bonus = (total ? (agreeN / total) : 0) * 18;   // +0..18 khi nhieu nguon dong thuan
     var pct = Math.min(99, Math.round(base + bonus));
-    var label = pct >= 60 ? "Cao" : pct >= 35 ? "Trung bình" : "Thấp";
+    var label = pct >= 60 ? L("Cao", "High") : pct >= 35 ? L("Trung bình", "Medium") : L("Thấp", "Low");
     return { pct: pct, label: label };
   }
 
@@ -1752,11 +1806,11 @@ window.AudioEngine = (function () {
     var v = agg.verdict, el = $("verdict");
     var present = agg.present.map(function (g) {
       return '<span class="src-pill" style="--c:' + T.GROUPS[g].color + '">' +
-             T.GROUPS[g].icon + " [" + g + "] " + T.GROUPS[g].name + "</span>";
+             T.GROUPS[g].icon + " [" + g + "] " + T.gname(T.GROUPS[g]) + "</span>";
     }).join("");
     var multi = agg.present.length > 1
-      ? '<div class="multi-note">🔎 Phát hiện <b>' + agg.present.length +
-        " nguồn âm cùng lúc</b> (đa nguồn)</div>"
+      ? '<div class="multi-note">🔎 ' + L("Phát hiện", "Detected") + " <b>" + agg.present.length +
+        " " + L("nguồn âm cùng lúc</b> (đa nguồn)", "sound sources at once</b> (multi-source)") + "</div>"
       : "";
     el.className = "verdict v-" + v.level;
     el.innerHTML =
@@ -1773,13 +1827,35 @@ window.AudioEngine = (function () {
   function groupEvidence(k, agg) {
     var ac = state.lastAcoustics, parts = [];
     var labels = ((agg && agg.raw) || []).filter(function (r) { return r.group === k && r.score >= 0.02; })
-      .slice(0, 3).map(function (r) { return esc(r.labelVi) + " " + Math.round(r.score * 100) + "%"; });
+      .slice(0, 3).map(function (r) { return esc(window.APP_LANG === "en" ? r.label : r.labelVi) + " " + Math.round(r.score * 100) + "%"; });
     if (labels.length) parts.push('<b>AI:</b> ' + labels.join(", "));
     if (ac) {
       if ((ac.vote[k] || 0) > 0.01) parts.push('<b>DSP:</b> ' + esc(ac.type));
-      if (ac.melodyVote && (ac.melodyVote[k] || 0) > 0.01) parts.push('<b>Giai điệu:</b> ' + (ac.notes ? ac.notes.length + " nốt" : "có"));
+      if (ac.melodyVote && (ac.melodyVote[k] || 0) > 0.01)
+        parts.push('<b>' + L("Giai điệu", "Melody") + ':</b> ' + (ac.notes ? ac.notes.length + L(" nốt", " notes") : L("có", "yes")));
     }
     return parts.length ? parts.join(" · ") : "";
+  }
+
+  // sóng âm ĐẶC TRƯNG của từng nhóm (bản đồ sóng âm minh hoạ)
+  function groupWaveSVG(k, color) {
+    var W = 300, H = 30, mid = H / 2, n = 150, pts = [], i, seed = k * 97 + 13;
+    function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+    for (i = 0; i < n; i++) {
+      var t = i / n, a = 0;
+      if (k === 1) a = 0.30 * Math.sin(t * 7 * Math.PI) + 0.16 * (rnd() * 2 - 1);            // gió/nước: cuộn chậm + nhiễu
+      else if (k === 2) a = (i % 16 < 2 ? (rnd() > 0.5 ? 0.85 : -0.85) : 0.06 * (rnd() * 2 - 1)); // chim/thú: chíp nhọn
+      else if (k === 3) a = 0.28 * Math.sin(t * 5 * Math.PI) + 0.24 * (rnd() * 2 - 1);        // môi trường: pha trộn
+      else if (k === 4) a = Math.abs(Math.sin(t * 5 * Math.PI)) * 0.7 * Math.sin(t * 64 * Math.PI); // giọng: âm tiết
+      else if (k === 5) a = 0.30 * Math.sin(t * 8 * Math.PI) + 0.05 * (rnd() * 2 - 1);        // mô phỏng: sạch hơn
+      else if (k === 6) a = (i % 24 < 2 ? (rnd() > 0.5 ? 0.9 : -0.9) : 0.03 * (rnd() * 2 - 1)); // vật dụng: xung gõ
+      else a = 0.72 * Math.sin(t * 26 * Math.PI) + 0.12 * Math.sin(t * 52 * Math.PI);          // tổng hợp: tuần hoàn sạch
+      pts.push((mid - a * (mid - 2)).toFixed(1));
+    }
+    var d = "M0," + pts[0];
+    for (i = 1; i < n; i++) d += " L" + (i / (n - 1) * W).toFixed(1) + "," + pts[i];
+    return '<svg class="gw" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
+      '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="1.4" stroke-opacity="0.85"/></svg>';
   }
 
   function renderBars(agg) {
@@ -1800,13 +1876,15 @@ window.AudioEngine = (function () {
       row.innerHTML =
         '<div class="bar-head">' +
           '<span class="bar-ic">' + g.icon + "</span>" +
-          '<span class="bar-name">[' + g.id + "] " + g.name + "</span>" +
+          '<span class="bar-name">[' + g.id + "] " + T.gname(g) + "</span>" +
           '<span class="bar-pct">' + (on ? pctTxt : "—") + "</span>" +
         "</div>" +
         '<div class="bar-track"><div class="bar-fill" style="width:' +
           (on ? w : 0) + "%;background:" + g.color + '"></div></div>' +
-        '<div class="bar-desc">' + g.desc + "</div>" +
-        (evi ? '<div class="bar-evi">🔎 Dấu hiệu: ' + evi + "</div>" : "");
+        '<div class="bar-wave" title="' + L("Sóng âm đặc trưng của nhóm", "Characteristic waveform of this group") + '">' +
+          groupWaveSVG(k, g.color) + "</div>" +
+        '<div class="bar-desc">' + T.gdesc(g) + "</div>" +
+        (evi ? '<div class="bar-evi">🔎 ' + L("Dấu hiệu", "Signals") + ": " + evi + "</div>" : "");
       host.appendChild(row);
     }
   }
@@ -1830,14 +1908,14 @@ window.AudioEngine = (function () {
   // ---------- Tai file ----------
   function handleFile(file) {
     if (!file) return;
-    setStatus("Đang đọc file: " + file.name + " …");
+    setStatus(L("Đang đọc file: ","Reading file: ") + file.name + " …");
     var url = URL.createObjectURL(file);
     $("player").src = url; $("player").style.display = "block";
     var reader = new FileReader();
     reader.onload = function () {
       analyzeArrayBuffer(reader.result, file.name);
     };
-    reader.onerror = function () { setStatus("❌ Không đọc được file."); };
+    reader.onerror = function () { setStatus(L("❌ Không đọc được file.","❌ Could not read the file.")); };
     reader.readAsArrayBuffer(file);
   }
 
@@ -1846,10 +1924,10 @@ window.AudioEngine = (function () {
       state.lastName = name || null;
       E.onStatus(setStatus);
       await E.ready();
-      setStatus("Đang phân tích âm thanh…");
+      setStatus(L("Đang phân tích âm thanh…","Analyzing audio…"));
       var res = await E.classifyArrayBuffer(arrayBuffer);
       setStatus("");
-      if (!res.categories.length) { setStatus("Không nhận được âm thanh nào."); return; }
+      if (!res.categories.length) { setStatus(L("Không nhận được âm thanh nào.","No audio detected.")); return; }
       runAnalysis(res.categories, res.samples);
     } catch (err) {
       console.error(err);
@@ -1865,7 +1943,7 @@ window.AudioEngine = (function () {
     try {
       rec.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (e) {
-      setStatus("❌ Không truy cập được micro. Hãy cấp quyền micro cho trang.");
+      setStatus(L("❌ Không truy cập được micro. Hãy cấp quyền micro cho trang.","❌ Cannot access microphone. Please grant mic permission."));
       return;
     }
     rec.chunks = [];
@@ -1910,7 +1988,7 @@ window.AudioEngine = (function () {
     $("btnRecord").classList.add("hidden");
     $("btnStop").classList.remove("hidden");
     $("recMeter").classList.remove("hidden");
-    setStatus("🔴 Đang ghi âm… (tối đa " + MAX_SEC + "s)");
+    setStatus(L("🔴 Đang ghi âm… (tối đa ","🔴 Recording… (max ") + MAX_SEC + "s)");
   }
 
   function stopRecording() {
@@ -1951,10 +2029,10 @@ window.AudioEngine = (function () {
 
   function buildNiceSelect() {
     var sel = $("saNice");
-    sel.innerHTML = '<option value="">— Chọn nhóm Nice —</option>';
+    sel.innerHTML = '<option value="">' + L("— Chọn nhóm Nice —", "— Choose a Nice class —") + '</option>';
     NICE.forEach(function (n, i) {
       var o = document.createElement("option");
-      o.value = String(i + 1); o.textContent = "Nhóm " + n;
+      o.value = String(i + 1); o.textContent = L("Nhóm ", "Class ") + n;
       sel.appendChild(o);
     });
   }
@@ -1983,53 +2061,62 @@ window.AudioEngine = (function () {
 
     // 1) Tinh nang ky thuat bat buoc -> chan tuyet doi
     if (func === "yes") {
-      level = "low"; title = "Khó được bảo hộ";
-      notes.push("Âm thanh là đặc tính kỹ thuật bắt buộc → thuộc trường hợp loại trừ (Khoản 6 Điều 73 Luật SHTT).");
+      level = "low"; title = L("Khó được bảo hộ", "Unlikely to be protected");
+      notes.push(L("Âm thanh là đặc tính kỹ thuật bắt buộc → thuộc trường hợp loại trừ (Khoản 6 Điều 73 Luật SHTT).",
+        "The sound is a mandatory technical feature → falls under exclusion (Art. 73(6) IP Law)."));
     }
     // 2) Tinh phan biet co huu -> thuan loi
     else if (inh === "yes" || dom === 7) {
-      level = "ok"; title = "Có khả năng được bảo hộ";
-      notes.push("Có dấu hiệu tính phân biệt cố hữu" + (dom===7 ? " (âm tổng hợp/giai điệu — nhóm 7)" : "") + " (Khoản 1 Điều 74 Luật SHTT).");
+      level = "ok"; title = L("Có khả năng được bảo hộ", "Likely protectable");
+      notes.push(L("Có dấu hiệu tính phân biệt cố hữu" + (dom===7 ? " (âm tổng hợp/giai điệu — nhóm 7)" : "") + " (Khoản 1 Điều 74 Luật SHTT).",
+        "Shows signs of inherent distinctiveness" + (dom===7 ? " (synthesized/melodic sound — group 7)" : "") + " (Art. 74(1) IP Law)."));
     }
     // 3) Khong/chua ro tinh phan biet co huu -> can secondary meaning
     else {
       var smScore = dur + rec + evi;   // 0..9
       if (smScore >= 6) {
-        level = "ok"; title = "Có thể được bảo hộ (qua ý nghĩa thứ hai)";
-        notes.push("Chưa có tính phân biệt cố hữu, nhưng thực trạng sử dụng đủ mạnh để hướng tới chứng minh “ý nghĩa thứ hai” (điểm b,c,d,đ,e Khoản 2 Điều 74 Luật SHTT).");
+        level = "ok"; title = L("Có thể được bảo hộ (qua ý nghĩa thứ hai)", "Protectable (via secondary meaning)");
+        notes.push(L("Chưa có tính phân biệt cố hữu, nhưng thực trạng sử dụng đủ mạnh để hướng tới chứng minh “ý nghĩa thứ hai” (điểm b,c,d,đ,e Khoản 2 Điều 74 Luật SHTT).",
+          "No inherent distinctiveness yet, but usage is strong enough to pursue proof of “secondary meaning” (points b,c,d,đ,e of Art. 74(2) IP Law)."));
       } else if (smScore >= 3) {
-        level = "conditional"; title = "Cần bổ sung bằng chứng";
-        notes.push("Phải chứng minh “ý nghĩa thứ hai”: kéo dài thời gian sử dụng, tăng mức độ nhận diện và thu thập thêm bằng chứng (doanh số, quảng cáo, khảo sát).");
+        level = "conditional"; title = L("Cần bổ sung bằng chứng", "More evidence needed");
+        notes.push(L("Phải chứng minh “ý nghĩa thứ hai”: kéo dài thời gian sử dụng, tăng mức độ nhận diện và thu thập thêm bằng chứng (doanh số, quảng cáo, khảo sát).",
+          "Must prove “secondary meaning”: extend usage period, raise recognition, and gather more evidence (sales, advertising, surveys)."));
       } else {
-        level = "low"; title = "Khó được bảo hộ (chưa đủ cơ sở)";
-        notes.push("Chưa có tính phân biệt cố hữu và chưa đủ bằng chứng sử dụng để đạt “ý nghĩa thứ hai”.");
+        level = "low"; title = L("Khó được bảo hộ (chưa đủ cơ sở)", "Unlikely (insufficient basis)");
+        notes.push(L("Chưa có tính phân biệt cố hữu và chưa đủ bằng chứng sử dụng để đạt “ý nghĩa thứ hai”.",
+          "No inherent distinctiveness and insufficient usage evidence for “secondary meaning”."));
       }
     }
 
     // Ket hop nhan xet tu phan loai am thanh
     if (state.lastAgg) {
       var g = T.GROUPS[dom];
-      notes.push("Phân loại âm thanh: nhóm " + dom + " — " + (g?g.name:"?") +
-        (audioFavorable ? " (thuận lợi)" : hasMelody ? " (có phối giai điệu → tăng tính phân biệt)" : " (âm tự nhiên/chức năng → cần yếu tố sáng tạo)") + ".");
+      notes.push(L("Phân loại âm thanh: nhóm ", "Sound classification: group ") + dom + " — " + (g?T.gname(g):"?") +
+        (audioFavorable ? L(" (thuận lợi)", " (favorable)") : hasMelody ? L(" (có phối giai điệu → tăng tính phân biệt)", " (has melody → raises distinctiveness)") : L(" (âm tự nhiên/chức năng → cần yếu tố sáng tạo)", " (natural/functional → needs a creative element)")) + ".");
     } else {
-      notes.push("Chưa phân loại âm thanh ở trên — hãy ghi âm/tải file để có đánh giá đầy đủ hơn.");
+      notes.push(L("Chưa phân loại âm thanh ở trên — hãy ghi âm/tải file để có đánh giá đầy đủ hơn.",
+        "No sound classified above — record/upload a file for a fuller assessment."));
     }
 
     // Luu y thu tuc bat buoc
-    notes.push("Thủ tục bắt buộc: nộp <b>khuông nhạc 5 dòng kẻ</b> + tệp <b>.mp3 ≤5MB</b>, phân loại theo Nice" +
-      (nice ? " (đã chọn nhóm " + nice + ")" : " (chưa chọn nhóm)") + " — Điều 105 Luật SHTT & Thông tư 10/2026/TT-BKHCN.");
+    notes.push(L("Thủ tục bắt buộc: nộp <b>khuông nhạc 5 dòng kẻ</b> + tệp <b>.mp3 ≤5MB</b>, phân loại theo Nice" +
+      (nice ? " (đã chọn nhóm " + nice + ")" : " (chưa chọn nhóm)") + " — Điều 105 Luật SHTT & Thông tư 10/2026/TT-BKHCN.",
+      "Mandatory procedure: submit a <b>5-line staff</b> + an <b>.mp3 ≤5MB</b> file, classified by Nice" +
+      (nice ? " (group " + nice + " selected)" : " (no group selected)") + " — Art. 105 IP Law & Circular 10/2026/TT-BKHCN."));
 
     var badge = { ok:"✅", conditional:"🟡", low:"❌" }[level];
-    var head = name ? ('“' + esc(name) + '”') : "Nhãn hiệu âm thanh";
+    var head = name ? ('“' + esc(name) + '”') : L("Nhãn hiệu âm thanh", "Sound trademark");
     state.lastSaResult = { name: name, nice: nice, level: level, title: title, badge: badge, notes: notes.slice() };
     $("saResult").innerHTML =
       '<div class="sa-card verdict v-' + level + '">' +
         '<div class="v-badge">' + badge + '</div>' +
         '<div class="v-body">' +
           '<div class="v-title">' + title + '</div>' +
-          '<div class="sa-meta"><b>' + head + '</b>' + (nice ? ' · nhóm Nice ' + nice : '') + '</div>' +
+          '<div class="sa-meta"><b>' + head + '</b>' + (nice ? L(' · nhóm Nice ', ' · Nice class ') + nice : '') + '</div>' +
           '<ul class="sa-list"><li>' + notes.join('</li><li>') + '</li></ul>' +
-          '<div class="v-legal">⚠ Đây là đánh giá sơ bộ mang tính tham khảo học thuật, không thay thế ý kiến chuyên môn của Cục SHTT.</div>' +
+          '<div class="v-legal">⚠ ' + L("Đây là đánh giá sơ bộ mang tính tham khảo học thuật, không thay thế ý kiến chuyên môn của Cục SHTT.",
+            "This is a preliminary academic reference, not a substitute for the IP Office’s professional opinion.") + '</div>' +
         '</div>' +
       '</div>';
     $("saResult").scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -2039,7 +2126,7 @@ window.AudioEngine = (function () {
 
   // ---------- Xuất BÁO CÁO phân tích (PDF / in) ----------
   function exportReport() {
-    if (!state.lastAgg) { setStatus("Hãy phân tích một âm thanh (ghi âm/tải file) trước khi xuất báo cáo."); return; }
+    if (!state.lastAgg) { setStatus(L("Hãy phân tích một âm thanh (ghi âm/tải file) trước khi xuất báo cáo.","Please analyze a sound (record/upload) before exporting a report.")); return; }
     var html = composeReportHTML();
     var w = window.open("", "_blank");
     if (!w) {
@@ -2047,7 +2134,7 @@ window.AudioEngine = (function () {
       var a = document.createElement("a");
       a.href = URL.createObjectURL(blob); a.download = "bao-cao-phan-tich-am-thanh.html";
       document.body.appendChild(a); a.click(); a.remove();
-      setStatus("Trình duyệt chặn cửa sổ — đã tải báo cáo dạng HTML về máy (mở rồi In → Lưu PDF).");
+      setStatus(L("Trình duyệt chặn cửa sổ — đã tải báo cáo dạng HTML về máy (mở rồi In → Lưu PDF).","Pop-up blocked — the HTML report was downloaded (open it, then Print → Save as PDF)."));
       return;
     }
     w.document.open(); w.document.write(html); w.document.close();
@@ -2166,19 +2253,60 @@ window.AudioEngine = (function () {
     return { buf: b, sr: sr };
   }
   function playFloat(b, sr) { try { var AC = window.AudioContext || window.webkitAudioContext; var ctx = new AC(); var ab = ctx.createBuffer(1, b.length, sr); ab.copyToChannel(b, 0); var s = ctx.createBufferSource(); s.buffer = ab; s.connect(ctx.destination); s.start(); } catch (e) {} }
-  var SAMP_NAME = { melody: "Mẫu giai điệu", beep: "Mẫu tông đơn/beep", noise: "Mẫu nhiễu/gió", voice: "Mẫu giọng (giả lập)", chirp: "Mẫu quét tần số" };
+  var SAMP_NAME = window.APP_LANG === "en"
+    ? { melody: "Melody sample", beep: "Single-tone/beep sample", noise: "Noise/wind sample", voice: "Voice sample (synthetic)", chirp: "Frequency-sweep sample" }
+    : { melody: "Mẫu giai điệu", beep: "Mẫu tông đơn/beep", noise: "Mẫu nhiễu/gió", voice: "Mẫu giọng (giả lập)", chirp: "Mẫu quét tần số" };
   async function analyzeSample(type) {
     var s = buildSample(type); playFloat(s.buf, s.sr);
     try {
-      E.onStatus(setStatus); await E.ready(); setStatus("Đang phân tích mẫu…");
+      E.onStatus(setStatus); await E.ready(); setStatus(L("Đang phân tích mẫu…","Analyzing sample…"));
       var cats = await E.classifyBuffer(s.buf); setStatus("");
       state.lastName = SAMP_NAME[type] || ("Mẫu " + type);
       runAnalysis(cats, s.buf);
     } catch (err) { setStatus("❌ " + (err && err.message ? err.message : err)); }
   }
 
+  // ---------- Đổi ngôn ngữ (VI / EN = tiếng Mỹ) ----------
+  function setLang(lang) {
+    window.APP_LANG = (lang === "en") ? "en" : "vi";
+    try { localStorage.setItem("amthanh_lang", window.APP_LANG); } catch (e) {}
+    document.documentElement.setAttribute("lang", window.APP_LANG);
+    // van ban tinh: [data-en] (HTML) + [data-en-ph] (placeholder)
+    Array.prototype.forEach.call(document.querySelectorAll("[data-en]"), function (el) {
+      if (el.__vi == null) el.__vi = el.innerHTML;
+      el.innerHTML = (window.APP_LANG === "en") ? el.getAttribute("data-en") : el.__vi;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-en-ph]"), function (el) {
+      if (el.__viph == null) el.__viph = el.getAttribute("placeholder") || "";
+      el.setAttribute("placeholder", (window.APP_LANG === "en") ? el.getAttribute("data-en-ph") : el.__viph);
+    });
+    // nut chuyen
+    Array.prototype.forEach.call(document.querySelectorAll("#langToggle [data-lang]"), function (b) {
+      b.classList.toggle("on", b.getAttribute("data-lang") === window.APP_LANG);
+    });
+    // dung lai cac thanh phan dong (giu trang thai bo loc + nice)
+    buildGroupChecklist();
+    Array.prototype.forEach.call(document.querySelectorAll("#sourceFilters input[data-g]"), function (c) {
+      c.checked = !!state.filters[+c.getAttribute("data-g")];
+    });
+    var niceVal = $("saNice") ? $("saNice").value : "";
+    buildNiceSelect(); if ($("saNice")) $("saNice").value = niceVal;
+    if (window.DECUONG && window.DECUONG.build) window.DECUONG.build();
+    renderHistory();
+    // tinh lai am hoc theo ngon ngu moi (type/metrics doi ngon ngu)
+    if (A && state.lastSamples) state.lastAcoustics = A.analyze(state.lastSamples, 16000);
+    if (state.lastCategories) render();
+  }
+
   // ---------- Wire ----------
   function init() {
+    // ngon ngu: khoi phuc lua chon truoc do
+    try { var sv = localStorage.getItem("amthanh_lang"); if (sv) window.APP_LANG = sv; } catch (e) {}
+    var lt = $("langToggle");
+    if (lt) lt.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-lang]"); if (b) setLang(b.getAttribute("data-lang"));
+    });
+
     buildGroupChecklist();
     $("btnRecord").addEventListener("click", startRecording);
     $("btnStop").addEventListener("click", stopRecording);
@@ -2216,6 +2344,9 @@ window.AudioEngine = (function () {
       b.addEventListener("click", function () { analyzeSample(b.getAttribute("data-sample")); });
     });
     window.__report = composeReportHTML; // hook kiểm thử
+
+    // ap dung ngon ngu da chon (neu la EN thi dich toan bo tinh + dong)
+    setLang(window.APP_LANG);
 
     // warm-up model (khong chan UI)
     E.onStatus(setStatus);
