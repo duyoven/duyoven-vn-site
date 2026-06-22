@@ -91,10 +91,16 @@
       "label": "Duy's Oven",
       "maxDevices": 5,
       "active": true,
-      "devices": []
+      "devices": [
+        {
+          "d": "6424a316782d9f77d36b493a2b9d21e34b275f8a576af36c639bd726d8086ff7",
+          "name": "Android",
+          "ts": "2026-06-22T01:45:58.491Z"
+        }
+      ]
     }
   ],
-  "rev": 13,
+  "rev": 14,
   "note": "App Xep Laser Duy's Oven - quan ly key kich hoat",
-  "updatedAt": "2026-06-22T01:37:03.252Z"
+  "updatedAt": "2026-06-22T01:45:58.491Z"
 }
