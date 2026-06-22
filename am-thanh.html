@@ -302,6 +302,12 @@ body{
 .hist-table tr.h-conditional td{border-left:3px solid #f59e0b}
 .hist-table tr.h-low td{border-left:3px solid #ef4444}
 
+/* link sang slide bảo vệ (web slideshow) */
+.hero-slides{display:inline-block;margin-top:16px;padding:10px 20px;border-radius:99px;
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff;font-weight:700;font-size:14.5px;
+  text-decoration:none;box-shadow:0 8px 22px rgba(139,92,246,.35)}
+.hero-slides:hover{filter:brightness(1.08)}
+
 /* nút đổi ngôn ngữ VI / EN (tiếng Mỹ) */
 .lang-toggle{position:fixed;top:12px;right:12px;z-index:60;display:flex;gap:3px;
   background:rgba(22,31,61,.9);border:1px solid var(--line);border-radius:99px;padding:3px}
@@ -425,6 +431,7 @@ body.locked .site-back{display:none}
       Nghe bằng micro hoặc tải file âm thanh → mô hình AI <b>YAMNet</b> tự thẩm định &
       phân loại nguồn gốc → <b>tự đánh giá khả năng bảo hộ nhãn hiệu âm thanh</b> (Bảng 4.1).
     </p>
+    <a class="hero-slides" href="slide-am-thanh" data-en="📊 View defense slides">📊 Xem slide bảo vệ đề án</a>
   </header>
 
   <!-- INPUT -->
@@ -2528,4 +2535,3 @@ window.AudioEngine = (function () {
 </script>
 </body>
 </html>
-
