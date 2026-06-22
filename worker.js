@@ -493,6 +493,27 @@ export default {
 
 
     // --- AI: tư vấn (chat) ---
+    if (url.pathname === "/api/audio-caption") {
+      const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type" };
+      if (request.method === "OPTIONS") return new Response(null, { headers: cors });
+      if (request.method === "POST") {
+        try {
+          const body = await request.json();
+          const a = body.analysis || {};
+          const lang = body.lang === "en" ? "en" : "vi";
+          const sys = lang === "en"
+            ? "You are an expert in acoustics and Vietnamese IP law on sound trademarks. Given a structured acoustic analysis (JSON), write a SHORT plain-language description of the sound (2-3 sentences), then ONE sentence assessing its distinctiveness / protectability as a sound mark under Vietnam IP Law (Art. 72/74). Be concrete; refer to the detected sounds. No markdown, no preamble. Answer in English."
+            : "Bạn là chuyên gia âm học và pháp luật SHTT Việt Nam về nhãn hiệu âm thanh. Dựa trên kết quả phân tích âm học (JSON), viết MÔ TẢ ngắn gọn bằng lời (2-3 câu) về âm thanh, rồi MỘT câu nhận định khả năng phân biệt/được bảo hộ làm nhãn hiệu âm thanh theo Luật SHTT VN (Điều 72/74). Cụ thể, bám vào âm đã nhận diện. Không markdown, không lời mở đầu. Trả lời bằng tiếng Việt.";
+          const user = "Phân tích (JSON): " + JSON.stringify(a).slice(0, 1800);
+          if (!env.ANTHROPIC_API_KEY) return new Response(JSON.stringify({ error: "no key" }), { status: 502, headers: { "Content-Type": "application/json", ...cors } });
+          const caption = await callClaude(env, [{ role: "system", content: sys }, { role: "user", content: user }]);
+          return new Response(JSON.stringify({ caption }), { headers: { "Content-Type": "application/json; charset=UTF-8", "Cache-Control": "no-store", ...cors } });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } });
+        }
+      }
+    }
+
     if (url.pathname === "/api/ai/chat" && request.method === "POST") {
       try {
         const body = await request.json();
