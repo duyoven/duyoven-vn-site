@@ -2180,13 +2180,32 @@ window.AudioEngine = (function () {
   // Audio captioning: mô tả + nhận định pháp lý bằng LLM (qua Worker Claude của site)
   async function genCaption() {
     var bk = state.lastBackend; if (!bk) return;
+    var agg = state.lastAgg, dec = bk.decision || {};
+    function gn(g) { return "[" + g + "] " + T.gname(T.GROUPS[g]); }
+    var presentArr = (dec.present || (agg && agg.present) || []);
+    var cov = dec.coverage || {}, coverage = {};
+    presentArr.forEach(function (g) { coverage[gn(g)] = Math.round((parseFloat(cov[g]) || 0) * 100) + "% thời lượng"; });
+    var a = authVerdict();
+    var deep = null;
+    if (state.deepResult && state.deepResult.stems) {
+      deep = state.deepResult.stems.map(function (s) {
+        return { nguon: s.name, nhom: "[" + s.group + "] " + (s.groupName || ""), nangLuong: s.energyPct + "%",
+                 kiemTraGiong: s.voiceCheck ? s.voiceCheck.verdict : undefined };
+      });
+    }
     var payload = { lang: window.APP_LANG === "en" ? "en" : "vi", analysis: {
-      dominant: bk.dominant, engine: bk.engine,
+      ketLuanNhom: gn(bk.dominant),
+      nguonPhatHien: presentArr.map(gn),
+      doPhuThoiGian: coverage,
+      coGiaiDieu: !!dec.melody,
+      soDoanThoiGian: dec.nseg || null,
+      amThatPhanTram: a ? a.realPct : null,
+      tachNguon: deep,                       // kết quả tách nguồn Demucs (nếu đã chạy Phân tích sâu)
       beatsTop: ((bk.beats && bk.beats.top) || []).slice(0, 6).map(function (r) { return r.label; }),
-      clapDesc: bk.clap && bk.clap.description, subLabels: bk.clap && bk.clap.subLabels,
+      clapDesc: bk.clap && bk.clap.description,
       uniqueness: bk.clap && bk.clap.uniqueness,
       type: state.lastAcoustics ? state.lastAcoustics.type : null,
-      verdict: state.lastAgg ? state.lastAgg.verdict.title : null,
+      verdict: agg ? agg.verdict.title : null,
       similarTop: (bk.similar && bk.similar[0]) ? (bk.similar[0].name + " " + bk.similar[0].similarity + "%") : null,
     }};
     var myB = bk;
@@ -2392,6 +2411,7 @@ window.AudioEngine = (function () {
         if (state.lastSamples !== mine) return;
         state.deepResult = res; state.deepFor = mine;
         panel.innerHTML = deepHtml(res); btn.style.display = "none";
+        genCaption();   // viết lại mô tả AI có thêm bằng chứng tách nguồn
       } catch (e) {
         btn.disabled = false;
         btn.innerHTML = '🔬 ' + L("Thử lại — tách nguồn", "Retry — separate sources");
