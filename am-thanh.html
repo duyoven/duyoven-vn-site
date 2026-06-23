@@ -409,47 +409,8 @@ body.locked .lang-toggle{display:none}
 }
 
 </style>
-<style>
-body.locked{overflow:hidden}
-body.locked .wrap,body.locked .bg-deco{display:none}
-#gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:radial-gradient(1000px 600px at 70% -10%, rgba(139,92,246,.25), transparent), #0b1020}
-body:not(.locked) #gate{display:none}
-.gate-card{width:100%;max-width:380px;background:linear-gradient(180deg,#161f3d,#111935);
-  border:1px solid #2a3866;border-radius:20px;padding:34px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.gate-ic{font-size:44px}
-.gate-title{font-size:22px;margin:8px 0 4px;color:#eef2ff}
-.gate-sub{color:#9aa6c8;font-size:14px;margin:0 0 20px}
-.gate-input{width:100%;padding:13px 15px;border-radius:12px;border:1px solid #2a3866;background:#0c1330;
-  color:#eef2ff;font-size:16px;outline:none;text-align:center;letter-spacing:.12em}
-.gate-input:focus{border-color:#8b5cf6}
-.gate-btn{width:100%;margin-top:14px;padding:13px;border:none;border-radius:12px;cursor:pointer;
-  font-size:15px;font-weight:700;color:#fff;background:linear-gradient(90deg,#8b5cf6,#ec4899)}
-.gate-btn:active{transform:scale(.98)}
-.gate-err{color:#fca5a5;font-size:13.5px;min-height:20px;margin-top:12px}
-.gate-card.shake{animation:shk .4s}
-@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.gate-back{display:inline-block;margin-top:8px;color:#9aa6c8;font-size:13px;text-decoration:none}
-.gate-back:hover{color:#eef2ff}
-.site-back{position:fixed;top:12px;left:12px;z-index:50;background:rgba(22,31,61,.85);border:1px solid #2a3866;
-  color:#c4b5fd;text-decoration:none;font-size:12.5px;padding:7px 12px;border-radius:99px}
-body.locked .site-back{display:none}
-.site-back:hover{color:#fff}
-</style>
 </head>
-<body class="locked">
-<a class="site-back" href="https://duyoven.vn">← duyoven.vn</a>
-<div id="gate" role="dialog" aria-modal="true">
-  <form class="gate-card" id="gateForm" autocomplete="off">
-    <div class="gate-ic">🔒</div>
-    <h1 class="gate-title">Khu vực có mật khẩu</h1>
-    <p class="gate-sub">Nhập mật khẩu để vào ứng dụng phân loại âm thanh.</p>
-    <input id="gatePw" type="password" class="gate-input" placeholder="Mật khẩu" autocomplete="off" />
-    <button type="submit" class="gate-btn">Vào ứng dụng →</button>
-    <div id="gateErr" class="gate-err"></div>
-    <a class="gate-back" href="https://duyoven.vn">← Về duyoven.vn</a>
-  </form>
-</div>
+<body>
 <div id="langToggle" class="lang-toggle" aria-label="Language"><button data-lang="vi" class="on">VI</button><button data-lang="en">EN</button></div>
 
 <!-- nền trang trí: logo trường + nốt nhạc + sóng âm -->
@@ -1274,33 +1235,41 @@ window.ACOUSTICS = (function () {
   function diatonicNumber(midi) { var pc = ((midi % 12) + 12) % 12, oct = Math.floor(midi / 12) - 1; return oct * 7 + DIAT[pc]; }
 
   function buildStaffSVG(notes) {
-    var H = 150, padL = 56, padR = 16, gap = 12, top = 40; // gap = khoảng cách giữa 2 dòng kẻ
-    var n = Math.max(1, notes.length), stepX = 34;
-    var W = padL + padR + n * stepX + 10;
-    var halfStep = gap / 2;
-    // dòng kẻ: E4(bottom)…F5(top). diatonic E4 = 4*7+2 = 30 nằm ở dòng dưới cùng (y = top + 4*gap)
-    var E4d = 30, bottomY = top + 4 * gap;
-    function yOf(midi) { return bottomY - (diatonicNumber(midi) - E4d) * halfStep; }
-    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" class="staff-svg">';
-    s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fbfbfd"/>';
-    // 5 dòng kẻ
-    for (var L = 0; L < 5; L++) { var y = top + L * gap; s += '<line x1="' + (padL - 8) + '" y1="' + y + '" x2="' + (W - 8) + '" y2="' + y + '" stroke="#222" stroke-width="1"/>'; }
-    // khóa Sol
-    s += '<text x="14" y="' + (top + 3 * gap + 6) + '" font-size="' + (gap * 4.4) + '" fill="#111" font-family="serif">𝄞</text>';
-    // nốt
-    for (var i = 0; i < notes.length; i++) {
-      var midi = notes[i].midi, cx = padL + i * stepX + stepX / 2, cy = yOf(midi);
-      var pc = ((midi % 12) + 12) % 12;
-      // ledger lines (ngoài khuông)
-      var dnum = diatonicNumber(midi), dE4 = E4d, dF5 = E4d + 8; // F5 = dòng trên cùng (diatonic 38)
-      var ly;
-      if (dnum < dE4) for (var dd = dE4 - 2; dd >= dnum; dd -= 2) { ly = bottomY - (dd - dE4) * halfStep; if (ly > top + 4 * gap) s += '<line x1="' + (cx - 11) + '" y1="' + ly + '" x2="' + (cx + 11) + '" y2="' + ly + '" stroke="#222" stroke-width="1"/>'; }
-      if (dnum > dF5) for (var du = dF5 + 2; du <= dnum; du += 2) { ly = bottomY - (du - dE4) * halfStep; if (ly < top) s += '<line x1="' + (cx - 11) + '" y1="' + ly + '" x2="' + (cx + 11) + '" y2="' + ly + '" stroke="#222" stroke-width="1"/>'; }
-      if (SHARP[pc]) s += '<text x="' + (cx - 20) + '" y="' + (cy + 5) + '" font-size="16" fill="#111" font-family="serif">♯</text>';
-      s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="6.5" ry="5" fill="#111" transform="rotate(-18 ' + cx + ' ' + cy + ')"/>';
-      s += '<line x1="' + (cx + 6) + '" y1="' + cy + '" x2="' + (cx + 6) + '" y2="' + (cy - gap * 2.6) + '" stroke="#111" stroke-width="1.4"/>';
-      s += '<text x="' + (cx - 8) + '" y="' + (H - 8) + '" font-size="9" fill="#666" font-family="sans-serif">' + noteName(midi) + '</text>';
+    // Bố cục NHIỀU DÒNG (như bản nhạc thật) để âm dài vẫn nét, không bị ép nhỏ.
+    var gap = 14, stepX = 34, padL = 52, padR = 16, perLine = 16, lineH = 116;
+    var MAX = 160; var more = notes.length > MAX; var ns = notes.slice(0, MAX);
+    var nLines = Math.max(1, Math.ceil(ns.length / perLine));
+    var W = padL + perLine * stepX + padR;
+    var H = 10 + nLines * lineH + 6;
+    var halfStep = gap / 2, E4d = 30;            // E4 = dòng kẻ dưới cùng
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" class="staff-svg" ' +
+            'shape-rendering="geometricPrecision" preserveAspectRatio="xMidYMid meet">';
+    s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+    for (var li = 0; li < nLines; li++) {
+      var staffTop = 14 + li * lineH + 22;       // y của dòng kẻ trên cùng của khuông này
+      var bottomY = staffTop + 4 * gap;
+      // 5 dòng kẻ
+      for (var L = 0; L < 5; L++) {
+        var y = staffTop + L * gap;
+        s += '<line x1="' + (padL - 10) + '" y1="' + y + '" x2="' + (W - 8) + '" y2="' + y + '" stroke="#1a1a1a" stroke-width="1.1"/>';
+      }
+      // khóa Sol
+      s += '<text x="10" y="' + (staffTop + 3 * gap + 7) + '" font-size="' + (gap * 4.6) + '" fill="#111" font-family="serif">𝄞</text>';
+      var start = li * perLine, end = Math.min(ns.length, start + perLine);
+      for (var i = start; i < end; i++) {
+        var midi = ns[i].midi, idx = i - start;
+        var cx = padL + idx * stepX + stepX / 2;
+        var dnum = diatonicNumber(midi), cy = bottomY - (dnum - E4d) * halfStep;
+        var pc = ((midi % 12) + 12) % 12, dE4 = E4d, dF5 = E4d + 8, ly, dd, du;
+        if (dnum < dE4) for (dd = dE4 - 2; dd >= dnum; dd -= 2) { ly = bottomY - (dd - dE4) * halfStep; if (ly > bottomY) s += '<line x1="' + (cx - 11) + '" y1="' + ly + '" x2="' + (cx + 11) + '" y2="' + ly + '" stroke="#1a1a1a" stroke-width="1.1"/>'; }
+        if (dnum > dF5) for (du = dF5 + 2; du <= dnum; du += 2) { ly = bottomY - (du - dE4) * halfStep; if (ly < staffTop) s += '<line x1="' + (cx - 11) + '" y1="' + ly + '" x2="' + (cx + 11) + '" y2="' + ly + '" stroke="#1a1a1a" stroke-width="1.1"/>'; }
+        if (SHARP[pc]) s += '<text x="' + (cx - 20) + '" y="' + (cy + 5) + '" font-size="16" fill="#111" font-family="serif">♯</text>';
+        s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="6.6" ry="5" fill="#111" transform="rotate(-18 ' + cx + ' ' + cy + ')"/>';
+        s += '<line x1="' + (cx + 6) + '" y1="' + cy + '" x2="' + (cx + 6) + '" y2="' + (cy - gap * 2.6) + '" stroke="#111" stroke-width="1.4"/>';
+        s += '<text x="' + (cx - 9) + '" y="' + (bottomY + 20) + '" font-size="9" fill="#666" font-family="sans-serif">' + noteName(midi) + '</text>';
+      }
     }
+    if (more) s += '<text x="' + (W - 70) + '" y="' + (H - 4) + '" font-size="10" fill="#999" font-family="sans-serif">… +' + (notes.length - MAX) + ' nốt</text>';
     s += '</svg>';
     return s;
   }
@@ -2799,7 +2768,7 @@ window.AudioEngine = (function () {
     var r = await AB.autodetect();
     state.backendInfo = r ? r.info : null;
     if (r) {
-      setBeStatus("on", L("● Đã kết nối máy chủ", "● Server connected"), r.url);
+      setBeStatus("on", L("● Đã kết nối máy chủ", "● Server connected"));
       if (state.lastSamples && !state.lastBackend) maybeBackend();   // bổ sung cho âm đang xem
     } else {
       setBeStatus("off", L("✕ Chưa kết nối (chế độ tại chỗ)", "✕ Not connected (local mode)"));
@@ -2922,29 +2891,6 @@ window.AudioEngine = (function () {
   else init();
 })();
 
-</script>
-<script>
-(function(){
-  var HASH="8ca66aacbc85bae5ec4c12f0998d55d156ade64c221c3ce6e214b68d4f8baac7", KEY="amthanh_unlocked";
-  function unlock(){ document.body.classList.remove('locked'); }
-  try{ if(sessionStorage.getItem(KEY)===HASH) unlock(); }catch(e){}
-  async function sha256(s){
-    var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-    return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
-  }
-  var form=document.getElementById('gateForm');
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    var h=await sha256(document.getElementById('gatePw').value);
-    if(h===HASH){ try{sessionStorage.setItem(KEY,HASH)}catch(e){}; unlock(); }
-    else{
-      document.getElementById('gateErr').textContent='Sai mật khẩu, thử lại.';
-      var c=document.querySelector('.gate-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
-      document.getElementById('gatePw').select();
-    }
-  });
-  setTimeout(function(){ var i=document.getElementById('gatePw'); if(i&&document.body.classList.contains('locked')) i.focus(); }, 150);
-})();
 </script>
 </body>
 </html>
