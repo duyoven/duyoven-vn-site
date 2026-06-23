@@ -809,9 +809,9 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
     7: { id: 7, parent: "artificial", code: "NT7", name: "Tổng hợp toàn phần",
          name_en: "Fully synthesized",
          full: "Âm thanh nhân tạo mô phỏng toàn phần",
-         desc: "Tạo hoàn toàn bằng kỹ thuật số / AI, hoặc phối giai điệu, tần số khác biệt với thực tế.",
-         desc_en: "Created entirely by digital/AI techniques, or an arranged melody/frequency distinct from reality.",
-         eg: "nhạc, jingle, giọng AI, hiệu ứng điện tử, âm game",
+         desc: "Tạo HOÀN TOÀN bằng kỹ thuật số / công nghệ tổng hợp / AI, KHÔNG bắt nguồn từ tự nhiên hay vật dụng thực tế; có thể khác biệt hoàn toàn với thực tế, hoặc phối giai điệu / trùng tần số mà tự nhiên không thể tạo ra.",
+         desc_en: "Created ENTIRELY by digital/synthesis/AI, NOT originating from nature or real objects; may differ entirely from reality, or use programmed melody/frequencies nature cannot produce.",
+         eg: "giọng AI, nhạc tổng hợp điện tử, synthesizer, hiệu ứng số, sine/beep, âm game 8-bit",
          verdict: "high", color: "#ec4899", icon: "🎹" },
   };
   function gname(g) { return w.APP_LANG === "en" && g.name_en ? g.name_en : g.name; }
@@ -908,7 +908,8 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
     var present = agg.present || [];
     var dom = agg.dominant;
     var has = function (g) { return present.indexOf(g) >= 0; };
-    var creativeMelody = has(7);                       // co yeu to giai dieu/tong hop
+    var arranged = !!agg.melody;                       // co phoi giai dieu / nhip dieu
+    var creativeCombo = has(7) || (present.length >= 2 && arranged);  // to hop sang tao / co yeu to tong hop
     var naturalOrFunctional = present.filter(function (g) {
       return [1,2,3,5,6].indexOf(g) >= 0;
     });
@@ -918,8 +919,8 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
     if (dom === 7) {
       return mk("high",
         L("Rất nên chấp nhận", "Strongly recommended"),
-        L("Âm thanh tổng hợp toàn phần (nhóm 7) – có giai điệu / yếu tố sáng tạo, tính phân biệt cao.",
-          "Fully synthesized sound (group 7) — has melody / a creative element and high distinctiveness."),
+        L("Âm thanh tổng hợp toàn phần (nhóm 7) – tạo hoàn toàn bằng kỹ thuật số/AI, không bắt nguồn từ tự nhiên hay vật dụng thực tế; tính phân biệt cao nhất.",
+          "Fully synthesized sound (group 7) — created entirely by digital/AI, not from nature or real objects; the highest distinctiveness."),
         L("Khoản 1 Điều 74 Luật SHTT: có khả năng tự phân biệt.",
           "Art. 74(1) IP Law: capable of self-distinction."));
     }
@@ -932,22 +933,22 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
         L("Xem xét theo Khoản 1 Điều 74 Luật SHTT (tính phân biệt cố hữu).",
           "Assessed under Art. 74(1) IP Law (inherent distinctiveness)."));
     }
-    // 3) Nhom 1/2/3/5/6 NHUNG co phoi giai dieu (nhom 7 cung xuat hien) -> co dieu kien
-    if (naturalOrFunctional.length && creativeMelody) {
-      return mk("conditional",
-        L("Có thể xem xét (có yếu tố sáng tạo)", "Worth considering (creative element)"),
-        L("Âm tự nhiên/chức năng được phối với giai điệu hoặc xử lý sáng tạo (mô phỏng sáng tạo) – làm tăng tính phân biệt.",
-          "Natural/functional sound arranged with melody or creatively processed (creative simulation) — raising distinctiveness."),
-        L("Khuyến khích mô phỏng sáng tạo; vẫn cần thẩm định tính phân biệt tổng thể.",
-          "Creative simulation is encouraged; overall distinctiveness still to be examined."));
-    }
-    // 4) Chi nhom 4 + 7 vang mat nhung con nguoi co mat manh -> ok
+    // 3) Có thành phần con người (nhóm 4) -> có thể chấp nhận (ưu tiên [4])
     if (has(4)) {
       return mk("ok",
         L("Có thể chấp nhận", "Acceptable"),
-        L("Có thành phần âm thanh con người (nhóm 4) đủ rõ.",
-          "Contains a sufficiently clear human-sound component (group 4)."),
+        L("Có thành phần âm thanh con người (nhóm 4) – có thể mang dấu ấn riêng để phân biệt; nếu phối cùng nhạc cụ/giai điệu thì càng tăng tính phân biệt.",
+          "Contains a human-sound component (group 4) — may carry a distinctive mark; combined with instrument/melody it is even more distinctive."),
         L("Xem xét theo Khoản 1 Điều 74 Luật SHTT.", "Assessed under Art. 74(1) IP Law."));
+    }
+    // 4) Tổ hợp ≥2 nguồn có phối giai điệu / có yếu tố tổng hợp -> có thể xem xét
+    if (naturalOrFunctional.length && creativeCombo) {
+      return mk("conditional",
+        L("Có thể xem xét (có yếu tố sáng tạo)", "Worth considering (creative element)"),
+        L("Âm tự nhiên/chức năng được phối thành giai điệu/nhịp điệu hoặc xử lý sáng tạo (tổ hợp nhiều nguồn) – làm tăng tính phân biệt.",
+          "Natural/functional sound arranged into melody/rhythm or creatively processed (multi-source combination) — raising distinctiveness."),
+        L("Khuyến khích mô phỏng/phối hợp sáng tạo; vẫn cần thẩm định tính phân biệt tổng thể.",
+          "Creative simulation/combination is encouraged; overall distinctiveness still to be examined."));
     }
     // 5a) Nhóm 6 (vật dụng/sản phẩm) trội — đặc tính kỹ thuật bắt buộc thì bị loại
     if (dom === 6) {
@@ -2170,7 +2171,8 @@ window.AudioEngine = (function () {
       for (var gk = 1; gk <= 7; gk++) bsum += (parseFloat(bgps[gk]) || 0);
       bsum = bsum || 1;
       for (gk = 1; gk <= 7; gk++) agg.groupScores[gk] = (parseFloat(bgps[gk]) || 0) / bsum * 100;
-      agg.headDominant = bk.dominant;   // KẾT LUẬN nhóm chính theo đầu học (chính xác)
+      agg.headDominant = bk.dominant;   // KẾT LUẬN nhóm chính theo luật minh bạch
+      agg.melody = !!(bk.decision && bk.decision.melody);  // có phối giai điệu (cho verdict)
       agg.raw = ((bk.beats && bk.beats.top) || []).map(function (r) {
         return { index: -1, score: r.score, group: r.group, label: r.label, labelVi: r.label };
       });
