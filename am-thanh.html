@@ -1932,10 +1932,10 @@ window.AudioEngine = (function () {
 
   // AudioSet display-name -> 7 nhóm (rút gọn từ backend/groups.py)
   var RULES = [
-    [4, ["speech","conversation","narration","male","female","child speech","sing","choir","chant","rap","humming","whistl","yodel","laugh","giggle","chuckle","cry","sob","baby","shout","yell","scream","groan","grunt","sigh","gasp","cough","sneeze","sniff","breath","snor","gargl","throat","hiccup","burp","human","clap","applause","cheer","boo","chatter","crowd","babbl","footstep"]],
+    [4, ["speech","conversation","narration","male","female","child speech","sing","choir","chant","mantra","rap","beatbox","humming","whistl","yodel","laugh","giggle","chuckle","cry","sob","baby","shout","yell","scream","groan","grunt","sigh","gasp","cough","sneeze","sniff","breath","snor","gargl","throat","hiccup","burp","human","clap","applause","cheer","boo","chatter","crowd","babbl","footstep"]],
     [2, ["animal","dog","bark","howl","cat","purr","meow","hiss","livestock","horse","neigh","cattle","moo","pig","oink","goat","bleat","sheep","fowl","chicken","cluck","crow","turkey","duck","quack","goose","bird","chirp","tweet","squawk","pigeon","owl","hoot","wing","roar","lion","rodent","mouse","insect","cricket","mosquito","fly","buzz","bee","frog","croak","snake","whale","elephant"]],
     [1, ["wind","rustl","thunder","rain","raindrop","water","stream","waterfall","ocean","wave","steam","gurgl","fire","crackle","drip","splash","sea","trickle"]],
-    [7, ["music","synthes","electronic music","techno","house music","dubstep","electronica","trance","hip hop","beatbox","rock music","pop music","jazz","classical music","reggae","funk","soul music","disco","folk music","ambient music","christmas music","dance music","sound effect","sampler","sine wave","beep","bleep","ringtone","theme music","jingle","reverberation","echo"]],
+    [7, ["synthes","electronic music","techno","house music","dubstep","electronica","trance","drum machine","sampler","sine wave","beep","bleep","chiptune","8-bit","vocoder","auto-tune"]],
     [6, ["guitar","banjo","sitar","mandolin","ukulele","harp","piano","keyboard (musical)","organ","percussion","drum","cymbal","hi-hat","snare","tabla","timpani","tambourine","gong","marimba","glockenspiel","vibraphone","orchestra","brass","trumpet","trombone","violin","cello","flute","saxophone","clarinet","oboe","harmonica","accordion","bagpipe","plucked string","bowed string","tuning fork","vehicle","car","engine","motor","truck","bus","emergency","siren","police","ambulance","train","rail","subway","aircraft","airplane","helicopter","propeller","boat","ship","skateboard","bicycle","door","slam","knock","tap","squeak","drawer","dishes","cutlery","chop","fry","blender","microwave","kettle","sink","toilet","toothbrush","shaver","vacuum","telephone","dial","alarm","buzzer","smoke detector","clock","tick","typ","camera","printer","tool","hammer","saw","sand","drill","explosion","gunshot","machine gun","firework","glass","clink","shatter","pour","spray","pump","mechanism","sewing","fan","cash register","coin","zipper","keys","wood","tear","bell","chime"]],
   ];
   function nameToGroup(name) {
@@ -2234,23 +2234,23 @@ window.AudioEngine = (function () {
   // ---------- Âm THẬT (thu từ thực thể) vs TÁI TẠO / TỔNG HỢP ----------
   function authVerdict() {
     var ac = state.lastAcoustics, bk = state.lastBackend;
-    var dspSynth = ac && ac.authDsp ? ac.authDsp.synth : null;
-    var clap = bk && bk.authenticity ? bk.authenticity : null;   // {real,playback,synth} %
-    if (dspSynth == null && !clap) return null;
-    var repro, synthShare = 0.5;
-    if (clap) {
-      var pb = (clap.playback || 0) / 100, sy = (clap.synth || 0) / 100;
-      var reproClap = pb + sy;
-      synthShare = (pb + sy) > 0 ? sy / (pb + sy) : 0.5;
-      repro = (dspSynth != null) ? (0.55 * reproClap + 0.45 * dspSynth) : reproClap;
-    } else { repro = dspSynth; synthShare = dspSynth; }
+    var dspSynth = ac && ac.authDsp ? ac.authDsp.synth : null;     // DSP: âm acoustic tự nhiên hay quá "sạch"
+    var dec = bk && bk.decision ? bk.decision : null;
+    var elec = dec && typeof dec.elec === "number" ? dec.elec : 0; // nhãn điện tử/synth của BEATs (đáng tin)
+    var clap = bk && bk.authenticity ? bk.authenticity : null;
+    var claSynth = clap ? (clap.synth || 0) / 100 : 0;             // CLAP synth (nhiễu — trọng số nhỏ)
+    if (dspSynth == null && !dec && !clap) return null;
+    // repro = mức "KHÔNG phải thu thật" (tổng hợp/AI). KHÔNG dùng CLAP 'playback' (không đáng tin,
+    // hay báo nhầm âm thật thành "phát lại"). Ưu tiên DSP + nhãn điện tử BEATs.
+    var repro;
+    if (dspSynth != null) repro = 0.60 * dspSynth + 0.30 * elec + 0.10 * claSynth;
+    else repro = 0.6 * elec + 0.4 * claSynth;
+    repro = Math.max(0, Math.min(1, repro));
     var label, icon, cls;
-    if (repro >= 0.58) {
+    if (repro >= 0.6) {
       icon = "🔁"; cls = "repro";
-      label = (synthShare >= 0.5)
-        ? L("Âm tổng hợp / tái tạo (kỹ thuật số · AI)", "Synthetic / reproduced (digital · AI)")
-        : L("Âm phát lại (qua loa/thiết bị)", "Played back (via speaker/device)");
-    } else if (repro <= 0.42) {
+      label = L("Âm tổng hợp / kỹ thuật số (AI)", "Synthetic / digital (AI)");
+    } else if (repro <= 0.45) {
       icon = "🎙️"; cls = "real";
       label = L("Âm thật — thu trực tiếp từ thực thể", "Genuine — recorded live from a real source");
     } else { icon = "❓"; cls = "mid"; label = L("Chưa chắc chắn — cần nghe kỹ", "Uncertain — review by ear"); }
