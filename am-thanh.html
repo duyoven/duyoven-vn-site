@@ -1445,12 +1445,31 @@ window.AudioEngine = (function () {
       if (p && typeof p.then === "function") p.then(resolve, reject);
     });
     try { tmp.close(); } catch (e) {}
-    // downmix mono THỦ CÔNG (không dùng OfflineAudioContext 16k — iOS Safari chặn sample-rate lạ)
-    var ch = decoded.numberOfChannels || 1, n = decoded.length, sr = decoded.sampleRate || 44100;
+    // ƯU TIÊN bộ resample chất lượng cao (chống alias) của OfflineAudioContext.
+    try {
+      var frames = Math.max(1, Math.ceil(decoded.duration * 16000));
+      var off = new OfflineAudioContext(1, frames, 16000);
+      var src = off.createBufferSource(); src.buffer = decoded;   // tự downmix mono
+      src.connect(off.destination); src.start();
+      var rendered = await off.startRendering();
+      return rendered.getChannelData(0);
+    } catch (e) {
+      // iOS Safari chặn sample-rate 16000 -> tự hạ tần số (CÓ lọc chống alias).
+      return manualResample16k(decoded);
+    }
+  }
+
+  // dự phòng cho iOS: downmix mono + lọc trung bình trượt (chống alias) + nội suy tuyến tính
+  function manualResample16k(decoded) {
+    var ch = decoded.numberOfChannels || 1, n = decoded.length, sr = decoded.sampleRate || 44100, i, c;
     var mono = new Float32Array(n);
-    for (var c = 0; c < ch; c++) { var d = decoded.getChannelData(c); for (var i = 0; i < n; i++) mono[i] += d[i] / ch; }
+    for (c = 0; c < ch; c++) { var d = decoded.getChannelData(c); for (i = 0; i < n; i++) mono[i] += d[i] / ch; }
     if (sr === 16000) return mono;
-    // resample tuyến tính về 16k
+    if (sr > 16000) {                       // chống alias trước khi hạ tần số
+      var D = Math.max(1, Math.round(sr / 16000)), acc = 0, sm = new Float32Array(n);
+      for (i = 0; i < n; i++) { acc += mono[i]; if (i >= D) acc -= mono[i - D]; sm[i] = acc / (i + 1 < D ? i + 1 : D); }
+      mono = sm;
+    }
     var ratio = 16000 / sr, outN = Math.max(1, Math.round(n * ratio)), out = new Float32Array(outN);
     for (var j = 0; j < outN; j++) {
       var x = j / ratio, i0 = Math.floor(x), i1 = i0 + 1 < n ? i0 + 1 : n - 1, t = x - i0;
