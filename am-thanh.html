@@ -1988,7 +1988,7 @@ window.AudioEngine = (function () {
         "<span>[" + g.id + "] " + T.gname(g) + "</span>";
       lab.querySelector("input").addEventListener("change", function (e) {
         state.filters[g.id] = e.target.checked;
-        if (state.lastCategories) render();
+        if (state.lastCategories || state.lastBackend) render();
       });
       wrap.appendChild(lab);
     });
@@ -2262,9 +2262,14 @@ window.AudioEngine = (function () {
 
   function renderSources(agg, ac) {
     var host = $("sourceBreakdown"); if (!host) return;
-    var ya = T.aggregate(state.lastCategories.filter(function(c){var g=window.YAMNET_GROUP[c.index];return g>=1&&g<=7;}));
-    T.summarize(ya, {});
-    var yTop = ya.dominant, dTop = topVote(ac.vote), mTop = ac.melodyConf > 0 ? topVote(ac.melodyVote) : 0;
+    var bk = agg.backend, yTop;
+    if (bk && bk.beats && bk.beats.groups) {            // máy chủ: "tổng thể" = BEATs theo nhóm
+      yTop = topVote(bk.beats.groups);
+    } else if (state.lastCategories) {                   // tại chỗ: YAMNet
+      var ya = T.aggregate(state.lastCategories.filter(function(c){var g=window.YAMNET_GROUP[c.index];return g>=1&&g<=7;}));
+      T.summarize(ya, {}); yTop = ya.dominant;
+    } else { yTop = agg.dominant; }
+    var dTop = topVote(ac.vote), mTop = ac.melodyConf > 0 ? topVote(ac.melodyVote) : 0;
     var gName = function (g) { return g && T.GROUPS[g] ? ("[" + g + "] " + T.gname(T.GROUPS[g])) : L("— (không xác định)", "— (undetermined)"); };
     var tops = [yTop, dTop]; if (ac.melodyConf > 0) tops.push(mTop);
     var agreeN = tops.filter(function (t) { return t === agg.dominant; }).length;
@@ -2823,7 +2828,7 @@ window.AudioEngine = (function () {
     renderHistory();
     // tinh lai am hoc theo ngon ngu moi (type/metrics doi ngon ngu)
     if (A && state.lastSamples) state.lastAcoustics = A.analyze(state.lastSamples, 16000);
-    if (state.lastCategories) render();
+    if (state.lastCategories || state.lastBackend) render();
   }
 
   // ---------- Wire ----------
@@ -2853,7 +2858,7 @@ window.AudioEngine = (function () {
 
     $("simToggle").addEventListener("change", function (e) {
       state.simulated = e.target.checked;
-      if (state.lastCategories) render();
+      if (state.lastCategories || state.lastBackend) render();
     });
 
     // tu danh gia
