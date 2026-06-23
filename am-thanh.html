@@ -323,6 +323,24 @@ body{
 .raw-grp{color:var(--muted);font-size:11.5px;margin:0 6px}
 .raw-score{font-weight:700;font-variant-numeric:tabular-nums;color:#c4b5fd}
 
+/* chất lượng ghi âm */
+.mic-quality{display:flex;flex-wrap:wrap;align-items:center;gap:7px 12px;margin-top:10px;padding:9px 13px;border-radius:12px;
+  border:1px solid var(--line);background:var(--card2);font-size:12.5px}
+.mic-quality.good{border-color:#169c5b}.mic-quality.fair{border-color:var(--gold)}.mic-quality.poor{border-color:#c03a2b}
+.mq-head{font-size:13.5px}.mq-head b{color:#eef2ff}
+.mic-quality.good .mq-head b{color:#34d399}.mic-quality.fair .mq-head b{color:#f5c451}.mic-quality.poor .mq-head b{color:#fca5a5}
+.mq-stat{color:var(--muted);font-variant-numeric:tabular-nums}
+.mq-warn{color:#fca5a5;flex-basis:100%}
+
+/* ghi chú khu 7 nhóm + âm thật/tái tạo */
+.group-note{margin-top:10px}
+.gn-auth{font-size:13.5px;font-weight:600;padding:8px 12px;border-radius:10px;margin-bottom:7px}
+.gn-auth.real{background:rgba(22,156,91,.14);border:1px solid #169c5b;color:#a7f3d0}
+.gn-auth.repro{background:rgba(236,72,153,.13);border:1px solid var(--pink);color:#fbcfe8}
+.gn-auth.mid{background:rgba(148,163,184,.14);border:1px solid var(--line);color:#cbd5e1}
+.gn-auth b{color:#fff}
+.gn-legend{font-size:11.5px;color:var(--muted);line-height:1.5}
+
 /* caption LLM */
 .ai-cap{background:linear-gradient(180deg,rgba(139,92,246,.12),rgba(236,72,153,.08));border:1px solid #3a2d6b;border-radius:12px;padding:12px 14px;margin:6px 0 12px}
 .ai-captxt{font-size:14.5px;line-height:1.5;color:#eef2ff}
@@ -471,6 +489,7 @@ body.locked .lang-toggle{display:none}
 
     <audio id="player" class="player" controls style="display:none"></audio>
     <div id="inputStats" class="input-stats" style="display:none"></div>
+    <div id="micQuality" class="mic-quality" style="display:none"></div>
     <div id="status" class="status" style="display:none"></div>
 
     <!-- options -->
@@ -513,6 +532,7 @@ body.locked .lang-toggle{display:none}
     <div class="panel">
       <h2 class="sec-title" data-en="Score across the 7 origin groups">Mức độ theo 7 nhóm nguồn gốc</h2>
       <div id="groupBars" class="group-bars"></div>
+      <div id="groupNote" class="group-note"></div>
     </div>
 
     <!-- PHÂN TÍCH NÂNG CAO: BEATs Large + CLAP -->
@@ -1225,11 +1245,45 @@ window.ACOUSTICS = (function () {
       { k: L("Số cao độ khác nhau", "Distinct pitches"), v: String(distinctNotes) },
     ];
 
+    // ---------- CHẤT LƯỢNG GHI ÂM (mic) ----------
+    var clipN = 0; for (i = 0; i < n; i++) if (Math.abs(buf[i]) > 0.985) clipN++;
+    var clipRatio = clipN / n;
+    var es = energyArr.slice().sort(function (a, b) { return a - b; });
+    var noiseE = es.length ? es[Math.floor(es.length * 0.1)] : 0;
+    var sigE = es.length ? es[Math.floor(es.length * 0.9)] : 0;
+    var snrDb = (noiseE > 0 && sigE > 0) ? 10 * Math.log10(sigE / noiseE) : (sigE > 0 ? 40 : 0);
+    var qScore = 100, qReasons = [];
+    if (duration < 0.6) { qScore -= 40; qReasons.push(L("quá ngắn (<0,6s)", "too short (<0.6s)")); }
+    if (dbRms < -45) { qScore -= 35; qReasons.push(L("tín hiệu quá nhỏ", "signal too quiet")); }
+    else if (dbRms < -38) { qScore -= 15; qReasons.push(L("hơi nhỏ", "a bit quiet")); }
+    if (clipRatio > 0.01 || dbRms > -1.5) { qScore -= 30; qReasons.push(L("méo/clip (thu quá to)", "clipping (too loud)")); }
+    if (snrDb < 8) { qScore -= 30; qReasons.push(L("nhiễu nền cao", "high background noise")); }
+    else if (snrDb < 14) { qScore -= 12; qReasons.push(L("hơi nhiễu", "somewhat noisy")); }
+    qScore = Math.max(0, Math.min(100, qScore));
+    var quality = { level: Math.round(dbRms * 10) / 10, snr: Math.round(snrDb * 10) / 10,
+      clip: clipRatio > 0.01, duration: Math.round(duration * 100) / 100, score: qScore,
+      verdict: qScore >= 75 ? "good" : qScore >= 50 ? "fair" : "poor", reasons: qReasons };
+
+    // ---------- DSP cue: âm THẬT (thu trực tiếp) vs TÁI TẠO/TỔNG HỢP ----------
+    // tổng hợp/điện tử: rất sạch (HNR cao, flatness rất thấp, tông thuần/giai điệu đều, ít nhiễu nền).
+    // âm thật: có nhiễu nền + biến động tự nhiên (flatness cao hơn, HNR vừa).
+    var synth = 0;
+    if (hnr > 0.85) synth += 0.30;
+    if (flatness < 0.045) synth += 0.25;
+    if (pureTone) synth += 0.25;
+    if (melodic && hnr > 0.7) synth += 0.20;
+    if (snrDb > 30) synth += 0.10;             // gần như không nhiễu nền → khả năng phát lại/tổng hợp
+    if (flatness > 0.20) synth -= 0.25;        // có nhiễu băng rộng → thiên về âm thật
+    if (hnr < 0.4 && !melodic) synth -= 0.15;
+    synth = Math.max(0, Math.min(1, synth));
+    var authDsp = { synth: synth };
+
     return {
-      duration: duration, features: { medF0: medF0, pitchRange: pitchRange, distinctPitches: distinctPitches,
+      duration: duration, quality: quality, authDsp: authDsp,
+      features: { medF0: medF0, pitchRange: pitchRange, distinctPitches: distinctPitches,
         voicedRatio: voicedRatio, centroidHz: centroidHz, flatness: flatness, hnr: hnr, zcr: zcr,
         onsets: onsets, tempo: tempo, melodic: melodic, pureTone: pureTone, voiceLike: voiceLike,
-        noiseLike: noiseLike, impulsive: impulsive, dbRms: dbRms },
+        noiseLike: noiseLike, impulsive: impulsive, dbRms: dbRms, snr: snrDb },
       vote: vote, type: type, typeIcon: typeIcon, distinctiveness: distinctiveness, metrics: metrics,
       spectro: { data: spec, frames: spec.length, bins: half, sr: sr, fft: FFT, hop: hop },
       notes: notes, distinctNotes: distinctNotes, melodyVote: melodyVote, melodyConf: melodyConf,
@@ -2116,9 +2170,11 @@ window.AudioEngine = (function () {
 
     renderVerdict(agg);
     renderBars(agg);
+    renderGroupNote();
     renderRaw(agg);
     renderAcoustics(agg);
     renderInputStats();
+    renderQuality();
     renderAI(agg);
     $("results").classList.add("show");
     state.lastAgg = agg;
@@ -2141,6 +2197,60 @@ window.AudioEngine = (function () {
     el.innerHTML = '<span class="is-cap">' + L("Thông số đầu vào:", "Input parameters:") + '</span>' + items.map(function (it) {
       return '<span class="istat"><span class="is-ic">' + it[0] + '</span><span class="is-k">' + it[1] + '</span><span class="is-v">' + it[2] + '</span></span>';
     }).join("");
+  }
+
+  // ---------- Âm THẬT (thu từ thực thể) vs TÁI TẠO / TỔNG HỢP ----------
+  function authVerdict() {
+    var ac = state.lastAcoustics, bk = state.lastBackend;
+    var dspSynth = ac && ac.authDsp ? ac.authDsp.synth : null;
+    var clap = bk && bk.authenticity ? bk.authenticity : null;   // {real,playback,synth} %
+    if (dspSynth == null && !clap) return null;
+    var repro, synthShare = 0.5;
+    if (clap) {
+      var pb = (clap.playback || 0) / 100, sy = (clap.synth || 0) / 100;
+      var reproClap = pb + sy;
+      synthShare = (pb + sy) > 0 ? sy / (pb + sy) : 0.5;
+      repro = (dspSynth != null) ? (0.55 * reproClap + 0.45 * dspSynth) : reproClap;
+    } else { repro = dspSynth; synthShare = dspSynth; }
+    var label, icon, cls;
+    if (repro >= 0.58) {
+      icon = "🔁"; cls = "repro";
+      label = (synthShare >= 0.5)
+        ? L("Âm tổng hợp / tái tạo (kỹ thuật số · AI)", "Synthetic / reproduced (digital · AI)")
+        : L("Âm phát lại (qua loa/thiết bị)", "Played back (via speaker/device)");
+    } else if (repro <= 0.42) {
+      icon = "🎙️"; cls = "real";
+      label = L("Âm thật — thu trực tiếp từ thực thể", "Genuine — recorded live from a real source");
+    } else { icon = "❓"; cls = "mid"; label = L("Chưa chắc chắn — cần nghe kỹ", "Uncertain — review by ear"); }
+    return { label: label, icon: icon, cls: cls, realPct: Math.round((1 - repro) * 100) };
+  }
+
+  // chất lượng ghi âm (mic)
+  function renderQuality() {
+    var el = $("micQuality"), ac = state.lastAcoustics; if (!el) return;
+    if (!ac || !ac.quality) { el.style.display = "none"; return; }
+    var q = ac.quality;
+    var icon = q.verdict === "good" ? "✅" : q.verdict === "fair" ? "⚠️" : "❌";
+    var vtxt = q.verdict === "good" ? L("Đủ chất lượng", "Good") : q.verdict === "fair" ? L("Tạm ổn", "Fair") : L("Chất lượng kém", "Poor");
+    el.style.display = "flex"; el.className = "mic-quality " + q.verdict;
+    el.innerHTML =
+      '<span class="mq-head">' + icon + " " + L("Chất lượng ghi âm", "Recording quality") + ': <b>' + vtxt + "</b> (" + q.score + "/100)</span>" +
+      '<span class="mq-stat">' + L("Mức", "Level") + " " + q.level + " dB</span>" +
+      '<span class="mq-stat">SNR ' + q.snr + " dB</span>" +
+      '<span class="mq-stat">' + L("Dài", "Dur") + " " + q.duration + "s</span>" +
+      (q.reasons.length ? '<span class="mq-warn">⚠ ' + esc(q.reasons.join(", ")) + "</span>" : "");
+  }
+
+  // ghi chú ở khu 7 nhóm: âm thật/tái tạo + chú thích 7 nhóm
+  function renderGroupNote() {
+    var host = $("groupNote"); if (!host) return;
+    var a = authVerdict();
+    var authHtml = a ? '<div class="gn-auth ' + a.cls + '">' + a.icon + " <b>" + esc(a.label) + "</b> · " +
+      L("độ tin âm thật", "genuine confidence") + " " + a.realPct + "%</div>" : "";
+    var legend = "📝 " + L(
+      "Ghi nhận theo 7 nhóm nguồn gốc: [1] phi sinh học · [2] sinh vật · [3] môi trường · [4] con người · [5] mô phỏng · [6] vật dụng · [7] tổng hợp.",
+      "Recorded by 7 origin groups: [1] abiotic · [2] living · [3] environment · [4] human · [5] simulation · [6] objects · [7] synthesized.");
+    host.innerHTML = authHtml + '<div class="gn-legend">' + legend + "</div>";
   }
 
   // ---------- Panel nâng cao: BEATs Large + CLAP ----------
