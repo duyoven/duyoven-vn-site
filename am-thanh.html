@@ -1384,17 +1384,25 @@ window.AudioEngine = (function () {
   async function decodeToMono16k(arrayBuffer) {
     var AC = window.AudioContext || window.webkitAudioContext;
     var tmp = new AC();
-    var decoded = await tmp.decodeAudioData(arrayBuffer.slice(0));
+    // decodeAudioData: hỗ trợ cả kiểu Promise lẫn callback (Safari cũ)
+    var decoded = await new Promise(function (resolve, reject) {
+      var p;
+      try { p = tmp.decodeAudioData(arrayBuffer.slice(0), resolve, reject); } catch (e) { reject(e); return; }
+      if (p && typeof p.then === "function") p.then(resolve, reject);
+    });
     try { tmp.close(); } catch (e) {}
-    var targetRate = 16000;
-    var frames = Math.max(1, Math.ceil(decoded.duration * targetRate));
-    var offline = new OfflineAudioContext(1, frames, targetRate);
-    var src = offline.createBufferSource();
-    src.buffer = decoded;            // multi-channel tu dong downmix ve mono
-    src.connect(offline.destination);
-    src.start();
-    var rendered = await offline.startRendering();
-    return rendered.getChannelData(0);
+    // downmix mono THỦ CÔNG (không dùng OfflineAudioContext 16k — iOS Safari chặn sample-rate lạ)
+    var ch = decoded.numberOfChannels || 1, n = decoded.length, sr = decoded.sampleRate || 44100;
+    var mono = new Float32Array(n);
+    for (var c = 0; c < ch; c++) { var d = decoded.getChannelData(c); for (var i = 0; i < n; i++) mono[i] += d[i] / ch; }
+    if (sr === 16000) return mono;
+    // resample tuyến tính về 16k
+    var ratio = 16000 / sr, outN = Math.max(1, Math.round(n * ratio)), out = new Float32Array(outN);
+    for (var j = 0; j < outN; j++) {
+      var x = j / ratio, i0 = Math.floor(x), i1 = i0 + 1 < n ? i0 + 1 : n - 1, t = x - i0;
+      out[j] = mono[i0] * (1 - t) + mono[i1] * t;
+    }
+    return out;
   }
 
   // Phan loai 1 buffer mono 16k -> [{index, score}].
