@@ -342,6 +342,7 @@ body{
 .gn-comp{font-size:13px;color:#c4b5fd;background:rgba(139,92,246,.10);border:1px solid var(--line);border-radius:10px;padding:7px 11px;margin-bottom:7px;line-height:1.45}
 .gn-comp b{color:#fff}
 .gn-why{font-size:11.5px;color:var(--muted);margin-top:4px;font-style:italic}
+.gn-cov{color:var(--muted);font-size:11px;font-style:italic}
 .gn-legend{font-size:11.5px;color:var(--muted);line-height:1.5}
 
 /* caption LLM */
@@ -2285,8 +2286,14 @@ window.AudioEngine = (function () {
     var compHtml = "";
     var dec = state.lastBackend && state.lastBackend.decision;
     if (agg && agg.present && agg.present.length > 1) {
-      var parts = agg.present.map(function (g) { return "[" + g + "] " + T.gname(T.GROUPS[g]); });
-      var why = (dec && dec.reason) ? '<div class="gn-why">⚙ ' + L("Quy tắc", "Rule") + ": " + esc(dec.reason) + "</div>" : "";
+      var cov = dec && dec.coverage;
+      var parts = agg.present.map(function (g) {
+        var pc = cov ? Math.round((parseFloat(cov[g]) || 0) * 100) : null;   // % thời lượng có mặt (DCASE)
+        var ct = pc != null ? " <span class='gn-cov'>(" + (pc >= 95 ? L("toàn bài", "whole clip") : pc + "% " + L("thời lượng", "of clip")) + ")</span>" : "";
+        return "[" + g + "] " + T.gname(T.GROUPS[g]) + ct;
+      });
+      var why = (dec && dec.reason) ? '<div class="gn-why">⚙ ' + L("Quy tắc", "Rule") + ": " + esc(dec.reason) +
+        (dec.nseg ? " · " + dec.nseg + " " + L("đoạn thời gian", "time segments") : "") + "</div>" : "";
       compHtml = '<div class="gn-comp">🧩 ' + L("Tổ hợp phát hiện", "Detected combination") + ": " + parts.join(" + ") +
         " → " + L("kết luận nhóm", "concluded as group") + " <b>[" + agg.dominant + "] " + esc(T.gname(T.GROUPS[agg.dominant])) + "</b>" + why + "</div>";
     }
