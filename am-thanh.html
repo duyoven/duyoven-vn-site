@@ -2352,10 +2352,13 @@ window.AudioEngine = (function () {
       var g = T.GROUPS[s.group] || {}, col = g.color || "#888";
       var labs = (s.top || []).slice(0, 3).map(function (t) { return esc(t.label); }).join(", ");
       var av = "";
-      if (s.authenticity) {
-        var sy = (s.authenticity.synth || 0) / 100, pb = (s.authenticity.playback || 0) / 100;
-        var realPct = Math.round((1 - Math.min(1, 0.7 * sy + 0.3 * pb)) * 100);
-        av = '<div class="ds-lab">🎙️ ' + L("Giọng: độ tin âm thật", "Voice: genuine confidence") + " ~" + realPct + "%</div>";
+      if (s.voiceCheck && s.voiceCheck.verdict) {
+        var v = s.voiceCheck.verdict;
+        var ic = v === "natural" ? "🎙️" : v === "synthetic" ? "🔁" : "❓";
+        var tx = v === "natural" ? L("Giọng tự nhiên (thu thật)", "Natural voice (genuine)")
+               : v === "synthetic" ? L("Có dấu hiệu giọng AI/tổng hợp — cần kiểm tra", "Signs of AI/synthetic voice — review")
+               : L("Chưa chắc — nghe kiểm tra", "Uncertain — review by ear");
+        av = '<div class="ds-lab">' + ic + " " + L("Kiểm tra giọng", "Voice check") + ": " + tx + "</div>";
       }
       return '<div class="ds"><div class="ds-row"><span class="ds-name">' + esc(s.name) + '</span>' +
         '<span class="ds-grp" style="color:' + col + '">[' + s.group + '] ' + esc(s.groupName || T.gname(g)) + '</span>' +
