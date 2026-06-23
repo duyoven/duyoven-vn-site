@@ -926,12 +926,21 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
           "Contains a sufficiently clear human-sound component (group 4)."),
         L("Xem xét theo Khoản 1 Điều 74 Luật SHTT.", "Assessed under Art. 74(1) IP Law."));
     }
-    // 5) Chi co nhom 1/2/3/5/6 don le -> khong nen chap nhan don le
+    // 5a) Nhóm 6 (vật dụng/sản phẩm) trội — đặc tính kỹ thuật bắt buộc thì bị loại
+    if (dom === 6) {
+      return mk("low",
+        L("Không nên chấp nhận đơn lẻ", "Not acceptable on its own"),
+        L("Âm từ vật dụng/sản phẩm nhân tạo (nhóm 6). Nếu là đặc tính kỹ thuật bắt buộc của sản phẩm thì bị loại; chỉ xét khi được phối giai điệu/nhịp điệu/hòa âm hoặc xử lý sáng tạo.",
+          "Sound from a man-made object/product (group 6). If it is a mandatory technical feature it is excluded; only considered if arranged with melody/rhythm/harmony or creatively processed."),
+        L("Khoản 6 Điều 73 Luật SHTT (đặc tính kỹ thuật bắt buộc); hoặc chứng minh “ý nghĩa thứ hai” qua sử dụng.",
+          "Art. 73(6) IP Law (mandatory technical feature); or prove “secondary meaning” through use."));
+    }
+    // 5b) Chỉ nhóm 1/2/3/5 đơn lẻ -> cần chứng minh ý nghĩa thứ hai (Khoản 2 Điều 74)
     return mk("low",
       L("Không nên chấp nhận đơn lẻ", "Not acceptable on its own"),
-      L("Chỉ gồm âm tự nhiên / chức năng (nhóm " + naturalOrFunctional.join(", ") +
+      L("Chỉ gồm âm tự nhiên / mô phỏng (nhóm " + naturalOrFunctional.join(", ") +
         ") thiếu yếu tố sáng tạo – không có tính phân biệt cố hữu rõ ràng.",
-        "Only natural/functional sound (group " + naturalOrFunctional.join(", ") +
+        "Only natural/simulated sound (group " + naturalOrFunctional.join(", ") +
         ") lacking a creative element — no clear inherent distinctiveness."),
       L("Cần chứng minh “ý nghĩa thứ hai” (secondary meaning) qua sử dụng lâu dài – điểm b, c, d, đ, e Khoản 2 Điều 74 Luật SHTT.",
         "Must prove “secondary meaning” through long-term use — points b, c, d, đ, e of Art. 74(2) IP Law."));
@@ -1994,18 +2003,6 @@ window.AudioEngine = (function () {
   // ---------- Phan tich ----------
   var CAPTION_URL = "https://duyoven.vn/api/audio-caption";
 
-  function runAnalysis(categories, samples) {
-    state.lastCategories = categories;
-    state.lastSamples = samples || null;
-    state.lastBackend = null;
-    state.captionText = null;
-    // nguon #2: phan tich am hoc DSP
-    state.lastAcoustics = (A && samples) ? A.analyze(samples, 16000) : null;
-    render();   // hien ngay ket qua YAMNet + DSP
-    $("results").scrollIntoView({ behavior: "smooth", block: "start" });
-    maybeBackend();   // bo sung BEATs Large + CLAP (neu backend bat) -> render lai
-  }
-
   // gop vote DSP + giai dieu thanh 1 vector 1..7 gui cho backend (meta classifier)
   function dspVoteVector(ac) {
     if (!ac) return null;
@@ -2015,20 +2012,42 @@ window.AudioEngine = (function () {
     return v;
   }
 
-  async function maybeBackend() {
-    if (!state.backendInfo || !AB || !state.lastSamples) return;
-    var mySamples = state.lastSamples;
-    try {
-      setStatus(L("Đang phân tích…", "Analyzing…"));
-      var res = await AB.analyze(mySamples, 16000, dspVoteVector(state.lastAcoustics));
-      if (state.lastSamples !== mySamples) return;   // da co am moi -> bo qua
-      state.lastBackend = res;
-      setStatus("");
-      render();
-      genCaption();   // sinh mô tả + nhận định bằng LLM
-    } catch (e) {
-      setStatus("");   // backend loi -> giu ket qua YAMNet+DSP
+  // ƯU TIÊN MÁY CHỦ — chỉ nạp mô hình trong trình duyệt KHI không có máy chủ
+  // (tránh treo "Page Unresponsive" trên máy yếu vì nạp mô hình ~4MB).
+  async function analyzeSamples(samples, name) {
+    state.lastSamples = samples || null;
+    state.lastName = name || null;
+    state.lastCategories = null;
+    state.lastBackend = null;
+    state.captionText = null;
+    state.lastAcoustics = (A && samples) ? A.analyze(samples, 16000) : null;
+    var mine = samples;
+    // dò máy chủ nếu chưa rõ
+    if (state.backendInfo == null && AB) { try { await detectBackend(); } catch (e) {} }
+
+    if (state.backendInfo && AB) {
+      var res = null;
+      try {
+        setStatus(L("Đang phân tích…", "Analyzing…"));
+        res = await AB.analyze(mine, 16000, dspVoteVector(state.lastAcoustics));
+      } catch (e) { res = null; /* máy chủ lỗi -> nhận diện tại chỗ */ }
+      if (res) {
+        if (state.lastSamples !== mine) return;
+        state.lastBackend = res; setStatus(""); render();
+        $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+        genCaption();
+        return;   // KHÔNG nạp mô hình tại chỗ khi máy chủ đã trả kết quả
+      }
     }
+    // Dự phòng: nạp mô hình tại chỗ (chỉ khi máy chủ không có)
+    try {
+      E.onStatus(setStatus); await E.ready();
+      setStatus(L("Đang nhận diện…", "Recognizing…"));
+      var cats = await E.classifyBuffer(mine);
+      if (state.lastSamples !== mine) return;
+      state.lastCategories = cats; setStatus(""); render();
+      $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) { setStatus("❌ " + (err && err.message ? err.message : err)); }
   }
 
   // Audio captioning: mô tả + nhận định pháp lý bằng LLM (qua Worker Claude của site)
@@ -2056,44 +2075,36 @@ window.AudioEngine = (function () {
   }
 
   function render() {
-    if (!state.lastCategories) return;
-    // loc theo nguon nguoi dung quan tam: bo cac lop thuoc nhom da tat
-    var cats = state.lastCategories.filter(function (c) {
-      var grp = window.YAMNET_GROUP[c.index];
-      if (grp < 1 || grp > 7) return false;
-      // nhom 5 chi xuat hien khi bat che do mo phong; nhung loc o muc nhom -> de analyze xu ly
-      return true;
-    });
-    var ac = state.lastAcoustics;
-    // ensemble 3 nguồn: YAMNet 0.55 + DSP-timbre 0.25 + Melody 0.20 (động theo độ tin cậy melody)
-    var combinedAc = null, acWeight = 0.30;
-    if (ac) {
-      var wY = 0.55, wD = 0.25, wM = (ac.melodyConf > 0) ? 0.20 : 0;
-      var tot = wY + wD + wM;
-      combinedAc = {};
-      for (var g = 1; g <= 7; g++) combinedAc[g] = wD * (ac.vote[g] || 0) + wM * ((ac.melodyVote && ac.melodyVote[g]) || 0);
-      acWeight = (wD + wM) / tot;
-    }
-    var agg = T.analyze(cats, {
-      simulated: state.simulated,
-      acousticVote: combinedAc, acousticWeight: acWeight,
-      acoustic: ac ? { type: ac.type, distinctiveness: ac.distinctiveness, features: ac.features } : null,
-    });
-
-    // BEATs Large + CLAP (backend): nếu có -> dùng nhóm meta làm kết quả chính
-    var bk = state.lastBackend;
+    var ac = state.lastAcoustics, bk = state.lastBackend, agg;
     if (bk && bk.groups) {
-      for (var gk = 1; gk <= 7; gk++) agg.groupScores[gk] = (parseFloat(bk.groups[gk]) || 0);
-      agg.engine = bk.engine || "BEATs Large + CLAP";
-      agg.backend = bk;
-    } else {
-      agg.engine = ac ? "YAMNet + DSP" : "YAMNet";
-    }
+      // KẾT QUẢ TỪ MÁY CHỦ (đầu học) — không cần mô hình trong trình duyệt
+      agg = { groupScores: { 1:0,2:0,3:0,4:0,5:0,6:0,7:0 }, raw: [] };
+      for (var gk = 1; gk <= 7; gk++) agg.groupScores[gk] = (parseFloat(bk.groups[gk]) || 0) * 100;
+      agg.raw = ((bk.beats && bk.beats.top) || []).map(function (r) {
+        return { index: -1, score: r.score, group: r.group, label: r.label, labelVi: r.label };
+      });
+      agg.engine = bk.engine || "—"; agg.backend = bk;
+    } else if (state.lastCategories) {
+      // DỰ PHÒNG: nhận diện tại chỗ (YAMNet) + DSP
+      var cats = state.lastCategories.filter(function (c) { var grp = window.YAMNET_GROUP[c.index]; return grp >= 1 && grp <= 7; });
+      var combinedAc = null, acWeight = 0.30;
+      if (ac) {
+        var wY = 0.55, wD = 0.25, wM = (ac.melodyConf > 0) ? 0.20 : 0, tot = wY + wD + wM;
+        combinedAc = {};
+        for (var g = 1; g <= 7; g++) combinedAc[g] = wD * (ac.vote[g] || 0) + wM * ((ac.melodyVote && ac.melodyVote[g]) || 0);
+        acWeight = (wD + wM) / tot;
+      }
+      agg = T.analyze(cats, { acousticVote: combinedAc, acousticWeight: acWeight,
+        acoustic: ac ? { type: ac.type, distinctiveness: ac.distinctiveness, features: ac.features } : null });
+      agg.engine = ac ? "—" : "—";
+    } else return;
 
-    // ap dung bo loc nguon: zero hoa cac nhom bi tat, tinh lai present/dominant/verdict
+    // mô phỏng (nhóm 5): chuyển điểm nhóm 1/2/3 sang 5
+    if (state.simulated) { var m = agg.groupScores, mv = m[1] + m[2] + m[3]; m[1] = m[2] = m[3] = 0; m[5] += mv; }
+    // bộ lọc nhóm
     var anyOff = Object.keys(state.filters).some(function (k){return !state.filters[k];});
     if (anyOff) for (var k = 1; k <= 7; k++) if (!state.filters[k]) agg.groupScores[k] = 0;
-    if (bk || anyOff) { T.summarize(agg, {}); agg.verdict = T.verdict(agg); }
+    T.summarize(agg, {}); agg.verdict = T.verdict(agg);
 
     renderVerdict(agg);
     renderBars(agg);
@@ -2399,14 +2410,10 @@ window.AudioEngine = (function () {
 
   async function analyzeArrayBuffer(arrayBuffer, name) {
     try {
-      state.lastName = name || null;
-      E.onStatus(setStatus);
-      await E.ready();
-      setStatus(L("Đang phân tích âm thanh…","Analyzing audio…"));
-      var res = await E.classifyArrayBuffer(arrayBuffer);
-      setStatus("");
-      if (!res.categories.length) { setStatus(L("Không nhận được âm thanh nào.","No audio detected.")); return; }
-      runAnalysis(res.categories, res.samples);
+      setStatus(L("Đang đọc âm thanh…", "Decoding audio…"));
+      var samples = await E.decodeToMono16k(arrayBuffer);   // chỉ giải mã, KHÔNG nạp mô hình
+      if (!samples || !samples.length) { setStatus(L("Không đọc được âm thanh.", "Could not decode audio.")); return; }
+      await analyzeSamples(samples, name);
     } catch (err) {
       console.error(err);
       setStatus("❌ Lỗi: " + (err && err.message ? err.message : err));
@@ -2748,12 +2755,7 @@ window.AudioEngine = (function () {
     : { melody: "Mẫu giai điệu", beep: "Mẫu tông đơn/beep", noise: "Mẫu nhiễu/gió", voice: "Mẫu giọng (giả lập)", chirp: "Mẫu quét tần số" };
   async function analyzeSample(type) {
     var s = buildSample(type); playFloat(s.buf, s.sr);
-    try {
-      E.onStatus(setStatus); await E.ready(); setStatus(L("Đang phân tích mẫu…","Analyzing sample…"));
-      var cats = await E.classifyBuffer(s.buf); setStatus("");
-      state.lastName = SAMP_NAME[type] || ("Mẫu " + type);
-      runAnalysis(cats, s.buf);
-    } catch (err) { setStatus("❌ " + (err && err.message ? err.message : err)); }
+    await analyzeSamples(s.buf, SAMP_NAME[type] || ("Mẫu " + type));
   }
 
   // ---------- Backend AI (BEATs Large + CLAP) ----------
@@ -2881,9 +2883,8 @@ window.AudioEngine = (function () {
     // ap dung ngon ngu da chon (neu la EN thi dich toan bo tinh + dong)
     setLang(window.APP_LANG);
 
-    // warm-up model (khong chan UI)
-    E.onStatus(setStatus);
-    setTimeout(function () { E.ready().catch(function(){}); }, 400);
+    E.onStatus(setStatus);   // KHÔNG warm-up YAMNet khi mở trang (tránh treo máy yếu);
+                             // mô hình tại chỗ chỉ nạp khi không có máy chủ.
   }
 
   if (document.readyState === "loading")
