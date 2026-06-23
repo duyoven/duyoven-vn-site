@@ -2199,6 +2199,8 @@ window.AudioEngine = (function () {
       doPhuThoiGian: coverage,
       coGiaiDieu: !!dec.melody,
       soDoanThoiGian: dec.nseg || null,
+      daiCaoDo: dec.pitch ? ((dec.pitch.noteLo || "") + "–" + (dec.pitch.noteHi || "") + " (median " + (dec.pitch.medianNote || "") + ")") : null,
+      vuotDaiNguoi: !!dec.exceededHuman,
       amThatPhanTram: a ? a.realPct : null,
       tachNguon: deep,                       // kết quả tách nguồn Demucs (nếu đã chạy Phân tích sâu)
       beatsTop: ((bk.beats && bk.beats.top) || []).slice(0, 6).map(function (r) { return r.label; }),
@@ -2357,7 +2359,17 @@ window.AudioEngine = (function () {
       compHtml = '<div class="gn-comp">🧩 ' + L("Tổ hợp phát hiện", "Detected combination") + ": " + parts.join(" + ") +
         " → " + L("kết luận nhóm", "concluded as group") + " <b>[" + agg.dominant + "] " + esc(T.gname(T.GROUPS[agg.dominant])) + "</b>" + why + "</div>";
     }
-    authHtml = compHtml + authHtml;
+    // dải cao độ (F0) + đối chiếu dải giọng người E2–E6 (Bảng ca sĩ chuyên nghiệp)
+    var pit = dec && dec.pitch, pitchHtml = "";
+    if (pit && pit.median) {
+      var rng = (pit.noteLo && pit.noteHi) ? (pit.noteLo + "–" + pit.noteHi) : "";
+      var verdict = dec.exceededHuman
+        ? '<b style="color:#fca5a5">' + L("VƯỢT dải giọng người (E2–E6) → nghi tổng hợp/AI", "exceeds human range (E2–E6) → suspect AI/synthetic") + "</b>"
+        : '<span style="color:#a7f3d0">' + L("trong dải nguồn thật có thể tạo", "within range a real source can produce") + "</span>";
+      pitchHtml = '<div class="gn-why">🎵 ' + L("Dải cao độ", "Pitch range") + ": " + esc(rng) +
+        " (median " + esc(pit.medianNote || "") + ", " + Math.round(pit.median) + "Hz) — " + verdict + "</div>";
+    }
+    authHtml = compHtml + pitchHtml + authHtml;
     var legend = "📝 " + L(
       "Ghi nhận theo 7 nhóm nguồn gốc: [1] phi sinh học · [2] sinh vật · [3] môi trường · [4] con người · [5] mô phỏng · [6] vật dụng · [7] tổng hợp.",
       "Recorded by 7 origin groups: [1] abiotic · [2] living · [3] environment · [4] human · [5] simulation · [6] objects · [7] synthesized.");
@@ -2378,6 +2390,11 @@ window.AudioEngine = (function () {
                : v === "synthetic" ? L("Có dấu hiệu giọng AI/tổng hợp — cần kiểm tra", "Signs of AI/synthetic voice — review")
                : L("Chưa chắc — nghe kiểm tra", "Uncertain — review by ear");
         av = '<div class="ds-lab">' + ic + " " + L("Kiểm tra giọng", "Voice check") + ": " + tx + "</div>";
+      }
+      if (s.pitch && s.pitch.median) {
+        av += '<div class="ds-lab">🎵 ' + L("Dải cao độ", "Pitch") + ": " + esc((s.pitch.noteLo || "") + "–" + (s.pitch.noteHi || "")) +
+          " (median " + esc(s.pitch.medianNote || "") + ")" +
+          (s.group === 7 ? ' — <b style="color:#fca5a5">' + L("vượt dải người", "exceeds human range") + "</b>" : "") + "</div>";
       }
       return '<div class="ds"><div class="ds-row"><span class="ds-name">' + esc(s.name) + '</span>' +
         '<span class="ds-grp" style="color:' + col + '">[' + s.group + '] ' + esc(s.groupName || T.gname(g)) + '</span>' +
