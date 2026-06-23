@@ -339,6 +339,8 @@ body{
 .gn-auth.repro{background:rgba(236,72,153,.13);border:1px solid var(--pink);color:#fbcfe8}
 .gn-auth.mid{background:rgba(148,163,184,.14);border:1px solid var(--line);color:#cbd5e1}
 .gn-auth b{color:#fff}
+.gn-comp{font-size:13px;color:#c4b5fd;background:rgba(139,92,246,.10);border:1px solid var(--line);border-radius:10px;padding:7px 11px;margin-bottom:7px;line-height:1.45}
+.gn-comp b{color:#fff}
 .gn-legend{font-size:11.5px;color:var(--muted);line-height:1.5}
 
 /* caption LLM */
@@ -2161,16 +2163,13 @@ window.AudioEngine = (function () {
     if (bk && bk.groups) {
       // KẾT QUẢ TỪ MÁY CHỦ (đầu học) — không cần mô hình trong trình duyệt
       agg = { groupScores: { 1:0,2:0,3:0,4:0,5:0,6:0,7:0 }, raw: [] };
-      // TRỘN đầu học (quyết định nhóm chính) + phân bố BEATs theo nhóm (hiện ĐA NGUỒN:
-      // vd guitar→[6], tiếng hát→[4], nhạc→[7]) để không bị "gộp" hết về 1 nhóm.
+      // THANH 7 nhóm = phân bố BEATs theo nhóm → HIỆN ĐẦY ĐỦ THÀNH PHẦN
+      // (vd: đàn→[6], giọng người→[4], nhạc→[7]) thay vì gộp hết về 1 nhóm.
       var bgps = (bk.beats && bk.beats.groups) || bk.groups, bsum = 0;
       for (var gk = 1; gk <= 7; gk++) bsum += (parseFloat(bgps[gk]) || 0);
       bsum = bsum || 1;
-      for (gk = 1; gk <= 7; gk++) {
-        var hh = parseFloat(bk.groups[gk]) || 0;          // đầu học (đã chuẩn hoá)
-        var bb = (parseFloat(bgps[gk]) || 0) / bsum;       // BEATs theo nhóm (đa nguồn)
-        agg.groupScores[gk] = (0.5 * hh + 0.5 * bb) * 100;
-      }
+      for (gk = 1; gk <= 7; gk++) agg.groupScores[gk] = (parseFloat(bgps[gk]) || 0) / bsum * 100;
+      agg.headDominant = bk.dominant;   // KẾT LUẬN nhóm chính theo đầu học (chính xác)
       agg.raw = ((bk.beats && bk.beats.top) || []).map(function (r) {
         return { index: -1, score: r.score, group: r.group, label: r.label, labelVi: r.label };
       });
@@ -2195,11 +2194,14 @@ window.AudioEngine = (function () {
     // bộ lọc nhóm
     var anyOff = Object.keys(state.filters).some(function (k){return !state.filters[k];});
     if (anyOff) for (var k = 1; k <= 7; k++) if (!state.filters[k]) agg.groupScores[k] = 0;
-    T.summarize(agg, {}); agg.verdict = T.verdict(agg);
+    T.summarize(agg, {});
+    // KẾT LUẬN nhóm chính theo đầu học (vd đàn+hát+giai điệu → nhóm 7) dù thanh hiện đa nguồn
+    if (agg.headDominant && state.filters[agg.headDominant]) agg.dominant = agg.headDominant;
+    agg.verdict = T.verdict(agg);
 
     renderVerdict(agg);
     renderBars(agg);
-    renderGroupNote();
+    renderGroupNote(agg);
     renderRaw(agg);
     renderAcoustics(agg);
     renderInputStats();
@@ -2271,11 +2273,19 @@ window.AudioEngine = (function () {
   }
 
   // ghi chú ở khu 7 nhóm: âm thật/tái tạo + chú thích 7 nhóm
-  function renderGroupNote() {
+  function renderGroupNote(agg) {
     var host = $("groupNote"); if (!host) return;
     var a = authVerdict();
     var authHtml = a ? '<div class="gn-auth ' + a.cls + '">' + a.icon + " <b>" + esc(a.label) + "</b> · " +
       L("độ tin âm thật", "genuine confidence") + " " + a.realPct + "%</div>" : "";
+    // tổ hợp các nguồn phát hiện -> kết luận nhóm chính
+    var compHtml = "";
+    if (agg && agg.present && agg.present.length > 1) {
+      var parts = agg.present.map(function (g) { return "[" + g + "] " + T.gname(T.GROUPS[g]); });
+      compHtml = '<div class="gn-comp">🧩 ' + L("Tổ hợp phát hiện", "Detected combination") + ": " + parts.join(" + ") +
+        " → " + L("kết luận nhóm", "concluded as group") + " <b>[" + agg.dominant + "] " + esc(T.gname(T.GROUPS[agg.dominant])) + "</b></div>";
+    }
+    authHtml = compHtml + authHtml;
     var legend = "📝 " + L(
       "Ghi nhận theo 7 nhóm nguồn gốc: [1] phi sinh học · [2] sinh vật · [3] môi trường · [4] con người · [5] mô phỏng · [6] vật dụng · [7] tổng hợp.",
       "Recorded by 7 origin groups: [1] abiotic · [2] living · [3] environment · [4] human · [5] simulation · [6] objects · [7] synthesized.");
