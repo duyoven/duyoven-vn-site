@@ -1932,11 +1932,12 @@ window.AudioEngine = (function () {
     [4, ["speech","conversation","narration","male","female","child speech","sing","choir","chant","rap","humming","whistl","yodel","laugh","giggle","chuckle","cry","sob","baby","shout","yell","scream","groan","grunt","sigh","gasp","cough","sneeze","sniff","breath","snor","gargl","throat","hiccup","burp","human","clap","applause","cheer","boo","chatter","crowd","babbl","footstep"]],
     [2, ["animal","dog","bark","howl","cat","purr","meow","hiss","livestock","horse","neigh","cattle","moo","pig","oink","goat","bleat","sheep","fowl","chicken","cluck","crow","turkey","duck","quack","goose","bird","chirp","tweet","squawk","pigeon","owl","hoot","wing","roar","lion","rodent","mouse","insect","cricket","mosquito","fly","buzz","bee","frog","croak","snake","whale","elephant"]],
     [1, ["wind","rustl","thunder","rain","raindrop","water","stream","waterfall","ocean","wave","steam","gurgl","fire","crackle","drip","splash","sea","trickle"]],
-    [7, ["music","musical instrument","string","guitar","banjo","sitar","mandolin","ukulele","harp","piano","keyboard (musical)","organ","synthes","percussion","drum","cymbal","hi-hat","snare","tabla","timpani","tambourine","gong","marimba","glockenspiel","vibraphone","orchestra","brass","horn","trumpet","trombone","violin","cello","bass","wind instrument","flute","saxophone","clarinet","oboe","harmonica","accordion","bagpipe","theremin","electronic music","techno","house music","dubstep","electronica","trance","hip hop","beatbox","rock music","pop music","jazz","classical music","reggae","funk","soul music","disco","folk music","ambient music","christmas music","dance music","sound effect","sampler","sine wave","beep","bleep","ringtone","theme music","jingle","chime","reverberation","echo"]],
-    [6, ["vehicle","car","engine","motor","truck","bus","emergency","siren","police","ambulance","train","rail","subway","aircraft","airplane","helicopter","propeller","boat","ship","skateboard","bicycle","door","slam","knock","tap","squeak","drawer","dishes","cutlery","chop","fry","blender","microwave","kettle","tap","sink","toilet","toothbrush","shaver","vacuum","telephone","dial","alarm","buzzer","smoke detector","clock","tick","typ","camera","printer","tool","hammer","saw","sand","drill","explosion","gunshot","machine gun","firework","glass","clink","shatter","pour","spray","pump","mechanism","sewing","fan","cash register","coin","zipper","keys","wood","tear","bell"]],
+    [7, ["music","synthes","electronic music","techno","house music","dubstep","electronica","trance","hip hop","beatbox","rock music","pop music","jazz","classical music","reggae","funk","soul music","disco","folk music","ambient music","christmas music","dance music","sound effect","sampler","sine wave","beep","bleep","ringtone","theme music","jingle","reverberation","echo"]],
+    [6, ["guitar","banjo","sitar","mandolin","ukulele","harp","piano","keyboard (musical)","organ","percussion","drum","cymbal","hi-hat","snare","tabla","timpani","tambourine","gong","marimba","glockenspiel","vibraphone","orchestra","brass","trumpet","trombone","violin","cello","flute","saxophone","clarinet","oboe","harmonica","accordion","bagpipe","plucked string","bowed string","tuning fork","vehicle","car","engine","motor","truck","bus","emergency","siren","police","ambulance","train","rail","subway","aircraft","airplane","helicopter","propeller","boat","ship","skateboard","bicycle","door","slam","knock","tap","squeak","drawer","dishes","cutlery","chop","fry","blender","microwave","kettle","sink","toilet","toothbrush","shaver","vacuum","telephone","dial","alarm","buzzer","smoke detector","clock","tick","typ","camera","printer","tool","hammer","saw","sand","drill","explosion","gunshot","machine gun","firework","glass","clink","shatter","pour","spray","pump","mechanism","sewing","fan","cash register","coin","zipper","keys","wood","tear","bell","chime"]],
   ];
   function nameToGroup(name) {
     var n = (name || "").toLowerCase();
+    if (n.indexOf("instrument") >= 0) return 6;   // nhạc cụ -> nhóm 6
     for (var i = 0; i < RULES.length; i++)
       for (var j = 0; j < RULES[i][1].length; j++)
         if (n.indexOf(RULES[i][1][j]) >= 0) return RULES[i][0];
@@ -2160,7 +2161,16 @@ window.AudioEngine = (function () {
     if (bk && bk.groups) {
       // KẾT QUẢ TỪ MÁY CHỦ (đầu học) — không cần mô hình trong trình duyệt
       agg = { groupScores: { 1:0,2:0,3:0,4:0,5:0,6:0,7:0 }, raw: [] };
-      for (var gk = 1; gk <= 7; gk++) agg.groupScores[gk] = (parseFloat(bk.groups[gk]) || 0) * 100;
+      // TRỘN đầu học (quyết định nhóm chính) + phân bố BEATs theo nhóm (hiện ĐA NGUỒN:
+      // vd guitar→[6], tiếng hát→[4], nhạc→[7]) để không bị "gộp" hết về 1 nhóm.
+      var bgps = (bk.beats && bk.beats.groups) || bk.groups, bsum = 0;
+      for (var gk = 1; gk <= 7; gk++) bsum += (parseFloat(bgps[gk]) || 0);
+      bsum = bsum || 1;
+      for (gk = 1; gk <= 7; gk++) {
+        var hh = parseFloat(bk.groups[gk]) || 0;          // đầu học (đã chuẩn hoá)
+        var bb = (parseFloat(bgps[gk]) || 0) / bsum;       // BEATs theo nhóm (đa nguồn)
+        agg.groupScores[gk] = (0.5 * hh + 0.5 * bb) * 100;
+      }
       agg.raw = ((bk.beats && bk.beats.top) || []).map(function (r) {
         return { index: -1, score: r.score, group: r.group, label: r.label, labelVi: r.label };
       });
@@ -2388,6 +2398,8 @@ window.AudioEngine = (function () {
         sb.innerHTML = '<div class="ac-cap">🎼 ' + L("Ký âm tự động — khuông nhạc 5 dòng", "Auto music notation — 5-line staff") + ' (' + ac.notes.length + ' ' + L("nốt", "notes") + ': ' +
           ac.notes.slice(0, 16).map(function (nn) { return A.noteName(nn.midi); }).join(" ") + (ac.notes.length > 16 ? "…" : "") + ')</div>' +
           A.buildStaffSVG(ac.notes) +
+          '<div class="ac-subnote">⚠ ' + L("Ký âm tự động CHỈ chính xác với âm ĐƠN (1 nốt mỗi lúc). Với hợp âm/đa âm (nhạc cụ + giọng hát cùng lúc) chỉ mang tính minh hoạ — nên dùng phần mềm ký âm chuyên dụng cho bản nộp đơn.",
+            "Auto notation is accurate only for MONOPHONIC audio (one note at a time). For polyphonic audio (instrument + voice together) it is indicative only — use dedicated notation software for the filing.") + '</div>' +
           '<div class="ac-subnote">' + L("Dùng tham khảo cho “bản thể hiện đồ họa (khuông nhạc 5 dòng kẻ)” bắt buộc khi nộp đơn (Điều 105 Luật SHTT; Thông tư 10/2026/TT-BKHCN).",
             "Reference for the mandatory “graphic representation (5-line staff)” required at filing (Art. 105 IP Law; Circular 10/2026/TT-BKHCN).") + '</div>';
       } else { sb.style.display = "none"; }
