@@ -343,6 +343,25 @@ body{
 .gn-comp b{color:#fff}
 .gn-why{font-size:11.5px;color:var(--muted);margin-top:4px;font-style:italic}
 .gn-cov{color:var(--muted);font-size:11px;font-style:italic}
+
+/* Phân tích sâu — tách nguồn (Demucs) */
+.deep-btn{margin-top:12px;padding:9px 16px;border-radius:10px;border:1px solid var(--accent);
+  background:rgba(139,92,246,.12);color:#ddd6fe;font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s}
+.deep-btn:hover{background:rgba(139,92,246,.22)}
+.deep-btn:disabled{opacity:.7;cursor:default}
+.deep-panel:not(:empty){margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card2)}
+.deep-head{font-size:13px;font-weight:700;color:#c4b5fd;margin-bottom:10px}
+.ds{margin-bottom:11px}
+.ds-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:13px}
+.ds-name{color:var(--ink)}
+.ds-grp{font-weight:700;margin-left:auto}
+.ds-e{color:var(--muted);font-variant-numeric:tabular-nums;min-width:46px;text-align:right}
+.ds-bar{height:8px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden;margin:5px 0 3px}
+.ds-bar i{display:block;height:100%;border-radius:6px}
+.ds-lab{font-size:11.5px;color:var(--muted)}
+.deep-concl{margin-top:6px;padding-top:9px;border-top:1px solid var(--line);font-size:13px;color:#a7f3d0}
+.deep-concl b{color:#fff}
+.deep-err{font-size:12.5px;color:#fca5a5}
 .gn-legend{font-size:11.5px;color:var(--muted);line-height:1.5}
 
 /* caption LLM */
@@ -537,6 +556,10 @@ body.locked .lang-toggle{display:none}
       <h2 class="sec-title" data-en="Score across the 7 origin groups">Mức độ theo 7 nhóm nguồn gốc</h2>
       <div id="groupBars" class="group-bars"></div>
       <div id="groupNote" class="group-note"></div>
+      <div id="deepWrap" style="display:none">
+        <button id="deepBtn" class="deep-btn" type="button">🔬 <span data-en="Deep analysis — separate sources (voice / instrument)">Phân tích sâu — tách nguồn (giọng / nhạc cụ)</span></button>
+        <div id="deepPanel" class="deep-panel"></div>
+      </div>
     </div>
 
     <!-- PHÂN TÍCH NÂNG CAO: BEATs Large + CLAP -->
@@ -1912,9 +1935,23 @@ window.AudioEngine = (function () {
     return j;
   }
 
+  // PHÂN TÍCH SÂU: tách nguồn (Demucs) -> phân loại từng nguồn. Chậm hơn (~10-30s).
+  async function analyzeDeep(f32, sr){
+    if(!ACTIVE) throw new Error("no backend");
+    var fd = new FormData();
+    fd.append("file", encodeWAV(f32, sr||16000), "audio.wav");
+    var c = new AbortController(), t = setTimeout(function(){c.abort();}, 240000);
+    var r = await fetch(ACTIVE+"/analyze_deep", {method:"POST", body:fd, signal:c.signal});
+    clearTimeout(t);
+    if(!r.ok) throw new Error("backend "+r.status);
+    var j = await r.json();
+    if(j.error) throw new Error(j.error);
+    return j;
+  }
+
   w.AIBACKEND = {
     DEFAULT: DEFAULT,
-    autodetect: autodetect, probe: probe, analyze: analyze, encodeWAV: encodeWAV,
+    autodetect: autodetect, probe: probe, analyze: analyze, analyzeDeep: analyzeDeep, encodeWAV: encodeWAV,
     saved: saved, setURL: setURL,
     active: function(){ return ACTIVE; }, info: function(){ return INFO; },
   };
@@ -2058,6 +2095,8 @@ window.AudioEngine = (function () {
     history: [],            // lich su cac am da phan tich
     simulated: false,       // che do mo phong (nhom 5)
     filters: { 1:true,2:true,3:true,4:true,5:true,6:true,7:true },
+    deepResult: null,       // ket qua phan tich sau (tach nguon Demucs)
+    deepFor: null,          // buffer da phan tich sau (de khong chay lai)
   };
   var AB = window.AIBACKEND;
 
@@ -2107,6 +2146,7 @@ window.AudioEngine = (function () {
     state.lastCategories = null;
     state.lastBackend = null;
     state.captionText = null;
+    state.deepResult = null; state.deepFor = null;   // reset phân tích sâu cho âm mới
     state.lastAcoustics = (A && samples) ? A.analyze(samples, 16000) : null;
     var mine = samples;
     // dò máy chủ nếu chưa rõ
@@ -2211,6 +2251,7 @@ window.AudioEngine = (function () {
     renderInputStats();
     renderQuality();
     renderAI(agg);
+    renderDeepUI();
     $("results").classList.add("show");
     state.lastAgg = agg;
     pushHistory(agg);
@@ -2302,6 +2343,58 @@ window.AudioEngine = (function () {
       "Ghi nhận theo 7 nhóm nguồn gốc: [1] phi sinh học · [2] sinh vật · [3] môi trường · [4] con người · [5] mô phỏng · [6] vật dụng · [7] tổng hợp.",
       "Recorded by 7 origin groups: [1] abiotic · [2] living · [3] environment · [4] human · [5] simulation · [6] objects · [7] synthesized.");
     host.innerHTML = authHtml + '<div class="gn-legend">' + legend + "</div>";
+  }
+
+  // ---------- Phân tích sâu: tách nguồn (Demucs) ----------
+  function deepHtml(res) {
+    if (!res || !res.stems) return "";
+    var rows = res.stems.map(function (s) {
+      var g = T.GROUPS[s.group] || {}, col = g.color || "#888";
+      var labs = (s.top || []).slice(0, 3).map(function (t) { return esc(t.label); }).join(", ");
+      var av = "";
+      if (s.authenticity) {
+        var sy = (s.authenticity.synth || 0) / 100, pb = (s.authenticity.playback || 0) / 100;
+        var realPct = Math.round((1 - Math.min(1, 0.7 * sy + 0.3 * pb)) * 100);
+        av = '<div class="ds-lab">🎙️ ' + L("Giọng: độ tin âm thật", "Voice: genuine confidence") + " ~" + realPct + "%</div>";
+      }
+      return '<div class="ds"><div class="ds-row"><span class="ds-name">' + esc(s.name) + '</span>' +
+        '<span class="ds-grp" style="color:' + col + '">[' + s.group + '] ' + esc(s.groupName || T.gname(g)) + '</span>' +
+        '<span class="ds-e">' + s.energyPct + '%</span></div>' +
+        '<div class="ds-bar"><i style="width:' + Math.max(2, s.energyPct) + '%;background:' + col + '"></i></div>' +
+        '<div class="ds-lab">' + L("Nhãn", "Labels") + ": " + labs + "</div>" + av + "</div>";
+    }).join("");
+    var present = (res.present || []).map(function (g) { return "[" + g + "] " + T.gname(T.GROUPS[g]); }).join(" + ");
+    var concl = present ? '<div class="deep-concl">✅ ' + L("Tách nguồn xác nhận", "Separation confirms") + ": <b>" + present + "</b></div>" : "";
+    return '<div class="deep-head">🔬 ' + L("Kết quả tách nguồn (Demucs) — phân loại từng nguồn riêng",
+      "Source separation (Demucs) — each source classified separately") + "</div>" + rows + concl;
+  }
+
+  function renderDeepUI() {
+    var wrap = $("deepWrap"), btn = $("deepBtn"), panel = $("deepPanel");
+    if (!wrap || !btn || !panel) return;
+    var canDeep = state.lastBackend && AB.active() && state.lastSamples && state.lastSamples.length;
+    if (!canDeep) { wrap.style.display = "none"; return; }
+    wrap.style.display = "block";
+    if (state.deepResult && state.deepFor === state.lastSamples) {
+      panel.innerHTML = deepHtml(state.deepResult); btn.style.display = "none"; return;
+    }
+    panel.innerHTML = ""; btn.style.display = ""; btn.disabled = false;
+    btn.innerHTML = '🔬 <span>' + L("Phân tích sâu — tách nguồn (giọng / nhạc cụ)", "Deep analysis — separate sources (voice / instrument)") + "</span>";
+    btn.onclick = async function () {
+      var mine = state.lastSamples;
+      btn.disabled = true;
+      btn.innerHTML = "⏳ " + L("Đang tách nguồn… (~10–30 giây)", "Separating sources… (~10–30s)");
+      try {
+        var res = await AB.analyzeDeep(mine, 16000);
+        if (state.lastSamples !== mine) return;
+        state.deepResult = res; state.deepFor = mine;
+        panel.innerHTML = deepHtml(res); btn.style.display = "none";
+      } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = '🔬 ' + L("Thử lại — tách nguồn", "Retry — separate sources");
+        panel.innerHTML = '<div class="deep-err">⚠ ' + L("Không tách nguồn được", "Separation failed") + ": " + esc(e.message || "") + "</div>";
+      }
+    };
   }
 
   // ---------- Panel nâng cao: BEATs Large + CLAP ----------
