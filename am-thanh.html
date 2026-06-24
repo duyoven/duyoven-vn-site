@@ -1079,27 +1079,36 @@ window.ACOUSTICS = (function () {
 
   function hann(N) { var w = new Float32Array(N); for (var i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (N - 1)); return w; }
 
-  // ---------- Pitch (autocorrelation) cho 1 khung thời gian ----------
-  // Chọn ĐỈNH ĐẦU TIÊN (lag nhỏ nhất) đạt ≥90% đỉnh lớn nhất → lấy đúng tần số cơ bản,
-  // tránh lỗi rớt quãng tám (subharmonic) thường gặp với sóng sin thuần.
+  // ---------- Pitch (YIN) cho 1 khung — CHÍNH XÁC, CHỐNG rớt quãng tám ----------
+  // YIN (de Cheveigné & Kawahara 2002): hàm hiệu + hiệu chuẩn tích luỹ trung bình (CMND)
+  // -> lấy ĐỈNH ĐẦU TIÊN dưới ngưỡng = chu kỳ THẬT, không bắt nhầm bội âm dưới (subharmonic).
+  // Phủ 70–1600 Hz để bắt được nốt cao (E6≈1319Hz) — autocorr cũ bị chặn ở 1000Hz nên rớt octave.
   function pitch(frame, sr) {
-    var n = frame.length, minLag = Math.floor(sr / 1000), maxLag = Math.min(Math.floor(sr / 70), n - 2);
+    var n = frame.length;
+    var maxLag = Math.min(Math.floor(sr / 70), n >> 1);     // thấp nhất ~70 Hz
+    var minLag = Math.max(2, Math.floor(sr / 1600));        // cao nhất ~1600 Hz (phủ E6)
     var e0 = 0, i; for (i = 0; i < n; i++) e0 += frame[i] * frame[i];
     if (e0 < 1e-6) return { f0: 0, clarity: 0 };
-    var ac = new Float32Array(maxLag + 1), pmax = 0;
-    for (var lag = minLag; lag <= maxLag; lag++) {
-      var s = 0; for (i = 0; i < n - lag; i++) s += frame[i] * frame[i + lag];
-      ac[lag] = s / (n - lag);
-      if (ac[lag] > pmax) pmax = ac[lag];
+    var d = new Float32Array(maxLag + 1), tau, j;
+    for (tau = 1; tau <= maxLag; tau++) {
+      var s = 0; for (j = 0; j + tau < n; j++) { var diff = frame[j] - frame[j + tau]; s += diff * diff; }
+      d[tau] = s;
     }
-    var clarity = pmax / (e0 / n);
-    if (clarity < 0.30) return { f0: 0, clarity: clarity };
-    var thr = 0.9 * pmax, chosen = -1;
-    for (lag = minLag + 1; lag < maxLag; lag++) {
-      if (ac[lag] >= thr && ac[lag] > ac[lag - 1] && ac[lag] >= ac[lag + 1]) { chosen = lag; break; }
+    var cmnd = new Float32Array(maxLag + 1); cmnd[0] = 1; var run = 0;
+    for (tau = 1; tau <= maxLag; tau++) { run += d[tau]; cmnd[tau] = d[tau] * tau / (run + 1e-12); }
+    var THR = 0.15, t = -1;
+    for (tau = minLag; tau <= maxLag; tau++) {
+      if (cmnd[tau] < THR) { while (tau + 1 <= maxLag && cmnd[tau + 1] < cmnd[tau]) tau++; t = tau; break; }
     }
-    if (chosen < 0) { chosen = minLag; for (lag = minLag; lag <= maxLag; lag++) if (ac[lag] > ac[chosen]) chosen = lag; }
-    return { f0: sr / chosen, clarity: clarity };
+    if (t < 0) {                                            // không có đáy < ngưỡng -> min toàn dải
+      var mn = 1e9; for (tau = minLag; tau <= maxLag; tau++) if (cmnd[tau] < mn) { mn = cmnd[tau]; t = tau; }
+      if (t < 0 || mn > 0.55) return { f0: 0, clarity: t < 0 ? 0 : 1 - mn };   // quá mờ -> vô thanh
+    }
+    if (t > 1 && t < maxLag) {                              // nội suy parabol cho mịn
+      var a = cmnd[t - 1], b = cmnd[t], c = cmnd[t + 1], den = a + c - 2 * b;
+      if (Math.abs(den) > 1e-9) t += 0.5 * (a - c) / den;
+    }
+    return { f0: sr / t, clarity: 1 - cmnd[Math.max(1, Math.min(maxLag, Math.round(t)))] };
   }
 
   // ---------- Phân tích chính ----------
