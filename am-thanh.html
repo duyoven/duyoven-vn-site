@@ -932,8 +932,7 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
     var present = agg.present || [];
     var dom = agg.dominant;
     var has = function (g) { return present.indexOf(g) >= 0; };
-    var arranged = !!agg.melody;                       // co phoi giai dieu / nhip dieu
-    var creativeCombo = has(7) || (present.length >= 2 && arranged);  // to hop sang tao / co yeu to tong hop
+    var arranged = !!agg.melody;                       // co giai dieu / nhip dieu / hoa am
     var naturalOrFunctional = present.filter(function (g) {
       return [1,2,3,5,6].indexOf(g) >= 0;
     });
@@ -965,14 +964,17 @@ window.YAMNET_GROUP = [4,4,4,4,4,7,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
           "Contains a human-sound component (group 4) — may carry a distinctive mark; combined with instrument/melody it is even more distinctive."),
         L("Xem xét theo Khoản 1 Điều 74 Luật SHTT.", "Assessed under Art. 74(1) IP Law."));
     }
-    // 4) Tổ hợp ≥2 nguồn có phối giai điệu / có yếu tố tổng hợp -> có thể xem xét
-    if (naturalOrFunctional.length && creativeCombo) {
+    // 4) Âm thường gặp (nhóm 1/2/3/5/6) NHƯNG có giai điệu/nhịp điệu/hoà âm và KHÔNG phải
+    //    âm chức năng bắt buộc của sản phẩm -> nâng lên "Có thể được xem xét" (nộp đơn Cục SHTT).
+    if (arranged && naturalOrFunctional.length) {
       return mk("conditional",
-        L("Có thể xem xét (có yếu tố sáng tạo)", "Worth considering (creative element)"),
-        L("Âm tự nhiên/chức năng được phối thành giai điệu/nhịp điệu hoặc xử lý sáng tạo (tổ hợp nhiều nguồn) – làm tăng tính phân biệt.",
-          "Natural/functional sound arranged into melody/rhythm or creatively processed (multi-source combination) — raising distinctiveness."),
-        L("Khuyến khích mô phỏng/phối hợp sáng tạo; vẫn cần thẩm định tính phân biệt tổng thể.",
-          "Creative simulation/combination is encouraged; overall distinctiveness still to be examined."));
+        L("Có thể được xem xét", "Worth considering"),
+        L("Tuy thuộc nhóm âm thường gặp (nhóm " + naturalOrFunctional.join(", ") +
+          ") nhưng đã có giai điệu/nhịp điệu/hoà âm và không phải âm chức năng kỹ thuật bắt buộc của sản phẩm – làm tăng tính phân biệt; đủ điều kiện nộp đơn để Cục SHTT thẩm định.",
+          "Although a common-type sound (group " + naturalOrFunctional.join(", ") +
+          "), it carries melody/rhythm/harmony and is not a product's mandatory technical sound — raising distinctiveness; eligible to file for examination by the IP Office."),
+        L("Theo nguyên tắc khuyến khích mô phỏng/phối hợp sáng tạo; xem xét tính phân biệt theo Khoản 2 Điều 74 (sáng tạo bổ sung / “ý nghĩa thứ hai”). Lưu ý loại trừ Khoản 6 Điều 73 nếu là đặc tính kỹ thuật bắt buộc.",
+          "Per the principle encouraging creative simulation/combination; distinctiveness assessed under Art. 74(2) (added creativity / “secondary meaning”). Excluded under Art. 73(6) if a mandatory technical feature."));
     }
     // 5a) Nhóm 6 (vật dụng/sản phẩm) trội — đặc tính kỹ thuật bắt buộc thì bị loại
     if (dom === 6) {
