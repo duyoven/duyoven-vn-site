@@ -2224,6 +2224,15 @@ window.AudioEngine = (function () {
     } catch (e) {}
   }
 
+  // Có GIAI ĐIỆU / NHỊP ĐIỆU / HOÀ ÂM không? (gộp nhãn nhạc máy chủ + DSP cao độ/onset/nốt)
+  function melodyDetected() {
+    var bk = state.lastBackend, ac = state.lastAcoustics, f = ac && ac.features;
+    if (bk && bk.decision && bk.decision.melody) return true;        // nhãn nhạc/giai điệu từ BEATs
+    if (f && (f.melodic || f.onsets >= 5)) return true;              // DSP: nhiều cao độ (giai điệu) / nhiều onset (nhịp điệu)
+    if (ac && (ac.melodyConf >= 0.4 || (ac.notes && ac.notes.length >= 3))) return true;  // DSP: trích được nốt nhạc
+    return false;
+  }
+
   function render() {
     var ac = state.lastAcoustics, bk = state.lastBackend, agg;
     if (bk && bk.groups) {
@@ -2236,7 +2245,7 @@ window.AudioEngine = (function () {
       bsum = bsum || 1;
       for (gk = 1; gk <= 7; gk++) agg.groupScores[gk] = (parseFloat(bgps[gk]) || 0) / bsum * 100;
       agg.headDominant = bk.dominant;   // KẾT LUẬN nhóm chính theo luật minh bạch
-      agg.melody = !!(bk.decision && bk.decision.melody);  // có phối giai điệu (cho verdict)
+      agg.melody = melodyDetected();    // có giai điệu/nhịp điệu/hoà âm (máy chủ + DSP) — cho verdict
       agg.raw = ((bk.beats && bk.beats.top) || []).map(function (r) {
         return { index: -1, score: r.score, group: r.group, label: r.label, labelVi: r.label };
       });
@@ -2254,6 +2263,7 @@ window.AudioEngine = (function () {
       agg = T.analyze(cats, { acousticVote: combinedAc, acousticWeight: acWeight,
         acoustic: ac ? { type: ac.type, distinctiveness: ac.distinctiveness, features: ac.features } : null });
       agg.engine = ac ? "—" : "—";
+      agg.melody = melodyDetected();    // có giai điệu/nhịp điệu/hoà âm (DSP) — cho verdict
     } else return;
 
     // mô phỏng (nhóm 5): chuyển điểm nhóm 1/2/3 sang 5
@@ -2371,7 +2381,17 @@ window.AudioEngine = (function () {
       pitchHtml = '<div class="gn-why">🎵 ' + L("Dải cao độ", "Pitch range") + ": " + esc(rng) +
         " (median " + esc(pit.medianNote || "") + ", " + Math.round(pit.median) + "Hz) — " + verdict + "</div>";
     }
-    authHtml = compHtml + pitchHtml + authHtml;
+    // giai điệu / nhịp điệu (nhận diện được hay không) — hiện rõ cho người dùng
+    var acm = state.lastAcoustics, fm = acm && acm.features, melHtml = "";
+    var hasMel = melodyDetected();
+    var mb = [];
+    if (acm && acm.notes && acm.notes.length) mb.push(acm.notes.length + " " + L("nốt", "notes"));
+    if (fm && fm.onsets) mb.push(fm.onsets + " onset");
+    if (fm && fm.tempo) mb.push("~" + fm.tempo + L(" nhịp/phút", " bpm"));
+    melHtml = '<div class="gn-why">🎶 ' + L("Giai điệu / Nhịp điệu", "Melody / Rhythm") + ": " +
+      (hasMel ? '<b style="color:#a7f3d0">' + L("CÓ", "Yes") + "</b>" + (mb.length ? " (" + mb.join(", ") + ")" : "")
+              : '<span style="color:var(--muted)">' + L("không rõ", "not detected") + "</span>") + "</div>";
+    authHtml = compHtml + pitchHtml + melHtml + authHtml;
     var legend = "📝 " + L(
       "Ghi nhận theo 7 nhóm nguồn gốc: [1] phi sinh học · [2] sinh vật · [3] môi trường · [4] con người · [5] mô phỏng · [6] vật dụng · [7] tổng hợp.",
       "Recorded by 7 origin groups: [1] abiotic · [2] living · [3] environment · [4] human · [5] simulation · [6] objects · [7] synthesized.");
@@ -2851,7 +2871,7 @@ window.AudioEngine = (function () {
 
     var dom = state.lastAgg ? state.lastAgg.dominant : null;   // nhom nguon goc troi
     var audioFavorable = dom === 4 || dom === 7;               // nhom 4/7 thuan loi
-    var hasMelody = state.lastAgg ? (state.lastAgg.present || []).indexOf(7) >= 0 : false;
+    var hasMelody = (state.lastAgg && state.lastAgg.melody) || melodyDetected();  // giai điệu/nhịp điệu/hoà âm
 
     var level, title;
 
@@ -2883,6 +2903,15 @@ window.AudioEngine = (function () {
         notes.push(L("Chưa có tính phân biệt cố hữu và chưa đủ bằng chứng sử dụng để đạt “ý nghĩa thứ hai”.",
           "No inherent distinctiveness and insufficient usage evidence for “secondary meaning”."));
       }
+    }
+
+    // NÂNG HẠNG: âm vốn "khó/không nên đơn lẻ" NHƯNG có giai điệu/nhịp điệu/hoà âm và KHÔNG phải
+    // âm chức năng kỹ thuật bắt buộc của sản phẩm -> "Có thể được xem xét" (đủ điều kiện nộp đơn Cục SHTT).
+    if (level === "low" && func !== "yes" && hasMelody) {
+      level = "conditional";
+      title = L("Có thể được xem xét", "Worth considering");
+      notes.unshift(L("Tuy là âm thường gặp nhưng đã CÓ giai điệu/nhịp điệu/hoà âm và không phải âm chức năng kỹ thuật bắt buộc của sản phẩm → tăng khả năng phân biệt; đủ điều kiện nộp đơn để Cục SHTT thẩm định (Khoản 2 Điều 74; khuyến khích phối hợp/mô phỏng sáng tạo).",
+        "Although a common-type sound, it carries melody/rhythm/harmony and is not a product's mandatory technical sound → raises distinctiveness; eligible to file for IP Office examination (Art. 74(2); creative arrangement encouraged)."));
     }
 
     // Ket hop nhan xet tu phan loai am thanh
