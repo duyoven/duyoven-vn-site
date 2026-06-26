@@ -6,3 +6,5 @@ deploy
 .git
 .git/**
 node_modules
+clip
+clip/**
