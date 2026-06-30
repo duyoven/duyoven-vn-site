@@ -362,6 +362,25 @@ body{
 .deep-concl{margin-top:6px;padding-top:9px;border-top:1px solid var(--line);font-size:13px;color:#a7f3d0}
 .deep-concl b{color:#fff}
 .deep-err{font-size:12.5px;color:#fca5a5}
+
+/* 7 công cụ đánh giá chuyên biệt */
+.gt-sum{font-size:13.5px;color:var(--ink);margin-bottom:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card2)}
+.gt-sum b{color:#fff}
+.gt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.gt-card{border:1px solid var(--line);border-left:3px solid var(--c);border-radius:11px;padding:11px 13px;background:var(--card2)}
+.gt-card.off{opacity:.45}
+.gt-head{display:flex;align-items:center;gap:8px;font-size:13.5px;margin-bottom:6px}
+.gt-ic{font-size:16px}
+.gt-name{font-weight:700;color:var(--ink)}
+.gt-state{margin-left:auto;font-size:12px;color:var(--c);font-variant-numeric:tabular-nums}
+.gt-traits{font-size:11.5px;color:var(--muted);margin-bottom:7px}
+.gt-verdict{font-size:13px;margin-bottom:3px}
+.gt-verdict.v-high b,.gt-verdict.v-ok b{color:#a7f3d0}
+.gt-verdict.v-conditional b{color:#fde68a}
+.gt-verdict.v-low b{color:#fca5a5}
+.gt-reason{font-size:11.5px;color:var(--muted);line-height:1.45}
+.gt-legal{font-size:11px;color:var(--muted);margin-top:4px;font-style:italic}
+.gt-absent{font-size:11.5px;color:var(--muted);font-style:italic}
 .gn-legend{font-size:11.5px;color:var(--muted);line-height:1.5}
 
 /* caption LLM */
@@ -560,6 +579,12 @@ body.locked .lang-toggle{display:none}
         <button id="deepBtn" class="deep-btn" type="button">🔬 <span data-en="Deep analysis — separate sources (voice / instrument)">Phân tích sâu — tách nguồn (giọng / nhạc cụ)</span></button>
         <div id="deepPanel" class="deep-panel"></div>
       </div>
+    </div>
+
+    <!-- 7 CÔNG CỤ ĐÁNH GIÁ CHUYÊN BIỆT (mỗi nhóm 1 bộ tiêu chí riêng) -->
+    <div id="groupToolsPanel" class="panel" style="display:none">
+      <h2 class="sec-title" data-en="7 specialized assessment tools (one per group)">7 công cụ đánh giá chuyên biệt (mỗi nhóm một bộ tiêu chí)</h2>
+      <div id="groupTools" class="group-tools"></div>
     </div>
 
     <!-- PHÂN TÍCH NÂNG CAO: BEATs Large + CLAP -->
@@ -2292,6 +2317,7 @@ window.AudioEngine = (function () {
     renderAcoustics(agg);
     renderInputStats();
     renderQuality();
+    renderGroupTools(agg);
     renderAI(agg);
     renderDeepUI();
     $("results").classList.add("show");
@@ -2405,6 +2431,112 @@ window.AudioEngine = (function () {
       "Ghi nhận theo 7 nhóm nguồn gốc: [1] phi sinh học · [2] sinh vật · [3] môi trường · [4] con người · [5] mô phỏng · [6] vật dụng · [7] tổng hợp.",
       "Recorded by 7 origin groups: [1] abiotic · [2] living · [3] environment · [4] human · [5] simulation · [6] objects · [7] synthesized.");
     host.innerHTML = authHtml + '<div class="gn-legend">' + legend + "</div>";
+  }
+
+  // ===== 7 CÔNG CỤ ĐÁNH GIÁ CHUYÊN BIỆT — mỗi nhóm 1 bộ tiêu chí riêng =====
+  // Sau khi nhận diện đa nhãn (nhóm nào có mặt), CHẠY công cụ tương ứng cho TỪNG nhóm.
+  function assessByGroup(agg) {
+    var bk = state.lastBackend, ac = state.lastAcoustics, f = (ac && ac.features) || {};
+    var dec = (bk && bk.decision) || {};
+    var cov = dec.coverage || {}, pres = dec.presence || {}, pit = dec.pitch || null;
+    var pct = agg.pct || {}, hasMel = !!agg.melody;
+    var notesN = (ac && ac.notes) ? ac.notes.length : 0;
+    var elec = dec.elec || 0;
+    var presentSet = dec.present || agg.present || [];
+    function labs(g) {
+      return (agg.raw || []).filter(function (r) { return r.group === g && r.score >= 0.04; })
+        .slice(0, 3).map(function (r) { return esc(window.APP_LANG === "en" ? r.label : (r.labelVi || r.label)); });
+    }
+    function conf(g) { var c = parseFloat(cov[g]) || 0, p = parseFloat(pres[g]) || 0, s = pct[g] || 0; return Math.round(Math.min(100, (0.45 * s + 0.35 * p + 0.20 * c) * 100)); }
+    function present(g) { return presentSet.indexOf(g) >= 0 || (parseFloat(cov[g]) || 0) >= 0.20 || (pct[g] || 0) >= 0.15; }
+    function mk(level, title, reason, legal) { return { level: level, title: title, reason: reason, legal: legal }; }
+    // verdict chung cho nhóm "thường gặp" (1,2,3,5): có giai điệu → nâng "có thể xem xét"
+    function commonLow(nm) {
+      return hasMel
+        ? mk("conditional", L("Có thể được xem xét", "Worth considering"),
+            L("“" + nm + "” vốn khó bảo hộ đơn lẻ, nhưng đã CÓ giai điệu/nhịp điệu/hoà âm (không phải âm chức năng) → tăng tính phân biệt; đủ điều kiện nộp đơn để Cục SHTT thẩm định.",
+              "\"" + nm + "\" is hard to protect alone, but carries melody/rhythm/harmony → eligible to file for IP Office review."),
+            L("Khoản 2 Điều 74; khuyến khích phối hợp/mô phỏng sáng tạo.", "Art. 74(2); creative arrangement encouraged."))
+        : mk("low", L("Không nên chấp nhận đơn lẻ", "Not acceptable alone"),
+            L("“" + nm + "” là âm phổ biến, thiếu tính phân biệt cố hữu.", "\"" + nm + "\" is a common sound lacking inherent distinctiveness."),
+            L("Cần chứng minh “ý nghĩa thứ hai” — Khoản 2 Điều 74.", "Needs secondary meaning — Art. 74(2)."));
+    }
+    var out = [];
+    // CÔNG CỤ 1 — Phi sinh học (gió/nước/sấm): chuyên xét nhiễu băng rộng, vô cao độ ổn định
+    (function () { var g = 1, tr = labs(g); if (f.flatness > 0.18) tr.push(L("nhiễu băng rộng", "broadband noise"));
+      out.push({ g: g, detected: present(g), score: conf(g), traits: tr, verdict: commonLow(T.gname(T.GROUPS[1])) }); })();
+    // CÔNG CỤ 2 — Sinh vật sống (động vật/côn trùng)
+    (function () { var g = 2, tr = labs(g);
+      out.push({ g: g, detected: present(g), score: conf(g), traits: tr, verdict: commonLow(T.gname(T.GROUPS[2])) }); })();
+    // CÔNG CỤ 3 — Môi trường tổng hợp: ≥2 âm tự nhiên cùng lúc
+    (function () { var g = 3, natN = [1, 2].filter(present).length, detected = present(3) || natN >= 2, tr = [];
+      if (natN >= 2) tr.push(L("kết hợp nhiều âm tự nhiên trong một không gian", "blend of several natural sounds"));
+      out.push({ g: g, detected: detected, score: detected ? Math.max(conf(3), 40) : conf(3), traits: tr, verdict: commonLow(T.gname(T.GROUPS[3])) }); })();
+    // CÔNG CỤ 4 — Con người (CHUYÊN: dải giọng người E2–E6, tỉ lệ hữu thanh)
+    (function () { var g = 4, tr = labs(g), inRange = pit ? (pit.median >= 80 && pit.median <= 1320) : null;
+      if (pit && pit.median) tr.push((L("cao độ ", "pitch ") + (pit.medianNote || "")) + (inRange === false ? " — " + L("VƯỢT dải giọng người", "exceeds human range") : (inRange ? " " + L("(trong dải E2–E6)", "(within E2–E6)") : "")));
+      if (f.voicedRatio) tr.push(L("hữu thanh ", "voiced ") + Math.round(f.voicedRatio * 100) + "%");
+      var verdict = (pit && inRange === false)
+        ? mk("ok", L("Có thể chấp nhận — cần lưu ý", "Acceptable — note"),
+            L("Có giọng người nhưng cao độ vượt dải tự nhiên (E2–E6) → khả năng là giọng AI/xử lý kỹ thuật → cân nhắc xếp nhóm 7.", "Human voice but pitch exceeds natural range → possibly AI/processed → consider group 7."),
+            L("Khoản 1 Điều 74; nếu tạo hoàn toàn bằng AI → nhóm 7.", "Art. 74(1); if fully AI-made → group 7."))
+        : mk("ok", L("Có thể chấp nhận", "Acceptable"),
+            L("Âm thanh con người (tiếng nói/hát) — có khả năng mang dấu ấn riêng để phân biệt.", "Human sound (speech/singing) — may carry a distinctive personal mark."),
+            L("Khoản 1 Điều 74 (tính phân biệt cố hữu).", "Art. 74(1) (inherent distinctiveness)."));
+      out.push({ g: g, detected: present(g), score: conf(g), traits: tr, verdict: verdict }); })();
+    // CÔNG CỤ 5 — Mô phỏng tự nhiên (tái hiện âm tự nhiên bằng phần mềm)
+    (function () { var g = 5, detected = present(5) || state.simulated, tr = []; if (state.simulated) tr.push(L("đang ở chế độ mô phỏng", "simulation mode on"));
+      out.push({ g: g, detected: detected, score: conf(g), traits: tr, verdict: commonLow(T.gname(T.GROUPS[5])) }); })();
+    // CÔNG CỤ 6 — Vật dụng/nhạc cụ (CHUYÊN: phân biệt ÂM CHỨC NĂNG vs CÓ GIAI ĐIỆU)
+    (function () { var g = 6, tr = labs(g), verdict;
+      if (hasMel) { tr.push(L("có giai điệu/nhịp điệu", "has melody/rhythm") + (notesN ? " (" + notesN + L(" nốt", " notes") + ")" : ""));
+        verdict = mk("conditional", L("Có thể được xem xét", "Worth considering"),
+          L("Nhạc cụ/vật dụng nhưng được phối GIAI ĐIỆU/NHỊP ĐIỆU/HOÀ ÂM và không phải âm chức năng kỹ thuật bắt buộc → tăng tính phân biệt; có thể nộp đơn để Cục SHTT thẩm định.", "Instrument/object arranged with melody/rhythm and not a mandatory functional sound → eligible to file."),
+          L("Khoản 2 Điều 74; loại trừ Khoản 6 Điều 73 nếu là đặc tính kỹ thuật bắt buộc.", "Art. 74(2); excluded under Art. 73(6) if a mandatory technical feature."));
+      } else { tr.push(L("âm chức năng (không có giai điệu)", "functional sound (no melody)"));
+        verdict = mk("low", L("Không nên chấp nhận đơn lẻ", "Not acceptable alone"),
+          L("Âm phát ra khi sử dụng thiết bị/sản phẩm; nếu là đặc tính kỹ thuật bắt buộc của sản phẩm thì bị loại.", "Sound from using a device/product; excluded if a mandatory technical feature."),
+          L("Khoản 6 Điều 73 (đặc tính kỹ thuật bắt buộc); hoặc “ý nghĩa thứ hai”.", "Art. 73(6); or secondary meaning."));
+      }
+      out.push({ g: g, detected: present(g), score: conf(g), traits: tr, verdict: verdict }); })();
+    // CÔNG CỤ 7 — Tổng hợp/AI (CHUYÊN: nhãn điện tử, phổ quá sạch, cao độ vượt dải người)
+    (function () { var g = 7, tr = [];
+      if (elec >= 0.30) tr.push(L("nhãn điện tử/tổng hợp", "electronic/synth labels"));
+      if (pit && pit.median > 1320) tr.push(L("cao độ vượt dải người (>E6)", "pitch above human range (>E6)"));
+      if (f.flatness != null && f.flatness < 0.04 && f.hnr > 0.85) tr.push(L("phổ quá “sạch” (nhân tạo)", "unnaturally clean spectrum"));
+      var detected = present(7) || elec >= 0.40 || (pit && pit.median > 1320);
+      out.push({ g: g, detected: detected, score: conf(g), traits: tr,
+        verdict: mk("high", L("Rất nên chấp nhận", "Strongly recommended"),
+          L("Âm tổng hợp toàn phần (kỹ thuật số/AI) — tần số/giai điệu nhân tạo, tính phân biệt cao nhất.", "Fully synthesized (digital/AI) — artificial frequency/melody, highest distinctiveness."),
+          L("Khoản 1 Điều 74 (khả năng tự phân biệt cao).", "Art. 74(1) (high self-distinction).")) }); })();
+    return out;
+  }
+
+  function renderGroupTools(agg) {
+    var host = $("groupTools"), panel = $("groupToolsPanel"); if (!host || !panel) return;
+    var tools = assessByGroup(agg);
+    var detected = tools.filter(function (t) { return t.detected; });
+    var badge = { high: "✅", ok: "✅", conditional: "🟡", low: "❌" };
+    tools.sort(function (a, b) { return (b.detected - a.detected) || (b.score - a.score); });
+    var cards = tools.map(function (t) {
+      var g = T.GROUPS[t.g];
+      var body = t.detected
+        ? (t.traits && t.traits.length ? '<div class="gt-traits">🔎 ' + t.traits.join(" · ") + "</div>" : "") +
+          '<div class="gt-verdict v-' + t.verdict.level + '">' + badge[t.verdict.level] + " <b>" + esc(t.verdict.title) + "</b></div>" +
+          '<div class="gt-reason">' + esc(t.verdict.reason) + "</div>" +
+          '<div class="gt-legal">⚖️ ' + esc(t.verdict.legal) + "</div>"
+        : '<div class="gt-absent">' + L("Công cụ đã chạy — không phát hiện nhóm này.", "Tool ran — this group not detected.") + "</div>";
+      return '<div class="gt-card ' + (t.detected ? "on" : "off") + '" style="--c:' + g.color + '">' +
+        '<div class="gt-head"><span class="gt-ic">' + g.icon + "</span>" +
+        '<span class="gt-name">[' + t.g + "] " + T.gname(g) + "</span>" +
+        '<span class="gt-state">' + (t.detected ? ("✓ " + t.score + "%") : "—") + "</span></div>" + body + "</div>";
+    }).join("");
+    var sum = detected.length
+      ? "🔬 " + L("Đã chạy 7 công cụ — phát hiện", "Ran 7 tools — detected") + " <b>" + detected.length + "</b> " +
+        L("nhóm âm", "sound group(s)") + ": " + detected.map(function (t) { return "[" + t.g + "] " + T.gname(T.GROUPS[t.g]); }).join(" + ")
+      : "🔬 " + L("Đã chạy 7 công cụ — chưa phát hiện nhóm âm rõ ràng.", "Ran 7 tools — no clear group detected.");
+    panel.style.display = "block";
+    host.innerHTML = '<div class="gt-sum">' + sum + "</div><div class=\"gt-grid\">" + cards + "</div>";
   }
 
   // ---------- Phân tích sâu: tách nguồn (Demucs) ----------
