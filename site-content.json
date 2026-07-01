@@ -1,6 +1,6 @@
 {
   "_note": "Nội dung động của duyoven.vn — chỉnh trong Admin › Website. Đừng sửa tay nếu không rành.",
-  "updatedAt": "2026-06-21T14:33:03.204Z",
+  "updatedAt": "2026-07-01T11:00:24.909Z",
   "company": {
     "name": "CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA",
     "brand": "Duy's Oven",
@@ -607,6 +607,18 @@
         "vi": "2",
         "nguonDien": "12VDC 2A"
       }
+    },
+    {
+      "id": "p1782903624686",
+      "code": "LNTT65",
+      "name": "Lò nướng Than tách khói Hybrid 65L",
+      "price": 0,
+      "unit": "bộ",
+      "short": "",
+      "img": "",
+      "link": "",
+      "active": true,
+      "approved": false
     }
   ],
   "news": [
