@@ -5,12 +5,51 @@
       "unit": "bộ",
       "qty": 0,
       "status": "Hoàn thiện"
+    },
+    {
+      "name": "Lò Tách khói 125L",
+      "unit": "bộ",
+      "qty": 2,
+      "status": "Hoàn thiện"
     }
   ],
-  "log": [],
+  "log": [
+    {
+      "t": "2026-07-01T01:06:26.546Z",
+      "type": "nhập",
+      "name": "Lò Tách khói 125L",
+      "qty": 2,
+      "note": "PNK PNK-20260701-080503 · Hoàn thiện"
+    }
+  ],
   "phieuxuat": [],
-  "phieunhap": [],
-  "updatedAt": "2026-06-22T09:23:22.281Z",
+  "phieunhap": [
+    {
+      "no": "PNK-20260701-080503",
+      "supplier": "",
+      "date": "2026-07-01",
+      "obj": {
+        "no": "PNK-20260701-080503",
+        "date": "2026-07-01",
+        "receiver": "Tuấn",
+        "supplier": "",
+        "ref": "",
+        "reason": "",
+        "items": [
+          {
+            "name": "Lò Tách khói 125L",
+            "code": "LTK125",
+            "unit": "bộ",
+            "q": 2,
+            "status": "Hoàn thiện",
+            "note": ""
+          }
+        ],
+        "staff": "nguyentuanapple7397@gmail.com"
+      }
+    }
+  ],
+  "updatedAt": "2026-07-01T01:06:31.958Z",
   "by": "nguyentuanapple7397@gmail.com",
-  "rev": 1
+  "rev": 2
 }
