@@ -11,9 +11,22 @@
       "unit": "bộ",
       "qty": 2,
       "status": "Hoàn thiện"
+    },
+    {
+      "name": "Pantina (lò mini gập gọn)",
+      "unit": "bộ",
+      "qty": 12,
+      "status": "Hoàn thiện"
     }
   ],
   "log": [
+    {
+      "t": "2026-07-01T01:10:28.922Z",
+      "type": "nhập",
+      "name": "Pantina (lò mini gập gọn)",
+      "qty": 12,
+      "note": "PNK PNK-20260701-080755 · Hoàn thiện"
+    },
     {
       "t": "2026-07-01T01:06:26.546Z",
       "type": "nhập",
@@ -24,6 +37,30 @@
   ],
   "phieuxuat": [],
   "phieunhap": [
+    {
+      "no": "PNK-20260701-080755",
+      "supplier": "",
+      "date": "2026-07-01",
+      "obj": {
+        "no": "PNK-20260701-080755",
+        "date": "2026-07-01",
+        "receiver": "Nguyễn Tuấn",
+        "supplier": "",
+        "ref": "",
+        "reason": "Đầy đủ phụ kiện",
+        "items": [
+          {
+            "name": "Pantina (lò mini gập gọn)",
+            "code": "PAN",
+            "unit": "bộ",
+            "q": 12,
+            "status": "Hoàn thiện",
+            "note": ""
+          }
+        ],
+        "staff": "nguyentuanapple7397@gmail.com"
+      }
+    },
     {
       "no": "PNK-20260701-080503",
       "supplier": "",
@@ -49,7 +86,7 @@
       }
     }
   ],
-  "updatedAt": "2026-07-01T01:06:31.958Z",
+  "updatedAt": "2026-07-01T01:10:31.825Z",
   "by": "nguyentuanapple7397@gmail.com",
-  "rev": 2
+  "rev": 3
 }
