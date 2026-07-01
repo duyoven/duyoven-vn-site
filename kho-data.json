@@ -23,9 +23,22 @@
       "unit": "bộ",
       "qty": 1,
       "status": "Hoàn thiện"
+    },
+    {
+      "name": "Hybrid 65L (than + gas)",
+      "unit": "bộ",
+      "qty": 1,
+      "status": "Hoàn thiện"
     }
   ],
   "log": [
+    {
+      "t": "2026-07-01T11:01:29.190Z",
+      "type": "nhập",
+      "name": "Hybrid 65L (than + gas)",
+      "qty": 1,
+      "note": "PNK PNK-20260701-180129 · Hoàn thiện ← Sơn"
+    },
     {
       "t": "2026-07-01T10:57:18.395Z",
       "type": "nhập",
@@ -57,6 +70,30 @@
   ],
   "phieuxuat": [],
   "phieunhap": [
+    {
+      "no": "PNK-20260701-180129",
+      "supplier": "Sơn",
+      "date": "2026-07-01",
+      "obj": {
+        "no": "PNK-20260701-180129",
+        "date": "2026-07-01",
+        "receiver": "Nguyễn Tuấn",
+        "supplier": "Sơn",
+        "ref": "",
+        "reason": "Đã hoàng thiện lò thành phẩm",
+        "items": [
+          {
+            "name": "Hybrid 65L (than + gas)",
+            "code": "HYB65",
+            "unit": "bộ",
+            "q": 1,
+            "status": "Hoàn thiện",
+            "note": ""
+          }
+        ],
+        "staff": "nguyentuanapple7397@gmail.com"
+      }
+    },
     {
       "no": "PNK-20260701-175457",
       "supplier": "Sơn",
@@ -154,7 +191,7 @@
       }
     }
   ],
-  "updatedAt": "2026-07-01T10:57:23.806Z",
+  "updatedAt": "2026-07-01T11:01:32.350Z",
   "by": "nguyentuanapple7397@gmail.com",
-  "rev": 5
+  "rev": 6
 }
