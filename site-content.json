@@ -1,6 +1,6 @@
 {
   "_note": "Nội dung động của duyoven.vn — chỉnh trong Admin › Website. Đừng sửa tay nếu không rành.",
-  "updatedAt": "2026-07-02T04:03:26.078Z",
+  "updatedAt": "2026-07-02T09:04:41.108Z",
   "company": {
     "name": "CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA",
     "brand": "Duy's Oven",
@@ -29,16 +29,24 @@
       "code": "PAN",
       "approved": true,
       "specs": {
-        "dai": "600",
-        "rong": "300",
-        "cao": "380",
-        "nang": "17",
-        "vi": "1",
-        "dungTich": "45",
+        "dai": "Dài : 636mm",
+        "rong": "Rộng : 392mm",
+        "cao": "Cao : 770mm",
+        "nang": "Cân nặng : 17kg",
+        "vi": "Số vỉ :4 vỉ",
+        "dungTich": "Dung tích 45L",
         "nguonDien": "12VDC/2A hoặc Power Bank typeC (Không kèm theo sản phẩm)",
-        "congNghe": "Than tách khói",
+        "congNghe": "Lò Nướng Than Tách Khói",
         "sonCl": "Sơn chịu nhiệt tiêu chuẩn Mỹ 600° C",
-        "board": "1"
+        "vi1kt": "Kích thước Vỉ nướng  : 22x25cm",
+        "vi1cl": "Chất Liệu inox Full 4li",
+        "vi2kt": "Kích thước vỉ than : 22x26cm",
+        "vi2cl": "Chất liệu inox  Full 4li",
+        "chatLieu": "Chất liệu inox 304",
+        "banhXe": "Không bánh xe",
+        "dongHo": "Đồng hồ nhiệt : 1",
+        "board": "Board mạch điều khiển Typec 12V/2A",
+        "khac": "Vỉ tách khói kích thước : 18x42cm\nChất liệu inox 304\nKính theo lò \nKích thước : 12x28cm\nChất Liệu : cường lực chiệu nhiệt"
       }
     },
     {
