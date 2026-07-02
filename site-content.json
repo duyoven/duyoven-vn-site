@@ -1,6 +1,6 @@
 {
   "_note": "Nội dung động của duyoven.vn — chỉnh trong Admin › Website. Đừng sửa tay nếu không rành.",
-  "updatedAt": "2026-07-01T11:00:24.909Z",
+  "updatedAt": "2026-07-02T04:03:26.078Z",
   "company": {
     "name": "CÔNG TY CP CÔNG NGHỆ CƠ KHÍ NÔNG NGHIỆP HARMONIA",
     "brand": "Duy's Oven",
@@ -33,9 +33,12 @@
         "rong": "300",
         "cao": "380",
         "nang": "17",
+        "vi": "1",
+        "dungTich": "45",
         "nguonDien": "12VDC/2A hoặc Power Bank typeC (Không kèm theo sản phẩm)",
         "congNghe": "Than tách khói",
-        "sonCl": "Sơn chịu nhiệt tiêu chuẩn Mỹ 600° C"
+        "sonCl": "Sơn chịu nhiệt tiêu chuẩn Mỹ 600° C",
+        "board": "1"
       }
     },
     {
